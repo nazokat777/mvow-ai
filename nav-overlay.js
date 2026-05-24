@@ -148,24 +148,23 @@
   // MVP scope (2026-05-24, qayta) — 14 ta zarur ekran.
   // today-plan.html qo'shildi: AI tuzgan kun tartibi ro'yxati — boshlashdan oldin.
   const SEQ = [
-    // Onboarding + reja → ruxsatlar (1-4)
+    // Onboarding + reja + sozlamalar (1-6)
     'welcome.html',           // 1. Tanishuv — ism
     'voice-commitment.html',  // 2. Mentor bilan tanishuv (va'da)
     'goal.html',              // 3. Maqsadingni so'rash (reja aytish)
     'permissions.html',       // 4. Ruxsatlar (rejani amalga oshirish uchun)
-    // Reja tuzish — ko'rish — bajarish (5-10)
     'routine.html',           // 5. "Rejalaringni ayt, kun tartibini tuzamiz" — AI
-    'calendar.html',          // 6. Haftalik kalendar
-    'today-plan.html',        // 7. Bugungi tayyor kun tartibi ro'yxati
-    'day-flow.html',          // 8. Taymer + nazorat
-    'hard-lock.html',         // 9. Ekran qulflash
-    'session-reflection.html',// 10. Sessiya bahosi
-    // Bildirishnomalar va natijalar (11-13)
-    'notifications.html',     // 11. Mentor xabarlari · yutuqlar
-    'weekly-review.html',     // 12. Natijalar — 1 kun / 1 hafta / 1 oy
-    'celebrate.html',         // 13. Haftalik bayram
-    // Sozlamalar — eng oxirga (kerak bo'lganda ochiladi)
-    'settings.html'           // 14. Sozlamalar
+    'settings.html',          // 6. Sozlamalar — mentor ohangi, sessiya sozlamalari
+    // Ko'rish — bajarish (7-11)
+    'calendar.html',          // 7. Haftalik kalendar
+    'today-plan.html',        // 8. Bugungi tayyor kun tartibi ro'yxati
+    'day-flow.html',          // 9. Taymer + nazorat
+    'hard-lock.html',         // 10. Ekran qulflash
+    'session-reflection.html',// 11. Sessiya bahosi
+    // Bildirishnomalar va natijalar (12-14)
+    'notifications.html',     // 12. Mentor xabarlari · yutuqlar
+    'weekly-review.html',     // 13. Natijalar — 1 kun / 1 hafta / 1 oy
+    'celebrate.html'          // 14. Haftalik bayram
   ];
 
   const file = (location.pathname.split('/').pop() || 'welcome.html').toLowerCase();
