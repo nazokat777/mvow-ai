@@ -162,9 +162,10 @@
     'day-flow.html',          // 8. Taymer + nazorat
     'hard-lock.html',         // 9. Ekran qulflash
     'session-reflection.html',// 10. Sessiya bahosi
-    // Natijalar (11-12)
-    'weekly-review.html',     // 11. Natijalar — 1 kun / 1 hafta / 1 oy
-    'celebrate.html'          // 12. Haftalik bayram
+    // Bildirishnomalar va natijalar (11-13)
+    'notifications.html',     // 11. Mentor xabarlari · yutuqlar · eslatmalar
+    'weekly-review.html',     // 12. Natijalar — 1 kun / 1 hafta / 1 oy
+    'celebrate.html'          // 13. Haftalik bayram
   ];
 
   const file = (location.pathname.split('/').pop() || 'welcome.html').toLowerCase();
