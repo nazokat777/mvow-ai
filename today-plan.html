@@ -186,6 +186,64 @@
   .qa-chip:active { background: rgba(232,199,126,.14); border-style: solid; }
   .qa-chip .ic { font-size: 11px; }
 
+  /* Custom add form */
+  .add-form {
+    margin-top: 10px;
+    display: grid;
+    grid-template-columns: 64px 1fr 60px 40px;
+    gap: 6px;
+  }
+  .add-form .ti {
+    background: rgba(232,199,126,.06);
+    border: 1px solid var(--gold-deep);
+    border-radius: 6px;
+    padding: 10px 8px;
+    color: var(--text-primary);
+    font-family: 'JetBrains Mono',monospace;
+    font-size: 11px;
+    letter-spacing: 1px;
+    outline: none;
+    transition: border-color .15s, background .15s;
+    min-width: 0;
+  }
+  .add-form .ti.name {
+    font-family: 'Cormorant Garamond',serif;
+    font-style: italic;
+    font-size: 13px;
+    letter-spacing: 0;
+  }
+  .add-form .ti::placeholder { color: var(--text-ghost); }
+  .add-form .ti:focus {
+    border-color: var(--gold);
+    background: rgba(232,199,126,.10);
+  }
+  .add-form .add-btn {
+    background: linear-gradient(180deg, var(--gold-flash), var(--gold), var(--gold-deep));
+    color: var(--void);
+    border: none;
+    border-radius: 6px;
+    font-size: 22px;
+    font-weight: 700;
+    line-height: 1;
+    cursor: pointer;
+    box-shadow: 0 0 10px rgba(232,199,126,.35);
+    transition: transform .12s;
+  }
+  .add-form .add-btn:active { transform: scale(.92); }
+  .add-form .add-btn:disabled {
+    opacity: .35;
+    cursor: not-allowed;
+    box-shadow: none;
+  }
+  .add-hint {
+    margin-top: 6px;
+    font-family: 'Cormorant Garamond',serif;
+    font-style: italic;
+    font-size: 11px;
+    color: var(--text-muted);
+    text-align: center;
+  }
+
   /* Day overview */
   .overview {
     margin-top: 18px;
@@ -333,18 +391,28 @@
       </div>
     </div>
 
-    <!-- Quick add -->
+    <!-- Custom add -->
     <div class="section-title">
-      <span class="lbl">TEZ QO'SH</span>
+      <span class="lbl">O'ZING QO'SH</span>
       <span class="line"></span>
     </div>
-    <div class="quick-add">
-      <span class="qa-chip"><span class="ic">⊙</span> Sport</span>
-      <span class="qa-chip"><span class="ic">◇</span> Kod</span>
-      <span class="qa-chip"><span class="ic">▥</span> Kitob</span>
-      <span class="qa-chip"><span class="ic">⌖</span> Til</span>
-      <span class="qa-chip"><span class="ic">∼</span> Pomodoro</span>
-      <span class="qa-chip"><span class="ic">+</span> Boshqa</span>
+
+    <div class="add-form">
+      <input class="ti time" type="text" placeholder="07:00" maxlength="5" id="newTime">
+      <input class="ti name" type="text" placeholder="Ish nomi (mas: Sport)" id="newName">
+      <input class="ti dur" type="text" placeholder="45 daq" id="newDur">
+      <button class="add-btn" id="addBtn" disabled>+</button>
+    </div>
+    <div class="add-hint">Vaqt, nomi, davomiyligini yoz — keyin <b style="color:var(--gold)">+</b> bos.</div>
+
+    <!-- Quick fill chips -->
+    <div class="quick-add" id="quickAdd">
+      <span class="qa-chip" data-name="Sport · yugurish" data-dur="45 daq"><span class="ic">⊙</span> Sport</span>
+      <span class="qa-chip" data-name="Loyiha · kod" data-dur="60 daq"><span class="ic">◇</span> Kod</span>
+      <span class="qa-chip" data-name="Kitob · mutolaa" data-dur="45 daq"><span class="ic">▥</span> Kitob</span>
+      <span class="qa-chip" data-name="Til o'rganish" data-dur="45 daq"><span class="ic">⌖</span> Til</span>
+      <span class="qa-chip" data-name="Pomodoro fokus" data-dur="25 daq"><span class="ic">∼</span> Pomodoro</span>
+      <span class="qa-chip" data-name="Oila bilan vaqt" data-dur="60 daq"><span class="ic">☼</span> Oila</span>
     </div>
 
     <!-- Day overview -->
@@ -381,14 +449,125 @@
     rays.appendChild(s);
   }
 
-  // Delete button — remove task row
-  document.querySelectorAll('.del').forEach(btn => {
+  const taskList = document.querySelector('.task-list');
+  const countEl  = document.querySelector('.section-title .count');
+
+  function updateCount() {
+    countEl.textContent = taskList.querySelectorAll('.task-row').length;
+  }
+
+  function attachDelete(btn) {
     btn.addEventListener('click', () => {
       const row = btn.closest('.task-row');
       row.style.transition = 'all .3s';
       row.style.transform = 'translateX(100%)';
       row.style.opacity = '0';
-      setTimeout(() => row.remove(), 300);
+      setTimeout(() => { row.remove(); updateCount(); }, 300);
+    });
+  }
+  document.querySelectorAll('.del').forEach(attachDelete);
+
+  // Parse "07:00" → 420 minutes for sorting
+  function timeToMin(t) {
+    const m = /^(\d{1,2}):?(\d{2})?$/.exec(t.trim());
+    if (!m) return 99999;
+    return (+m[1]) * 60 + (+(m[2] || 0));
+  }
+  // Normalize "7:0" → "07:00"
+  function normalizeTime(t) {
+    const m = /^(\d{1,2}):?(\d{2})?$/.exec(t.trim());
+    if (!m) return t.trim();
+    const hh = String(Math.min(23, +m[1])).padStart(2,'0');
+    const mm = String(Math.min(59, +(m[2] || 0))).padStart(2,'0');
+    return hh + ':' + mm;
+  }
+  // "45 daq" / "1.5 soat" / "2s" → display short
+  function shortDur(d) {
+    d = d.trim();
+    if (/^(\d+(\.\d+)?)\s*s(oat)?$/i.test(d)) {
+      return RegExp.$1 + 'S';
+    }
+    if (/^(\d+)\s*daq/i.test(d)) {
+      return RegExp.$1 + ' DAQ';
+    }
+    return d.toUpperCase();
+  }
+
+  // Insert row sorted by time
+  function insertRow(timeStr, name, dur) {
+    const norm = normalizeTime(timeStr);
+    const row = document.createElement('div');
+    row.className = 'task-row';
+    row.innerHTML = `
+      <div class="time">${norm}<br><span style="color:var(--gold-deep);font-size:8px">${dur.trim()}</span></div>
+      <div class="body">
+        <div class="name">${name.trim()}</div>
+        <div class="meta">✦ O'ZIM QO'SHGAN · <span class="dur">${shortDur(dur)}</span></div>
+      </div>
+      <div class="del">×</div>
+    `;
+    row.style.opacity = '0';
+    row.style.transform = 'translateY(-8px)';
+
+    // Insert by time order
+    const mins = timeToMin(norm);
+    const rows = Array.from(taskList.querySelectorAll('.task-row'));
+    let inserted = false;
+    for (const r of rows) {
+      const t = r.querySelector('.time').textContent.match(/(\d{1,2}):(\d{2})/);
+      if (!t) continue;
+      const rm = (+t[1]) * 60 + (+t[2]);
+      if (mins < rm) {
+        taskList.insertBefore(row, r);
+        inserted = true;
+        break;
+      }
+    }
+    if (!inserted) taskList.appendChild(row);
+
+    requestAnimationFrame(() => {
+      row.style.transition = 'all .35s ease';
+      row.style.opacity = '1';
+      row.style.transform = 'translateY(0)';
+    });
+
+    attachDelete(row.querySelector('.del'));
+    updateCount();
+  }
+
+  // Form
+  const newTime = document.getElementById('newTime');
+  const newName = document.getElementById('newName');
+  const newDur  = document.getElementById('newDur');
+  const addBtn  = document.getElementById('addBtn');
+
+  function validate() {
+    addBtn.disabled = !(newTime.value.trim() && newName.value.trim() && newDur.value.trim());
+  }
+  [newTime, newName, newDur].forEach(i => i.addEventListener('input', validate));
+
+  addBtn.addEventListener('click', () => {
+    if (addBtn.disabled) return;
+    insertRow(newTime.value, newName.value, newDur.value);
+    newTime.value = ''; newName.value = ''; newDur.value = '';
+    validate();
+    newTime.focus();
+  });
+
+  // Enter key in any field → submit
+  [newTime, newName, newDur].forEach(i =>
+    i.addEventListener('keydown', e => {
+      if (e.key === 'Enter') { e.preventDefault(); addBtn.click(); }
+    })
+  );
+
+  // Quick chips — pre-fill form
+  document.querySelectorAll('#quickAdd .qa-chip').forEach(chip => {
+    chip.addEventListener('click', () => {
+      newName.value = chip.dataset.name || chip.textContent.trim();
+      newDur.value  = chip.dataset.dur  || '45 daq';
+      if (!newTime.value) newTime.focus();
+      validate();
     });
   });
 </script>
