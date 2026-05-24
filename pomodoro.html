@@ -1,0 +1,539 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>M·VoW — Pomodoro</title>
+<link rel="manifest" href="manifest.webmanifest">
+<meta name="theme-color" content="#04060B">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="M·VoW">
+<link rel="apple-touch-icon" href="assets/mnsm-logo.png">
+<link rel="icon" type="image/png" href="assets/mnsm-logo.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;600;700&family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,500&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  :root {
+    --void:#04060B; --void-2:#0A0E16;
+    --text-primary:#F5F2EC; --text-body:#B8BBC2;
+    --text-muted:#6B6E76; --text-ghost:#3A3D44;
+    --gold:#E8C77E; --gold-2:#C7A36B; --gold-deep:#8a6f44;
+    --gold-flash:#FFE9B5; --honey:#D4A574; --cream:#F0E5D2;
+    --sky:#7CA8C9; --sky-deep:#4A6B85;
+    --emerald:#4A8A5C; --emerald-bright:#6BAF7C;
+    --crimson:#B8334A; --rose:#C28B8B;
+  }
+  body {
+    background:#14171d; font-family:'Inter',sans-serif;
+    color:var(--text-primary); min-height:100vh;
+    display:flex; justify-content:center; align-items:flex-start;
+    padding:24px;
+  }
+  .phone {
+    width:380px; min-height:800px;
+    background:var(--void); border-radius:40px;
+    overflow:hidden; position:relative;
+    box-shadow:0 0 0 8px #2a2e36, 0 30px 80px rgba(0,0,0,.85), 0 0 100px rgba(232,199,126,.10);
+    transition:background 1.2s ease, box-shadow 1.2s ease;
+  }
+  .phone[data-mode="break"] {
+    background:#08111A;
+    box-shadow:0 0 0 8px #2a2e36, 0 30px 80px rgba(0,0,0,.85), 0 0 100px rgba(124,168,201,.25);
+  }
+  .phone[data-mode="long-break"] {
+    background:#0E1610;
+    box-shadow:0 0 0 8px #2a2e36, 0 30px 80px rgba(0,0,0,.85), 0 0 100px rgba(74,138,92,.25);
+  }
+
+  .backdrop {
+    position:absolute; inset:0;
+    background:
+      radial-gradient(ellipse 90% 50% at 50% 35%, rgba(232,199,126,.14), transparent 65%),
+      linear-gradient(180deg, var(--void) 0%, var(--void-2) 50%, var(--void) 100%);
+    transition:background 1.2s ease;
+  }
+  .phone[data-mode="break"] .backdrop {
+    background:
+      radial-gradient(ellipse 90% 50% at 50% 35%, rgba(124,168,201,.18), transparent 65%),
+      linear-gradient(180deg, var(--void) 0%, #08111A 50%, var(--void) 100%);
+  }
+  .phone[data-mode="long-break"] .backdrop {
+    background:
+      radial-gradient(ellipse 90% 50% at 50% 35%, rgba(74,138,92,.18), transparent 65%),
+      linear-gradient(180deg, var(--void) 0%, #0E1610 50%, var(--void) 100%);
+  }
+
+  .gilt-frame{position:absolute;inset:14px;border:1px solid rgba(232,199,126,.18);border-radius:26px;pointer-events:none;z-index:4}
+  .letterbox{position:absolute;left:0;right:0;height:14px;background:var(--void);z-index:7;pointer-events:none}
+  .letterbox.top{top:0}.letterbox.bottom{bottom:0}
+
+  .container{position:relative;padding:60px 24px 130px;z-index:2}
+
+  /* Top header */
+  .header-row {
+    display:flex; justify-content:space-between; align-items:center;
+    margin-bottom:18px;
+  }
+  .mode-pill {
+    display:inline-flex; align-items:center; gap:6px;
+    padding:5px 12px; border-radius:999px;
+    border:1px solid var(--gold);
+    background:rgba(232,199,126,.10);
+    font-family:'JetBrains Mono',monospace; font-size:9px;
+    letter-spacing:4px; color:var(--gold);
+    transition:all .6s;
+  }
+  .phone[data-mode="break"] .mode-pill {
+    border-color:var(--sky); background:rgba(124,168,201,.12); color:var(--sky);
+  }
+  .phone[data-mode="long-break"] .mode-pill {
+    border-color:var(--emerald); background:rgba(74,138,92,.12); color:var(--emerald-bright);
+  }
+  .mode-pill .dot {
+    width:5px; height:5px; border-radius:50%; background:currentColor;
+    animation:blink 1.4s ease-in-out infinite;
+  }
+  @keyframes blink{0%,100%{opacity:.4}50%{opacity:1}}
+  .session-pill {
+    padding:5px 12px; border:1px solid var(--gold-deep);
+    border-radius:999px; background:rgba(232,199,126,.04);
+    font-family:'JetBrains Mono',monospace; font-size:9px;
+    letter-spacing:3px; color:var(--gold);
+  }
+
+  /* Hero task */
+  .hero {
+    text-align:center; margin-bottom:18px;
+  }
+  .hero .lbl {
+    font-family:'JetBrains Mono',monospace; font-size:8.5px;
+    letter-spacing:4px; color:var(--gold-deep); margin-bottom:6px;
+  }
+  .hero .task {
+    font-family:'Cormorant Garamond',serif; font-style:italic; font-weight:600;
+    font-size:21px; color:var(--text-primary); line-height:1.25;
+  }
+  .phone[data-mode="break"] .hero .task { color:var(--sky); }
+  .phone[data-mode="long-break"] .hero .task { color:var(--emerald-bright); }
+
+  /* Circular timer */
+  .timer-wrap {
+    position:relative; width:260px; height:260px;
+    margin:0 auto 14px;
+  }
+  .timer-halo {
+    position:absolute; inset:-30px;
+    border-radius:50%;
+    background:radial-gradient(circle, var(--gold) 0%, transparent 60%);
+    opacity:.32; filter:blur(32px);
+    animation:breathe 4s ease-in-out infinite;
+  }
+  .phone[data-mode="break"] .timer-halo {
+    background:radial-gradient(circle, var(--sky) 0%, transparent 60%);
+  }
+  .phone[data-mode="long-break"] .timer-halo {
+    background:radial-gradient(circle, var(--emerald) 0%, transparent 60%);
+  }
+  @keyframes breathe{0%,100%{opacity:.30;transform:scale(.92)}50%{opacity:.55;transform:scale(1.08)}}
+
+  .timer-svg {
+    position:absolute; inset:0; width:100%; height:100%;
+    transform:rotate(-90deg);
+    filter:drop-shadow(0 0 12px rgba(232,199,126,.5));
+  }
+  .timer-track { fill:none; stroke:rgba(138,111,68,.32); stroke-width:3; }
+  .timer-progress {
+    fill:none; stroke:var(--gold); stroke-width:4;
+    stroke-linecap:round;
+    transition:stroke-dashoffset 1s linear, stroke .6s;
+  }
+  .phone[data-mode="break"] .timer-progress { stroke:var(--sky); }
+  .phone[data-mode="long-break"] .timer-progress { stroke:var(--emerald); }
+
+  /* MNSM logo behind timer center */
+  .timer-logo {
+    position:absolute; top:50%; left:50%;
+    transform:translate(-50%, -50%);
+    width:100px; height:100px;
+    background:url(assets/mnsm-logo.png) center/contain no-repeat;
+    filter:drop-shadow(0 0 14px rgba(232,199,126,.55));
+    opacity:.7;
+    z-index:2;
+  }
+
+  /* Digital time */
+  .timer-digits {
+    position:absolute; top:62%; left:50%;
+    transform:translate(-50%, 0);
+    font-family:'JetBrains Mono',monospace; font-weight:500;
+    font-size:42px; color:var(--gold); letter-spacing:2px;
+    text-shadow:0 0 16px rgba(232,199,126,.6);
+    z-index:3;
+  }
+  .phone[data-mode="break"] .timer-digits { color:var(--sky); text-shadow:0 0 16px rgba(124,168,201,.6); }
+  .phone[data-mode="long-break"] .timer-digits { color:var(--emerald-bright); text-shadow:0 0 16px rgba(74,138,92,.6); }
+  .timer-label {
+    position:absolute; top:84%; left:50%;
+    transform:translate(-50%, 0);
+    font-family:'JetBrains Mono',monospace; font-size:8.5px;
+    letter-spacing:3px; color:var(--gold-deep); z-index:3;
+  }
+
+  /* Pomodoro cycle dots */
+  .cycle-row {
+    display:flex; justify-content:center; align-items:center; gap:8px;
+    margin-bottom:14px;
+  }
+  .cycle-row .lbl {
+    font-family:'JetBrains Mono',monospace; font-size:8px;
+    letter-spacing:2px; color:var(--gold-deep); margin-right:4px;
+  }
+  .cycle-row .cdot {
+    width:10px; height:10px; border-radius:50%;
+    background:var(--text-ghost);
+    transition:all .3s;
+  }
+  .cycle-row .cdot.done { background:var(--gold); box-shadow:0 0 6px var(--gold); }
+  .cycle-row .cdot.current {
+    background:var(--gold-flash);
+    box-shadow:0 0 10px var(--gold);
+    animation:dot-pulse 1.6s ease-in-out infinite;
+  }
+  @keyframes dot-pulse{0%,100%{transform:scale(1)}50%{transform:scale(1.4)}}
+
+  /* Mentor message */
+  .mentor-msg {
+    display:flex; align-items:flex-start; gap:10px;
+    padding:12px 14px;
+    background:rgba(232,199,126,.05);
+    border-left:2px solid var(--gold);
+    border-radius:0 4px 4px 0;
+    margin-bottom:14px;
+  }
+  .phone[data-mode="break"] .mentor-msg {
+    border-left-color:var(--sky); background:rgba(124,168,201,.06);
+  }
+  .phone[data-mode="long-break"] .mentor-msg {
+    border-left-color:var(--emerald); background:rgba(74,138,92,.06);
+  }
+  .mentor-msg .orb {
+    width:24px; height:24px; flex-shrink:0; margin-top:2px;
+    background:url(assets/mnsm-logo.png) center/contain no-repeat;
+    filter:drop-shadow(0 0 6px rgba(232,199,126,.5));
+  }
+  .mentor-msg .text {
+    flex:1;
+    font-family:'Cormorant Garamond',serif; font-style:italic;
+    font-size:13.5px; color:var(--text-body); line-height:1.5;
+  }
+  .mentor-msg .text .em { color:var(--gold); font-weight:600; font-style:normal; }
+  .phone[data-mode="break"] .mentor-msg .text .em { color:var(--sky); }
+  .phone[data-mode="long-break"] .mentor-msg .text .em { color:var(--emerald-bright); }
+
+  /* Neuro insight cards (break only) */
+  .insight-card {
+    display:none;
+    padding:12px 14px;
+    background:rgba(124,168,201,.06);
+    border:1px solid rgba(124,168,201,.30);
+    border-radius:8px;
+    margin-bottom:14px;
+  }
+  .phone[data-mode="break"] .insight-card { display:block; }
+  .phone[data-mode="long-break"] .insight-card { display:block; background:rgba(74,138,92,.06); border-color:rgba(74,138,92,.30); }
+  .insight-card .lbl {
+    font-family:'JetBrains Mono',monospace; font-size:8px;
+    letter-spacing:3px; color:var(--sky); margin-bottom:6px;
+  }
+  .phone[data-mode="long-break"] .insight-card .lbl { color:var(--emerald-bright); }
+  .insight-card .actions {
+    display:flex; flex-direction:column; gap:6px;
+  }
+  .insight-card .act {
+    display:flex; align-items:center; gap:8px;
+    font-family:'Cormorant Garamond',serif; font-style:italic;
+    font-size:13px; color:var(--text-body);
+  }
+  .insight-card .act .ic { color:var(--sky); font-size:14px; width:18px; text-align:center; }
+  .phone[data-mode="long-break"] .insight-card .act .ic { color:var(--emerald-bright); }
+  .insight-card .act .em { color:var(--sky); font-weight:600; font-style:normal; }
+  .phone[data-mode="long-break"] .insight-card .act .em { color:var(--emerald-bright); }
+
+  /* Stats bar */
+  .stats {
+    display:flex; justify-content:space-between;
+    padding:10px 14px;
+    background:rgba(232,199,126,.03);
+    border-top:1px solid rgba(138,111,68,.22);
+    border-bottom:1px solid rgba(138,111,68,.22);
+    margin-bottom:14px;
+  }
+  .stat { text-align:center; flex:1; }
+  .stat .v {
+    font-family:'JetBrains Mono',monospace; font-size:15px;
+    color:var(--gold); font-weight:500;
+  }
+  .stat .l {
+    margin-top:2px;
+    font-family:'JetBrains Mono',monospace; font-size:7px;
+    letter-spacing:1.5px; color:var(--gold-deep);
+  }
+
+  /* Bottom */
+  .bottom-bar {
+    position:fixed; bottom:0; left:50%; transform:translateX(-50%);
+    width:100%; max-width:380px;
+    padding:14px 24px env(safe-area-inset-bottom, 14px);
+    background:linear-gradient(180deg, transparent, rgba(4,6,11,.95) 30%);
+    z-index:50;
+  }
+  .primary-btn {
+    width:100%; padding:14px;
+    background:linear-gradient(180deg, var(--cream), var(--gold), var(--gold-deep));
+    color:var(--void); font-size:12px; font-weight:700;
+    letter-spacing:5px; border:none; border-radius:4px;
+    cursor:pointer; text-transform:uppercase;
+    box-shadow:0 0 22px rgba(232,199,126,.40), inset 0 1px 0 rgba(255,255,255,.5);
+    transition:all .3s;
+  }
+  .phone[data-mode="break"] .primary-btn {
+    background:linear-gradient(180deg, #C5DBED, var(--sky), var(--sky-deep));
+    box-shadow:0 0 22px rgba(124,168,201,.4);
+  }
+  .phone[data-mode="long-break"] .primary-btn {
+    background:linear-gradient(180deg, #DDF1E0, var(--emerald), #1F3D2A);
+    color:var(--text-primary);
+    box-shadow:0 0 22px rgba(74,138,92,.4);
+  }
+  .secondary-row { display:flex; gap:6px; margin-top:8px; }
+  .secondary-btn {
+    flex:1; background:none;
+    border:1px solid var(--gold-deep); color:var(--gold-deep);
+    padding:8px; font-size:9px; letter-spacing:2px;
+    border-radius:2px; cursor:pointer; text-transform:uppercase;
+  }
+
+  /* State tabs */
+  .state-tabs {
+    display:flex; justify-content:center; gap:6px;
+    margin-top:18px; flex-wrap:wrap;
+  }
+  .state-tab {
+    padding:7px 14px; border-radius:2px;
+    font-family:'JetBrains Mono',monospace; font-size:10px;
+    letter-spacing:2px; color:rgba(255,255,255,.4);
+    cursor:pointer; border:1px solid rgba(255,255,255,.08);
+  }
+  .state-tab.active { color:var(--gold); border-color:var(--gold); background:rgba(232,199,126,.08); }
+
+  .footer-info{margin-top:22px;text-align:center;color:rgba(255,255,255,.45);font-size:13px;line-height:1.6;font-family:'Cormorant Garamond',serif;font-style:italic}
+
+  @media (max-width:480px){
+    body{padding:0}
+    .phone{width:100vw;min-height:100vh;border-radius:0;box-shadow:none}
+    .bottom-bar{max-width:100vw}
+    .footer-info,.state-tabs{display:none}
+  }
+</style>
+</head>
+<body>
+
+<div style="display:flex;flex-direction:column;align-items:center;">
+
+<div class="phone" id="phone" data-mode="focus">
+  <div class="backdrop"></div>
+  <div class="gilt-frame"></div>
+  <div class="letterbox top"></div>
+  <div class="letterbox bottom"></div>
+
+  <div class="container">
+
+    <!-- Header -->
+    <div class="header-row">
+      <div class="mode-pill">
+        <div class="dot"></div>
+        <span id="modeLabel">FOKUS · POMODORO 2</span>
+      </div>
+      <div class="session-pill" id="sessionPill">SESSIYA · KOD</div>
+    </div>
+
+    <!-- Hero -->
+    <div class="hero">
+      <div class="lbl" id="heroLbl">3-CHI POMODORO · 4 TADAN</div>
+      <div class="task" id="heroTask">Chuqur kod — API integratsiya</div>
+    </div>
+
+    <!-- Timer -->
+    <div class="timer-wrap">
+      <div class="timer-halo"></div>
+      <svg class="timer-svg" viewBox="0 0 260 260">
+        <circle class="timer-track" cx="130" cy="130" r="118"/>
+        <circle id="timerProgress" class="timer-progress"
+                cx="130" cy="130" r="118"
+                stroke-dasharray="741.4" stroke-dashoffset="370.7"/>
+      </svg>
+      <div class="timer-logo"></div>
+      <div class="timer-digits" id="timerDigits">12:30</div>
+      <div class="timer-label" id="timerLabel">QOLDI · FOKUS</div>
+    </div>
+
+    <!-- Cycle dots -->
+    <div class="cycle-row">
+      <span class="lbl">TSIKL</span>
+      <div class="cdot done"></div>
+      <div class="cdot done"></div>
+      <div class="cdot current"></div>
+      <div class="cdot"></div>
+    </div>
+
+    <!-- Mentor message -->
+    <div class="mentor-msg">
+      <div class="orb"></div>
+      <div class="text" id="mentorText">
+        <span class="em">2-pomodoro</span> davom etmoqda. Diqqat tarqalsa — bir lahza nafas chiqar, qaytib kel. 25 daqiqa miyangning <span class="em">eng sof attention oynasi</span>.
+      </div>
+    </div>
+
+    <!-- Break insight card -->
+    <div class="insight-card" id="insightCard">
+      <div class="lbl" id="insightLbl">5 DAQIQADA — MIYANG UCHUN</div>
+      <div class="actions">
+        <div class="act"><span class="ic">☀</span><span>Stol oldidan tur — <span class="em">qon aylanish</span> tiniqlashadi</span></div>
+        <div class="act"><span class="ic">◊</span><span>Derazaga qara — <span class="em">ko'z muskuli</span> bo'shashadi</span></div>
+        <div class="act"><span class="ic">∼</span><span>Bir piyola suv ich — <span class="em">2% suvsizlik</span> diqqatni 12% pasaytiradi</span></div>
+      </div>
+    </div>
+
+    <!-- Stats -->
+    <div class="stats">
+      <div class="stat"><div class="v">2</div><div class="l">BAJARILDI</div></div>
+      <div class="stat"><div class="v">50<span style="font-size:9px;color:var(--gold-deep);">DAQ</span></div><div class="l">FOKUS · JAMI</div></div>
+      <div class="stat"><div class="v">12<span style="font-size:9px;color:var(--gold-deep);">DAQ</span></div><div class="l">DAM · JAMI</div></div>
+    </div>
+
+  </div>
+
+  <!-- Bottom -->
+  <div class="bottom-bar">
+    <button class="primary-btn" id="primaryBtn">DAVOM ETAMAN</button>
+    <div class="secondary-row">
+      <button class="secondary-btn">⏸ TO'XTAT</button>
+      <button class="secondary-btn">⏭ POMODORO+1</button>
+    </div>
+  </div>
+
+</div>
+
+<!-- State tabs -->
+<div class="state-tabs">
+  <div class="state-tab active" data-mode="focus">FOKUS 25 DAQ</div>
+  <div class="state-tab" data-mode="break">DAM 5 DAQ</div>
+  <div class="state-tab" data-mode="long-break">UZUN DAM 15</div>
+  <div class="state-tab" data-mode="complete">YAKUN</div>
+</div>
+
+<div class="footer-info">
+  Pomodoro — 25/5 sikl · miya optimal fokus oynasi
+</div>
+
+</div>
+
+<script>
+  const modes = {
+    focus: {
+      modeLabel:'FOKUS · POMODORO 3', heroLbl:'3-CHI POMODORO · 4 TADAN',
+      heroTask:'Chuqur kod — API integratsiya',
+      timerText:'12:30', timerLabel:'QOLDI · FOKUS', progress:.5,
+      mentor:'<span class="em">3-pomodoro</span> davom etmoqda. Diqqat tarqalsa — bir lahza nafas chiqar, qaytib kel. 25 daqiqa miyangning <span class="em">eng sof attention oynasi</span>.',
+      btn:'DAVOM ETAMAN',
+      cycle:[true,true,'current',false]
+    },
+    break: {
+      modeLabel:'TANAFFUS · 5 DAQ', heroLbl:'POMODORO ORASIDA',
+      heroTask:'Dam ol · ko\'zga, tanaga, nafasga',
+      timerText:'04:38', timerLabel:'DAM · QOLDI', progress:.07,
+      mentor:'Dam — bekorchilik emas, <span class="em">miyangning sifatli ish vaqti</span>. Default Mode Network yondi — eng yangi g\'oyalar shu lahzada keladi.',
+      btn:'KEYINGI POMODOROGA',
+      cycle:[true,true,true,'current']
+    },
+    'long-break': {
+      modeLabel:'UZUN DAM · 15 DAQ', heroLbl:'4 POMODORO TUGADI',
+      heroTask:'15 daqiqa — chuqur dam',
+      timerText:'13:12', timerLabel:'UZUN DAM · QOLDI', progress:.12,
+      mentor:'4 ta pomodoro · <span class="em">100 daqiqa fokus</span>. Endi 15 daqiqa — yur, suv ich, sof havo nafasla. Keyingi 4 tsikl uchun <span class="em">resurs</span> shu yerda yig\'iladi.',
+      btn:'YANGI 4 POMODORO',
+      cycle:[true,true,true,true]
+    },
+    complete: {
+      modeLabel:'BAJARILDI', heroLbl:'KOD SESSIYASI YOPILDI',
+      heroTask:'2 soat · 4 pomodoro · API tayyor',
+      timerText:'00:00', timerLabel:'TUGADI', progress:1,
+      mentor:'<span class="em">100 daqiqa</span> tindirilgan fokus. API integratsiya yopildi — bu daraxtingda yana bir halqa. Hozir 15 daqiqa dam, keyin keyingi ish.',
+      btn:'TUGATIB — KEYINGI ISHGA',
+      cycle:[true,true,true,true]
+    }
+  };
+
+  const phone = document.getElementById('phone');
+  const modeLabel = document.getElementById('modeLabel');
+  const heroLbl = document.getElementById('heroLbl');
+  const heroTask = document.getElementById('heroTask');
+  const timerDigits = document.getElementById('timerDigits');
+  const timerLabel = document.getElementById('timerLabel');
+  const timerProgress = document.getElementById('timerProgress');
+  const mentorText = document.getElementById('mentorText');
+  const primaryBtn = document.getElementById('primaryBtn');
+  const insightLbl = document.getElementById('insightLbl');
+  const RING = 741.4;
+
+  function applyMode(name) {
+    const m = modes[name];
+    phone.dataset.mode = name;
+    modeLabel.textContent = m.modeLabel;
+    heroLbl.textContent = m.heroLbl;
+    heroTask.textContent = m.heroTask;
+    timerDigits.textContent = m.timerText;
+    timerLabel.textContent = m.timerLabel;
+    timerProgress.style.strokeDashoffset = (RING * (1 - m.progress)).toFixed(1);
+    mentorText.innerHTML = m.mentor;
+    primaryBtn.textContent = m.btn;
+    // cycle dots
+    const dots = document.querySelectorAll('.cycle-row .cdot');
+    dots.forEach((d, i) => {
+      d.className = 'cdot';
+      if (m.cycle[i] === true) d.classList.add('done');
+      else if (m.cycle[i] === 'current') d.classList.add('current');
+    });
+    // insight label
+    if (name === 'long-break') insightLbl.textContent = '15 DAQIQADA — CHUQUR RESET';
+    else insightLbl.textContent = '5 DAQIQADA — MIYANG UCHUN';
+  }
+  applyMode('focus');
+
+  document.querySelectorAll('.state-tab').forEach(tab => {
+    tab.addEventListener('click', () => {
+      document.querySelectorAll('.state-tab').forEach(t => t.classList.remove('active'));
+      tab.classList.add('active');
+      applyMode(tab.dataset.mode);
+    });
+  });
+
+  // Live ticking (only in focus mode)
+  let sec = 12 * 60 + 30;
+  setInterval(() => {
+    if (phone.dataset.mode !== 'focus') return;
+    if (sec <= 0) { applyMode('break'); sec = 5 * 60; return; }
+    const m = Math.floor(sec / 60);
+    const s = sec % 60;
+    timerDigits.textContent = String(m).padStart(2,'0') + ':' + String(s).padStart(2,'0');
+    timerProgress.style.strokeDashoffset = (RING * (1 - sec / (25*60))).toFixed(1);
+    sec--;
+  }, 1000);
+</script>
+
+<script src="nav-overlay.js" defer></script>
+</body>
+</html>

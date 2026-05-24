@@ -1,0 +1,889 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>M-VoW AI — Kunning Niyati</title>
+<link rel="manifest" href="manifest.webmanifest">
+<meta name="theme-color" content="#04060B">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="M·VoW">
+<link rel="apple-touch-icon" href="assets/mnsm-logo.png">
+<link rel="icon" type="image/png" href="assets/mnsm-logo.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500&family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --void:        #06080F;
+    --void-2:      #0E1119;
+    --shadow:      #11151D;
+
+    --text-primary: #F5F2EC;
+    --text-body:    #B8BBC2;
+    --text-muted:   #6B6E76;
+    --text-ghost:   #3A3D44;
+
+    --gold:        #E8C77E;
+    --gold-2:      #C7A36B;
+    --gold-deep:   #8a6f44;
+    --gold-flash:  #FFE9B5;
+    --honey:       #D4A574;
+    --cream:       #F0E5D2;
+
+    --emerald:     #4A8A5C;
+    --emerald-deep:#1F3D2A;
+    --crimson:     #B8334A;
+  }
+
+  body {
+    background: #14171d;
+    font-family: 'Inter', sans-serif;
+    color: var(--text-primary);
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 24px;
+  }
+
+  .phone {
+    width: 380px;
+    height: 800px;
+    background: var(--void);
+    border-radius: 40px;
+    overflow: hidden;
+    position: relative;
+    box-shadow:
+      0 0 0 8px #2a2e36,
+      0 30px 80px rgba(0,0,0,0.85),
+      0 0 100px rgba(232,199,126,0.10);
+  }
+
+  /* Sunrise rising from below */
+  .backdrop {
+    position: absolute; inset: 0;
+    background:
+      radial-gradient(ellipse 90% 40% at 50% 100%, rgba(232,199,126,0.22), transparent 65%),
+      radial-gradient(ellipse 90% 30% at 50% 100%, rgba(212,165,116,0.15), transparent 60%),
+      linear-gradient(180deg, var(--void) 0%, #0E0B16 50%, #1A1410 100%);
+  }
+
+  .gilt-frame {
+    position: absolute; inset: 14px;
+    border: 1px solid rgba(232,199,126,0.22);
+    border-radius: 26px;
+    pointer-events: none;
+    z-index: 4;
+  }
+
+  .pattern-wash {
+    position: absolute; inset: 0;
+    opacity: 0.025;
+    background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='100' height='100' viewBox='0 0 100 100'><g fill='none' stroke='%23E8C77E' stroke-width='0.5'><polygon points='50,5 62,38 95,38 70,58 80,90 50,72 20,90 30,58 5,38 38,38'/></g></svg>");
+    background-size: 130px 130px;
+    pointer-events: none;
+    z-index: 1;
+  }
+
+  /* Rising sun rays */
+  .sun-rays {
+    position: absolute;
+    bottom: -100px; left: 50%;
+    transform: translateX(-50%);
+    width: 600px; height: 600px;
+    pointer-events: none;
+    z-index: 1;
+    opacity: 0.4;
+    background:
+      conic-gradient(from 270deg at 50% 50%,
+        transparent 0deg, transparent 30deg,
+        rgba(232,199,126,0.10) 60deg, transparent 90deg,
+        transparent 120deg,
+        rgba(232,199,126,0.10) 150deg, transparent 180deg,
+        transparent 210deg,
+        rgba(232,199,126,0.10) 240deg, transparent 270deg,
+        transparent 300deg,
+        rgba(232,199,126,0.10) 330deg, transparent 360deg);
+    animation: rays-rotate 60s linear infinite;
+  }
+  @keyframes rays-rotate {
+    to { transform: translateX(-50%) rotate(360deg); }
+  }
+
+  .letterbox {
+    position: absolute;
+    left: 0; right: 0;
+    height: 14px;
+    background: var(--void);
+    z-index: 7;
+    pointer-events: none;
+  }
+  .letterbox.top { top: 0; }
+  .letterbox.bottom { bottom: 0; }
+
+  /* === Header === */
+  .header-row {
+    position: absolute;
+    top: 26px; left: 24px; right: 24px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    z-index: 5;
+  }
+  .pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 4px 10px;
+    border: 1px solid var(--gold-deep);
+    border-radius: 999px;
+    background: rgba(232,199,126,0.04);
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 9px;
+    letter-spacing: 2px;
+    color: var(--gold);
+  }
+  .pill .dot {
+    width: 5px; height: 5px;
+    border-radius: 50%;
+    background: var(--gold);
+    box-shadow: 0 0 6px var(--gold);
+  }
+  .pill .ic { color: var(--gold); font-size: 11px; }
+
+  /* Step indicator */
+  .step-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 4px 10px;
+    background: rgba(232,199,126,0.06);
+    border: 1px solid var(--gold-deep);
+    border-radius: 999px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 8.5px;
+    letter-spacing: 2px;
+    color: var(--gold-deep);
+  }
+  .step-pill .dots { display: flex; gap: 3px; }
+  .step-pill .stp {
+    width: 4px; height: 4px;
+    border-radius: 50%;
+    background: var(--gold-deep);
+  }
+  .step-pill .stp.active {
+    background: var(--gold);
+    box-shadow: 0 0 6px var(--gold);
+  }
+
+  /* === Brand === */
+  .brand-seal {
+    position: absolute;
+    top: 70px; left: 0; right: 0;
+    text-align: center;
+    z-index: 5;
+  }
+  .brand-seal .ornament {
+    display: flex; justify-content: center; align-items: center;
+    gap: 10px; margin-bottom: 4px;
+  }
+  .brand-seal .ornament .line {
+    width: 36px; height: 1px;
+    background: linear-gradient(90deg, transparent, var(--honey), transparent);
+  }
+  .brand-seal .ornament .star { color: var(--honey); font-size: 9px; }
+  .brand-seal .seal-text {
+    font-family: 'Cormorant Garamond', serif;
+    font-style: italic;
+    font-size: 13px;
+    color: var(--honey);
+    letter-spacing: 2px;
+  }
+
+  /* === Neuro micro-stat strip === */
+  .neuro-strip {
+    position: absolute;
+    top: 110px; left: 24px; right: 24px;
+    display: flex;
+    gap: 8px;
+    z-index: 4;
+  }
+  .neuro-card {
+    flex: 1;
+    padding: 8px;
+    background: rgba(232,199,126,0.04);
+    border: 1px solid rgba(138,111,68,0.25);
+    border-radius: 4px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .neuro-card .ic {
+    width: 22px; height: 22px;
+    display: flex; align-items: center; justify-content: center;
+    color: var(--gold);
+    font-size: 14px;
+  }
+  .neuro-card .data { display: flex; flex-direction: column; gap: 1px; }
+  .neuro-card .v {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    color: var(--gold);
+    line-height: 1;
+  }
+  .neuro-card .l {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 7px;
+    letter-spacing: 1px;
+    color: var(--gold-deep);
+  }
+
+  /* === Mentor question (the centerpiece) === */
+  .question-block {
+    position: absolute;
+    top: 188px; left: 24px; right: 24px;
+    z-index: 4;
+  }
+  .question-orb-row {
+    display: flex; align-items: flex-start; gap: 12px;
+    margin-bottom: 18px;
+  }
+  .mentor-orb {
+    width: 32px; height: 32px;
+    border-radius: 50%;
+    background: radial-gradient(circle at 35% 35%, var(--gold-flash), var(--gold) 60%, var(--gold-deep));
+    box-shadow: 0 0 16px rgba(232,199,126,0.55);
+    flex-shrink: 0;
+    margin-top: 4px;
+    animation: orb-breathe 3s ease-in-out infinite;
+  }
+  @keyframes orb-breathe {
+    0%, 100% { transform: scale(0.92); }
+    50%      { transform: scale(1.08); }
+  }
+  .question-text {
+    font-family: 'Cormorant Garamond', serif;
+    font-style: italic;
+    font-weight: 600;
+    font-size: 26px;
+    line-height: 1.3;
+    color: var(--text-primary);
+    text-shadow: 0 0 24px rgba(232,199,126,0.30);
+    letter-spacing: 0.3px;
+  }
+  .question-text .em { color: var(--gold); }
+  .question-text .word {
+    display: inline-block;
+    opacity: 0;
+    transform: translateY(8px);
+    filter: blur(6px);
+    animation: word-in 0.7s cubic-bezier(0.16, 0.84, 0.32, 1) forwards;
+  }
+  @keyframes word-in {
+    to { opacity: 1; transform: translateY(0); filter: blur(0); }
+  }
+
+  .question-prompt {
+    margin-top: 4px;
+    margin-left: 44px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 8.5px;
+    letter-spacing: 4px;
+    color: var(--gold-deep);
+    opacity: 0;
+    animation: fade-in 0.6s 1.2s ease forwards;
+  }
+  @keyframes fade-in { from { opacity: 0; } to { opacity: 1; } }
+
+  /* === Answer chips === */
+  .answers {
+    margin-top: 16px;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+    opacity: 0;
+    animation: fade-up 0.8s 1.4s ease forwards;
+  }
+  @keyframes fade-up {
+    from { opacity: 0; transform: translateY(8px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+  .answer-chip {
+    padding: 12px 14px;
+    background: rgba(232,199,126,0.04);
+    border: 1px solid var(--gold-deep);
+    border-radius: 4px;
+    cursor: pointer;
+    transition: all 0.2s;
+    display: flex; align-items: center; gap: 10px;
+  }
+  .answer-chip:hover { border-color: var(--gold); background: rgba(232,199,126,0.10); }
+  .answer-chip.selected {
+    border-color: var(--gold);
+    background: rgba(232,199,126,0.14);
+    box-shadow: 0 0 14px rgba(232,199,126,0.25);
+  }
+  .answer-chip .ic { font-size: 18px; color: var(--gold); }
+  .answer-chip .label {
+    font-family: 'Cormorant Garamond', serif;
+    font-style: italic;
+    font-size: 14px;
+    color: var(--text-primary);
+    line-height: 1.3;
+  }
+  .answer-chip.selected .label { color: var(--gold); font-weight: 600; }
+
+  /* === Mentor reframe (after answer) === */
+  .reframe {
+    margin-top: 16px;
+    padding: 12px 14px 12px 16px;
+    border-left: 2px solid var(--honey);
+    background: rgba(212,165,116,0.06);
+    border-radius: 0 4px 4px 0;
+    display: none;
+  }
+  .phone[data-state="answered"] .reframe,
+  .phone[data-state="action"] .reframe { display: block; }
+  .reframe .label {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 8.5px;
+    letter-spacing: 4px;
+    color: var(--gold-deep);
+    margin-bottom: 6px;
+  }
+  .reframe .text {
+    font-family: 'Cormorant Garamond', serif;
+    font-style: italic;
+    font-size: 14px;
+    color: var(--text-body);
+    line-height: 1.5;
+  }
+  .reframe .text .em { color: var(--honey); font-weight: 600; }
+
+  /* === Today's plan card === */
+  .plan-card {
+    position: absolute;
+    top: 460px; left: 24px; right: 24px;
+    padding: 14px 16px;
+    background: rgba(232,199,126,0.04);
+    border: 1px solid rgba(232,199,126,0.30);
+    border-radius: 4px;
+    z-index: 4;
+    display: none;
+  }
+  .phone[data-state="action"] .plan-card { display: block; animation: fade-up 0.8s 0.2s ease backwards; }
+  .plan-card .head {
+    display: flex; justify-content: space-between; align-items: center;
+    margin-bottom: 10px;
+  }
+  .plan-card .label {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 9px;
+    letter-spacing: 4px;
+    color: var(--gold);
+  }
+  .plan-card .meta {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 9px;
+    color: var(--gold-deep);
+  }
+  .plan-card .first-step {
+    display: flex; align-items: flex-start; gap: 10px;
+    padding-bottom: 10px;
+    margin-bottom: 10px;
+    border-bottom: 1px dashed rgba(138,111,68,0.30);
+  }
+  .plan-card .first-step .num {
+    flex-shrink: 0;
+    width: 22px; height: 22px;
+    border-radius: 50%;
+    background: var(--gold);
+    color: var(--void);
+    display: flex; align-items: center; justify-content: center;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    font-weight: 700;
+  }
+  .plan-card .first-step .info { flex: 1; }
+  .plan-card .first-step .name {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 16px;
+    font-weight: 600;
+    color: var(--text-primary);
+    line-height: 1.2;
+  }
+  .plan-card .first-step .micro {
+    margin-top: 2px;
+    font-family: 'Cormorant Garamond', serif;
+    font-style: italic;
+    font-size: 12px;
+    color: var(--text-muted);
+  }
+  .plan-card .small-step {
+    display: flex; align-items: center; gap: 10px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 9px;
+    letter-spacing: 1.5px;
+    color: var(--gold-deep);
+  }
+  .plan-card .small-step .ic { color: var(--gold); font-size: 13px; }
+
+  /* === Identity affirmation (after answer) === */
+  .identity {
+    position: absolute;
+    top: 460px; left: 24px; right: 24px;
+    padding: 16px;
+    background:
+      radial-gradient(ellipse at 70% 50%, rgba(232,199,126,0.14), transparent 65%),
+      rgba(232,199,126,0.04);
+    border: 1px solid rgba(232,199,126,0.32);
+    border-radius: 4px;
+    z-index: 4;
+    text-align: center;
+    display: none;
+  }
+  .phone[data-state="answered"] .identity { display: block; animation: fade-up 0.8s 0.4s ease backwards; }
+  .identity .label {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 9px;
+    letter-spacing: 5px;
+    color: var(--gold-deep);
+    margin-bottom: 8px;
+  }
+  .identity .text {
+    font-family: 'Cormorant Garamond', serif;
+    font-style: italic;
+    font-size: 19px;
+    color: var(--text-primary);
+    line-height: 1.4;
+    font-weight: 600;
+    text-shadow: 0 0 20px rgba(232,199,126,0.30);
+  }
+  .identity .text .em { color: var(--gold); }
+
+  /* === Bottom action === */
+  .bottom-bar {
+    position: absolute;
+    bottom: 24px; left: 24px; right: 24px;
+    z-index: 5;
+  }
+  .primary-btn {
+    width: 100%;
+    background: linear-gradient(180deg, var(--cream) 0%, var(--gold) 50%, var(--gold-deep) 100%);
+    color: var(--void);
+    padding: 14px;
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 5px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    text-transform: uppercase;
+    font-family: 'Inter', sans-serif;
+    box-shadow:
+      0 0 22px rgba(232,199,126,0.40),
+      inset 0 1px 0 rgba(255,255,255,0.5);
+    transition: all 0.2s;
+    position: relative; overflow: hidden;
+  }
+  .primary-btn::before {
+    content: '';
+    position: absolute; inset: 0;
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.4), transparent);
+    transform: translateX(-100%);
+    animation: shimmer 3s ease-in-out infinite;
+  }
+  @keyframes shimmer {
+    0% { transform: translateX(-100%); }
+    50% { transform: translateX(100%); }
+    100% { transform: translateX(100%); }
+  }
+  .primary-btn:hover { transform: scale(1.02); letter-spacing: 6px; }
+
+  .skip-link {
+    width: 100%;
+    margin-top: 8px;
+    background: none;
+    border: none;
+    color: var(--text-muted);
+    font-family: 'Cormorant Garamond', serif;
+    font-style: italic;
+    font-size: 12px;
+    cursor: pointer;
+    text-align: center;
+  }
+  .skip-link:hover { color: var(--gold-deep); }
+
+  .vignette {
+    position: absolute; inset: 0;
+    pointer-events: none;
+    background: radial-gradient(ellipse 110% 80% at 50% 50%, transparent 60%, rgba(0,0,0,0.4));
+    z-index: 6;
+  }
+
+  /* === Tabs (preview) === */
+  .state-tabs {
+    display: flex;
+    justify-content: center;
+    gap: 6px;
+    margin-top: 18px;
+    flex-wrap: wrap;
+  }
+  .state-tab {
+    padding: 7px 14px;
+    border-radius: 2px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 2px;
+    color: rgba(255,255,255,0.4);
+    cursor: pointer;
+    border: 1px solid rgba(255,255,255,0.08);
+    user-select: none;
+    transition: all 0.2s;
+  }
+  .state-tab:hover { color: var(--honey); border-color: var(--gold-deep); }
+  .state-tab.active {
+    color: var(--honey);
+    border-color: var(--honey);
+    background: rgba(212,165,116,0.10);
+  }
+
+  .footer-info {
+    margin-top: 22px;
+    text-align: center;
+    color: rgba(255,255,255,0.45);
+    font-size: 13px;
+    line-height: 1.6;
+    font-family: 'Cormorant Garamond', serif;
+    font-style: italic;
+  }
+
+  @media (max-width: 480px) {
+    body { padding: 0; }
+    .phone {
+      width: 100vw;
+      height: 100vh;
+      border-radius: 0;
+      box-shadow: none;
+    }
+    .footer-info, .state-tabs { display: none; }
+  }
+</style>
+</head>
+<body>
+
+<div style="display:flex; flex-direction:column; align-items:center;">
+
+  <div class="phone" id="phone" data-state="ask">
+    <div class="backdrop"></div>
+    <div class="pattern-wash"></div>
+    <div class="sun-rays"></div>
+    <div class="gilt-frame"></div>
+    <div class="letterbox top"></div>
+    <div class="letterbox bottom"></div>
+
+    <!-- Header -->
+    <div class="header-row">
+      <div class="pill">
+        <span class="ic">☀</span>
+        <span>06:42 · TONG</span>
+      </div>
+      <div class="step-pill">
+        <span id="stepNum">1/3</span>
+        <div class="dots" id="stepDots">
+          <div class="stp active"></div>
+          <div class="stp"></div>
+          <div class="stp"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Brand -->
+    <div class="brand-seal">
+      <div class="ornament">
+        <div class="line"></div>
+        <div class="star">✦</div>
+        <div class="line"></div>
+      </div>
+      <div class="seal-text" id="seal">kunning niyati</div>
+    </div>
+
+    <!-- Neuro micro-stat strip -->
+    <div class="neuro-strip">
+      <div class="neuro-card">
+        <div class="ic">☾</div>
+        <div class="data">
+          <div class="v">7s 14d</div>
+          <div class="l">UYQU</div>
+        </div>
+      </div>
+      <div class="neuro-card">
+        <div class="ic">☀</div>
+        <div class="data">
+          <div class="v">5 DAQ</div>
+          <div class="l">TONG QUYOSHI</div>
+        </div>
+      </div>
+      <div class="neuro-card">
+        <div class="ic">⚡</div>
+        <div class="data">
+          <div class="v">82%</div>
+          <div class="l">ENERGIYA</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Mentor question -->
+    <div class="question-block">
+      <div class="question-orb-row">
+        <div class="mentor-orb"></div>
+        <div class="question-text" id="questionText">
+          <span class="word" style="animation-delay:0.2s">Bugun</span>
+          <span class="word" style="animation-delay:0.5s"><span class="em">kim</span></span>
+          <span class="word" style="animation-delay:0.7s">bo'lib</span>
+          <span class="word" style="animation-delay:0.95s">uyg'onding?</span>
+        </div>
+      </div>
+      <div class="question-prompt" id="questionPrompt">— ko'nglingdan kelgan birini tanla —</div>
+
+      <!-- Answer chips -->
+      <div class="answers" id="answers">
+        <div class="answer-chip" data-answer="strong">
+          <div class="ic">⚡</div>
+          <div class="label">Kuchli, tayyor.</div>
+        </div>
+        <div class="answer-chip" data-answer="hopeful">
+          <div class="ic">☀</div>
+          <div class="label">Yengil, umidli.</div>
+        </div>
+        <div class="answer-chip" data-answer="tired">
+          <div class="ic">🌙</div>
+          <div class="label">Charchagan.</div>
+        </div>
+        <div class="answer-chip" data-answer="confused">
+          <div class="ic">∼</div>
+          <div class="label">Bilmayman.</div>
+        </div>
+      </div>
+
+      <!-- Reframe (mentor's response) -->
+      <div class="reframe">
+        <div class="label">MURABBIY</div>
+        <div class="text" id="reframeText">
+          Yaxshi. <span class="em">Kuch — his emas</span>, yo'nalish. Sen aytding "kuchli" — endi miyangda dopamin shu so'zga moslashadi. Davom etamiz.
+        </div>
+      </div>
+    </div>
+
+    <!-- Identity affirmation (state: answered) -->
+    <div class="identity">
+      <div class="label">SEN — KIM</div>
+      <div class="text" id="identityText">
+        Sen — har kuni <span class="em">aniq qaror qila oladigan odam</span>.<br>Bugun ham buni isbotlaysan.
+      </div>
+    </div>
+
+    <!-- Today's plan (state: action) -->
+    <div class="plan-card">
+      <div class="head">
+        <span class="label">BUGUNGI ENG MUHIM</span>
+        <span class="meta">07:00 — 07:30</span>
+      </div>
+      <div class="first-step">
+        <div class="num">1</div>
+        <div class="info">
+          <div class="name">Qur'on darsi</div>
+          <div class="micro">Bugun yana bir bobni o'zlashtirish</div>
+        </div>
+      </div>
+      <div class="small-step">
+        <span class="ic">⚡</span>
+        <span>2 DAQIQADA: KITOBNI OL · BIRINCHI OYAT</span>
+      </div>
+    </div>
+
+    <!-- Bottom action -->
+    <div class="bottom-bar">
+      <button class="primary-btn" id="primaryBtn">Davom etamiz</button>
+      <button class="skip-link">— keyin javob beraman —</button>
+    </div>
+
+    <div class="vignette"></div>
+  </div>
+
+  <!-- State tabs -->
+  <div class="state-tabs">
+    <div class="state-tab active" data-state="ask">SAVOL · 1</div>
+    <div class="state-tab" data-state="answered">JAVOB OLINDI</div>
+    <div class="state-tab" data-state="ask2">SAVOL · 2</div>
+    <div class="state-tab" data-state="ask3">SAVOL · 3</div>
+    <div class="state-tab" data-state="action">HARAKATGA</div>
+  </div>
+
+  <div class="footer-info">
+    Kunning niyati — savollar bilan miyani harakatga chorlash
+  </div>
+</div>
+
+<script>
+  const states = {
+    ask: {
+      step: 1,
+      seal: 'kunning niyati',
+      questionWords: ['Bugun', '<span class="em">kim</span>', 'bo\'lib', 'uyg\'onding?'],
+      prompt: '— ko\'nglingdan kelgan birini tanla —',
+      answers: [
+        { id: 'strong',   ic: '⚡', label: 'Kuchli, tayyor.' },
+        { id: 'hopeful',  ic: '☀', label: 'Yengil, umidli.' },
+        { id: 'tired',    ic: '🌙', label: 'Charchagan.' },
+        { id: 'confused', ic: '∼', label: 'Bilmayman.' }
+      ],
+      reframe: '',
+      identity: '',
+      btn: 'Davom etamiz'
+    },
+    answered: {
+      step: 1,
+      seal: 'sen aytding',
+      questionWords: ['Bugun', '<span class="em">kim</span>', 'bo\'lib', 'uyg\'onding?'],
+      prompt: '— sen "kuchli" deb javob berding —',
+      answers: [
+        { id: 'strong',   ic: '⚡', label: 'Kuchli, tayyor.', selected: true },
+        { id: 'hopeful',  ic: '☀', label: 'Yengil, umidli.' },
+        { id: 'tired',    ic: '🌙', label: 'Charchagan.' },
+        { id: 'confused', ic: '∼', label: 'Bilmayman.' }
+      ],
+      reframe: 'Yaxshi. <span class="em">Kuch — his emas</span>, yo\'nalish. Sen aytding "kuchli" — endi miyangda dopamin shu so\'zga moslashadi. Davom etamiz.',
+      identity: 'Sen — har kuni <span class="em">aniq qaror qila oladigan odam</span>.<br>Bugun ham buni isbotlaysan.',
+      btn: 'Keyingi savol'
+    },
+    ask2: {
+      step: 2,
+      seal: 'ikkinchi savol',
+      questionWords: ['Bu', 'kun', 'tugagach,', '<span class="em">qaysi</span>', 'ish', 'uchun', 'xursand', 'bo\'lasan?'],
+      prompt: '— miyangga aniq manzara ber —',
+      answers: [
+        { id: 'qd',  ic: '☪', label: 'Qur\'on darsi.' },
+        { id: 'kod', ic: '◇', label: 'Kod loyihasini tugatsam.' },
+        { id: 'sp',  ic: '✦', label: 'Sport — yugurish.' },
+        { id: 'os',  ic: '☼', label: 'Ona bilan ovqatlansam.' }
+      ],
+      reframe: '',
+      identity: '',
+      btn: 'Davom etamiz'
+    },
+    ask3: {
+      step: 3,
+      seal: 'eng kichik qadam',
+      questionWords: ['Hoziroq,', '<span class="em">2 daqiqada</span>', 'qaysi', 'qadamni', 'qila', 'olasan?'],
+      prompt: '— eng ahmoqona kichik narsa ham bo\'ladi —',
+      answers: [
+        { id: 'k',  ic: '▥', label: 'Kitobni oldim.' },
+        { id: 'b',  ic: '▦', label: 'Birinchi sahifani ochdim.' },
+        { id: 'q',  ic: '▧', label: 'Quloqchin kiyaman.' },
+        { id: 't',  ic: '▩', label: 'Telefon uzoqqa qo\'yaman.' }
+      ],
+      reframe: '',
+      identity: '',
+      btn: 'Tayyorman'
+    },
+    action: {
+      step: 3,
+      seal: 'kuching jam bo\'ldi',
+      questionWords: ['Mana,', 'sening', '<span class="em">kuning</span>.', 'Boshlaymizmi?'],
+      prompt: '— uchta savol, uchta javob: harakat tug\'ildi —',
+      answers: [],
+      reframe: 'Bilasanmi nima yuz berdi? Sen <span class="em">3 ta savolga</span> javob berding. Miyangda 3 ta neyron yo\'l yondi: identitet, vizualizatsiya, harakat. Endi qila olmasligingdan ko\'ra qila olishing osonroq.',
+      identity: '',
+      btn: 'Boshlayman'
+    }
+  };
+
+  const phone     = document.getElementById('phone');
+  const seal      = document.getElementById('seal');
+  const questionT = document.getElementById('questionText');
+  const prompt    = document.getElementById('questionPrompt');
+  const answers   = document.getElementById('answers');
+  const reframeT  = document.getElementById('reframeText');
+  const identityT = document.getElementById('identityText');
+  const stepNum   = document.getElementById('stepNum');
+  const stepDots  = document.getElementById('stepDots');
+  const primaryBtn= document.getElementById('primaryBtn');
+
+  function applyState(name) {
+    const s = states[name];
+    phone.dataset.state = name;
+    seal.textContent = s.seal;
+
+    // Question rebuild with stagger animation
+    questionT.innerHTML = s.questionWords.map((w, i) =>
+      `<span class="word" style="animation-delay:${0.2 + i*0.18}s">${w}</span>`
+    ).join(' ');
+
+    prompt.style.animation = 'none';
+    void prompt.offsetWidth;
+    prompt.style.animation = `fade-in 0.6s ${0.2 + s.questionWords.length*0.18 + 0.2}s ease forwards`;
+    prompt.textContent = s.prompt;
+
+    // Answers
+    answers.style.animation = 'none';
+    void answers.offsetWidth;
+    answers.style.animation = `fade-up 0.8s ${0.2 + s.questionWords.length*0.18 + 0.4}s ease forwards`;
+    answers.innerHTML = s.answers.map(a =>
+      `<div class="answer-chip ${a.selected ? 'selected' : ''}" data-answer="${a.id}">
+        <div class="ic">${a.ic}</div>
+        <div class="label">${a.label}</div>
+      </div>`
+    ).join('');
+
+    // Step indicator
+    stepNum.textContent = s.step + '/3';
+    stepDots.innerHTML = [1,2,3].map(i =>
+      `<div class="stp ${i <= s.step ? 'active' : ''}"></div>`
+    ).join('');
+
+    // Reframe
+    if (s.reframe) reframeT.innerHTML = s.reframe;
+    if (s.identity) identityT.innerHTML = s.identity;
+
+    primaryBtn.textContent = s.btn;
+
+    // Re-attach click handlers
+    document.querySelectorAll('.answer-chip').forEach(chip => {
+      chip.addEventListener('click', () => {
+        document.querySelectorAll('.answer-chip').forEach(c => c.classList.remove('selected'));
+        chip.classList.add('selected');
+      });
+    });
+  }
+
+  applyState('ask');
+
+  document.querySelectorAll('.state-tab').forEach(tab => {
+    tab.addEventListener('click', () => {
+      document.querySelectorAll('.state-tab').forEach(t => t.classList.remove('active'));
+      tab.classList.add('active');
+      applyState(tab.dataset.state);
+    });
+  });
+
+  // Primary button advances
+  primaryBtn.addEventListener('click', () => {
+    const order = ['ask', 'answered', 'ask2', 'ask3', 'action'];
+    const cur = phone.dataset.state || 'ask';
+    const idx = order.indexOf(cur);
+    const next = order[(idx + 1) % order.length];
+    document.querySelectorAll('.state-tab').forEach(t =>
+      t.classList.toggle('active', t.dataset.state === next)
+    );
+    applyState(next);
+  });
+</script>
+
+<script src="nav-overlay.js" defer></script>
+</body>
+</html>

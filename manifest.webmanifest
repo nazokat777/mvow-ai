@@ -1,0 +1,42 @@
+{
+  "name": "M·VoW · Sening intizom do'sting",
+  "short_name": "M·VoW",
+  "description": "Discipline AI — psixolog, neyrobiolog, harakatga chorlovchi do'st. MNSM AI Specialist tomonidan.",
+  "start_url": "./gallery.html",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "portrait",
+  "theme_color": "#04060B",
+  "background_color": "#04060B",
+  "lang": "uz",
+  "dir": "ltr",
+  "categories": ["productivity", "lifestyle", "health"],
+  "icons": [
+    {
+      "src": "assets/mnsm-logo.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "assets/mnsm-logo.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ],
+  "shortcuts": [
+    {
+      "name": "Bosh sahifa",
+      "url": "./home.html"
+    },
+    {
+      "name": "Murabbiy bilan suhbat",
+      "url": "./chat.html"
+    },
+    {
+      "name": "Hafta bayrami",
+      "url": "./weekly-review.html"
+    }
+  ]
+}

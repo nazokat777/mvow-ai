@@ -1,0 +1,858 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>M-VoW AI — Turg'unlik</title>
+<link rel="manifest" href="manifest.webmanifest">
+<meta name="theme-color" content="#04060B">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="M·VoW">
+<link rel="apple-touch-icon" href="assets/mnsm-logo.png">
+<link rel="icon" type="image/png" href="assets/mnsm-logo.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --void:        #06080F;
+    --void-2:      #0E1119;
+
+    --text-primary: #F5F2EC;
+    --text-body:    #B8BBC2;
+    --text-muted:   #6B6E76;
+    --text-ghost:   #3A3D44;
+
+    --gold:        #E8C77E;
+    --gold-2:      #C7A36B;
+    --gold-deep:   #8a6f44;
+    --gold-flash:  #FFE9B5;
+    --honey:       #D4A574;
+    --cream:       #F0E5D2;
+
+    --crimson:     #B8334A;
+    --crimson-deep:#6B1F1F;
+    --emerald:     #4A8A5C;
+    --emerald-deep:#1F3D2A;
+  }
+
+  body {
+    background: #14171d;
+    font-family: 'Inter', sans-serif;
+    color: var(--text-primary);
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 24px;
+  }
+
+  .phone {
+    width: 380px;
+    height: 800px;
+    background: var(--void);
+    border-radius: 40px;
+    overflow: hidden;
+    position: relative;
+    box-shadow:
+      0 0 0 8px #2a2e36,
+      0 30px 80px rgba(0,0,0,0.85),
+      0 0 100px rgba(232,199,126,0.07);
+  }
+
+  /* Backdrop — starts heavy/foggy, clears with each state */
+  .backdrop {
+    position: absolute; inset: 0;
+    background:
+      radial-gradient(ellipse 90% 50% at 50% 30%, rgba(140,140,150,0.10), transparent 65%),
+      linear-gradient(180deg, var(--void) 0%, #0F1018 50%, var(--void) 100%);
+    transition: background 1.2s ease;
+  }
+  .phone[data-state="q2"] .backdrop {
+    background:
+      radial-gradient(ellipse 90% 50% at 50% 30%, rgba(212,165,116,0.08), transparent 65%),
+      linear-gradient(180deg, var(--void) 0%, #0E0F1A 50%, var(--void) 100%);
+  }
+  .phone[data-state="q3"] .backdrop {
+    background:
+      radial-gradient(ellipse 90% 50% at 50% 30%, rgba(232,199,126,0.12), transparent 65%),
+      linear-gradient(180deg, var(--void) 0%, #110D18 50%, var(--void) 100%);
+  }
+  .phone[data-state="action"] .backdrop {
+    background:
+      radial-gradient(ellipse 90% 50% at 50% 30%, rgba(232,199,126,0.18), transparent 65%),
+      radial-gradient(ellipse 100% 60% at 50% 100%, rgba(74,138,92,0.08), transparent 70%),
+      linear-gradient(180deg, var(--void) 0%, #1A1410 50%, var(--void) 100%);
+  }
+
+  /* Fog overlay — heavy initially, clears state-by-state */
+  .fog {
+    position: absolute; inset: 0;
+    pointer-events: none;
+    z-index: 3;
+    background:
+      radial-gradient(ellipse 100% 80% at 50% 100%, rgba(58,61,68,0.35), transparent 70%),
+      radial-gradient(ellipse 100% 60% at 50% 0%, rgba(40,44,55,0.30), transparent 70%);
+    transition: opacity 1.2s ease;
+  }
+  .phone[data-state="stuck"] .fog { opacity: 1; }
+  .phone[data-state="q1"]    .fog { opacity: 0.7; }
+  .phone[data-state="q2"]    .fog { opacity: 0.4; }
+  .phone[data-state="q3"]    .fog { opacity: 0.15; }
+  .phone[data-state="action"] .fog { opacity: 0; }
+
+  .gilt-frame {
+    position: absolute; inset: 14px;
+    border: 1px solid rgba(232,199,126,0.18);
+    border-radius: 26px;
+    pointer-events: none;
+    z-index: 5;
+  }
+
+  .pattern-wash {
+    position: absolute; inset: 0;
+    opacity: 0.025;
+    background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='100' height='100' viewBox='0 0 100 100'><g fill='none' stroke='%23E8C77E' stroke-width='0.5'><polygon points='50,5 62,38 95,38 70,58 80,90 50,72 20,90 30,58 5,38 38,38'/></g></svg>");
+    background-size: 130px 130px;
+    pointer-events: none;
+    z-index: 1;
+  }
+
+  /* Light particles increase as state progresses */
+  .motes {
+    position: absolute; inset: 0;
+    pointer-events: none;
+    z-index: 2;
+    overflow: hidden;
+    opacity: 0;
+    transition: opacity 1.2s;
+  }
+  .phone[data-state="q3"] .motes,
+  .phone[data-state="action"] .motes { opacity: 1; }
+  .motes span {
+    position: absolute;
+    width: 2px; height: 2px;
+    border-radius: 50%;
+    background: var(--gold);
+    box-shadow: 0 0 4px var(--cream);
+    opacity: 0;
+    animation: drift 9s linear infinite;
+  }
+  @keyframes drift {
+    0%   { transform: translateY(80vh); opacity: 0; }
+    20%  { opacity: 0.7; }
+    100% { transform: translateY(-20vh) translateX(20px); opacity: 0; }
+  }
+
+  .letterbox {
+    position: absolute;
+    left: 0; right: 0;
+    height: 14px;
+    background: var(--void);
+    z-index: 8;
+    pointer-events: none;
+  }
+  .letterbox.top { top: 0; }
+  .letterbox.bottom { bottom: 0; }
+
+  /* === Header === */
+  .header-row {
+    position: absolute;
+    top: 26px; left: 24px; right: 24px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    z-index: 6;
+  }
+  .stuck-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    padding: 4px 11px;
+    border: 1px solid var(--text-ghost);
+    border-radius: 999px;
+    background: rgba(58,61,68,0.20);
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 9px;
+    letter-spacing: 3px;
+    color: var(--text-muted);
+    transition: all 0.6s;
+  }
+  .phone[data-state="action"] .stuck-pill {
+    color: var(--emerald);
+    border-color: var(--emerald-deep);
+    background: rgba(74,138,92,0.10);
+  }
+  .stuck-pill .pulse-dot {
+    width: 5px; height: 5px;
+    border-radius: 50%;
+    background: currentColor;
+    animation: stuck-pulse 2.4s ease-in-out infinite;
+  }
+  @keyframes stuck-pulse {
+    0%, 100% { opacity: 0.4; transform: scale(1); }
+    50%      { opacity: 0.9; transform: scale(1.2); }
+  }
+
+  .step-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 4px 10px;
+    background: rgba(232,199,126,0.04);
+    border: 1px solid var(--gold-deep);
+    border-radius: 999px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 8.5px;
+    letter-spacing: 2px;
+    color: var(--gold-deep);
+  }
+  .step-pill .dots { display: flex; gap: 3px; }
+  .step-pill .stp {
+    width: 4px; height: 4px;
+    border-radius: 50%;
+    background: var(--text-ghost);
+  }
+  .step-pill .stp.active {
+    background: var(--gold);
+    box-shadow: 0 0 6px var(--gold);
+  }
+
+  /* === Brand seal === */
+  .brand-seal {
+    position: absolute;
+    top: 70px; left: 0; right: 0;
+    text-align: center;
+    z-index: 6;
+  }
+  .brand-seal .ornament {
+    display: flex; justify-content: center; align-items: center;
+    gap: 10px; margin-bottom: 4px;
+  }
+  .brand-seal .ornament .line {
+    width: 38px; height: 1px;
+    background: linear-gradient(90deg, transparent, var(--gold-deep), transparent);
+  }
+  .brand-seal .ornament .star { color: var(--gold-deep); font-size: 8px; }
+  .brand-seal .seal-text {
+    font-family: 'Cormorant Garamond', serif;
+    font-style: italic;
+    font-size: 13px;
+    color: var(--gold-deep);
+    letter-spacing: 2px;
+    transition: color 0.6s;
+  }
+  .phone[data-state="q3"] .brand-seal .seal-text,
+  .phone[data-state="action"] .brand-seal .seal-text { color: var(--honey); }
+
+  /* === Mentor recognition (stuck state intro) === */
+  .recognition {
+    position: absolute;
+    top: 130px; left: 24px; right: 24px;
+    z-index: 4;
+    display: flex;
+    align-items: flex-start;
+    gap: 14px;
+    padding: 0 4px;
+  }
+  .mentor-orb {
+    width: 32px; height: 32px;
+    border-radius: 50%;
+    background: radial-gradient(circle at 35% 35%, var(--gold-flash), var(--gold) 60%, var(--gold-deep));
+    box-shadow: 0 0 14px rgba(232,199,126,0.5);
+    flex-shrink: 0;
+    margin-top: 6px;
+    animation: orb-breathe 3s ease-in-out infinite;
+  }
+  @keyframes orb-breathe {
+    0%, 100% { transform: scale(0.92); }
+    50%      { transform: scale(1.08); }
+  }
+
+  .recognition .text {
+    font-family: 'Cormorant Garamond', serif;
+    font-style: italic;
+    font-weight: 600;
+    font-size: 22px;
+    line-height: 1.35;
+    color: var(--text-primary);
+    text-shadow: 0 0 16px rgba(232,199,126,0.20);
+    letter-spacing: 0.3px;
+  }
+  .recognition .text .em { color: var(--gold); }
+
+  .recognition .text .word {
+    display: inline-block;
+    opacity: 0;
+    transform: translateY(8px);
+    filter: blur(6px);
+    animation: word-in 0.7s cubic-bezier(0.16, 0.84, 0.32, 1) forwards;
+  }
+  @keyframes word-in {
+    to { opacity: 1; transform: translateY(0); filter: blur(0); }
+  }
+
+  /* === Question prompt and answers === */
+  .answers-block {
+    position: absolute;
+    top: 270px; left: 24px; right: 24px;
+    z-index: 4;
+  }
+  .prompt {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 8.5px;
+    letter-spacing: 4px;
+    color: var(--gold-deep);
+    margin-bottom: 12px;
+    margin-left: 2px;
+    opacity: 0;
+    animation: fade-in 0.6s 1.5s ease forwards;
+  }
+  @keyframes fade-in { from { opacity: 0; } to { opacity: 1; } }
+
+  .answers {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    opacity: 0;
+    animation: fade-up 0.8s 1.7s ease forwards;
+  }
+  @keyframes fade-up {
+    from { opacity: 0; transform: translateY(8px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+  .answer-chip {
+    padding: 11px 14px;
+    background: rgba(232,199,126,0.04);
+    border: 1px solid var(--gold-deep);
+    border-radius: 4px;
+    cursor: pointer;
+    transition: all 0.2s;
+    display: flex; align-items: center; gap: 12px;
+  }
+  .answer-chip:hover { border-color: var(--gold); background: rgba(232,199,126,0.10); }
+  .answer-chip.selected {
+    border-color: var(--gold);
+    background: rgba(232,199,126,0.12);
+    box-shadow: 0 0 12px rgba(232,199,126,0.25);
+  }
+  .answer-chip .ic {
+    font-size: 17px;
+    color: var(--gold);
+    flex-shrink: 0;
+    width: 22px;
+    text-align: center;
+  }
+  .answer-chip .label {
+    font-family: 'Cormorant Garamond', serif;
+    font-style: italic;
+    font-size: 14px;
+    color: var(--text-primary);
+    line-height: 1.3;
+  }
+  .answer-chip.selected .label { color: var(--gold); font-weight: 600; }
+
+  /* === Action card (final state) === */
+  .action-card {
+    position: absolute;
+    top: 240px; left: 24px; right: 24px;
+    padding: 16px 18px;
+    background:
+      radial-gradient(ellipse at 70% 50%, rgba(232,199,126,0.16), transparent 65%),
+      rgba(232,199,126,0.05);
+    border: 1px solid rgba(232,199,126,0.34);
+    border-radius: 4px;
+    z-index: 4;
+    display: none;
+  }
+  .phone[data-state="action"] .action-card { display: block; animation: fade-up 0.8s 0.2s ease backwards; }
+  .action-card .lbl {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 9px;
+    letter-spacing: 5px;
+    color: var(--gold-deep);
+    margin-bottom: 10px;
+  }
+  .action-card .identity-text {
+    font-family: 'Cormorant Garamond', serif;
+    font-style: italic;
+    font-size: 19px;
+    color: var(--text-primary);
+    line-height: 1.4;
+    font-weight: 600;
+    margin-bottom: 14px;
+    text-shadow: 0 0 18px rgba(232,199,126,0.25);
+  }
+  .action-card .identity-text .em { color: var(--gold); }
+
+  .action-card .step-row {
+    display: flex; align-items: flex-start; gap: 12px;
+    padding-top: 12px;
+    border-top: 1px dashed rgba(138,111,68,0.30);
+  }
+  .action-card .step-num {
+    flex-shrink: 0;
+    width: 24px; height: 24px;
+    border-radius: 50%;
+    background: var(--gold);
+    color: var(--void);
+    display: flex; align-items: center; justify-content: center;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    font-weight: 700;
+  }
+  .action-card .step-info { flex: 1; }
+  .action-card .step-name {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 15px;
+    font-weight: 600;
+    color: var(--text-primary);
+    line-height: 1.2;
+    margin-bottom: 2px;
+  }
+  .action-card .step-mini {
+    font-family: 'Cormorant Garamond', serif;
+    font-style: italic;
+    font-size: 12px;
+    color: var(--text-muted);
+  }
+
+  /* === Reframe (between Q's, mentor's response) === */
+  .reframe {
+    position: absolute;
+    top: 462px; left: 24px; right: 24px;
+    padding: 12px 14px;
+    border-left: 2px solid var(--honey);
+    background: rgba(212,165,116,0.05);
+    border-radius: 0 3px 3px 0;
+    z-index: 4;
+    display: none;
+  }
+  .phone[data-state="q2"] .reframe,
+  .phone[data-state="q3"] .reframe,
+  .phone[data-state="action"] .reframe { display: block; }
+  .reframe .lbl {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 8.5px;
+    letter-spacing: 4px;
+    color: var(--gold-deep);
+    margin-bottom: 6px;
+  }
+  .reframe .text {
+    font-family: 'Cormorant Garamond', serif;
+    font-style: italic;
+    font-size: 13px;
+    color: var(--text-body);
+    line-height: 1.5;
+    letter-spacing: 0.3px;
+  }
+  .reframe .text .em { color: var(--gold); font-weight: 600; }
+
+  /* === Bottom action === */
+  .bottom-bar {
+    position: absolute;
+    bottom: 24px; left: 24px; right: 24px;
+    z-index: 6;
+  }
+  .primary-btn {
+    width: 100%;
+    background: linear-gradient(180deg, var(--cream) 0%, var(--gold) 50%, var(--gold-deep) 100%);
+    color: var(--void);
+    padding: 14px;
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 5px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    text-transform: uppercase;
+    font-family: 'Inter', sans-serif;
+    box-shadow:
+      0 0 22px rgba(232,199,126,0.40),
+      inset 0 1px 0 rgba(255,255,255,0.5);
+    transition: all 0.2s;
+    position: relative;
+    overflow: hidden;
+  }
+  .primary-btn::before {
+    content: '';
+    position: absolute; inset: 0;
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.4), transparent);
+    transform: translateX(-100%);
+    animation: shimmer 3s ease-in-out infinite;
+  }
+  @keyframes shimmer {
+    0% { transform: translateX(-100%); }
+    50% { transform: translateX(100%); }
+    100% { transform: translateX(100%); }
+  }
+  .primary-btn:hover { transform: scale(1.02); letter-spacing: 6px; }
+
+  .skip-link {
+    width: 100%;
+    margin-top: 8px;
+    background: none;
+    border: none;
+    color: var(--text-muted);
+    font-family: 'Cormorant Garamond', serif;
+    font-style: italic;
+    font-size: 12px;
+    cursor: pointer;
+    text-align: center;
+  }
+  .skip-link:hover { color: var(--gold-deep); }
+
+  .vignette {
+    position: absolute; inset: 0;
+    pointer-events: none;
+    background: radial-gradient(ellipse 110% 80% at 50% 50%, transparent 60%, rgba(0,0,0,0.4));
+    z-index: 7;
+  }
+
+  /* Tabs (preview) */
+  .state-tabs {
+    display: flex;
+    justify-content: center;
+    gap: 6px;
+    margin-top: 18px;
+    flex-wrap: wrap;
+  }
+  .state-tab {
+    padding: 7px 14px;
+    border-radius: 2px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 2px;
+    color: rgba(255,255,255,0.4);
+    cursor: pointer;
+    border: 1px solid rgba(255,255,255,0.08);
+    user-select: none;
+    transition: all 0.2s;
+  }
+  .state-tab:hover { color: var(--gold); border-color: var(--gold-deep); }
+  .state-tab.active {
+    color: var(--gold);
+    border-color: var(--gold);
+    background: rgba(232,199,126,0.08);
+  }
+
+  .footer-info {
+    margin-top: 22px;
+    text-align: center;
+    color: rgba(255,255,255,0.45);
+    font-size: 13px;
+    line-height: 1.6;
+    font-family: 'Cormorant Garamond', serif;
+    font-style: italic;
+  }
+
+  @media (max-width: 480px) {
+    body { padding: 0; }
+    .phone {
+      width: 100vw;
+      height: 100vh;
+      border-radius: 0;
+      box-shadow: none;
+    }
+    .footer-info, .state-tabs { display: none; }
+  }
+</style>
+</head>
+<body>
+
+<div style="display:flex; flex-direction:column; align-items:center;">
+
+  <div class="phone" id="phone" data-state="stuck">
+    <div class="backdrop"></div>
+    <div class="pattern-wash"></div>
+    <div class="motes" id="motes"></div>
+    <div class="fog"></div>
+    <div class="gilt-frame"></div>
+    <div class="letterbox top"></div>
+    <div class="letterbox bottom"></div>
+
+    <!-- Header -->
+    <div class="header-row">
+      <div class="stuck-pill">
+        <div class="pulse-dot"></div>
+        <span id="stuckLabel">TURG'UNLIK · 14 DAQ</span>
+      </div>
+      <div class="step-pill">
+        <span id="stepNum">0/3</span>
+        <div class="dots" id="stepDots">
+          <div class="stp"></div>
+          <div class="stp"></div>
+          <div class="stp"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Brand -->
+    <div class="brand-seal">
+      <div class="ornament">
+        <div class="line"></div>
+        <div class="star">✦</div>
+        <div class="line"></div>
+      </div>
+      <div class="seal-text" id="seal">murabbiy ko'rdi</div>
+    </div>
+
+    <!-- Mentor recognition / question -->
+    <div class="recognition">
+      <div class="mentor-orb"></div>
+      <div class="text" id="recognitionText">
+        <span class="word" style="animation-delay:0.2s">Sen</span>
+        <span class="word" style="animation-delay:0.4s">14</span>
+        <span class="word" style="animation-delay:0.6s">daqiqa</span>
+        <span class="word" style="animation-delay:0.8s">ekranga</span>
+        <span class="word" style="animation-delay:1.0s"><span class="em">qaragancha</span></span>
+        <span class="word" style="animation-delay:1.2s">turibsan.</span>
+      </div>
+    </div>
+
+    <!-- Action card (only in action state) -->
+    <div class="action-card">
+      <div class="lbl">SEN — KIM</div>
+      <div class="identity-text" id="identityText">
+        Sen — <span class="em">turg'unlikdan chiqishni</span> biladigan odam.<br>
+        3 ta savol — fog ko'tarildi.
+      </div>
+      <div class="step-row">
+        <div class="step-num">1</div>
+        <div class="step-info">
+          <div class="step-name">2 daqiqalik qadam</div>
+          <div class="step-mini">Kitobni qo'lga ol — birinchi sahifa.</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Answers (questions state) -->
+    <div class="answers-block">
+      <div class="prompt" id="qPrompt">— sen aslida nimadan qochyapsan? —</div>
+      <div class="answers" id="answers">
+        <!-- filled by JS -->
+      </div>
+    </div>
+
+    <!-- Reframe -->
+    <div class="reframe">
+      <div class="lbl">MURABBIY · QAYTAR</div>
+      <div class="text" id="reframeText">
+        Yaxshi. Tan oldim — qo'rquv. <span class="em">Qo'rquv — dushman emas, signal</span>. U shunchaki "muhim narsa" ekanini ko'rsatadi.
+      </div>
+    </div>
+
+    <!-- Bottom -->
+    <div class="bottom-bar">
+      <button class="primary-btn" id="primaryBtn">Boshlaymiz</button>
+      <button class="skip-link" id="skipLink">— hozir gapirgim yo'q —</button>
+    </div>
+
+    <div class="vignette"></div>
+  </div>
+
+  <!-- State tabs -->
+  <div class="state-tabs">
+    <div class="state-tab active" data-state="stuck">TURG'UNLIK</div>
+    <div class="state-tab" data-state="q1">SAVOL · 1</div>
+    <div class="state-tab" data-state="q2">SAVOL · 2</div>
+    <div class="state-tab" data-state="q3">SAVOL · 3</div>
+    <div class="state-tab" data-state="action">HARAKATGA</div>
+  </div>
+
+  <div class="footer-info">
+    Turg'unlik — savollar bilan tumandan chiqish
+  </div>
+</div>
+
+<script>
+  const states = {
+    stuck: {
+      step: 0,
+      seal: 'murabbiy ko\'rdi',
+      stuckLabel: 'TURG\'UNLIK · 14 DAQ',
+      recogWords: ['Sen', '14', 'daqiqa', 'ekranga', '<span class="em">qaragancha</span>', 'turibsan.'],
+      qPrompt: '— men hukm qilmayman, savol beraman —',
+      answers: [
+        { ic: '∼', label: 'Tushunmadim, men shu yerdaman.' },
+        { ic: '◇', label: 'Boshlay olmayapman.' },
+        { ic: '◯', label: 'Charchadim, energiya yo\'q.' },
+        { ic: '⌖', label: 'Ahamiyatsiz his qilyapman.' }
+      ],
+      reframeText: '',
+      btn: 'Tayyorman, boshlaymiz',
+      skipText: '— hozir gapirgim yo\'q —'
+    },
+    q1: {
+      step: 1,
+      seal: 'birinchi savol — nom ber',
+      stuckLabel: 'SAVOL · 1',
+      recogWords: ['Eng', 'yaqin', '<span class="em">his</span>', '— qaysi?'],
+      qPrompt: '— miyaning his-ni nomlash uni kichraytiradi —',
+      answers: [
+        { ic: '◐', label: 'Qo\'rquv — boshlamaslik qo\'rqinchli.' },
+        { ic: '◑', label: 'Charchoq — bu og\'ir.' },
+        { ic: '◒', label: 'Ma\'nosizlik — nimaga kerakligini sezmayman.' },
+        { ic: '◓', label: 'Boshqa — aytaman.' }
+      ],
+      reframeText: '',
+      btn: 'Davom etamiz',
+      skipText: '— qaytadan o\'ylayman —'
+    },
+    q2: {
+      step: 2,
+      seal: 'ikkinchi savol — chuqurroq',
+      stuckLabel: 'SAVOL · 2',
+      recogWords: ['Bu', '<span class="em">qo\'rquv</span>', 'sendan', 'nimani', 'himoya', 'qilyapti?'],
+      qPrompt: '— har his bir ehtiyojni ifoda qiladi —',
+      answers: [
+        { ic: '✺', label: 'Mag\'lubiyatdan — agar boshlasam, muvaffaqiyatsiz bo\'laman.' },
+        { ic: '✻', label: 'Charchoqdan — energiya yetarli emas.' },
+        { ic: '✼', label: 'Mas\'uliyatdan — ko\'p narsa kutiladi.' },
+        { ic: '✽', label: 'Notanishdan — qaerdan boshlashni bilmayman.' }
+      ],
+      reframeText: 'Yaxshi. Tan oldim — qo\'rquv. <span class="em">Qo\'rquv — dushman emas, signal</span>. U shunchaki "muhim narsa" ekanini ko\'rsatadi. Endi miyangda <span class="em">amigdala</span> tinch bo\'ldi — savol bilan System 2 yondi.',
+      btn: 'Davom etamiz',
+      skipText: '— biroz vaqt kerak —'
+    },
+    q3: {
+      step: 3,
+      seal: 'uchinchi savol — qadam',
+      stuckLabel: 'SAVOL · 3',
+      recogWords: ['Hoziroq,', '<span class="em">2 daqiqada</span>', 'qaysi', 'arzimas', 'qadamni', 'qila', 'olasan?'],
+      qPrompt: '— eng kichik harakat ham harakat —',
+      answers: [
+        { ic: '▥', label: 'Kitobni qo\'lga olish.' },
+        { ic: '▦', label: 'Birinchi sahifani ochish.' },
+        { ic: '▧', label: 'Stol oldida o\'tirish.' },
+        { ic: '▩', label: 'Telefonni boshqa xonaga qo\'yish.' }
+      ],
+      reframeText: 'Sen ko\'rding — qo\'rquv mag\'lubiyatdan emas, <span class="em">notanishlikdan</span> kelyapti. Bu — yaxshi xabar. Notanish — bilim bilan ochiladi. Bilim — kichik qadamdan boshlanadi.',
+      btn: 'Boshlayman',
+      skipText: '— bittasini tanladim —'
+    },
+    action: {
+      step: 3,
+      seal: 'tuman ko\'tarildi',
+      stuckLabel: 'TINIQ · TAYYORMAN',
+      recogWords: null,
+      qPrompt: '',
+      answers: [],
+      reframeText: 'Bilasanmi nima yuz berdi? Sen <span class="em">3 ta savolga</span> javob berding. Miyangda 3 ta neyron yo\'l yondi: <span class="em">tan olish, ma\'no, harakat</span>. Tuman ko\'tarildi — chunki sen so\'rading o\'zingdan.',
+      btn: 'Birinchi qadamni qilaman',
+      skipText: ''
+    }
+  };
+
+  const phone     = document.getElementById('phone');
+  const seal      = document.getElementById('seal');
+  const stuckLbl  = document.getElementById('stuckLabel');
+  const recogText = document.getElementById('recognitionText');
+  const qPrompt   = document.getElementById('qPrompt');
+  const answers   = document.getElementById('answers');
+  const reframeT  = document.getElementById('reframeText');
+  const stepNum   = document.getElementById('stepNum');
+  const stepDots  = document.getElementById('stepDots');
+  const primaryBtn= document.getElementById('primaryBtn');
+  const skipLink  = document.getElementById('skipLink');
+
+  function applyState(name) {
+    const s = states[name];
+    phone.dataset.state = name;
+    seal.textContent = s.seal;
+    stuckLbl.textContent = s.stuckLabel;
+    primaryBtn.textContent = s.btn;
+    skipLink.textContent = s.skipText || '';
+    skipLink.style.display = s.skipText ? 'block' : 'none';
+
+    // Recognition text
+    if (s.recogWords) {
+      recogText.style.display = 'block';
+      recogText.innerHTML = s.recogWords.map((w, i) =>
+        `<span class="word" style="animation-delay:${0.2 + i*0.18}s">${w}</span>`
+      ).join(' ');
+    } else {
+      recogText.style.display = 'none';
+    }
+
+    // Prompt + answers
+    if (s.answers.length > 0) {
+      qPrompt.style.animation = 'none';
+      void qPrompt.offsetWidth;
+      qPrompt.style.animation = `fade-in 0.6s ${0.2 + (s.recogWords ? s.recogWords.length*0.18 : 0) + 0.2}s ease forwards`;
+      qPrompt.textContent = s.qPrompt;
+
+      answers.style.animation = 'none';
+      void answers.offsetWidth;
+      answers.style.animation = `fade-up 0.8s ${0.2 + (s.recogWords ? s.recogWords.length*0.18 : 0) + 0.4}s ease forwards`;
+      answers.innerHTML = s.answers.map(a =>
+        `<div class="answer-chip">
+          <div class="ic">${a.ic}</div>
+          <div class="label">${a.label}</div>
+        </div>`
+      ).join('');
+      qPrompt.style.display = 'block';
+      answers.style.display = 'flex';
+
+      document.querySelectorAll('.answer-chip').forEach(chip => {
+        chip.addEventListener('click', () => {
+          document.querySelectorAll('.answer-chip').forEach(c => c.classList.remove('selected'));
+          chip.classList.add('selected');
+        });
+      });
+    } else {
+      qPrompt.style.display = 'none';
+      answers.style.display = 'none';
+    }
+
+    // Reframe
+    reframeT.innerHTML = s.reframeText || '';
+
+    // Step indicator
+    stepNum.textContent = s.step + '/3';
+    stepDots.innerHTML = [1,2,3].map(i =>
+      `<div class="stp ${i <= s.step ? 'active' : ''}"></div>`
+    ).join('');
+  }
+
+  applyState('stuck');
+
+  document.querySelectorAll('.state-tab').forEach(tab => {
+    tab.addEventListener('click', () => {
+      document.querySelectorAll('.state-tab').forEach(t => t.classList.remove('active'));
+      tab.classList.add('active');
+      applyState(tab.dataset.state);
+    });
+  });
+
+  primaryBtn.addEventListener('click', () => {
+    const order = ['stuck', 'q1', 'q2', 'q3', 'action'];
+    const cur = phone.dataset.state || 'stuck';
+    const idx = order.indexOf(cur);
+    const next = order[(idx + 1) % order.length];
+    document.querySelectorAll('.state-tab').forEach(t =>
+      t.classList.toggle('active', t.dataset.state === next)
+    );
+    applyState(next);
+  });
+
+  // Spawn motes (visible from q3 onward)
+  function spawnMotes() {
+    const motes = document.getElementById('motes');
+    for (let i = 0; i < 14; i++) {
+      const m = document.createElement('span');
+      m.style.left = Math.random() * 100 + '%';
+      m.style.animationDuration = (7 + Math.random() * 6) + 's';
+      m.style.animationDelay = (Math.random() * 8) + 's';
+      motes.appendChild(m);
+    }
+  }
+  spawnMotes();
+</script>
+
+<script src="nav-overlay.js" defer></script>
+</body>
+</html>

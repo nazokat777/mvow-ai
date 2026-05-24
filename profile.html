@@ -1,0 +1,602 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>M-VoW AI — Sen</title>
+<link rel="manifest" href="manifest.webmanifest">
+<meta name="theme-color" content="#04060B">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="M·VoW">
+<link rel="apple-touch-icon" href="assets/mnsm-logo.png">
+<link rel="icon" type="image/png" href="assets/mnsm-logo.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;600;700&family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,500&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --void:        #04060B;
+    --void-2:      #0A0E16;
+    --shadow:      #11151D;
+    --steel:       #1A1F2A;
+
+    --text-primary: #F5F2EC;
+    --text-body:    #B8BBC2;
+    --text-muted:   #6B6E76;
+    --text-ghost:   #3A3D44;
+
+    --gold:        #E8C77E;
+    --gold-2:      #C7A36B;
+    --gold-deep:   #8a6f44;
+    --gold-flash:  #FFE9B5;
+    --honey:       #D4A574;
+    --cream:       #F0E5D2;
+
+    --emerald:     #4A8A5C;
+    --emerald-bright: #6BAF7C;
+    --emerald-deep:#1F3D2A;
+    --rose:        #C28B8B;
+  }
+
+  body {
+    background: #14171d;
+    font-family: 'Inter', sans-serif;
+    color: var(--text-primary);
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 24px;
+  }
+
+  .phone {
+    width: 380px;
+    height: 800px;
+    background: var(--void);
+    border-radius: 40px;
+    overflow: hidden;
+    position: relative;
+    box-shadow:
+      0 0 0 8px #2a2e36,
+      0 30px 80px rgba(0,0,0,0.85),
+      0 0 100px rgba(232,199,126,0.10);
+  }
+
+  .backdrop {
+    position: absolute; inset: 0;
+    background:
+      radial-gradient(ellipse 80% 40% at 50% 25%, rgba(232,199,126,0.10), transparent 65%),
+      radial-gradient(ellipse 100% 50% at 50% 100%, rgba(74,138,92,0.06), transparent 70%),
+      linear-gradient(180deg, var(--void) 0%, var(--void-2) 50%, var(--void) 100%);
+  }
+
+  .gilt-frame {
+    position: absolute; inset: 14px;
+    border: 1px solid rgba(232,199,126,0.18);
+    border-radius: 26px;
+    pointer-events: none;
+    z-index: 4;
+  }
+
+  .pattern-wash {
+    position: absolute; inset: 0;
+    opacity: 0.025;
+    background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='100' height='100' viewBox='0 0 100 100'><g fill='none' stroke='%23E8C77E' stroke-width='0.5'><polygon points='50,5 62,38 95,38 70,58 80,90 50,72 20,90 30,58 5,38 38,38'/></g></svg>");
+    background-size: 130px 130px;
+    pointer-events: none;
+    z-index: 1;
+  }
+
+  .letterbox {
+    position: absolute;
+    left: 0; right: 0;
+    height: 14px;
+    background: var(--void);
+    z-index: 7;
+    pointer-events: none;
+  }
+  .letterbox.top { top: 0; }
+  .letterbox.bottom { bottom: 0; }
+
+  /* === Header === */
+  .header-row {
+    position: absolute;
+    top: 26px; left: 24px; right: 24px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    z-index: 5;
+  }
+  .icon-btn {
+    width: 28px; height: 28px;
+    display: flex; align-items: center; justify-content: center;
+    border: 1px solid var(--gold-deep);
+    border-radius: 50%;
+    cursor: pointer;
+    background: rgba(232,199,126,0.04);
+    color: var(--gold);
+  }
+  .icon-btn svg { width: 12px; height: 12px; fill: none; stroke: currentColor; stroke-width: 1.8; }
+
+  .title-stamp {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 5px 12px;
+    border: 1px solid var(--gold);
+    border-radius: 999px;
+    background: rgba(232,199,126,0.06);
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 9px;
+    letter-spacing: 4px;
+    color: var(--gold);
+  }
+
+  /* === Identity hero === */
+  .identity-hero {
+    position: absolute;
+    top: 64px; left: 24px; right: 24px;
+    text-align: center;
+    z-index: 4;
+  }
+  .avatar-wrap {
+    position: relative;
+    width: 60px; height: 60px;
+    margin: 0 auto 8px;
+  }
+  .avatar-halo {
+    position: absolute; inset: -8px;
+    border-radius: 50%;
+    background: radial-gradient(circle, var(--gold) 0%, transparent 65%);
+    opacity: 0.45;
+    filter: blur(14px);
+    animation: breathe 4s ease-in-out infinite;
+  }
+  @keyframes breathe {
+    0%, 100% { opacity: 0.40; transform: scale(0.95); }
+    50%      { opacity: 0.65; transform: scale(1.08); }
+  }
+  .avatar {
+    position: relative;
+    width: 60px; height: 60px;
+    border-radius: 50%;
+    background: radial-gradient(circle at 35% 35%, var(--gold-flash), var(--gold) 50%, var(--gold-deep));
+    box-shadow:
+      0 0 20px rgba(232,199,126,0.55),
+      inset 0 -5px 10px rgba(0,0,0,0.30);
+    z-index: 1;
+    animation: avatar-pulse 3s ease-in-out infinite;
+  }
+  @keyframes avatar-pulse {
+    0%, 100% { transform: scale(0.97); }
+    50%      { transform: scale(1.04); }
+  }
+  .name {
+    font-family: 'Cormorant Garamond', serif;
+    font-weight: 600;
+    font-size: 20px;
+    color: var(--text-primary);
+    letter-spacing: 1px;
+    line-height: 1;
+  }
+  .since {
+    margin-top: 4px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 8px;
+    letter-spacing: 2.5px;
+    color: var(--gold-deep);
+  }
+
+  /* === Identity statement (becoming) === */
+  .becoming {
+    position: absolute;
+    top: 188px; left: 24px; right: 24px;
+    padding: 10px 14px;
+    background:
+      radial-gradient(ellipse at 80% 50%, rgba(232,199,126,0.14), transparent 65%),
+      rgba(232,199,126,0.05);
+    border: 1px solid rgba(232,199,126,0.28);
+    border-radius: 4px;
+    z-index: 4;
+  }
+  .becoming .lbl {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 8px;
+    letter-spacing: 4px;
+    color: var(--gold-deep);
+    margin-bottom: 6px;
+  }
+  .becoming .text {
+    font-family: 'Cormorant Garamond', serif;
+    font-style: italic;
+    font-size: 14.5px;
+    color: var(--text-primary);
+    line-height: 1.35;
+    font-weight: 600;
+    text-shadow: 0 0 14px rgba(232,199,126,0.20);
+  }
+  .becoming .text .em { color: var(--gold); }
+
+  /* === Stats grid === */
+  .stats-grid {
+    position: absolute;
+    top: 274px; left: 24px; right: 24px;
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr 1fr;
+    gap: 5px;
+    z-index: 4;
+  }
+  .stat {
+    padding: 8px 4px;
+    background: rgba(232,199,126,0.04);
+    border: 1px solid rgba(138,111,68,0.30);
+    border-radius: 3px;
+    text-align: center;
+  }
+  .stat .v {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 16px;
+    font-weight: 500;
+    color: var(--gold);
+    line-height: 1;
+  }
+  .stat .v .unit { font-size: 9px; color: var(--gold-deep); margin-left: 2px; }
+  .stat .l {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 7px;
+    letter-spacing: 1.2px;
+    color: var(--gold-deep);
+    margin-top: 3px;
+    line-height: 1.3;
+  }
+
+  /* === Growth tree (rings visualization) === */
+  .growth-block {
+    position: absolute;
+    top: 336px; left: 24px; right: 24px;
+    z-index: 4;
+  }
+  .growth-block .head {
+    display: flex; justify-content: space-between; align-items: center;
+    margin-bottom: 4px;
+  }
+  .growth-block .lbl {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 8.5px;
+    letter-spacing: 3px;
+    color: var(--gold-deep);
+  }
+  .growth-block .meta {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 8px;
+    color: var(--gold);
+    letter-spacing: 1px;
+  }
+
+  .rings-wrap {
+    position: relative;
+    height: 130px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .rings-svg {
+    width: 170px; height: 130px;
+  }
+
+  /* === Habits formed === */
+  .habits-block {
+    position: absolute;
+    top: 488px; left: 24px; right: 24px;
+    z-index: 4;
+  }
+  .habits-block .lbl {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 8.5px;
+    letter-spacing: 3px;
+    color: var(--gold-deep);
+    margin-bottom: 6px;
+  }
+  .habits-row {
+    display: flex; gap: 6px; flex-wrap: wrap;
+  }
+  .habit-chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    padding: 3px 8px;
+    border: 1px solid var(--emerald-deep);
+    border-radius: 999px;
+    background: rgba(74,138,92,0.08);
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 7.5px;
+    letter-spacing: 0.8px;
+    color: var(--emerald-bright);
+  }
+  .habit-chip.pending {
+    border-color: var(--gold-deep);
+    background: rgba(232,199,126,0.04);
+    color: var(--gold-deep);
+    border-style: dashed;
+  }
+  .habit-chip .ic { font-size: 9px; }
+
+  /* === Mentor relationship === */
+  .relation-block {
+    position: absolute;
+    top: 580px; left: 24px; right: 24px;
+    padding: 9px 12px;
+    border-left: 2px solid var(--honey);
+    background: rgba(212,165,116,0.04);
+    border-radius: 0 3px 3px 0;
+    z-index: 4;
+  }
+  .relation-block .head {
+    display: flex; justify-content: space-between; align-items: center;
+    margin-bottom: 4px;
+  }
+  .relation-block .label {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 8px;
+    letter-spacing: 2.5px;
+    color: var(--gold-deep);
+  }
+  .relation-block .depth {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 8px;
+    color: var(--gold);
+    letter-spacing: 1.5px;
+  }
+  .relation-block .text {
+    font-family: 'Cormorant Garamond', serif;
+    font-style: italic;
+    font-size: 11.5px;
+    color: var(--text-body);
+    line-height: 1.4;
+  }
+  .relation-block .text .em { color: var(--gold); font-weight: 600; }
+
+  /* === Bottom nav === */
+  .bottom-nav {
+    position: absolute;
+    bottom: 22px; left: 24px; right: 24px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 16px;
+    background: rgba(17,21,29,0.7);
+    backdrop-filter: blur(8px);
+    border: 1px solid rgba(138,111,68,0.30);
+    border-radius: 999px;
+    z-index: 5;
+  }
+  .nav-item {
+    display: flex; flex-direction: column; gap: 2px; align-items: center;
+    cursor: pointer;
+    padding: 4px 8px;
+  }
+  .nav-item svg { width: 16px; height: 16px; fill: none; stroke: var(--text-muted); stroke-width: 1.5; }
+  .nav-item .lbl {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 7px;
+    letter-spacing: 1.5px;
+    color: var(--text-muted);
+  }
+  .nav-item.active svg { stroke: var(--gold); }
+  .nav-item.active .lbl { color: var(--gold); }
+  .nav-item.fab {
+    background: linear-gradient(180deg, var(--gold-flash) 0%, var(--gold) 50%, var(--gold-2) 100%);
+    border-radius: 50%;
+    width: 42px; height: 42px;
+    display: flex; align-items: center; justify-content: center;
+    box-shadow: 0 0 20px rgba(232,199,126,0.4);
+    margin-top: -28px;
+    flex-direction: row;
+  }
+  .nav-item.fab svg { stroke: var(--void); width: 20px; height: 20px; }
+  .nav-item.fab .lbl { display: none; }
+
+  .vignette {
+    position: absolute; inset: 0;
+    pointer-events: none;
+    background: radial-gradient(ellipse 110% 80% at 50% 50%, transparent 60%, rgba(0,0,0,0.4));
+    z-index: 6;
+  }
+
+  .footer-info {
+    margin-top: 22px;
+    text-align: center;
+    color: rgba(255,255,255,0.45);
+    font-size: 13px;
+    line-height: 1.6;
+    font-family: 'Cormorant Garamond', serif;
+    font-style: italic;
+  }
+
+  @media (max-width: 480px) {
+    body { padding: 0; }
+    .phone {
+      width: 100vw;
+      height: 100vh;
+      border-radius: 0;
+      box-shadow: none;
+    }
+    .footer-info { display: none; }
+  }
+</style>
+</head>
+<body>
+
+<div style="display:flex; flex-direction:column; align-items:center;">
+
+  <div class="phone">
+    <div class="backdrop"></div>
+    <div class="pattern-wash"></div>
+    <div class="gilt-frame"></div>
+    <div class="letterbox top"></div>
+    <div class="letterbox bottom"></div>
+
+    <!-- Header -->
+    <div class="header-row">
+      <div class="icon-btn" title="Orqa">
+        <svg viewBox="0 0 12 12"><path d="M8 2 L4 6 L8 10"/></svg>
+      </div>
+      <div class="title-stamp">SEN</div>
+      <div class="icon-btn" title="Sozlamalar">
+        <svg viewBox="0 0 12 12"><circle cx="6" cy="6" r="1.5"/><path d="M6 1 v1.5 M6 9.5 V11 M1 6 h1.5 M9.5 6 H11"/></svg>
+      </div>
+    </div>
+
+    <!-- Identity hero -->
+    <div class="identity-hero">
+      <div class="avatar-wrap">
+        <div class="avatar-halo"></div>
+        <div class="avatar"></div>
+      </div>
+      <div class="name" id="userName">Aziz</div>
+      <div class="since" id="sinceLine">12 KUN YO'L · 2026-MAY-3 DAN</div>
+    </div>
+
+    <!-- Becoming -->
+    <div class="becoming">
+      <div class="lbl">SEN — KIM BO'LIB BORMOQDASAN</div>
+      <div class="text" id="becomingText">
+        Sen — <span class="em">o'z so'zida turadigan</span> odam.<br>
+        Har kuni yangi sen bo'lib uyg'onyapsan.
+      </div>
+    </div>
+
+    <!-- Stats grid -->
+    <div class="stats-grid">
+      <div class="stat">
+        <div class="v" id="statStreak">12<span class="unit">K</span></div>
+        <div class="l">STREAK<br>HOZIR</div>
+      </div>
+      <div class="stat">
+        <div class="v" id="statBest">12<span class="unit">K</span></div>
+        <div class="l">ENG<br>UZUN</div>
+      </div>
+      <div class="stat">
+        <div class="v" id="statSessions">38</div>
+        <div class="l">JAMI<br>SESSIYA</div>
+      </div>
+      <div class="stat">
+        <div class="v" id="statHours">47<span class="unit">S</span></div>
+        <div class="l">JAMI<br>FOKUS</div>
+      </div>
+    </div>
+
+    <!-- Growth rings -->
+    <div class="growth-block">
+      <div class="head">
+        <span class="lbl" id="treeLbl">DARAXTING · DARAXT</span>
+        <span class="meta" id="treeMeta">ildiz chuqurlashyapti · har hafta yangi halqa</span>
+      </div>
+      <div class="rings-wrap">
+        <svg class="rings-svg" viewBox="0 0 170 130">
+          <!-- Center core (origin urug') -->
+          <circle cx="85" cy="65" r="5" fill="#FFE9B5"/>
+
+          <!-- Tree rings — each = a week -->
+          <g fill="none" stroke-width="1">
+            <circle cx="85" cy="65" r="11" stroke="#8a6f44" opacity="0.35"/>
+            <circle cx="85" cy="65" r="17" stroke="#8a6f44" opacity="0.40"/>
+            <circle cx="85" cy="65" r="23" stroke="#C7A36B" opacity="0.45"/>
+            <circle cx="85" cy="65" r="29" stroke="#C7A36B" opacity="0.55"/>
+            <circle cx="85" cy="65" r="35" stroke="#C7A36B" opacity="0.60"/>
+            <circle cx="85" cy="65" r="41" stroke="#E8C77E" opacity="0.65" stroke-width="1.1"/>
+            <circle cx="85" cy="65" r="47" stroke="#E8C77E" opacity="0.70" stroke-width="1.1"/>
+            <circle cx="85" cy="65" r="53" stroke="#E8C77E" opacity="0.80" stroke-width="1.2"/>
+            <circle cx="85" cy="65" r="59" stroke="#FFE9B5" opacity="0.85" stroke-width="1.3"/>
+            <!-- Latest ring (this week) — pulsing -->
+            <circle cx="85" cy="65" r="65" stroke="#FFE9B5" opacity="0.95" stroke-width="1.6"
+                    stroke-dasharray="4 2">
+              <animate attributeName="r" values="63;67;63" dur="3s" repeatCount="indefinite"/>
+              <animate attributeName="opacity" values="0.7;1;0.7" dur="3s" repeatCount="indefinite"/>
+            </circle>
+          </g>
+
+          <!-- Branches — habits formed -->
+          <g stroke="#E8C77E" stroke-width="0.9" fill="none" opacity="0.7">
+            <line x1="85" y1="65" x2="85"  y2="0"/>
+            <line x1="85" y1="65" x2="155" y2="65"/>
+            <line x1="85" y1="65" x2="15"  y2="65"/>
+            <line x1="85" y1="65" x2="138" y2="18"/>
+            <line x1="85" y1="65" x2="32"  y2="18"/>
+          </g>
+
+          <!-- Leaf clusters at branch ends (habits formed) -->
+          <g fill="#6BAF7C" opacity="0.85">
+            <circle cx="85"  cy="3"   r="3.5"/>
+            <circle cx="153" cy="65"  r="3.5"/>
+            <circle cx="17"  cy="65"  r="3.5"/>
+            <circle cx="138" cy="20"  r="3"/>
+            <circle cx="32"  cy="20"  r="3"/>
+          </g>
+          <g fill="#FFE9B5" opacity="0.9">
+            <circle cx="85"  cy="3"  r="1.6"/>
+            <circle cx="153" cy="65" r="1.6"/>
+            <circle cx="17"  cy="65" r="1.6"/>
+          </g>
+        </svg>
+      </div>
+    </div>
+
+    <!-- Habits formed -->
+    <div class="habits-block">
+      <div class="lbl" id="habitsLbl">SHAKLANGAN ODATLAR · 3</div>
+      <div class="habits-row" id="habitsRow">
+        <div class="habit-chip"><span class="ic">☾</span><span>Tonggi namoz · 12 kun</span></div>
+        <div class="habit-chip"><span class="ic">⊙</span><span>Yugurish · 9 kun</span></div>
+        <div class="habit-chip"><span class="ic">▥</span><span>Mutolaa · 7 kun</span></div>
+      </div>
+    </div>
+
+    <!-- Mentor relationship -->
+    <div class="relation-block">
+      <div class="head">
+        <span class="label">MURABBIY · MEN BILAN</span>
+        <span class="depth" id="relationDepth">CHUQUR TANISHUV</span>
+      </div>
+      <div class="text" id="relationText">
+        <span class="em">Sening ritmingni bilaman.</span> Tongda kuchli, tushga charchaysan, kechqurun yana yumshaysan. Payshanba — eng samaradorli kun.
+      </div>
+    </div>
+
+    <!-- Bottom nav -->
+    <div class="bottom-nav">
+      <div class="nav-item">
+        <svg viewBox="0 0 24 24"><path d="M3 12 L12 4 L21 12 V20 H3 Z"/></svg>
+        <span class="lbl">UY</span>
+      </div>
+      <div class="nav-item">
+        <svg viewBox="0 0 24 24"><rect x="4" y="6" width="16" height="14" rx="2"/><line x1="4" y1="10" x2="20" y2="10"/></svg>
+        <span class="lbl">KALENDAR</span>
+      </div>
+      <div class="nav-item fab" title="Yangi sessiya">
+        <svg viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+      </div>
+      <div class="nav-item">
+        <svg viewBox="0 0 24 24"><path d="M3 17 L9 11 L13 15 L21 7"/><polyline points="15,7 21,7 21,13"/></svg>
+        <span class="lbl">YO'L</span>
+      </div>
+      <div class="nav-item active">
+        <svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 21 c0,-4 4,-7 8,-7 s8,3 8,7"/></svg>
+        <span class="lbl">SEN</span>
+      </div>
+    </div>
+
+    <div class="vignette"></div>
+  </div>
+
+  <div class="footer-info">
+    Sen — vaqt o'tib qaysi odamga aylanmoqdasan
+  </div>
+</div>
+
+<script src="nav-overlay.js" defer></script>
+</body>
+</html>

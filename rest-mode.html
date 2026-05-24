@@ -1,0 +1,792 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>M-VoW AI — Dam Rejimi</title>
+<link rel="manifest" href="manifest.webmanifest">
+<meta name="theme-color" content="#04060B">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="M·VoW">
+<link rel="apple-touch-icon" href="assets/mnsm-logo.png">
+<link rel="icon" type="image/png" href="assets/mnsm-logo.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --void:        #06080F;
+    --void-2:      #0E1119;
+    --shadow:      #14171F;
+
+    --text-primary: #F5F2EC;
+    --text-body:    #B8BBC2;
+    --text-muted:   #6B6E76;
+    --text-ghost:   #3A3D44;
+
+    --gold:        #E8C77E;
+    --gold-2:      #C7A36B;
+    --gold-deep:   #8a6f44;
+
+    --honey:       #D4A574;
+    --cream:       #F0E5D2;
+    --sage:        #8AA876;
+    --sage-deep:   #4F6648;
+    --rose:        #C28B8B;
+  }
+
+  body {
+    background: #14171d;
+    font-family: 'Inter', sans-serif;
+    color: var(--text-primary);
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 24px;
+  }
+
+  .phone {
+    width: 380px;
+    height: 800px;
+    background: var(--void);
+    border-radius: 40px;
+    overflow: hidden;
+    position: relative;
+    box-shadow:
+      0 0 0 8px #2a2e36,
+      0 30px 80px rgba(0,0,0,0.85),
+      0 0 100px rgba(212,165,116,0.10);
+  }
+
+  /* === Soft warm backdrop (dusk/sunset feel) === */
+  .backdrop {
+    position: absolute; inset: 0;
+    background:
+      radial-gradient(ellipse 90% 50% at 50% 30%, rgba(212,165,116,0.14), transparent 65%),
+      radial-gradient(ellipse 100% 60% at 50% 100%, rgba(138,168,118,0.06), transparent 70%),
+      linear-gradient(180deg, var(--void) 0%, #0F0C18 50%, var(--void) 100%);
+    transition: background 1s ease;
+  }
+  .phone[data-state="celebrate"] .backdrop {
+    background:
+      radial-gradient(ellipse 90% 50% at 50% 30%, rgba(232,199,126,0.20), transparent 65%),
+      radial-gradient(ellipse 100% 60% at 50% 100%, rgba(212,165,116,0.10), transparent 70%),
+      linear-gradient(180deg, var(--void) 0%, #1A1410 50%, var(--void) 100%);
+  }
+
+  /* Soft horizon glow at bottom */
+  .horizon-soft {
+    position: absolute;
+    bottom: 0; left: 0; right: 0;
+    height: 35%;
+    pointer-events: none;
+    z-index: 1;
+    background:
+      linear-gradient(180deg,
+        transparent 0%,
+        rgba(212,165,116,0.04) 40%,
+        rgba(212,165,116,0.10) 70%,
+        rgba(194,139,139,0.08) 100%);
+  }
+
+  .gilt-frame {
+    position: absolute; inset: 14px;
+    border: 1px solid rgba(212,165,116,0.20);
+    border-radius: 26px;
+    pointer-events: none;
+    z-index: 4;
+  }
+
+  .pattern-wash {
+    position: absolute; inset: 0;
+    opacity: 0.025;
+    background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='100' height='100' viewBox='0 0 100 100'><g fill='none' stroke='%23D4A574' stroke-width='0.5'><circle cx='50' cy='50' r='28'/><circle cx='50' cy='50' r='14'/><circle cx='50' cy='50' r='42'/></g></svg>");
+    background-size: 130px 130px;
+    pointer-events: none;
+    z-index: 1;
+  }
+
+  /* Floating petals (instead of embers) */
+  .petals {
+    position: absolute; inset: 0;
+    pointer-events: none;
+    z-index: 2;
+    overflow: hidden;
+  }
+  .petals span {
+    position: absolute;
+    width: 8px; height: 4px;
+    border-radius: 50% 0 50% 0;
+    background: var(--rose);
+    opacity: 0;
+    transform-origin: center;
+    animation: petal-fall 14s linear infinite;
+  }
+  .petals span:nth-child(2n) { background: var(--honey); }
+  .petals span:nth-child(3n) { background: var(--cream); width: 5px; height: 3px; }
+  @keyframes petal-fall {
+    0%   { transform: translateY(-30px) rotate(0deg); opacity: 0; }
+    10%  { opacity: 0.55; }
+    50%  { transform: translateY(50vh) rotate(180deg) translateX(20px); opacity: 0.45; }
+    100% { transform: translateY(110vh) rotate(360deg) translateX(-15px); opacity: 0; }
+  }
+
+  /* Letterbox bars */
+  .letterbox {
+    position: absolute;
+    left: 0; right: 0;
+    height: 14px;
+    background: var(--void);
+    z-index: 7;
+    pointer-events: none;
+  }
+  .letterbox.top { top: 0; }
+  .letterbox.bottom { bottom: 0; }
+
+  /* === Top header === */
+  .header-row {
+    position: absolute;
+    top: 26px; left: 24px; right: 24px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    z-index: 5;
+  }
+  .pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 4px 10px;
+    border: 1px solid var(--gold-deep);
+    border-radius: 999px;
+    background: rgba(212,165,116,0.05);
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 9px;
+    letter-spacing: 2px;
+    color: var(--honey);
+  }
+  .pill.silent .silent-dot {
+    width: 6px; height: 6px;
+    border-radius: 50%;
+    background: var(--gold-deep);
+    box-shadow: 0 0 4px rgba(232,199,126,0.3);
+  }
+  .pill.rest {
+    color: var(--sage);
+    border-color: var(--sage-deep);
+    background: rgba(138,168,118,0.05);
+  }
+  .pill.rest .rest-icon { color: var(--sage); font-size: 11px; }
+
+  /* === Brand seal === */
+  .brand-seal {
+    position: absolute;
+    top: 64px; left: 0; right: 0;
+    text-align: center;
+    z-index: 5;
+  }
+  .brand-seal .ornament {
+    display: flex; justify-content: center; align-items: center;
+    gap: 12px; margin-bottom: 4px;
+  }
+  .brand-seal .ornament .line {
+    width: 50px; height: 1px;
+    background: linear-gradient(90deg, transparent, var(--honey), transparent);
+  }
+  .brand-seal .ornament .leaf { color: var(--honey); font-size: 10px; }
+  .brand-seal .seal-text {
+    font-family: 'Cormorant Garamond', serif;
+    font-style: italic;
+    font-size: 14px;
+    color: var(--honey);
+    letter-spacing: 2px;
+    font-weight: 400;
+  }
+
+  /* === Stats strip === */
+  .stats-strip {
+    position: absolute;
+    top: 110px; left: 24px; right: 24px;
+    display: flex;
+    justify-content: space-between;
+    padding: 12px 14px;
+    background: rgba(212,165,116,0.04);
+    border-top: 1px solid rgba(138,111,68,0.20);
+    border-bottom: 1px solid rgba(138,111,68,0.20);
+    z-index: 4;
+  }
+  .stat {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 2px;
+    flex: 1;
+  }
+  .stat .v {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 18px;
+    font-weight: 500;
+    color: var(--gold);
+    line-height: 1;
+  }
+  .stat .l {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 7.5px;
+    letter-spacing: 2px;
+    color: var(--gold-deep);
+    text-align: center;
+  }
+  .stat-sep {
+    width: 1px;
+    background: rgba(138,111,68,0.25);
+    margin: 4px 0;
+  }
+
+  /* === Hero (mentor's gentle message) === */
+  .hero {
+    position: absolute;
+    top: 192px; left: 0; right: 0;
+    text-align: center;
+    z-index: 4;
+    padding: 0 36px;
+  }
+  .hero-prelude {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 9px;
+    letter-spacing: 5px;
+    color: var(--gold-deep);
+    margin-bottom: 16px;
+  }
+  .hero-title {
+    font-family: 'Cormorant Garamond', serif;
+    font-style: italic;
+    font-weight: 600;
+    font-size: 38px;
+    line-height: 1.15;
+    color: var(--text-primary);
+    text-shadow: 0 0 28px rgba(212,165,116,0.30);
+    margin-bottom: 18px;
+  }
+  .hero-title .em {
+    color: var(--honey);
+    font-weight: 700;
+  }
+  .hero-title .word {
+    display: inline-block;
+    opacity: 0;
+    transform: translateY(12px);
+    filter: blur(8px);
+    animation: title-in 1.0s cubic-bezier(0.16, 0.84, 0.32, 1) forwards;
+  }
+  @keyframes title-in {
+    to { opacity: 1; transform: translateY(0); filter: blur(0); }
+  }
+
+  .hero-message {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 16px;
+    line-height: 1.5;
+    color: var(--text-body);
+    letter-spacing: 0.3px;
+    opacity: 0;
+    animation: fade-up 0.8s 1.4s ease forwards;
+  }
+  .hero-message .em { color: var(--honey); font-weight: 600; }
+  @keyframes fade-up {
+    from { opacity: 0; transform: translateY(8px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  /* === What changes (rest mode benefits) === */
+  .changes {
+    position: absolute;
+    top: 432px; left: 24px; right: 24px;
+    display: flex;
+    justify-content: space-between;
+    gap: 8px;
+    z-index: 4;
+    opacity: 0;
+    animation: fade-up 0.8s 1.8s ease forwards;
+  }
+  .change-card {
+    flex: 1;
+    padding: 10px 8px;
+    background: rgba(138,168,118,0.05);
+    border: 1px solid rgba(79,102,72,0.35);
+    border-radius: 4px;
+    text-align: center;
+  }
+  .change-card .ic {
+    font-size: 18px;
+    margin-bottom: 4px;
+    color: var(--sage);
+  }
+  .change-card .lbl {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 8px;
+    letter-spacing: 1.5px;
+    color: var(--sage);
+    line-height: 1.4;
+  }
+
+  /* === Wisdom (hikmat) === */
+  .wisdom {
+    position: absolute;
+    top: 522px; left: 24px; right: 24px;
+    text-align: center;
+    z-index: 4;
+    padding: 14px 18px;
+    opacity: 0;
+    animation: fade-up 0.8s 2.1s ease forwards;
+  }
+  .wisdom::before, .wisdom::after {
+    position: absolute;
+    font-family: 'Cormorant Garamond', serif;
+    color: var(--gold-deep);
+    font-size: 32px;
+    line-height: 1;
+    font-weight: 600;
+    opacity: 0.6;
+  }
+  .wisdom::before { content: '“'; top: 0; left: 0; }
+  .wisdom::after  { content: '”'; bottom: -10px; right: 0; }
+  .wisdom .text {
+    font-family: 'Cormorant Garamond', serif;
+    font-style: italic;
+    font-size: 15px;
+    line-height: 1.45;
+    color: var(--text-primary);
+    font-weight: 500;
+  }
+  .wisdom .text .em { color: var(--honey); font-weight: 600; font-style: normal; }
+
+  /* === Energy state selector === */
+  .energy-row {
+    position: absolute;
+    top: 612px; left: 24px; right: 24px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    z-index: 4;
+    opacity: 0;
+    animation: fade-up 0.8s 2.3s ease forwards;
+  }
+  .energy-row .lbl {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 8px;
+    letter-spacing: 4px;
+    color: var(--gold-deep);
+    margin-bottom: 8px;
+  }
+  .energy-chips {
+    display: flex;
+    gap: 6px;
+    justify-content: center;
+  }
+  .e-chip {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 2px;
+    padding: 6px 10px;
+    border: 1px solid var(--gold-deep);
+    border-radius: 4px;
+    background: rgba(232,199,126,0.03);
+    cursor: pointer;
+    transition: all 0.2s;
+    min-width: 64px;
+  }
+  .e-chip:hover { border-color: var(--gold); background: rgba(232,199,126,0.07); }
+  .e-chip .ic { font-size: 16px; line-height: 1; }
+  .e-chip .name {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 7.5px;
+    letter-spacing: 1px;
+    color: var(--gold-deep);
+  }
+  .e-chip.active {
+    border-color: var(--honey);
+    background: rgba(212,165,116,0.10);
+    box-shadow: 0 0 12px rgba(212,165,116,0.2);
+  }
+  .e-chip.active .name { color: var(--honey); }
+
+  /* === Bottom action === */
+  .bottom-bar {
+    position: absolute;
+    bottom: 22px; left: 24px; right: 24px;
+    z-index: 5;
+    display: none;
+  }
+  .phone[data-state="rest-day"] .bottom-bar,
+  .phone[data-state="celebrate"] .bottom-bar { display: block; }
+  .accept-btn {
+    width: 100%;
+    background: linear-gradient(180deg, var(--cream) 0%, var(--honey) 60%, var(--gold-deep) 100%);
+    color: var(--void);
+    padding: 14px;
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: 4px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    text-transform: uppercase;
+    font-family: 'Inter', sans-serif;
+    box-shadow: 0 0 20px rgba(212,165,116,0.30);
+  }
+  .override-link {
+    width: 100%;
+    margin-top: 8px;
+    background: none;
+    border: none;
+    color: var(--text-muted);
+    font-family: 'Cormorant Garamond', serif;
+    font-style: italic;
+    font-size: 12px;
+    cursor: pointer;
+  }
+
+  .vignette {
+    position: absolute; inset: 0;
+    pointer-events: none;
+    background: radial-gradient(ellipse 110% 80% at 50% 50%, transparent 55%, rgba(0,0,0,0.4));
+    z-index: 6;
+  }
+
+  /* === Tabs (preview) === */
+  .state-tabs {
+    display: flex;
+    justify-content: center;
+    gap: 6px;
+    margin-top: 18px;
+    flex-wrap: wrap;
+  }
+  .state-tab {
+    padding: 7px 14px;
+    border-radius: 2px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 2px;
+    color: rgba(255,255,255,0.4);
+    cursor: pointer;
+    border: 1px solid rgba(255,255,255,0.08);
+    user-select: none;
+    transition: all 0.2s;
+  }
+  .state-tab:hover { color: var(--honey); border-color: var(--gold-deep); }
+  .state-tab.active {
+    color: var(--honey);
+    border-color: var(--honey);
+    background: rgba(212,165,116,0.10);
+  }
+
+  .footer-info {
+    margin-top: 22px;
+    text-align: center;
+    color: rgba(255,255,255,0.45);
+    font-size: 13px;
+    line-height: 1.6;
+    font-family: 'Cormorant Garamond', serif;
+    font-style: italic;
+  }
+
+  @media (max-width: 480px) {
+    body { padding: 0; }
+    .phone {
+      width: 100vw;
+      height: 100vh;
+      border-radius: 0;
+      box-shadow: none;
+    }
+    .footer-info, .state-tabs { display: none; }
+  }
+</style>
+</head>
+<body>
+
+<div style="display:flex; flex-direction:column; align-items:center;">
+
+  <div class="phone" id="phone" data-state="burnout">
+    <div class="backdrop"></div>
+    <div class="pattern-wash"></div>
+    <div class="horizon-soft"></div>
+    <div class="petals" id="petals"></div>
+    <div class="gilt-frame"></div>
+    <div class="letterbox top"></div>
+    <div class="letterbox bottom"></div>
+
+    <!-- Top header -->
+    <div class="header-row">
+      <div class="pill silent">
+        <div class="silent-dot"></div>
+        <span id="modePill">MURABBIY JIM</span>
+      </div>
+      <div class="pill rest">
+        <span class="rest-icon">☾</span>
+        <span id="modeName">DAM REJIMI</span>
+      </div>
+    </div>
+
+    <!-- Brand seal -->
+    <div class="brand-seal">
+      <div class="ornament">
+        <div class="line"></div>
+        <div class="leaf">❀</div>
+        <div class="line"></div>
+      </div>
+      <div class="seal-text" id="seal">murabbiy g'amxo'rligida</div>
+    </div>
+
+    <!-- Stats -->
+    <div class="stats-strip">
+      <div class="stat">
+        <div class="v" id="statStreak">12</div>
+        <div class="l">KUN<br>STREAK</div>
+      </div>
+      <div class="stat-sep"></div>
+      <div class="stat">
+        <div class="v" id="statHours">47</div>
+        <div class="l">SOAT<br>FOKUS · HAFT</div>
+      </div>
+      <div class="stat-sep"></div>
+      <div class="stat">
+        <div class="v" id="statSessions">38</div>
+        <div class="l">SESSIYA<br>HAFT</div>
+      </div>
+      <div class="stat-sep"></div>
+      <div class="stat">
+        <div class="v" id="statBypass">2</div>
+        <div class="l">CHEKINISH<br>HAFT</div>
+      </div>
+    </div>
+
+    <!-- Hero -->
+    <div class="hero">
+      <div class="hero-prelude" id="heroPrelude">MURABBIY KO'RDI · CHARCHAGAN</div>
+
+      <div class="hero-title" id="heroTitle">
+        <span class="word" style="animation-delay: 0.4s">Aziz,</span>
+        <span class="word" style="animation-delay: 0.7s">dam</span>
+        <span class="word" style="animation-delay: 0.95s">ol.</span>
+      </div>
+
+      <div class="hero-message" id="heroMessage">
+        Sen <span class="em">12 kun ketma-ket</span> fokusda turding. Bugun nafas ol — ertaga yana kuchli qaytasan.
+      </div>
+    </div>
+
+    <!-- What changes (rest mode benefits) -->
+    <div class="changes">
+      <div class="change-card">
+        <div class="ic">🔓</div>
+        <div class="lbl">ILOVALAR<br>OCHIQ</div>
+      </div>
+      <div class="change-card">
+        <div class="ic">🔕</div>
+        <div class="lbl">ALARMSIZ<br>KUN</div>
+      </div>
+      <div class="change-card">
+        <div class="ic">∅</div>
+        <div class="lbl">SESSIYA<br>YO'Q</div>
+      </div>
+      <div class="change-card">
+        <div class="ic">∞</div>
+        <div class="lbl">STREAK<br>SAQLANADI</div>
+      </div>
+    </div>
+
+    <!-- Wisdom -->
+    <div class="wisdom">
+      <div class="text" id="wisdomText">
+        Egilmagan kamon <span class="em">ko'p o'q ottiradi</span>. Egilmas — sinadi.
+      </div>
+    </div>
+
+    <!-- Energy selector -->
+    <div class="energy-row">
+      <div class="lbl">BUGUNGI ENERGIYANG</div>
+      <div class="energy-chips">
+        <div class="e-chip" data-energy="strong">
+          <div class="ic">⚡</div>
+          <div class="name">KUCHLI</div>
+        </div>
+        <div class="e-chip" data-energy="medium">
+          <div class="ic">🌥</div>
+          <div class="name">O'RTA</div>
+        </div>
+        <div class="e-chip active" data-energy="tired">
+          <div class="ic">🌙</div>
+          <div class="name">CHARCHADIM</div>
+        </div>
+        <div class="e-chip" data-energy="rest">
+          <div class="ic">☾</div>
+          <div class="name">DAM KUNI</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Bottom action (only shown in some states) -->
+    <div class="bottom-bar">
+      <button class="accept-btn" id="acceptBtn">Dam olaman</button>
+      <button class="override-link">yo'q, davom etaman</button>
+    </div>
+
+    <div class="vignette"></div>
+  </div>
+
+  <!-- State tabs -->
+  <div class="state-tabs">
+    <div class="state-tab active" data-state="burnout">DAM TAKLIFI</div>
+    <div class="state-tab" data-state="rest-day">DAM KUNI</div>
+    <div class="state-tab" data-state="soft">YUMSHOQ REJIM</div>
+    <div class="state-tab" data-state="celebrate">BAYRAM</div>
+  </div>
+
+  <div class="footer-info">
+    Dam rejimi — kuyishdan saqlanish balansi
+  </div>
+</div>
+
+<script>
+  const states = {
+    burnout: {
+      modePill: 'MURABBIY KO\'RDI',
+      modeName: 'DAM TAKLIFI',
+      seal: 'murabbiy g\'amxo\'rligida',
+      heroPrelude: 'CHARCHAGANSAN',
+      heroTitle: ['Aziz,', 'dam', 'ol.'],
+      heroMessage: 'Sen <span class="em">12 kun ketma-ket</span> fokusda turding. Bugun nafas ol — ertaga yana kuchli qaytasan.',
+      wisdom: 'Egilmagan kamon <span class="em">ko\'p o\'q ottiradi</span>. Egilmas — sinadi.',
+      stats: { streak: 12, hours: 47, sessions: 38, bypass: 2 },
+      activeEnergy: 'tired',
+      showButtons: true,
+      acceptLabel: 'Dam olaman'
+    },
+    'rest-day': {
+      modePill: 'DAM KUNI',
+      modeName: 'DAM REJIMI',
+      seal: 'erkin kun',
+      heroPrelude: 'BUGUN — DAM',
+      heroTitle: ['Sen', 'erkin', 'san.'],
+      heroMessage: 'Hech qanday alarm. Hech qanday block. Telefoning <span class="em">to\'liq seniki</span>. Mentor faqat ertaga qaytadi.',
+      wisdom: 'Daraxt qishda dam oladi — bahorda <span class="em">guldek otiladi</span>.',
+      stats: { streak: 12, hours: 47, sessions: 38, bypass: 2 },
+      activeEnergy: 'rest',
+      showButtons: true,
+      acceptLabel: 'Dam kuni — tasdiqlayman'
+    },
+    soft: {
+      modePill: 'YUMSHOQ REJIM',
+      modeName: 'CHARCHOQ · -50%',
+      seal: 'mentor yumshoq ohangda',
+      heroPrelude: 'OG\'IRROQ KUNDASAN',
+      heroTitle: ['Bugun', 'osonroq', 'qil.'],
+      heroMessage: 'Sessiyalaring <span class="em">yarmiga qisqartirildi</span>. Block kuchsiz. Negotiation\'da mentor jim. Bu ham fokus turi — ham g\'amxo\'rlik.',
+      wisdom: 'Kuch — siljishda. <span class="em">Mayda qadam</span> ham qadam.',
+      stats: { streak: 12, hours: 47, sessions: 38, bypass: 2 },
+      activeEnergy: 'tired',
+      showButtons: false
+    },
+    celebrate: {
+      modePill: '7-KUN MUZAFFAR',
+      modeName: 'BAYRAM',
+      seal: 'mentor sevinishida',
+      heroPrelude: 'BAYRAM · BIR HAFTA',
+      heroTitle: ['Tabriklayman.', 'Sen', 'qila', 'olding.'],
+      heroMessage: 'Bir hafta ketma-ket reja bo\'yicha yashading. <span class="em">Ko\'pchilik 3 kunda taslim</span> bo\'ladi. Sen — boshqa.',
+      wisdom: 'Har <span class="em">7-kun</span> — bayram. Bayram — kuchning takror tug\'ilishi.',
+      stats: { streak: 7, hours: 32, sessions: 24, bypass: 1 },
+      activeEnergy: 'strong',
+      showButtons: true,
+      acceptLabel: 'Bayramni boshlayman'
+    }
+  };
+
+  const phone     = document.getElementById('phone');
+  const modePill  = document.getElementById('modePill');
+  const modeName  = document.getElementById('modeName');
+  const seal      = document.getElementById('seal');
+  const prelude   = document.getElementById('heroPrelude');
+  const title     = document.getElementById('heroTitle');
+  const message   = document.getElementById('heroMessage');
+  const wisdom    = document.getElementById('wisdomText');
+  const acceptBtn = document.getElementById('acceptBtn');
+  const bottomBar = document.querySelector('.bottom-bar');
+
+  function applyState(name) {
+    const s = states[name];
+    phone.dataset.state = name;
+    modePill.textContent = s.modePill;
+    modeName.textContent = s.modeName;
+    seal.textContent = s.seal;
+    prelude.textContent = s.heroPrelude;
+
+    // Animated title rebuild
+    title.innerHTML = s.heroTitle.map((w, i) =>
+      `<span class="word" style="animation-delay:${0.4 + i*0.25}s">${w}</span>`
+    ).join(' ');
+
+    // Reset reveal animations
+    message.style.animation = 'none';
+    void message.offsetWidth;
+    message.style.animation = 'fade-up 0.8s ' + (0.4 + s.heroTitle.length*0.25 + 0.4) + 's ease forwards';
+    message.innerHTML = s.heroMessage;
+
+    wisdom.innerHTML = s.wisdom;
+
+    // Stats
+    document.getElementById('statStreak').textContent   = s.stats.streak;
+    document.getElementById('statHours').textContent    = s.stats.hours;
+    document.getElementById('statSessions').textContent = s.stats.sessions;
+    document.getElementById('statBypass').textContent   = s.stats.bypass;
+
+    // Energy chip
+    document.querySelectorAll('.e-chip').forEach(c => c.classList.remove('active'));
+    const energy = document.querySelector(`.e-chip[data-energy="${s.activeEnergy}"]`);
+    if (energy) energy.classList.add('active');
+
+    // Buttons
+    bottomBar.style.display = s.showButtons ? 'block' : 'none';
+    if (s.acceptLabel) acceptBtn.textContent = s.acceptLabel;
+  }
+
+  applyState('burnout');
+
+  document.querySelectorAll('.state-tab').forEach(tab => {
+    tab.addEventListener('click', () => {
+      document.querySelectorAll('.state-tab').forEach(t => t.classList.remove('active'));
+      tab.classList.add('active');
+      applyState(tab.dataset.state);
+    });
+  });
+
+  // Manual energy chip select (for fun)
+  document.querySelectorAll('.e-chip').forEach(chip => {
+    chip.addEventListener('click', () => {
+      document.querySelectorAll('.e-chip').forEach(c => c.classList.remove('active'));
+      chip.classList.add('active');
+    });
+  });
+
+  // Spawn petals
+  function spawnPetals() {
+    const petals = document.getElementById('petals');
+    for (let i = 0; i < 14; i++) {
+      const p = document.createElement('span');
+      p.style.left = Math.random() * 100 + '%';
+      p.style.animationDuration = (10 + Math.random() * 8) + 's';
+      p.style.animationDelay = (Math.random() * 12) + 's';
+      petals.appendChild(p);
+    }
+  }
+  spawnPetals();
+</script>
+
+<script src="nav-overlay.js" defer></script>
+</body>
+</html>

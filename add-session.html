@@ -1,0 +1,824 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>M-VoW AI — Yangi Sessiya</title>
+<link rel="manifest" href="manifest.webmanifest">
+<meta name="theme-color" content="#04060B">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="M·VoW">
+<link rel="apple-touch-icon" href="assets/mnsm-logo.png">
+<link rel="icon" type="image/png" href="assets/mnsm-logo.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --void:        #04060B;
+    --void-2:      #0A0E16;
+    --shadow:      #11151D;
+    --steel:       #1A1F2A;
+
+    --text-primary: #F5F2EC;
+    --text-body:    #B8BBC2;
+    --text-muted:   #6B6E76;
+    --text-ghost:   #3A3D44;
+
+    --gold:        #E8C77E;
+    --gold-2:      #C7A36B;
+    --gold-deep:   #8a6f44;
+    --gold-flash:  #FFE9B5;
+    --honey:       #D4A574;
+    --cream:       #F0E5D2;
+
+    --crimson:     #B8334A;
+    --crimson-deep:#6B1F1F;
+    --emerald:     #4A8A5C;
+    --emerald-deep:#1F3D2A;
+  }
+
+  body {
+    background: #14171d;
+    font-family: 'Inter', sans-serif;
+    color: var(--text-primary);
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 24px;
+  }
+
+  .phone {
+    width: 380px;
+    height: 800px;
+    background: var(--void);
+    border-radius: 40px;
+    overflow: hidden;
+    position: relative;
+    box-shadow:
+      0 0 0 8px #2a2e36,
+      0 30px 80px rgba(0,0,0,0.85),
+      0 0 100px rgba(232,199,126,0.07);
+  }
+
+  .backdrop {
+    position: absolute; inset: 0;
+    background:
+      radial-gradient(ellipse 90% 50% at 50% 30%, rgba(212,165,116,0.10), transparent 65%),
+      linear-gradient(180deg, var(--void) 0%, var(--void-2) 50%, var(--void) 100%);
+  }
+
+  .gilt-frame {
+    position: absolute; inset: 14px;
+    border: 1px solid rgba(232,199,126,0.18);
+    border-radius: 26px;
+    pointer-events: none;
+    z-index: 4;
+  }
+
+  .pattern-wash {
+    position: absolute; inset: 0;
+    opacity: 0.025;
+    background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='100' height='100' viewBox='0 0 100 100'><g fill='none' stroke='%23E8C77E' stroke-width='0.5'><polygon points='50,5 62,38 95,38 70,58 80,90 50,72 20,90 30,58 5,38 38,38'/></g></svg>");
+    background-size: 130px 130px;
+    pointer-events: none;
+    z-index: 1;
+  }
+
+  .letterbox {
+    position: absolute;
+    left: 0; right: 0;
+    height: 14px;
+    background: var(--void);
+    z-index: 7;
+    pointer-events: none;
+  }
+  .letterbox.top { top: 0; }
+  .letterbox.bottom { bottom: 0; }
+
+  /* === Header === */
+  .header-row {
+    position: absolute;
+    top: 26px; left: 24px; right: 24px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    z-index: 5;
+  }
+  .header-stamp {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 5px 12px;
+    border: 1px solid var(--honey);
+    border-radius: 999px;
+    background: rgba(212,165,116,0.08);
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 9px;
+    letter-spacing: 4px;
+    color: var(--honey);
+  }
+  .header-stamp .star { color: var(--gold); font-size: 8px; }
+  .close-btn {
+    width: 28px; height: 28px;
+    display: flex; align-items: center; justify-content: center;
+    border: 1px solid var(--gold-deep);
+    border-radius: 50%;
+    cursor: pointer;
+    background: rgba(232,199,126,0.04);
+    color: var(--gold);
+    font-family: 'Inter', sans-serif;
+    font-size: 16px;
+    line-height: 1;
+  }
+
+  /* === Mentor question === */
+  .mentor-question {
+    position: absolute;
+    top: 70px; left: 24px; right: 24px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    z-index: 4;
+  }
+  .mentor-orb {
+    width: 26px; height: 26px;
+    border-radius: 50%;
+    background: radial-gradient(circle at 35% 35%, var(--gold-flash), var(--gold) 60%, var(--gold-deep));
+    box-shadow: 0 0 12px rgba(232,199,126,0.5);
+    flex-shrink: 0;
+    animation: orb-pulse 2.4s ease-in-out infinite;
+  }
+  @keyframes orb-pulse {
+    0%, 100% { transform: scale(0.95); }
+    50%      { transform: scale(1.08); }
+  }
+  .mentor-question .text {
+    font-family: 'Cormorant Garamond', serif;
+    font-style: italic;
+    font-size: 17px;
+    color: var(--text-primary);
+    font-weight: 500;
+    letter-spacing: 0.3px;
+    line-height: 1.3;
+  }
+  .mentor-question .text .em { color: var(--honey); }
+
+  /* === Preview card (live updates) === */
+  .preview-card {
+    position: absolute;
+    top: 124px; left: 24px; right: 24px;
+    padding: 16px 18px;
+    background: linear-gradient(135deg, rgba(184,51,74,0.08) 0%, rgba(232,199,126,0.06) 100%);
+    border: 1px solid rgba(232,199,126,0.30);
+    border-radius: 4px;
+    z-index: 4;
+    transition: border-color 0.6s, background 0.6s;
+  }
+  .phone[data-sev="max"] .preview-card {
+    background: linear-gradient(135deg, rgba(184,51,74,0.10) 0%, rgba(232,199,126,0.06) 100%);
+    border-color: rgba(184,51,74,0.30);
+  }
+  .preview-card .head {
+    display: flex; justify-content: space-between; align-items: center;
+    margin-bottom: 8px;
+  }
+  .preview-card .stamp {
+    display: inline-flex; align-items: center; gap: 5px;
+    padding: 3px 8px;
+    border: 1px solid var(--gold);
+    border-radius: 999px;
+    background: rgba(232,199,126,0.10);
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 8px;
+    letter-spacing: 3px;
+    color: var(--gold);
+  }
+  .phone[data-sev="max"] .preview-card .stamp { color: var(--crimson); border-color: var(--crimson); background: rgba(184,51,74,0.10); }
+  .preview-card .stamp .pulse-dot {
+    width: 4px; height: 4px;
+    border-radius: 50%;
+    background: currentColor;
+    box-shadow: 0 0 6px currentColor;
+    animation: blink 1.4s ease-in-out infinite;
+  }
+  @keyframes blink { 0%,100% { opacity: 0.4; } 50% { opacity: 1; } }
+
+  .preview-card .preview-time {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    color: var(--gold);
+    letter-spacing: 1px;
+  }
+  .preview-card .preview-title {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 22px;
+    font-weight: 600;
+    color: var(--text-primary);
+    line-height: 1.2;
+    margin-bottom: 4px;
+  }
+  .preview-card .preview-goal {
+    font-family: 'Cormorant Garamond', serif;
+    font-style: italic;
+    font-size: 13px;
+    color: var(--text-muted);
+    line-height: 1.45;
+    margin-bottom: 10px;
+  }
+  .preview-card .preview-meta {
+    display: flex; gap: 12px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 9px;
+    letter-spacing: 1.5px;
+    color: var(--gold-deep);
+  }
+  .preview-card .preview-meta .icon { color: var(--gold); }
+
+  /* === Form === */
+  .form {
+    position: absolute;
+    top: 280px; left: 24px; right: 24px;
+    z-index: 4;
+  }
+  .field {
+    margin-bottom: 10px;
+  }
+  .field-row {
+    display: flex; align-items: center; gap: 10px;
+    padding: 10px 12px;
+    background: rgba(232,199,126,0.025);
+    border: 1px solid rgba(138,111,68,0.30);
+    border-radius: 4px;
+    transition: all 0.2s;
+  }
+  .field-row:focus-within { border-color: var(--gold); }
+  .field-row .lbl {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 8.5px;
+    letter-spacing: 3px;
+    color: var(--gold-deep);
+    flex-shrink: 0;
+    min-width: 56px;
+  }
+  .field-row .val {
+    flex: 1;
+    font-family: 'Cormorant Garamond', serif;
+    font-style: italic;
+    font-size: 14px;
+    color: var(--text-primary);
+    background: none;
+    border: none;
+    outline: none;
+    letter-spacing: 0.3px;
+  }
+  .field-row .val.placeholder { color: var(--text-ghost); }
+  .field-row .mic-mini {
+    width: 22px; height: 22px;
+    border-radius: 50%;
+    background: rgba(232,199,126,0.10);
+    border: 1px solid var(--gold-deep);
+    display: flex; align-items: center; justify-content: center;
+    color: var(--gold);
+    cursor: pointer;
+    flex-shrink: 0;
+  }
+  .field-row .mic-mini svg { width: 11px; height: 11px; fill: currentColor; }
+
+  /* === Severity selector === */
+  .severity-block {
+    margin-top: 12px;
+  }
+  .severity-block .lbl {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 8.5px;
+    letter-spacing: 3px;
+    color: var(--gold-deep);
+    margin-bottom: 6px;
+  }
+  .sev-chips {
+    display: flex; gap: 5px;
+  }
+  .sev-chip {
+    flex: 1;
+    padding: 7px 4px;
+    text-align: center;
+    border: 1px solid var(--gold-deep);
+    border-radius: 3px;
+    background: rgba(232,199,126,0.03);
+    cursor: pointer;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 8.5px;
+    letter-spacing: 1.5px;
+    color: var(--gold-deep);
+    transition: all 0.2s;
+    user-select: none;
+  }
+  .sev-chip:hover { color: var(--gold); border-color: var(--gold); }
+  .sev-chip.active {
+    background: rgba(232,199,126,0.10);
+    color: var(--gold);
+    border-color: var(--gold);
+    box-shadow: 0 0 10px rgba(232,199,126,0.25);
+  }
+  .sev-chip[data-sev="max"].active {
+    color: var(--crimson);
+    border-color: var(--crimson);
+    background: rgba(184,51,74,0.10);
+    box-shadow: 0 0 10px rgba(184,51,74,0.30);
+  }
+
+  /* === Type / Whitelist === */
+  .type-block {
+    margin-top: 12px;
+    display: flex; gap: 6px;
+  }
+  .type-card {
+    flex: 1;
+    padding: 8px 10px;
+    border: 1px solid var(--gold-deep);
+    border-radius: 3px;
+    background: rgba(232,199,126,0.03);
+    cursor: pointer;
+    transition: all 0.2s;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .type-card.active { border-color: var(--gold); background: rgba(232,199,126,0.08); box-shadow: 0 0 10px rgba(232,199,126,0.20); }
+  .type-card .ic {
+    font-size: 16px;
+    color: var(--gold);
+  }
+  .type-card .info { display: flex; flex-direction: column; gap: 1px; }
+  .type-card .name {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 9px;
+    letter-spacing: 2px;
+    color: var(--gold);
+  }
+  .type-card .sub {
+    font-family: 'Cormorant Garamond', serif;
+    font-style: italic;
+    font-size: 10px;
+    color: var(--text-muted);
+  }
+
+  /* === Mentor commentary === */
+  .mentor-commentary {
+    position: absolute;
+    top: 596px; left: 24px; right: 24px;
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    padding: 12px 14px;
+    background: rgba(212,165,116,0.05);
+    border-left: 2px solid var(--honey);
+    border-radius: 0 4px 4px 0;
+    z-index: 4;
+  }
+  .mentor-commentary .orb {
+    width: 18px; height: 18px;
+    border-radius: 50%;
+    background: radial-gradient(circle at 35% 35%, var(--gold-flash), var(--gold) 60%, var(--gold-deep));
+    box-shadow: 0 0 8px rgba(232,199,126,0.5);
+    flex-shrink: 0;
+    margin-top: 2px;
+  }
+  .mentor-commentary .text {
+    font-family: 'Cormorant Garamond', serif;
+    font-style: italic;
+    font-size: 13px;
+    color: var(--text-body);
+    line-height: 1.5;
+    letter-spacing: 0.3px;
+  }
+  .mentor-commentary .text .em { color: var(--honey); font-weight: 600; }
+
+  /* === Bottom action === */
+  .bottom-bar {
+    position: absolute;
+    bottom: 24px; left: 24px; right: 24px;
+    z-index: 5;
+  }
+
+  .save-btn {
+    width: 100%;
+    background: linear-gradient(180deg, var(--cream) 0%, var(--gold) 50%, var(--gold-deep) 100%);
+    color: var(--void);
+    padding: 14px;
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 5px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    text-transform: uppercase;
+    font-family: 'Inter', sans-serif;
+    box-shadow:
+      0 0 22px rgba(232,199,126,0.40),
+      inset 0 1px 0 rgba(255,255,255,0.5);
+    transition: all 0.2s;
+    position: relative;
+    overflow: hidden;
+  }
+  .save-btn::before {
+    content: '';
+    position: absolute; inset: 0;
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.4), transparent);
+    transform: translateX(-100%);
+    animation: shimmer 3s ease-in-out infinite;
+  }
+  @keyframes shimmer {
+    0%   { transform: translateX(-100%); }
+    50%  { transform: translateX(100%); }
+    100% { transform: translateX(100%); }
+  }
+  .save-btn:hover { transform: scale(1.02); letter-spacing: 6px; }
+
+  .save-row {
+    display: flex; gap: 6px; margin-top: 8px;
+  }
+  .save-row .secondary-btn {
+    flex: 1;
+    background: none;
+    border: 1px solid var(--gold-deep);
+    color: var(--gold-deep);
+    padding: 8px;
+    font-size: 9px;
+    letter-spacing: 2px;
+    border-radius: 2px;
+    cursor: pointer;
+    font-family: 'Inter', sans-serif;
+    text-transform: uppercase;
+    transition: all 0.2s;
+  }
+  .save-row .secondary-btn:hover { color: var(--gold); border-color: var(--gold); }
+
+  .vignette {
+    position: absolute; inset: 0;
+    pointer-events: none;
+    background: radial-gradient(ellipse 110% 80% at 50% 50%, transparent 60%, rgba(0,0,0,0.4));
+    z-index: 6;
+  }
+
+  /* === Tabs (preview) === */
+  .state-tabs {
+    display: flex;
+    justify-content: center;
+    gap: 6px;
+    margin-top: 18px;
+    flex-wrap: wrap;
+  }
+  .state-tab {
+    padding: 7px 14px;
+    border-radius: 2px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 2px;
+    color: rgba(255,255,255,0.4);
+    cursor: pointer;
+    border: 1px solid rgba(255,255,255,0.08);
+    user-select: none;
+    transition: all 0.2s;
+  }
+  .state-tab:hover { color: var(--honey); border-color: var(--gold-deep); }
+  .state-tab.active {
+    color: var(--honey);
+    border-color: var(--honey);
+    background: rgba(212,165,116,0.10);
+  }
+
+  .footer-info {
+    margin-top: 22px;
+    text-align: center;
+    color: rgba(255,255,255,0.45);
+    font-size: 13px;
+    line-height: 1.6;
+    font-family: 'Cormorant Garamond', serif;
+    font-style: italic;
+  }
+
+  @media (max-width: 480px) {
+    body { padding: 0; }
+    .phone {
+      width: 100vw;
+      height: 100vh;
+      border-radius: 0;
+      box-shadow: none;
+    }
+    .footer-info, .state-tabs { display: none; }
+  }
+</style>
+</head>
+<body>
+
+<div style="display:flex; flex-direction:column; align-items:center;">
+
+  <div class="phone" id="phone" data-sev="max" data-state="ready">
+    <div class="backdrop"></div>
+    <div class="pattern-wash"></div>
+    <div class="gilt-frame"></div>
+    <div class="letterbox top"></div>
+    <div class="letterbox bottom"></div>
+
+    <!-- Header -->
+    <div class="header-row">
+      <div class="header-stamp">
+        <span class="star">✦</span>
+        <span>BIRGA QURAMIZ</span>
+      </div>
+      <div class="close-btn">×</div>
+    </div>
+
+    <!-- Mentor question -->
+    <div class="mentor-question">
+      <div class="mentor-orb"></div>
+      <div class="text" id="mentorAsk">Aziz, qaysi <span class="em">yo'lni</span> quramiz?</div>
+    </div>
+
+    <!-- Preview card (live) -->
+    <div class="preview-card">
+      <div class="head">
+        <div class="stamp">
+          <div class="pulse-dot"></div>
+          <span id="prevStampText">MUQADDAS · KEYINGI</span>
+        </div>
+        <div class="preview-time" id="prevTime">14:30 — 15:15</div>
+      </div>
+      <div class="preview-title" id="prevTitle">Qur'on darsi</div>
+      <div class="preview-goal" id="prevGoal">Bugun yana bir bobni o'zlashtirish</div>
+      <div class="preview-meta">
+        <span><span class="icon">∼</span> <span id="prevDuration">45 DAQ</span></span>
+        <span><span class="icon">↻</span> HAR KUNI</span>
+        <span><span class="icon">▥</span> <span id="prevType">SOLO</span></span>
+      </div>
+    </div>
+
+    <!-- Form -->
+    <div class="form">
+      <!-- Title -->
+      <div class="field">
+        <div class="field-row">
+          <span class="lbl">NOMI</span>
+          <input class="val" id="inputTitle" value="Qur'on darsi" />
+          <div class="mic-mini" title="Ovoz bilan">
+            <svg viewBox="0 0 24 24"><path d="M12 14a3 3 0 0 0 3-3V5a3 3 0 0 0-6 0v6a3 3 0 0 0 3 3z M19 11a7 7 0 0 1-14 0 M12 18v3"/></svg>
+          </div>
+        </div>
+      </div>
+
+      <!-- Goal -->
+      <div class="field">
+        <div class="field-row">
+          <span class="lbl">MAQSAD</span>
+          <input class="val" id="inputGoal" value="Bugun yana bir bobni o'zlashtirish" />
+          <div class="mic-mini" title="Ovoz bilan">
+            <svg viewBox="0 0 24 24"><path d="M12 14a3 3 0 0 0 3-3V5a3 3 0 0 0-6 0v6a3 3 0 0 0 3 3z M19 11a7 7 0 0 1-14 0 M12 18v3"/></svg>
+          </div>
+        </div>
+      </div>
+
+      <!-- Time -->
+      <div class="field">
+        <div class="field-row">
+          <span class="lbl">VAQT</span>
+          <input class="val" id="inputTime" value="14:30 — 15:15 · har kuni" />
+        </div>
+      </div>
+
+      <!-- Severity -->
+      <div class="severity-block">
+        <div class="lbl">QANCHA MUHIM?</div>
+        <div class="sev-chips" id="sevChips">
+          <div class="sev-chip active" data-sev="max">MUQADDAS</div>
+          <div class="sev-chip" data-sev="high">YUQORI</div>
+          <div class="sev-chip" data-sev="med">REJADAGI</div>
+          <div class="sev-chip" data-sev="low">OPTSIYONAL</div>
+        </div>
+      </div>
+
+      <!-- Type -->
+      <div class="type-block">
+        <div class="type-card active" data-type="solo">
+          <div class="ic">🛡</div>
+          <div class="info">
+            <div class="name">SOLO FOKUS</div>
+            <div class="sub">hammasi bloklanadi</div>
+          </div>
+        </div>
+        <div class="type-card" data-type="online">
+          <div class="ic">↗</div>
+          <div class="info">
+            <div class="name">ONLINE DARS</div>
+            <div class="sub">whitelist · 2 ilova</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Mentor commentary -->
+    <div class="mentor-commentary">
+      <div class="orb"></div>
+      <div class="text" id="commentaryText">
+        Yaxshi reja. <span class="em">14:30</span> — kuchli vaqt, charchamagan paytda. Eslataman, sen tayyorlanasan.
+      </div>
+    </div>
+
+    <!-- Save -->
+    <div class="bottom-bar">
+      <button class="save-btn">SESSIYANI MUHRLASH</button>
+      <div class="save-row">
+        <button class="secondary-btn">Ovoz va'dasini qo'sh</button>
+        <button class="secondary-btn">Bekor qilish</button>
+      </div>
+    </div>
+
+    <div class="vignette"></div>
+  </div>
+
+  <!-- State tabs -->
+  <div class="state-tabs">
+    <div class="state-tab" data-mode="empty">BO'SH</div>
+    <div class="state-tab" data-mode="filling">TUSHIRAYAPMAN</div>
+    <div class="state-tab active" data-mode="ready">TAYYOR</div>
+    <div class="state-tab" data-mode="online-class">ONLINE DARS</div>
+  </div>
+
+  <div class="footer-info">
+    AddSession — mentor do'st sifatida birga reja qurish
+  </div>
+</div>
+
+<script>
+  const states = {
+    empty: {
+      ask: 'Aziz, qaysi <span class="em">yo\'lni</span> quramiz?',
+      stamp: '○ TANLAB OLINMAGAN',
+      title: '— nom yo\'q —',
+      titlePlaceholder: true,
+      goal: '— maqsad yo\'q —',
+      goalPlaceholder: true,
+      time: '— vaqt belgilanmagan —',
+      duration: '— DAQ',
+      sev: 'max',
+      type: 'solo',
+      typeName: 'SOLO',
+      commentary: '<span class="em">Boshlaylik</span>. Avval — nima qilmoqchisan? Ovoz bilan ham aytsang bo\'ladi.',
+      titleVal: '',
+      goalVal: '',
+      timeVal: ''
+    },
+    filling: {
+      ask: 'Yaxshi. <span class="em">Davom et</span>.',
+      stamp: 'YOZILMOQDA',
+      title: 'Qur\'on darsi',
+      titlePlaceholder: false,
+      goal: '— maqsad yo\'q —',
+      goalPlaceholder: true,
+      time: '— vaqt belgilanmagan —',
+      duration: '— DAQ',
+      sev: 'max',
+      type: 'solo',
+      typeName: 'SOLO',
+      commentary: '<span class="em">Yaxshi nom</span>. Endi ayt — nima maqsading? Aniq maqsad — yarmi yutuq.',
+      titleVal: 'Qur\'on darsi',
+      goalVal: '',
+      timeVal: ''
+    },
+    ready: {
+      ask: 'Mana sening yo\'ling. <span class="em">Tasdiqlasakmi?</span>',
+      stamp: 'MUQADDAS · KEYINGI',
+      title: 'Qur\'on darsi',
+      titlePlaceholder: false,
+      goal: 'Bugun yana bir bobni o\'zlashtirish',
+      goalPlaceholder: false,
+      time: '14:30 — 15:15',
+      duration: '45 DAQ',
+      sev: 'max',
+      type: 'solo',
+      typeName: 'SOLO',
+      commentary: 'Yaxshi reja. <span class="em">14:30</span> — kuchli vaqt, charchamagan paytda. Eslataman, sen tayyorlanasan.',
+      titleVal: 'Qur\'on darsi',
+      goalVal: 'Bugun yana bir bobni o\'zlashtirish',
+      timeVal: '14:30 — 15:15 · har kuni'
+    },
+    'online-class': {
+      ask: 'Online dars — kim bilan?',
+      stamp: 'YUQORI · ONLINE',
+      title: 'Algoritm darsi',
+      titlePlaceholder: false,
+      goal: '12-mavzu · graf algoritmlari',
+      goalPlaceholder: false,
+      time: '19:00 — 20:30',
+      duration: '90 DAQ',
+      sev: 'high',
+      type: 'online',
+      typeName: 'TELEGRAM · @algoritm_dars_2026',
+      commentary: 'Telegram dars — <span class="em">faqat shu guruhda</span> bo\'lasan. Boshqa chatlar bloklangan. Qatnashish — eshitish.',
+      titleVal: 'Algoritm darsi',
+      goalVal: '12-mavzu · graf algoritmlari',
+      timeVal: '19:00 — 20:30 · har dushanba/payshanba'
+    }
+  };
+
+  const phone     = document.getElementById('phone');
+  const ask       = document.getElementById('mentorAsk');
+  const prevStamp = document.getElementById('prevStampText');
+  const prevTitle = document.getElementById('prevTitle');
+  const prevGoal  = document.getElementById('prevGoal');
+  const prevTime  = document.getElementById('prevTime');
+  const prevDur   = document.getElementById('prevDuration');
+  const prevType  = document.getElementById('prevType');
+  const inpTitle  = document.getElementById('inputTitle');
+  const inpGoal   = document.getElementById('inputGoal');
+  const inpTime   = document.getElementById('inputTime');
+  const commentary= document.getElementById('commentaryText');
+
+  function applyMode(mode) {
+    const s = states[mode];
+    phone.dataset.sev = s.sev;
+    phone.dataset.type = s.type;
+
+    ask.innerHTML = s.ask;
+
+    prevStamp.textContent = s.stamp;
+    prevTitle.textContent = s.title;
+    prevGoal.textContent  = s.goal;
+    prevTime.textContent  = s.time;
+    prevDur.textContent   = s.duration;
+    prevType.textContent  = s.typeName;
+
+    prevTitle.style.color = s.titlePlaceholder ? 'var(--text-ghost)' : 'var(--text-primary)';
+    prevTitle.style.fontStyle = s.titlePlaceholder ? 'italic' : 'normal';
+    prevGoal.style.color  = s.goalPlaceholder  ? 'var(--text-ghost)' : 'var(--text-muted)';
+
+    inpTitle.value = s.titleVal;
+    inpGoal.value  = s.goalVal;
+    inpTime.value  = s.timeVal;
+
+    document.querySelectorAll('.sev-chip').forEach(c =>
+      c.classList.toggle('active', c.dataset.sev === s.sev)
+    );
+    document.querySelectorAll('.type-card').forEach(c =>
+      c.classList.toggle('active', c.dataset.type === s.type)
+    );
+
+    commentary.innerHTML = s.commentary;
+  }
+
+  applyMode('ready');
+
+  document.querySelectorAll('.state-tab').forEach(tab => {
+    tab.addEventListener('click', () => {
+      document.querySelectorAll('.state-tab').forEach(t => t.classList.remove('active'));
+      tab.classList.add('active');
+      applyMode(tab.dataset.mode);
+    });
+  });
+
+  // Live preview as user types
+  inpTitle.addEventListener('input', () => {
+    prevTitle.textContent = inpTitle.value || '— nom yo\'q —';
+    prevTitle.style.color = inpTitle.value ? 'var(--text-primary)' : 'var(--text-ghost)';
+  });
+  inpGoal.addEventListener('input', () => {
+    prevGoal.textContent = inpGoal.value || '— maqsad yo\'q —';
+    prevGoal.style.color = inpGoal.value ? 'var(--text-muted)' : 'var(--text-ghost)';
+  });
+
+  // Severity chip clicks
+  document.querySelectorAll('.sev-chip').forEach(chip => {
+    chip.addEventListener('click', () => {
+      document.querySelectorAll('.sev-chip').forEach(c => c.classList.remove('active'));
+      chip.classList.add('active');
+      phone.dataset.sev = chip.dataset.sev;
+      const sevLabel = chip.textContent;
+      const stampMap = {
+        max: 'MUQADDAS · KEYINGI',
+        high: 'YUQORI · KEYINGI',
+        med: 'REJADAGI · KEYINGI',
+        low: 'OPTSIYONAL · KEYINGI'
+      };
+      prevStamp.textContent = stampMap[chip.dataset.sev] || sevLabel;
+    });
+  });
+
+  // Type clicks
+  document.querySelectorAll('.type-card').forEach(card => {
+    card.addEventListener('click', () => {
+      document.querySelectorAll('.type-card').forEach(c => c.classList.remove('active'));
+      card.classList.add('active');
+      const type = card.dataset.type;
+      prevType.textContent = type === 'solo' ? 'SOLO' : 'TELEGRAM';
+    });
+  });
+</script>
+
+<script src="nav-overlay.js" defer></script>
+</body>
+</html>

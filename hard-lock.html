@@ -1,0 +1,434 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>M-VoW AI — Hard Lock Preview</title>
+<link rel="manifest" href="manifest.webmanifest">
+<meta name="theme-color" content="#04060B">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="M·VoW">
+<link rel="apple-touch-icon" href="assets/mnsm-logo.png">
+<link rel="icon" type="image/png" href="assets/mnsm-logo.png">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@500&display=swap" rel="stylesheet">
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --void:        #0A0E14;
+    --shadow:      #11151D;
+    --steel:       #1A1F2A;
+    --iron:        #232936;
+
+    --text-primary: #F5F2EC;
+    --text-body:    #B8BBC2;
+    --text-muted:   #6B6E76;
+    --text-ghost:   #3A3D44;
+
+    --glow:        #00E5D4;
+    --glow-end:    #00B5A8;
+    --glow-dim:    #007D75;
+  }
+
+  body {
+    background: #1a1d24;
+    font-family: 'Inter', sans-serif;
+    color: var(--text-primary);
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 24px;
+  }
+
+  /* Telefon ramkasi */
+  .phone {
+    width: 380px;
+    height: 800px;
+    background: var(--void);
+    border-radius: 40px;
+    overflow: hidden;
+    position: relative;
+    box-shadow:
+      0 0 0 8px #2a2e36,
+      0 30px 80px rgba(0,0,0,0.7),
+      0 0 60px rgba(0,229,212,0.05);
+    display: flex;
+    flex-direction: column;
+  }
+
+  /* Header */
+  .header {
+    height: 56px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    padding-top: 8px;
+  }
+
+  .shield {
+    width: 18px;
+    height: 18px;
+    position: relative;
+  }
+  .shield svg { width: 100%; height: 100%; }
+
+  .brand {
+    font-weight: 700;
+    font-size: 16px;
+    letter-spacing: 4px;
+    color: var(--text-primary);
+  }
+
+  /* Hard Lock badge */
+  .lock-badge {
+    align-self: center;
+    background: var(--shadow);
+    color: var(--glow);
+    border: 1px solid var(--glow-dim);
+    padding: 6px 16px;
+    border-radius: 999px;
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 3px;
+    margin-top: 12px;
+  }
+
+  /* Timer ring */
+  .timer-wrap {
+    flex: 0 0 auto;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-top: 40px;
+    position: relative;
+  }
+
+  .ring-container {
+    width: 240px;
+    height: 240px;
+    position: relative;
+  }
+
+  .ring-svg {
+    width: 100%;
+    height: 100%;
+    transform: rotate(-90deg);
+    filter: drop-shadow(0 0 20px rgba(0,229,212,0.55));
+  }
+
+  .ring-track  { stroke: var(--iron); fill: none; }
+  .ring-progress {
+    stroke: var(--glow);
+    fill: none;
+    stroke-linecap: round;
+    transition: stroke-dashoffset 1s linear;
+  }
+
+  .timer-label {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    text-align: center;
+  }
+
+  .timer-digits {
+    font-family: 'JetBrains Mono', monospace;
+    font-weight: 500;
+    font-size: 44px;
+    color: var(--glow);
+    letter-spacing: 2px;
+  }
+
+  .timer-sub {
+    margin-top: 4px;
+    font-size: 9px;
+    font-weight: 600;
+    letter-spacing: 2px;
+    color: var(--text-muted);
+    text-transform: uppercase;
+  }
+
+  /* Task pill */
+  .task-pill {
+    align-self: center;
+    background: linear-gradient(135deg, var(--glow), var(--glow-end));
+    color: var(--void);
+    padding: 12px 28px;
+    border-radius: 999px;
+    font-weight: 700;
+    font-size: 13px;
+    letter-spacing: 3px;
+    margin-top: 32px;
+    text-transform: uppercase;
+  }
+
+  /* Blocked distractions */
+  .distractions {
+    margin-top: 28px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .distractions-label {
+    font-size: 10px;
+    font-weight: 600;
+    letter-spacing: 3px;
+    color: var(--text-muted);
+    margin-bottom: 4px;
+  }
+
+  .distraction-row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 12px;
+    font-weight: 500;
+    letter-spacing: 1.5px;
+    color: var(--text-muted);
+    text-decoration: line-through;
+  }
+
+  .distraction-row svg {
+    width: 14px;
+    height: 14px;
+    fill: none;
+    stroke: var(--glow-dim);
+    stroke-width: 1.5;
+  }
+
+  /* Spacer */
+  .spacer { flex: 1 1 auto; }
+
+  /* Bottom drawer */
+  .drawer {
+    background: var(--shadow);
+    padding: 24px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 12px;
+  }
+
+  .mic-wrapper {
+    position: relative;
+    width: 112px;
+    height: 112px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .mic-halo {
+    position: absolute;
+    width: 96px;
+    height: 96px;
+    border-radius: 50%;
+    background: var(--glow);
+    filter: blur(20px);
+    opacity: 0.4;
+    animation: pulse 1.4s ease-in-out infinite alternate;
+  }
+
+  @keyframes pulse {
+    from { opacity: 0.3; transform: scale(0.95); }
+    to   { opacity: 0.6; transform: scale(1.05); }
+  }
+
+  .mic-button {
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    background: var(--glow);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    z-index: 1;
+  }
+
+  .mic-button svg { width: 32px; height: 32px; fill: var(--void); }
+
+  .drawer-caption {
+    font-size: 10px;
+    font-weight: 600;
+    letter-spacing: 3px;
+    color: var(--text-muted);
+  }
+
+  .cancel-btn {
+    border: 1px solid var(--text-ghost);
+    border-radius: 4px;
+    padding: 8px 16px;
+    font-size: 11px;
+    font-weight: 500;
+    letter-spacing: 2px;
+    color: var(--text-muted);
+    cursor: pointer;
+    background: transparent;
+  }
+
+  .focus-text {
+    font-size: 12px;
+    font-weight: 500;
+    color: var(--text-body);
+    letter-spacing: 1px;
+    margin-top: 4px;
+    text-align: center;
+  }
+
+  .tts-text {
+    font-size: 10px;
+    color: var(--text-ghost);
+    letter-spacing: 2px;
+    text-align: center;
+  }
+
+  /* Caption tashqarida */
+  .footer-info {
+    margin-top: 32px;
+    text-align: center;
+    color: rgba(255,255,255,0.4);
+    font-size: 13px;
+    line-height: 1.6;
+  }
+
+  .footer-info code {
+    background: rgba(255,255,255,0.08);
+    padding: 2px 8px;
+    border-radius: 4px;
+    color: var(--glow);
+  }
+
+  @media (max-width: 480px) {
+    body { padding: 0; }
+    .phone {
+      width: 100vw;
+      height: 100vh;
+      border-radius: 0;
+      box-shadow: none;
+    }
+    .footer-info { display: none; }
+  }
+</style>
+</head>
+<body>
+
+<div class="container" style="display:flex; flex-direction:column; align-items:center;">
+  <div class="phone">
+    <!-- Header -->
+    <div class="header">
+      <div class="shield">
+        <svg viewBox="0 0 18 18">
+          <path d="M9 0 L18 4.5 L18 11.5 Q18 15.3 9 18 Q0 15.3 0 11.5 L0 4.5 Z"
+                fill="none" stroke="#00E5D4" stroke-width="1.5"/>
+          <circle cx="9" cy="9" r="1.5" fill="#00E5D4"/>
+        </svg>
+      </div>
+      <div class="brand">M-VoW</div>
+    </div>
+
+    <!-- Lock badge -->
+    <div class="lock-badge">HARD LOCK</div>
+
+    <!-- Timer ring -->
+    <div class="timer-wrap">
+      <div class="ring-container">
+        <svg class="ring-svg" viewBox="0 0 240 240">
+          <circle class="ring-track" cx="120" cy="120" r="116" stroke-width="4"/>
+          <circle id="progress-ring" class="ring-progress"
+                  cx="120" cy="120" r="116" stroke-width="4"
+                  stroke-dasharray="729" stroke-dashoffset="0"/>
+        </svg>
+        <div class="timer-label">
+          <div class="timer-digits" id="timer">00:34:57</div>
+          <div class="timer-sub">until next planned break</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Task pill -->
+    <div class="task-pill">CHUQUR KOD · API</div>
+
+    <!-- Blocked distractions -->
+    <div class="distractions">
+      <div class="distractions-label">BLOKLANGAN · DIQQATNI O'G'IRLAGUVCHILAR</div>
+      <div class="distraction-row">
+        <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="4.93" y1="4.93" x2="19.07" y2="19.07"/></svg>
+        INSTAGRAM
+      </div>
+      <div class="distraction-row">
+        <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="4.93" y1="4.93" x2="19.07" y2="19.07"/></svg>
+        TIKTOK
+      </div>
+      <div class="distraction-row">
+        <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="4.93" y1="4.93" x2="19.07" y2="19.07"/></svg>
+        YOUTUBE
+      </div>
+    </div>
+
+    <div class="spacer"></div>
+
+    <!-- Bottom drawer -->
+    <div class="drawer">
+      <div class="mic-wrapper">
+        <div class="mic-halo"></div>
+        <div class="mic-button">
+          <svg viewBox="0 0 24 24">
+            <path d="M12 14a3 3 0 0 0 3-3V5a3 3 0 0 0-6 0v6a3 3 0 0 0 3 3z M19 11a7 7 0 0 1-14 0 M12 18v3"
+                  fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+            <rect x="9" y="2" width="6" height="12" rx="3" fill="#0A0E14"/>
+            <path d="M5 11a7 7 0 0 0 14 0 M12 18v3" fill="none" stroke="#0A0E14" stroke-width="2" stroke-linecap="round"/>
+          </svg>
+        </div>
+      </div>
+      <div class="drawer-caption">HOLD TO COMMUNICATE</div>
+      <button class="cancel-btn">CANCEL TASK</button>
+      <div class="focus-text">FOCUS, AZIZ. NO DISTRACTIONS.</div>
+      <div class="tts-text">STAY DISCIPLINED (TTS)</div>
+    </div>
+  </div>
+
+  <div class="footer-info">
+    Bu — <code>HardLockPreviewActivity.kt</code> ning HTML ko'rinishi.<br>
+    Real qurilmada xuddi shunday ko'rinadi.
+  </div>
+</div>
+
+<script>
+  // Live countdown
+  let totalSec = 34 * 60 + 57;
+  const totalRing = 729; // circumference (2 * pi * 116)
+  const startTotal = totalSec;
+
+  function tick() {
+    if (totalSec <= 0) totalSec = startTotal;
+
+    const h = Math.floor(totalSec / 3600);
+    const m = Math.floor((totalSec % 3600) / 60);
+    const s = totalSec % 60;
+
+    const fmt = (n) => String(n).padStart(2, '0');
+    document.getElementById('timer').textContent =
+      h > 0 ? `${fmt(h)}:${fmt(m)}:${fmt(s)}` : `${fmt(m)}:${fmt(s)}`;
+
+    // Ring progress (kamayadi)
+    const progress = totalSec / startTotal;
+    const offset = totalRing * (1 - progress);
+    document.getElementById('progress-ring').style.strokeDashoffset = offset;
+
+    totalSec--;
+  }
+
+  tick();
+  setInterval(tick, 1000);
+</script>
+
+<script src="nav-overlay.js" defer></script>
+</body>
+</html>

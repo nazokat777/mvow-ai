@@ -1,0 +1,427 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>M·VoW — Ertangi Reja</title>
+<link rel="manifest" href="manifest.webmanifest">
+<meta name="theme-color" content="#04060B">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="M·VoW">
+<link rel="apple-touch-icon" href="assets/mnsm-logo.png">
+<link rel="icon" type="image/png" href="assets/mnsm-logo.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;600;700&family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,500&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  :root {
+    --void:#04060B; --void-2:#0A0E16; --shadow:#11151D;
+    --text-primary:#F5F2EC; --text-body:#B8BBC2;
+    --text-muted:#6B6E76; --text-ghost:#3A3D44;
+    --gold:#E8C77E; --gold-2:#C7A36B; --gold-deep:#8a6f44;
+    --gold-flash:#FFE9B5; --honey:#D4A574; --cream:#F0E5D2;
+    --twilight:#6B5C8E; --twilight-deep:#3A2E55;
+    --emerald:#4A8A5C; --emerald-bright:#6BAF7C; --crimson:#B8334A;
+  }
+  body {
+    background: #14171d; font-family: 'Inter',sans-serif;
+    color: var(--text-primary); min-height: 100vh;
+    display: flex; justify-content: center; align-items: flex-start;
+    padding: 24px;
+  }
+  .phone {
+    width: 380px; min-height: 800px;
+    background: var(--void); border-radius: 40px;
+    overflow: hidden; position: relative;
+    box-shadow: 0 0 0 8px #2a2e36, 0 30px 80px rgba(0,0,0,.85), 0 0 100px rgba(107,92,142,.18);
+  }
+  /* Twilight backdrop — evening vibe */
+  .backdrop {
+    position: absolute; inset: 0;
+    background:
+      radial-gradient(ellipse 90% 50% at 50% 30%, rgba(107,92,142,.18), transparent 65%),
+      radial-gradient(ellipse 100% 60% at 50% 100%, rgba(232,199,126,.06), transparent 70%),
+      linear-gradient(180deg, var(--void) 0%, #0E0B18 50%, var(--void) 100%);
+  }
+  .gilt-frame { position:absolute; inset:14px; border:1px solid rgba(232,199,126,.18); border-radius:26px; pointer-events:none; z-index:4; }
+  .letterbox { position:absolute; left:0; right:0; height:14px; background:var(--void); z-index:7; pointer-events:none; }
+  .letterbox.top { top:0; } .letterbox.bottom { bottom:0; }
+
+  /* Tiny stars */
+  .stars { position:absolute; inset:0; z-index:1; pointer-events:none; }
+  .stars span {
+    position:absolute; width:2px; height:2px; border-radius:50%;
+    background:var(--cream); box-shadow:0 0 4px var(--cream);
+    animation: twinkle 3.5s ease-in-out infinite;
+  }
+  @keyframes twinkle { 0%,100%{opacity:.2}50%{opacity:.9} }
+
+  .container { position: relative; padding: 60px 24px 130px; z-index: 2; }
+
+  /* Header */
+  .header-row {
+    display: flex; justify-content: space-between; align-items: center;
+    margin-bottom: 18px;
+  }
+  .time-pill {
+    display: inline-flex; align-items: center; gap: 6px;
+    padding: 5px 12px; border: 1px solid var(--twilight);
+    border-radius: 999px; background: rgba(107,92,142,.10);
+    font-family: 'JetBrains Mono',monospace; font-size: 9px;
+    letter-spacing: 4px; color: var(--twilight);
+  }
+  .time-pill .moon { color: var(--cream); font-size: 11px; }
+  .stamp {
+    padding: 5px 12px; border: 1px solid var(--gold);
+    border-radius: 999px; background: rgba(232,199,126,.08);
+    font-family: 'JetBrains Mono',monospace; font-size: 9px;
+    letter-spacing: 4px; color: var(--gold);
+  }
+
+  /* Mentor invitation */
+  .invite {
+    display: flex; align-items: flex-start; gap: 12px;
+    padding: 14px 14px;
+    background: rgba(107,92,142,.06);
+    border-left: 2px solid var(--twilight);
+    border-radius: 0 4px 4px 0;
+    margin-bottom: 22px;
+  }
+  .invite .orb {
+    width: 26px; height: 26px; flex-shrink: 0; margin-top: 2px;
+    background: url(assets/mnsm-logo.png) center/contain no-repeat;
+    filter: drop-shadow(0 0 6px rgba(232,199,126,.5));
+  }
+  .invite .text {
+    font-family: 'Cormorant Garamond',serif; font-style: italic;
+    font-size: 15px; line-height: 1.5; color: var(--text-primary);
+    font-weight: 500;
+  }
+  .invite .text .em { color: var(--gold); font-weight: 600; font-style: normal; }
+
+  /* Section title */
+  .section-title {
+    display: flex; align-items: baseline; gap: 10px;
+    margin: 14px 0 10px;
+  }
+  .section-title .lbl {
+    font-family: 'JetBrains Mono',monospace; font-size: 9px;
+    letter-spacing: 4px; color: var(--gold-deep);
+  }
+  .section-title .line {
+    flex: 1; height: 1px;
+    background: linear-gradient(90deg, transparent, var(--gold-deep), transparent);
+  }
+  .section-title .count {
+    font-family: 'JetBrains Mono',monospace; font-size: 8.5px;
+    color: var(--gold); letter-spacing: 1.5px;
+  }
+
+  /* Task row */
+  .task-list { display: flex; flex-direction: column; gap: 8px; }
+  .task-row {
+    display: grid;
+    grid-template-columns: 56px 1fr 24px;
+    gap: 12px; align-items: center;
+    padding: 12px 14px;
+    background: rgba(232,199,126,.04);
+    border: 1px solid rgba(138,111,68,.30);
+    border-radius: 8px;
+    transition: all .2s;
+  }
+  .task-row:active { background: rgba(232,199,126,.10); transform: scale(0.99); }
+  .task-row.severity-max {
+    border-color: rgba(184,51,74,.35);
+    background: rgba(184,51,74,.04);
+  }
+
+  .task-row .time {
+    font-family: 'JetBrains Mono',monospace; font-size: 11.5px;
+    letter-spacing: 1px; color: var(--gold);
+    text-align: center; line-height: 1.3;
+  }
+  .task-row.severity-max .time { color: var(--crimson); }
+
+  .task-row .body { min-width: 0; }
+  .task-row .name {
+    font-family: 'Cormorant Garamond',serif; font-weight: 600;
+    font-size: 14px; color: var(--text-primary); line-height: 1.2;
+  }
+  .task-row .meta {
+    margin-top: 3px;
+    font-family: 'JetBrains Mono',monospace; font-size: 8px;
+    letter-spacing: 1.5px; color: var(--gold-deep);
+  }
+  .task-row .meta .dur { color: var(--gold); }
+  .task-row .del {
+    color: var(--text-ghost); font-size: 16px;
+    cursor: pointer; text-align: center;
+  }
+  .task-row .del:active { color: var(--crimson); }
+
+  /* Quick-add chips */
+  .quick-add {
+    display: flex; gap: 6px; flex-wrap: wrap;
+    margin-top: 12px;
+  }
+  .qa-chip {
+    display: inline-flex; align-items: center; gap: 5px;
+    padding: 7px 11px;
+    background: rgba(232,199,126,.06);
+    border: 1px dashed var(--gold-deep);
+    border-radius: 999px;
+    font-family: 'JetBrains Mono',monospace; font-size: 9px;
+    letter-spacing: 1.5px; color: var(--gold);
+    cursor: pointer; user-select: none;
+  }
+  .qa-chip:active { background: rgba(232,199,126,.14); border-style: solid; }
+  .qa-chip .ic { font-size: 11px; }
+
+  /* Voice planning */
+  .voice-row {
+    margin-top: 14px;
+    display: flex; align-items: center; gap: 10px;
+    padding: 12px 14px;
+    background: rgba(232,199,126,.04);
+    border: 1px solid rgba(138,111,68,.30);
+    border-radius: 8px;
+  }
+  .voice-row .mic-btn {
+    width: 36px; height: 36px;
+    border-radius: 50%;
+    background: linear-gradient(180deg, var(--gold-flash), var(--gold), var(--gold-2));
+    color: var(--void);
+    display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0;
+    box-shadow: 0 0 10px rgba(232,199,126,.4);
+  }
+  .voice-row .mic-btn svg { width: 16px; height: 16px; fill: currentColor; }
+  .voice-row .lbl {
+    flex: 1;
+    font-family: 'Cormorant Garamond',serif; font-style: italic;
+    font-size: 13px; color: var(--text-muted);
+  }
+  .voice-row .lbl .em { color: var(--gold); }
+
+  /* Day overview pill */
+  .overview {
+    margin-top: 18px;
+    padding: 12px 14px;
+    background: rgba(107,92,142,.08);
+    border: 1px solid rgba(107,92,142,.4);
+    border-radius: 8px;
+  }
+  .overview .label {
+    font-family: 'JetBrains Mono',monospace; font-size: 8.5px;
+    letter-spacing: 4px; color: var(--twilight); margin-bottom: 6px;
+  }
+  .overview .row {
+    display: flex; justify-content: space-between; align-items: center;
+    font-family: 'Cormorant Garamond',serif; font-style: italic;
+    font-size: 13px; color: var(--text-body);
+  }
+  .overview .row .v { color: var(--cream); font-weight: 600; font-style: normal; }
+
+  /* Mentor closing */
+  .mentor-close {
+    margin-top: 18px;
+    padding: 12px 14px;
+    border-left: 2px solid var(--gold);
+    background: rgba(232,199,126,.05);
+    border-radius: 0 4px 4px 0;
+    font-family: 'Cormorant Garamond',serif; font-style: italic;
+    font-size: 13px; color: var(--text-body); line-height: 1.5;
+  }
+  .mentor-close .em { color: var(--gold); font-weight: 600; }
+
+  /* Bottom seal */
+  .bottom-bar {
+    position: fixed; bottom: 0; left: 50%;
+    transform: translateX(-50%);
+    width: 100%; max-width: 380px;
+    padding: 14px 24px env(safe-area-inset-bottom, 14px);
+    background: linear-gradient(180deg, transparent, rgba(4,6,11,.95) 30%);
+    z-index: 50;
+  }
+  .seal-btn {
+    width: 100%; padding: 14px;
+    background: linear-gradient(180deg, var(--cream), var(--gold), var(--gold-deep));
+    color: var(--void); font-size: 12px; font-weight: 700;
+    letter-spacing: 5px; border: none; border-radius: 4px;
+    cursor: pointer; text-transform: uppercase;
+    box-shadow: 0 0 22px rgba(232,199,126,.40), inset 0 1px 0 rgba(255,255,255,.5);
+  }
+  .seal-btn .ic { margin-right: 4px; }
+  .skip-link {
+    display: block; margin-top: 8px; text-align: center;
+    background: none; border: none; color: var(--text-muted);
+    font-family: 'Cormorant Garamond',serif; font-style: italic;
+    font-size: 12px; cursor: pointer; width: 100%;
+  }
+
+  @media (max-width: 480px) {
+    body { padding: 0; }
+    .phone { width: 100vw; min-height: 100vh; border-radius: 0; box-shadow: none; }
+    .bottom-bar { max-width: 100vw; }
+  }
+</style>
+</head>
+<body>
+
+<div class="phone">
+  <div class="backdrop"></div>
+  <div class="stars" id="stars"></div>
+  <div class="gilt-frame"></div>
+  <div class="letterbox top"></div>
+  <div class="letterbox bottom"></div>
+
+  <div class="container">
+
+    <!-- Header -->
+    <div class="header-row">
+      <div class="time-pill">
+        <span class="moon">☾</span>
+        <span>21:14 · ERTANGI REJA</span>
+      </div>
+      <span class="stamp">KECHQURUN</span>
+    </div>
+
+    <!-- Mentor invitation -->
+    <div class="invite">
+      <div class="orb"></div>
+      <div class="text">
+        Ertangi yo'lni hozir chizamiz. Tongda <span class="em">tasdiqlaysan</span> — kerak bo'lsa o'zgartirib qaytadan.
+      </div>
+    </div>
+
+    <!-- Task list -->
+    <div class="section-title">
+      <span class="lbl">ERTANGI ISHLAR · 11-MAY</span>
+      <span class="line"></span>
+      <span class="count">5</span>
+    </div>
+
+    <div class="task-list">
+      <div class="task-row">
+        <div class="time">06:30<br><span style="color:var(--gold-deep);font-size:8px">15 daq</span></div>
+        <div class="body">
+          <div class="name">Tonggi yengillik</div>
+          <div class="meta">⊙ STRETCH + QUYOSH · <span class="dur">15 DAQ</span></div>
+        </div>
+        <div class="del">×</div>
+      </div>
+
+      <div class="task-row">
+        <div class="time">07:00<br><span style="color:var(--gold-deep);font-size:8px">45 daq</span></div>
+        <div class="body">
+          <div class="name">Yugurish · 5 km</div>
+          <div class="meta">⊙ SPORT · <span class="dur">45 DAQ</span></div>
+        </div>
+        <div class="del">×</div>
+      </div>
+
+      <div class="task-row severity-max">
+        <div class="time">09:00<br><span style="color:var(--gold-deep);font-size:8px">2 soat</span></div>
+        <div class="body">
+          <div class="name">Chuqur kod — API</div>
+          <div class="meta">⊙ POMODORO · 4 SIKL · <span class="dur">2S</span></div>
+        </div>
+        <div class="del">×</div>
+      </div>
+
+      <div class="task-row">
+        <div class="time">13:00<br><span style="color:var(--gold-deep);font-size:8px">45 daq</span></div>
+        <div class="body">
+          <div class="name">Ingliz tili · B2 darsi</div>
+          <div class="meta">↗ ZOOM · MEETING · <span class="dur">45 DAQ</span></div>
+        </div>
+        <div class="del">×</div>
+      </div>
+
+      <div class="task-row">
+        <div class="time">19:00<br><span style="color:var(--gold-deep);font-size:8px">60 daq</span></div>
+        <div class="body">
+          <div class="name">Kitob o'qish · Atomic Habits</div>
+          <div class="meta">⊙ FOKUS · 3 BOB · <span class="dur">60 DAQ</span></div>
+        </div>
+        <div class="del">×</div>
+      </div>
+    </div>
+
+    <!-- Quick add -->
+    <div class="section-title">
+      <span class="lbl">TEZ QO'SH</span>
+      <span class="line"></span>
+    </div>
+    <div class="quick-add">
+      <span class="qa-chip"><span class="ic">⊙</span> Sport</span>
+      <span class="qa-chip"><span class="ic">◇</span> Kod</span>
+      <span class="qa-chip"><span class="ic">▥</span> Kitob</span>
+      <span class="qa-chip"><span class="ic">⌖</span> Til o'rganish</span>
+      <span class="qa-chip"><span class="ic">∼</span> Pomodoro</span>
+      <span class="qa-chip"><span class="ic">☼</span> Oila</span>
+      <span class="qa-chip"><span class="ic">+</span> Boshqa</span>
+    </div>
+
+    <!-- Voice planning -->
+    <div class="voice-row">
+      <div class="mic-btn">
+        <svg viewBox="0 0 24 24"><path d="M12 14a3 3 0 0 0 3-3V5a3 3 0 0 0-6 0v6a3 3 0 0 0 3 3z M19 11a7 7 0 0 1-14 0 M12 18v3"/></svg>
+      </div>
+      <div class="lbl">
+        Yoki <span class="em">ovoz bilan ayt</span> — "ertaga ertalab yugurish, soat 9 da kod, tushda til..."
+      </div>
+    </div>
+
+    <!-- Day overview -->
+    <div class="overview">
+      <div class="label">ERTANGI MANZARA</div>
+      <div class="row"><span>Jami fokus</span><span class="v">4 soat 45 daq</span></div>
+      <div class="row"><span>Sessiya soni</span><span class="v">5 ta</span></div>
+      <div class="row"><span>Birinchi uyg'onish</span><span class="v">06:15</span></div>
+      <div class="row"><span>Erkin vaqt</span><span class="v">3 soat 30 daq</span></div>
+    </div>
+
+    <!-- Mentor closing -->
+    <div class="mentor-close">
+      <span class="em">Yaxshi reja.</span> Erta uyg'onish bilan kun kuchli boshlanadi. Tushga til darsi <span class="em">— miya hali toza paytda</span>. Endi yot, men ertaga 06:15 da chaqiraman.
+    </div>
+
+  </div>
+
+  <!-- Bottom seal -->
+  <div class="bottom-bar">
+    <button class="seal-btn"><span class="ic">✓</span> REJANI MUHRLAYMAN</button>
+    <button class="skip-link">— ertalab tuzataman —</button>
+  </div>
+</div>
+
+<script>
+  // Spawn twinkling stars
+  const stars = document.getElementById('stars');
+  for (let i = 0; i < 20; i++) {
+    const s = document.createElement('span');
+    s.style.left = Math.random() * 100 + '%';
+    s.style.top  = (5 + Math.random() * 60) + '%';
+    s.style.animationDuration = (2.5 + Math.random() * 3) + 's';
+    s.style.animationDelay = (Math.random() * 3) + 's';
+    stars.appendChild(s);
+  }
+
+  // Delete button — remove task row
+  document.querySelectorAll('.del').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const row = btn.closest('.task-row');
+      row.style.transition = 'all .3s';
+      row.style.transform = 'translateX(100%)';
+      row.style.opacity = '0';
+      setTimeout(() => row.remove(), 300);
+    });
+  });
+</script>
+
+<script src="nav-overlay.js" defer></script>
+</body>
+</html>

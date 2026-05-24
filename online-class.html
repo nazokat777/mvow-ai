@@ -1,0 +1,861 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>M-VoW AI — Online Dars Rejimi</title>
+<link rel="manifest" href="manifest.webmanifest">
+<meta name="theme-color" content="#04060B">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="M·VoW">
+<link rel="apple-touch-icon" href="assets/mnsm-logo.png">
+<link rel="icon" type="image/png" href="assets/mnsm-logo.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,500&family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --void:        #04060B;
+    --void-2:      #0A0E16;
+    --shadow:      #11151D;
+    --steel:       #1A1F2A;
+
+    --text-primary: #F5F2EC;
+    --text-body:    #B8BBC2;
+    --text-muted:   #6B6E76;
+    --text-ghost:   #3A3D44;
+
+    --gold:        #E8C77E;
+    --gold-2:      #C7A36B;
+    --gold-deep:   #8a6f44;
+    --gold-flash:  #FFE9B5;
+
+    --emerald:     #4A8A5C;
+    --emerald-bright: #6BAF7C;
+    --emerald-deep:#1F3D2A;
+
+    --crimson:     #B8334A;
+    --crimson-deep:#6B1F1F;
+  }
+
+  body {
+    background: #14171d;
+    font-family: 'Inter', sans-serif;
+    color: var(--text-primary);
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 24px;
+  }
+
+  .phone {
+    width: 380px;
+    height: 800px;
+    background: var(--void);
+    border-radius: 40px;
+    overflow: hidden;
+    position: relative;
+    box-shadow:
+      0 0 0 8px #2a2e36,
+      0 30px 80px rgba(0,0,0,0.85),
+      0 0 100px rgba(232,199,126,0.07);
+  }
+
+  .backdrop {
+    position: absolute; inset: 0;
+    background:
+      radial-gradient(ellipse 80% 50% at 50% 25%, rgba(74,138,92,0.10), transparent 65%),
+      radial-gradient(ellipse 90% 60% at 50% 100%, rgba(232,199,126,0.08), transparent 70%),
+      linear-gradient(180deg, var(--void) 0%, var(--void-2) 50%, var(--void) 100%);
+  }
+
+  .gilt-frame {
+    position: absolute; inset: 14px;
+    border: 1px solid rgba(232,199,126,0.18);
+    border-radius: 26px;
+    pointer-events: none;
+    z-index: 4;
+  }
+
+  .pattern-wash {
+    position: absolute; inset: 0;
+    opacity: 0.025;
+    background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='100' height='100' viewBox='0 0 100 100'><g fill='none' stroke='%23E8C77E' stroke-width='0.5'><polygon points='50,5 62,38 95,38 70,58 80,90 50,72 20,90 30,58 5,38 38,38'/><circle cx='50' cy='50' r='20'/></g></svg>");
+    background-size: 130px 130px;
+    pointer-events: none;
+    z-index: 1;
+  }
+
+  .letterbox {
+    position: absolute;
+    left: 0; right: 0;
+    height: 14px;
+    background: var(--void);
+    z-index: 7;
+    pointer-events: none;
+  }
+  .letterbox.top { top: 0; }
+  .letterbox.bottom { bottom: 0; }
+
+  /* === Top header === */
+  .header-row {
+    position: absolute;
+    top: 26px; left: 24px; right: 24px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    z-index: 5;
+  }
+  .pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 4px 10px;
+    border: 1px solid var(--gold-deep);
+    border-radius: 2px;
+    background: rgba(232,199,126,0.04);
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 9px;
+    letter-spacing: 2px;
+    color: var(--gold);
+  }
+  .pill.green {
+    border-color: var(--emerald-deep);
+    background: rgba(74,138,92,0.08);
+    color: var(--emerald-bright);
+  }
+  .pill .dot {
+    width: 5px; height: 5px;
+    border-radius: 50%;
+    background: var(--emerald-bright);
+    box-shadow: 0 0 8px var(--emerald-bright);
+    animation: live-blink 1.4s ease-in-out infinite;
+  }
+  @keyframes live-blink {
+    0%, 100% { opacity: 0.4; }
+    50%      { opacity: 1; }
+  }
+  .pill .lock-icon { width: 10px; height: 10px; fill: none; stroke: var(--gold); stroke-width: 1.5; }
+  .pill .clock-mono { color: var(--gold); }
+
+  /* === Brand === */
+  .brand-seal {
+    position: absolute;
+    top: 64px; left: 0; right: 0;
+    text-align: center;
+    z-index: 5;
+  }
+  .brand-seal .ornament {
+    display: flex; justify-content: center; align-items: center;
+    gap: 10px; margin-bottom: 4px;
+  }
+  .brand-seal .ornament .line {
+    width: 38px; height: 1px;
+    background: linear-gradient(90deg, transparent, var(--gold-deep), transparent);
+  }
+  .brand-seal .ornament .star { color: var(--gold); font-size: 8px; }
+  .brand-seal .seal-text {
+    font-family: 'Cormorant Garamond', serif;
+    font-style: italic;
+    font-size: 14px;
+    color: var(--gold);
+    letter-spacing: 2px;
+  }
+
+  /* === Session header === */
+  .session-block {
+    position: absolute;
+    top: 110px; left: 24px; right: 24px;
+    text-align: center;
+    z-index: 4;
+  }
+  .session-block .source-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 4px 10px;
+    border: 1px solid var(--emerald-deep);
+    border-radius: 999px;
+    background: rgba(74,138,92,0.08);
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 9px;
+    letter-spacing: 3px;
+    color: var(--emerald-bright);
+    margin-bottom: 10px;
+  }
+  .session-block .title {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 24px;
+    font-weight: 600;
+    color: var(--text-primary);
+    letter-spacing: 0.5px;
+    line-height: 1.3;
+    margin-bottom: 4px;
+  }
+  .session-block .meta {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 9px;
+    letter-spacing: 2px;
+    color: var(--gold-deep);
+  }
+  .session-block .meta .sep { margin: 0 6px; color: var(--text-ghost); }
+  .session-block .meta .room { color: var(--emerald-bright); }
+
+  /* === Apps panels === */
+  .apps-block {
+    position: absolute;
+    top: 220px; left: 24px; right: 24px;
+    z-index: 4;
+  }
+
+  .panel {
+    background: rgba(232,199,126,0.025);
+    border: 1px solid rgba(138,111,68,0.22);
+    border-radius: 4px;
+    padding: 10px 12px;
+    margin-bottom: 10px;
+  }
+  .panel.allowed {
+    border-color: rgba(74,138,92,0.35);
+    background: rgba(74,138,92,0.05);
+  }
+  .panel.blocked {
+    border-color: rgba(184,51,74,0.30);
+    background: rgba(184,51,74,0.03);
+  }
+
+  .panel-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 8px;
+  }
+  .panel-head .label {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 9px;
+    letter-spacing: 4px;
+    color: var(--emerald-bright);
+  }
+  .panel.blocked .panel-head .label { color: var(--crimson); }
+  .panel-head .count {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 9px;
+    letter-spacing: 1px;
+    color: var(--text-ghost);
+  }
+
+  .app-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+  }
+
+  .app-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 5px 10px;
+    border-radius: 4px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 1px;
+    background: rgba(255,255,255,0.03);
+    border: 1px solid rgba(255,255,255,0.06);
+  }
+  .app-pill.ok {
+    color: var(--emerald-bright);
+    border-color: rgba(74,138,92,0.35);
+    background: rgba(74,138,92,0.10);
+  }
+  .app-pill.no {
+    color: var(--crimson);
+    border-color: rgba(184,51,74,0.30);
+    background: rgba(184,51,74,0.05);
+    text-decoration: line-through;
+    text-decoration-color: rgba(184,51,74,0.6);
+  }
+  .app-pill .icon {
+    width: 14px; height: 14px;
+    border-radius: 3px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 9px;
+    font-weight: 700;
+    color: var(--void);
+  }
+  .app-pill.ok .check { color: var(--emerald-bright); }
+  .app-pill.no .x { color: var(--crimson); }
+
+  /* App brand colors (tiny accents) */
+  .icon-tg { background: #2AABEE; }
+  .icon-zm { background: #2D8CFF; }
+  .icon-mt { background: #00897B; }
+  .icon-ms { background: #5059C9; }   /* MS Teams */
+  .icon-dc { background: #5865F2; }   /* Discord */
+  .icon-wx { background: #00BCEB; }   /* Webex */
+  .icon-sk { background: #00AFF0; }   /* Skype */
+  .icon-cs { background: #2A73CC; }   /* Coursera */
+  .icon-wa { background: #25D366; }   /* WhatsApp */
+  .icon-ig { background: linear-gradient(135deg, #f09433, #e6683c, #dc2743, #cc2366, #bc1888); }
+  .icon-tt { background: #000; color: #fff; }
+  .icon-yt { background: #FF0000; }
+  .icon-tw { background: #1DA1F2; }
+  .icon-fb { background: #1877F2; }
+
+  /* === Mentor note === */
+  .mentor-note {
+    position: absolute;
+    top: 470px; left: 24px; right: 24px;
+    padding: 12px 16px;
+    background: rgba(232,199,126,0.04);
+    border-left: 2px solid var(--gold);
+    border-radius: 2px;
+    z-index: 4;
+  }
+  .mentor-note .head {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 9px;
+    letter-spacing: 4px;
+    color: var(--gold-deep);
+    margin-bottom: 6px;
+  }
+  .mentor-note .text {
+    font-family: 'Cormorant Garamond', serif;
+    font-style: italic;
+    font-size: 14px;
+    color: var(--text-body);
+    line-height: 1.45;
+  }
+  .mentor-note .text .em { color: var(--gold); font-weight: 600; }
+
+  /* === Live timer mini === */
+  .timer-mini {
+    position: absolute;
+    top: 552px; left: 24px; right: 24px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 12px;
+    background: rgba(232,199,126,0.025);
+    border-top: 1px solid rgba(138,111,68,0.22);
+    border-bottom: 1px solid rgba(138,111,68,0.22);
+    z-index: 4;
+  }
+  .timer-mini .left {
+    display: flex; flex-direction: column; gap: 2px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 8.5px;
+    letter-spacing: 2px;
+  }
+  .timer-mini .left .lbl { color: var(--gold-deep); }
+  .timer-mini .left .pgs { color: var(--text-muted); }
+  .timer-mini .digits {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 22px;
+    font-weight: 500;
+    letter-spacing: 2px;
+    color: var(--gold);
+    text-shadow: 0 0 10px rgba(232,199,126,0.5);
+  }
+
+  /* === Bottom buttons === */
+  .bottom-bar {
+    position: absolute;
+    bottom: 24px; left: 24px; right: 24px;
+    z-index: 5;
+  }
+  .launch-btn {
+    width: 100%;
+    background: linear-gradient(180deg, var(--emerald-bright) 0%, var(--emerald) 60%, var(--emerald-deep) 100%);
+    color: var(--text-primary);
+    padding: 16px;
+    font-size: 13px;
+    font-weight: 700;
+    letter-spacing: 4px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    text-transform: uppercase;
+    font-family: 'Inter', sans-serif;
+    position: relative;
+    overflow: hidden;
+    box-shadow:
+      0 0 24px rgba(74,138,92,0.32),
+      inset 0 1px 0 rgba(255,255,255,0.3);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    transition: all 0.25s;
+  }
+  .launch-btn:hover { letter-spacing: 6px; }
+  .launch-btn .app-icon {
+    width: 22px; height: 22px;
+    border-radius: 4px;
+    display: flex; align-items: center; justify-content: center;
+    font-weight: 700;
+    color: #fff;
+    font-size: 12px;
+  }
+  .launch-btn::before {
+    content: '';
+    position: absolute; inset: 0;
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+    transform: translateX(-100%);
+    animation: shimmer 3s ease-in-out infinite;
+  }
+  @keyframes shimmer {
+    0%   { transform: translateX(-100%); }
+    50%  { transform: translateX(100%); }
+    100% { transform: translateX(100%); }
+  }
+
+  .end-link {
+    width: 100%;
+    margin-top: 10px;
+    background: none;
+    border: 1px solid var(--text-ghost);
+    color: var(--text-muted);
+    padding: 10px;
+    font-size: 11px;
+    letter-spacing: 3px;
+    font-family: 'Inter', sans-serif;
+    cursor: pointer;
+    text-transform: uppercase;
+    border-radius: 2px;
+    transition: all 0.2s;
+  }
+  .end-link:hover {
+    color: var(--text-body);
+    border-color: var(--gold-deep);
+  }
+
+  .vignette {
+    position: absolute; inset: 0;
+    pointer-events: none;
+    background: radial-gradient(ellipse 110% 80% at 50% 50%, transparent 55%, rgba(0,0,0,0.5));
+    z-index: 6;
+  }
+
+  /* === Tabs (preview) === */
+  .state-tabs {
+    display: flex;
+    gap: 6px;
+    margin-top: 18px;
+    overflow-x: auto;
+    padding: 4px 0 8px;
+    max-width: 480px;
+    scrollbar-width: thin;
+    scrollbar-color: rgba(232,199,126,0.3) transparent;
+  }
+  .state-tabs::-webkit-scrollbar { height: 4px; }
+  .state-tabs::-webkit-scrollbar-thumb { background: rgba(232,199,126,0.3); border-radius: 2px; }
+  .state-tab {
+    padding: 7px 14px;
+    border-radius: 2px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 2px;
+    color: rgba(255,255,255,0.4);
+    cursor: pointer;
+    border: 1px solid rgba(255,255,255,0.08);
+    user-select: none;
+    transition: all 0.2s;
+    white-space: nowrap;
+    flex-shrink: 0;
+  }
+  .state-tab:hover { color: var(--gold); border-color: var(--gold-deep); }
+  .state-tab.active {
+    color: var(--gold);
+    border-color: var(--gold);
+    background: rgba(232,199,126,0.08);
+  }
+  .state-tab.add {
+    border-style: dashed;
+    color: var(--gold-deep);
+  }
+  .state-tab.add:hover { color: var(--gold); }
+
+  .footer-info {
+    margin-top: 22px;
+    text-align: center;
+    color: rgba(255,255,255,0.45);
+    font-size: 13px;
+    line-height: 1.6;
+    font-family: 'Cormorant Garamond', serif;
+    font-style: italic;
+  }
+
+  @media (max-width: 480px) {
+    body { padding: 0; }
+    .phone {
+      width: 100vw;
+      height: 100vh;
+      border-radius: 0;
+      box-shadow: none;
+    }
+    .footer-info, .state-tabs { display: none; }
+  }
+</style>
+</head>
+<body>
+
+<div style="display:flex; flex-direction:column; align-items:center;">
+
+  <div class="phone" id="phone">
+    <div class="backdrop"></div>
+    <div class="pattern-wash"></div>
+    <div class="gilt-frame"></div>
+    <div class="letterbox top"></div>
+    <div class="letterbox bottom"></div>
+
+    <!-- Top header -->
+    <div class="header-row">
+      <div class="pill">
+        <svg class="lock-icon" viewBox="0 0 12 12">
+          <rect x="3" y="6" width="6" height="5" rx="1"/>
+          <path d="M4 6 V4 a2 2 0 0 1 4 0 V6"/>
+        </svg>
+        <span>HARD LOCK</span>
+      </div>
+      <div class="pill green">
+        <div class="dot"></div>
+        <span id="modeName">ONLINE DARS</span>
+      </div>
+    </div>
+
+    <!-- Brand seal -->
+    <div class="brand-seal">
+      <div class="ornament">
+        <div class="line"></div>
+        <div class="star">✦</div>
+        <div class="line"></div>
+      </div>
+      <div class="seal-text">murabbiy nazoratida</div>
+    </div>
+
+    <!-- Session info -->
+    <div class="session-block">
+      <div class="source-pill" id="sourcePill">
+        <span class="icon-tg" style="width:8px;height:8px;border-radius:50%;display:inline-block;"></span>
+        <span>TELEGRAM · @algoritm_dars_2026</span>
+      </div>
+      <div class="title" id="sessionTitle">Algoritm darsi · 12-mavzu</div>
+      <div class="meta">
+        <span>19:00 — 20:30</span>
+        <span class="sep">·</span>
+        <span class="room">90 DAQ</span>
+      </div>
+    </div>
+
+    <!-- Apps panels -->
+    <div class="apps-block">
+      <div class="panel allowed">
+        <div class="panel-head">
+          <span class="label">DARSGA RUXSAT ETILGAN</span>
+          <span class="count" id="okCount">2 ILOVA</span>
+        </div>
+        <div class="app-list" id="okList">
+          <span class="app-pill ok">
+            <span class="icon icon-tg">T</span>
+            <span class="check">✓</span>
+            <span>TELEGRAM</span>
+          </span>
+          <span class="app-pill ok">
+            <span class="icon icon-zm">Z</span>
+            <span class="check">✓</span>
+            <span>ZOOM</span>
+          </span>
+        </div>
+      </div>
+
+      <div class="panel blocked">
+        <div class="panel-head">
+          <span class="label">BLOKLANGAN — DIQQATSIZLIK</span>
+          <span class="count" id="noCount">5 ILOVA</span>
+        </div>
+        <div class="app-list">
+          <span class="app-pill no">
+            <span class="icon icon-ig">I</span>
+            <span class="x">✕</span>
+            <span>INSTAGRAM</span>
+          </span>
+          <span class="app-pill no">
+            <span class="icon icon-tt">T</span>
+            <span class="x">✕</span>
+            <span>TIKTOK</span>
+          </span>
+          <span class="app-pill no">
+            <span class="icon icon-yt">Y</span>
+            <span class="x">✕</span>
+            <span>YOUTUBE</span>
+          </span>
+          <span class="app-pill no">
+            <span class="icon icon-tw">X</span>
+            <span class="x">✕</span>
+            <span>TWITTER</span>
+          </span>
+          <span class="app-pill no">
+            <span class="icon icon-fb">f</span>
+            <span class="x">✕</span>
+            <span>FACEBOOK</span>
+          </span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Mentor note -->
+    <div class="mentor-note">
+      <div class="head">MURABBIY ESLATMASI</div>
+      <div class="text" id="mentorText">
+        Telegram'da <span class="em">faqat dars guruhida</span> bo'l. Boshqa chatga o'tsang — eslatama keladi.
+      </div>
+    </div>
+
+    <!-- Timer mini -->
+    <div class="timer-mini">
+      <div class="left">
+        <span class="lbl">SESSIYA QOLDI</span>
+        <span class="pgs">23/90 DAQ</span>
+      </div>
+      <div class="digits" id="timerDigits">01:07:14</div>
+    </div>
+
+    <!-- Bottom -->
+    <div class="bottom-bar">
+      <button class="launch-btn" id="launchBtn">
+        <span class="app-icon icon-tg">T</span>
+        <span>TELEGRAM'NI OCH</span>
+      </button>
+      <button class="end-link">Sessiyani tugatish</button>
+    </div>
+
+    <div class="vignette"></div>
+  </div>
+
+  <!-- State tabs (different class types) -->
+  <div class="state-tabs">
+    <div class="state-tab active" data-mode="telegram">TELEGRAM DARS</div>
+    <div class="state-tab" data-mode="zoom">ZOOM DARS</div>
+    <div class="state-tab" data-mode="meet">G·MEET</div>
+    <div class="state-tab" data-mode="teams">MS TEAMS</div>
+    <div class="state-tab" data-mode="discord">DISCORD</div>
+    <div class="state-tab" data-mode="webex">WEBEX</div>
+    <div class="state-tab" data-mode="masterclass">YOUTUBE MASTERKLASS</div>
+    <div class="state-tab" data-mode="coursera">COURSERA</div>
+    <div class="state-tab add">+ O'ZINGNI QO'SH</div>
+  </div>
+
+  <div class="footer-info">
+    Online dars rejimi — kontekstli whitelist
+  </div>
+</div>
+
+<script>
+  // === Class mode templates ===
+  const modes = {
+    telegram: {
+      modeName: 'TELEGRAM DARS',
+      sourceLabel: 'TELEGRAM · @algoritm_dars_2026',
+      sourceIcon: 'tg',
+      title: 'Algoritm darsi · 12-mavzu',
+      schedule: '19:00 — 20:30',
+      duration: '90 DAQ',
+      ok: [
+        { code: 'tg', name: 'TELEGRAM' },
+        { code: 'zm', name: 'ZOOM' }
+      ],
+      mentorNote: 'Telegram\'da <span class="em">faqat dars guruhida</span> bo\'l. Boshqa chatga o\'tsang — eslatama keladi.',
+      launchLabel: 'TELEGRAM\'NI OCH',
+      launchIcon: 'tg'
+    },
+    zoom: {
+      modeName: 'ZOOM DARS',
+      sourceLabel: 'ZOOM · MEETING 845-237-1102',
+      sourceIcon: 'zm',
+      title: 'Ingliz tili · B2 darsi',
+      schedule: '20:00 — 21:30',
+      duration: '90 DAQ',
+      ok: [
+        { code: 'zm', name: 'ZOOM' },
+        { code: 'tg', name: 'TELEGRAM' }
+      ],
+      mentorNote: '<span class="em">Kamerang yoqilgan bo\'lsin</span> — qatnashgansan. Telegram faqat zarurat uchun.',
+      launchLabel: 'ZOOM\'GA QO\'SHILISH',
+      launchIcon: 'zm'
+    },
+    meet: {
+      modeName: 'GOOGLE MEET',
+      sourceLabel: 'GOOGLE MEET · meet/abc-defg-hij',
+      sourceIcon: 'mt',
+      title: 'Loyiha kengashi',
+      schedule: '15:00 — 16:00',
+      duration: '60 DAQ',
+      ok: [
+        { code: 'mt', name: 'G·MEET' },
+        { code: 'tg', name: 'TELEGRAM' }
+      ],
+      mentorNote: 'Kengashda <span class="em">aktiv ishtirok</span> et. Mute holatida qolma.',
+      launchLabel: 'MEET\'GA QO\'SHILISH',
+      launchIcon: 'mt'
+    },
+    masterclass: {
+      modeName: 'MASTERKLASS',
+      sourceLabel: 'YOUTUBE · ALI ABDAAL — DEEP WORK',
+      sourceIcon: 'yt',
+      title: 'Masterklass · Mahsuldorlik tizimi',
+      schedule: '21:00 — 22:30',
+      duration: '90 DAQ',
+      ok: [
+        { code: 'yt', name: 'YOUTUBE (USTAZ)' },
+        { code: 'tg', name: 'IZOH GURUHI' }
+      ],
+      mentorNote: 'YouTube\'da <span class="em">faqat shu masterklass</span>. Bosh sahifaga, izohlarga, ko\'rsatilgan videolarga o\'tsang — bloklanadi.',
+      launchLabel: 'MASTERKLASSNI BOSHLASH',
+      launchIcon: 'yt'
+    },
+    teams: {
+      modeName: 'MS TEAMS',
+      sourceLabel: 'TEAMS · IT-jamoasi · Standup',
+      sourceIcon: 'ms',
+      title: 'Standup · Sprint 14',
+      schedule: '10:00 — 10:30',
+      duration: '30 DAQ',
+      ok: [
+        { code: 'ms', name: 'MS TEAMS' },
+        { code: 'tg', name: 'TELEGRAM' }
+      ],
+      mentorNote: '<span class="em">Standup\'da faqat o\'z hisobotingni</span> ber. Slack/Telegram'da begona muloqotga kirma.',
+      launchLabel: 'TEAMS\'GA QO\'SHILISH',
+      launchIcon: 'ms'
+    },
+    discord: {
+      modeName: 'DISCORD',
+      sourceLabel: 'DISCORD · UZ-DEV-COMMUNITY · #algoritm',
+      sourceIcon: 'dc',
+      title: 'Discord study session',
+      schedule: '20:00 — 22:00',
+      duration: '120 DAQ',
+      ok: [
+        { code: 'dc', name: 'DISCORD' }
+      ],
+      mentorNote: 'Discord\'da <span class="em">faqat #algoritm kanalida</span> bo\'l. Shaxsiy DM\'larga o\'tsang — eslatama.',
+      launchLabel: 'DISCORD\'GA O\'TISH',
+      launchIcon: 'dc'
+    },
+    webex: {
+      modeName: 'WEBEX',
+      sourceLabel: 'WEBEX · 1234 567 8901',
+      sourceIcon: 'wx',
+      title: 'Korporativ trening',
+      schedule: '14:00 — 15:30',
+      duration: '90 DAQ',
+      ok: [
+        { code: 'wx', name: 'WEBEX' },
+        { code: 'tg', name: 'TELEGRAM' }
+      ],
+      mentorNote: '<span class="em">Eshit, eslatma yoz.</span> Kamerangni yoqish majburiy emas, lekin chataktiv ish.',
+      launchLabel: 'WEBEX\'GA QO\'SHILISH',
+      launchIcon: 'wx'
+    },
+    coursera: {
+      modeName: 'COURSERA',
+      sourceLabel: 'COURSERA · ML SPECIALIZATION · WEEK 4',
+      sourceIcon: 'cs',
+      title: 'Mashinaviy o\'rganish · 4-hafta',
+      schedule: '18:00 — 19:30',
+      duration: '90 DAQ',
+      ok: [
+        { code: 'cs', name: 'COURSERA' },
+        { code: 'yt', name: 'YOUTUBE (KURS)' }
+      ],
+      mentorNote: '<span class="em">Quiz va laboratoriyani</span> nihoyasiga yetkaz. Yangi kursga o\'tib ketma — fokus shu yerda.',
+      launchLabel: 'KURSGA QAYTISH',
+      launchIcon: 'cs'
+    }
+  };
+
+  // === All blocked apps (constant) ===
+  const blockedApps = [
+    { code: 'ig', name: 'INSTAGRAM' },
+    { code: 'tt', name: 'TIKTOK' },
+    { code: 'yt', name: 'YOUTUBE' },
+    { code: 'tw', name: 'TWITTER' },
+    { code: 'fb', name: 'FACEBOOK' }
+  ];
+
+  const sourcePill = document.getElementById('sourcePill');
+  const sessionTitle = document.getElementById('sessionTitle');
+  const modeNameEl = document.getElementById('modeName');
+  const okList = document.getElementById('okList');
+  const okCount = document.getElementById('okCount');
+  const noCount = document.getElementById('noCount');
+  const mentorText = document.getElementById('mentorText');
+  const launchBtn = document.getElementById('launchBtn');
+
+  function applyMode(modeKey) {
+    const m = modes[modeKey];
+
+    modeNameEl.textContent = m.modeName;
+    sessionTitle.textContent = m.title;
+
+    // Source pill
+    sourcePill.innerHTML = `<span class="icon-${m.sourceIcon}" style="width:8px;height:8px;border-radius:50%;display:inline-block;"></span><span>${m.sourceLabel}</span>`;
+
+    const iconLetter = (c) => ({
+      tg:'T', zm:'Z', mt:'M', ms:'T', dc:'D', wx:'W', sk:'S', cs:'C', wa:'W', yt:'Y'
+    }[c] || '·');
+
+    // Allowed apps
+    okList.innerHTML = m.ok.map(app =>
+      `<span class="app-pill ok">
+        <span class="icon icon-${app.code}">${iconLetter(app.code)}</span>
+        <span class="check">✓</span>
+        <span>${app.name}</span>
+      </span>`
+    ).join('');
+    okCount.textContent = `${m.ok.length} ILOVA`;
+
+    // Blocked count: subtract anything that appears in ok
+    const blockedActive = blockedApps.filter(b => !m.ok.some(o => o.code === b.code));
+    noCount.textContent = `${blockedActive.length} ILOVA`;
+
+    // Mentor note
+    mentorText.innerHTML = m.mentorNote;
+
+    // Launch button
+    launchBtn.innerHTML = `<span class="app-icon icon-${m.launchIcon}">${iconLetter(m.launchIcon)}</span><span>${m.launchLabel}</span>`;
+  }
+
+  applyMode('telegram');
+  document.querySelectorAll('.state-tab').forEach(tab => {
+    tab.addEventListener('click', () => {
+      if (tab.classList.contains('add')) {
+        alert('Sozlamalardan istalgan ilovani whitelist\'ga qo\'shish mumkin:\n\n• Skype\n• WhatsApp\n• Slack\n• Notion\n• Boshqa har qanday Android ilova\n\nHar bir dars uchun alohida ruxsat etilganlar ro\'yxati saqlanadi.');
+        return;
+      }
+      document.querySelectorAll('.state-tab').forEach(t => t.classList.remove('active'));
+      tab.classList.add('active');
+      applyMode(tab.dataset.mode);
+    });
+  });
+
+  // Live timer
+  let totalSec = 67 * 60 + 14;
+  setInterval(() => {
+    if (totalSec <= 0) totalSec = 67 * 60 + 14;
+    const h = Math.floor(totalSec / 3600);
+    const m = Math.floor((totalSec % 3600) / 60);
+    const s = totalSec % 60;
+    document.getElementById('timerDigits').textContent =
+      String(h).padStart(2,'0') + ':' + String(m).padStart(2,'0') + ':' + String(s).padStart(2,'0');
+    totalSec--;
+  }, 1000);
+</script>
+
+<script src="nav-overlay.js" defer></script>
+</body>
+</html>

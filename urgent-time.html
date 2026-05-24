@@ -1,0 +1,725 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>M-VoW AI — Shoshilinch Vaqt</title>
+<link rel="manifest" href="manifest.webmanifest">
+<meta name="theme-color" content="#04060B">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="M·VoW">
+<link rel="apple-touch-icon" href="assets/mnsm-logo.png">
+<link rel="icon" type="image/png" href="assets/mnsm-logo.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,500&family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --void:        #04060B;
+    --void-2:      #0A0E16;
+    --shadow:      #11151D;
+
+    --text-primary: #F5F2EC;
+    --text-body:    #B8BBC2;
+    --text-muted:   #6B6E76;
+    --text-ghost:   #3A3D44;
+
+    --gold:        #E8C77E;
+    --gold-2:      #C7A36B;
+    --gold-deep:   #8a6f44;
+    --gold-flash:  #FFE9B5;
+
+    --crimson:     #B8334A;
+    --crimson-deep:#6B1F1F;
+    --emerald:     #4A8A5C;
+  }
+
+  body {
+    background: #14171d;
+    font-family: 'Inter', sans-serif;
+    color: var(--text-primary);
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 24px;
+  }
+
+  .phone {
+    width: 380px;
+    height: 800px;
+    background: var(--void);
+    border-radius: 40px;
+    overflow: hidden;
+    position: relative;
+    box-shadow:
+      0 0 0 8px #2a2e36,
+      0 30px 80px rgba(0,0,0,0.85),
+      0 0 100px rgba(232,199,126,0.07);
+  }
+
+  .backdrop {
+    position: absolute; inset: 0;
+    background:
+      radial-gradient(ellipse 80% 60% at 50% 30%, rgba(232,199,126,0.10), transparent 65%),
+      linear-gradient(180deg, var(--void) 0%, var(--void-2) 50%, var(--void) 100%);
+  }
+
+  .gilt-frame {
+    position: absolute; inset: 14px;
+    border: 1px solid rgba(232,199,126,0.18);
+    border-radius: 26px;
+    pointer-events: none;
+    z-index: 4;
+  }
+
+  .pattern-wash {
+    position: absolute; inset: 0;
+    opacity: 0.025;
+    background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='100' height='100' viewBox='0 0 100 100'><g fill='none' stroke='%23E8C77E' stroke-width='0.5'><polygon points='50,5 62,38 95,38 70,58 80,90 50,72 20,90 30,58 5,38 38,38'/><circle cx='50' cy='50' r='20'/></g></svg>");
+    background-size: 130px 130px;
+    pointer-events: none;
+    z-index: 1;
+  }
+
+  .dust {
+    position: absolute; inset: 0;
+    pointer-events: none;
+    z-index: 2;
+    overflow: hidden;
+  }
+  .dust span {
+    position: absolute;
+    width: 2px; height: 2px;
+    border-radius: 50%;
+    background: var(--gold);
+    box-shadow: 0 0 4px var(--gold);
+    opacity: 0;
+    animation: float 8s linear infinite;
+  }
+  @keyframes float {
+    0%   { transform: translateY(100%); opacity: 0; }
+    20%  { opacity: 0.7; }
+    100% { transform: translateY(-20%); opacity: 0; }
+  }
+
+  .letterbox {
+    position: absolute;
+    left: 0; right: 0;
+    height: 14px;
+    background: var(--void);
+    z-index: 7;
+    pointer-events: none;
+  }
+  .letterbox.top    { top: 0; }
+  .letterbox.bottom { bottom: 0; }
+
+  /* === Top header === */
+  .header-row {
+    position: absolute;
+    top: 26px; left: 24px; right: 24px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    z-index: 5;
+  }
+  .urgent-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 4px 10px;
+    border: 1px solid var(--crimson);
+    border-radius: 999px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 9px;
+    letter-spacing: 3px;
+    color: var(--crimson);
+    background: rgba(184,51,74,0.08);
+    text-transform: uppercase;
+  }
+  .urgent-pill .urg-dot {
+    width: 5px; height: 5px;
+    border-radius: 50%;
+    background: var(--crimson);
+    box-shadow: 0 0 8px var(--crimson);
+    animation: urgblink 1s ease-in-out infinite;
+  }
+  @keyframes urgblink {
+    0%, 100% { opacity: 0.4; } 50% { opacity: 1; }
+  }
+  .session-pause-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 4px 10px;
+    border: 1px solid var(--gold-deep);
+    border-radius: 2px;
+    background: rgba(232,199,126,0.04);
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 8px;
+    letter-spacing: 2px;
+    color: var(--gold-deep);
+  }
+  .session-pause-pill .pause-icon {
+    display: inline-flex;
+    width: 8px; height: 9px;
+    gap: 1.5px;
+  }
+  .session-pause-pill .pause-icon span {
+    width: 2.5px; background: var(--gold-deep);
+  }
+
+  /* === Brand seal === */
+  .brand-seal {
+    position: absolute;
+    top: 64px; left: 0; right: 0;
+    text-align: center;
+    z-index: 5;
+  }
+  .brand-seal .ornament {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 4px;
+  }
+  .brand-seal .ornament .line {
+    width: 38px; height: 1px;
+    background: linear-gradient(90deg, transparent, var(--gold-deep), transparent);
+  }
+  .brand-seal .ornament .star { color: var(--gold); font-size: 8px; }
+  .brand-seal .seal-text {
+    font-family: 'Cormorant Garamond', serif;
+    font-style: italic;
+    font-size: 14px;
+    color: var(--gold);
+    letter-spacing: 2px;
+  }
+
+  /* === Question hero === */
+  .question {
+    position: absolute;
+    top: 110px; left: 0; right: 0;
+    text-align: center;
+    z-index: 4;
+    padding: 0 28px;
+  }
+  .question .label {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 9px;
+    letter-spacing: 5px;
+    color: var(--gold-deep);
+    margin-bottom: 8px;
+  }
+  .question .text {
+    font-family: 'Cormorant Garamond', serif;
+    font-style: italic;
+    font-size: 24px;
+    font-weight: 600;
+    color: var(--text-primary);
+    letter-spacing: 0.5px;
+    line-height: 1.35;
+  }
+  .question .text .em { color: var(--gold); }
+
+  /* === Time dial (hero) === */
+  .dial-wrap {
+    position: absolute;
+    top: 200px; left: 50%;
+    transform: translateX(-50%);
+    width: 240px; height: 240px;
+    z-index: 4;
+  }
+  .dial-halo {
+    position: absolute; inset: -20px;
+    border-radius: 50%;
+    background: radial-gradient(circle, var(--gold) 0%, transparent 60%);
+    opacity: 0.20;
+    filter: blur(28px);
+    animation: breathe 4s ease-in-out infinite;
+  }
+  @keyframes breathe {
+    0%, 100% { opacity: 0.15; transform: scale(0.9); }
+    50%      { opacity: 0.35; transform: scale(1.1); }
+  }
+
+  .dial-svg {
+    position: absolute; inset: 0;
+    width: 100%; height: 100%;
+    transform: rotate(-90deg);
+    filter: drop-shadow(0 0 14px rgba(232,199,126,0.4));
+  }
+  .dial-track {
+    fill: none;
+    stroke: rgba(138,111,68,0.32);
+    stroke-width: 2;
+  }
+  .dial-progress {
+    fill: none;
+    stroke: var(--gold);
+    stroke-width: 3;
+    stroke-linecap: round;
+    transition: stroke-dashoffset 0.5s cubic-bezier(0.2, 0.8, 0.2, 1);
+  }
+
+  /* Tick marks around dial */
+  .dial-ticks { position: absolute; inset: 0; width: 100%; height: 100%; }
+
+  .dial-labels {
+    position: absolute; inset: 0;
+    pointer-events: none;
+  }
+  .dial-labels .lbl {
+    position: absolute;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 9px;
+    letter-spacing: 1px;
+    color: var(--gold-deep);
+    transform: translate(-50%, -50%);
+  }
+
+  /* Center number */
+  .dial-center {
+    position: absolute;
+    top: 50%; left: 50%;
+    transform: translate(-50%, -50%);
+    text-align: center;
+    z-index: 5;
+  }
+  .dial-center .num {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 60px;
+    font-weight: 500;
+    color: var(--gold);
+    line-height: 1;
+    letter-spacing: 1px;
+    text-shadow: 0 0 16px rgba(232,199,126,0.5);
+    transition: all 0.3s;
+  }
+  .dial-center .unit {
+    margin-top: 6px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 9px;
+    letter-spacing: 4px;
+    color: var(--gold-deep);
+  }
+
+  /* Selector dot on the dial ring */
+  .dial-cursor {
+    position: absolute;
+    top: 50%; left: 50%;
+    width: 240px; height: 240px;
+    transform: translate(-50%, -50%);
+    pointer-events: none;
+    transition: transform 0.5s cubic-bezier(0.2, 0.8, 0.2, 1);
+  }
+  .dial-cursor::before {
+    content: '';
+    position: absolute;
+    top: -1px; left: 50%;
+    width: 12px; height: 12px;
+    margin-left: -6px; margin-top: -6px;
+    border-radius: 50%;
+    background: var(--gold-flash);
+    box-shadow:
+      0 0 14px var(--gold-flash),
+      0 0 28px var(--gold);
+  }
+
+  /* === Quick chips === */
+  .chips {
+    position: absolute;
+    top: 478px; left: 24px; right: 24px;
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 6px;
+    z-index: 4;
+  }
+  .chip {
+    padding: 8px 14px;
+    border: 1px solid var(--gold-deep);
+    border-radius: 999px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    font-weight: 500;
+    letter-spacing: 1px;
+    color: var(--gold);
+    background: rgba(232,199,126,0.04);
+    cursor: pointer;
+    user-select: none;
+    transition: all 0.2s;
+    min-width: 56px;
+    text-align: center;
+  }
+  .chip:hover {
+    border-color: var(--gold);
+    background: rgba(232,199,126,0.08);
+  }
+  .chip.active {
+    background: var(--gold);
+    color: var(--void);
+    border-color: var(--gold);
+    box-shadow: 0 0 16px rgba(232,199,126,0.4);
+  }
+  .chip.custom {
+    border-style: dashed;
+    color: var(--gold-deep);
+  }
+
+  /* === Reason input === */
+  .reason-row {
+    position: absolute;
+    top: 538px; left: 24px; right: 24px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 14px;
+    background: rgba(232,199,126,0.025);
+    border: 1px solid rgba(138,111,68,0.25);
+    border-radius: 4px;
+    z-index: 4;
+  }
+  .reason-row .mic-btn {
+    width: 28px; height: 28px;
+    border-radius: 50%;
+    background: var(--gold);
+    color: var(--void);
+    display: flex; align-items: center; justify-content: center;
+    box-shadow: 0 0 10px rgba(232,199,126,0.4);
+  }
+  .reason-row .mic-btn svg { width: 14px; height: 14px; fill: currentColor; }
+  .reason-row .text {
+    flex: 1;
+    font-family: 'Cormorant Garamond', serif;
+    font-style: italic;
+    font-size: 13px;
+    color: var(--text-muted);
+    letter-spacing: 0.5px;
+  }
+  .reason-row .text.placeholder { color: var(--text-ghost); }
+
+  /* === Pause-info strip === */
+  .pause-info {
+    position: absolute;
+    top: 596px; left: 24px; right: 24px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 8px 12px;
+    background: rgba(232,199,126,0.025);
+    border-top: 1px solid rgba(138,111,68,0.22);
+    border-bottom: 1px solid rgba(138,111,68,0.22);
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 9px;
+    letter-spacing: 2px;
+    color: var(--gold-deep);
+    z-index: 4;
+  }
+  .pause-info .label { color: var(--gold-deep); }
+  .pause-info .which { color: var(--gold); }
+  .pause-info .resume { color: var(--gold); font-size: 10px; }
+
+  /* === Bottom button === */
+  .bottom-bar {
+    position: absolute;
+    bottom: 22px; left: 24px; right: 24px;
+    z-index: 5;
+  }
+  .grant-btn {
+    width: 100%;
+    background: linear-gradient(180deg, var(--gold-flash) 0%, var(--gold) 50%, var(--gold-2) 100%);
+    color: var(--void);
+    padding: 16px;
+    font-size: 13px;
+    font-weight: 700;
+    letter-spacing: 6px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-family: 'Inter', sans-serif;
+    text-transform: uppercase;
+    position: relative;
+    overflow: hidden;
+    box-shadow:
+      0 0 24px rgba(232,199,126,0.32),
+      inset 0 1px 0 rgba(255,255,255,0.5);
+    transition: all 0.25s;
+  }
+  .grant-btn::before {
+    content: '';
+    position: absolute; inset: 0;
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.4), transparent);
+    transform: translateX(-100%);
+    animation: shimmer 3s ease-in-out infinite;
+  }
+  @keyframes shimmer {
+    0%   { transform: translateX(-100%); }
+    50%  { transform: translateX(100%); }
+    100% { transform: translateX(100%); }
+  }
+  .grant-btn:hover { transform: scale(1.02); }
+
+  .cancel-link {
+    width: 100%;
+    margin-top: 10px;
+    background: none;
+    border: none;
+    color: var(--text-muted);
+    font-size: 11px;
+    letter-spacing: 3px;
+    font-family: 'Inter', sans-serif;
+    cursor: pointer;
+    text-transform: uppercase;
+    transition: color 0.2s;
+  }
+  .cancel-link:hover { color: var(--gold-deep); }
+
+  .vignette {
+    position: absolute; inset: 0;
+    pointer-events: none;
+    background: radial-gradient(ellipse 110% 80% at 50% 50%, transparent 55%, rgba(0,0,0,0.5));
+    z-index: 6;
+  }
+
+  .footer-info {
+    margin-top: 22px;
+    text-align: center;
+    color: rgba(255,255,255,0.45);
+    font-size: 13px;
+    line-height: 1.6;
+    font-family: 'Cormorant Garamond', serif;
+    font-style: italic;
+  }
+
+  @media (max-width: 480px) {
+    body { padding: 0; }
+    .phone {
+      width: 100vw;
+      height: 100vh;
+      border-radius: 0;
+      box-shadow: none;
+    }
+    .footer-info { display: none; }
+  }
+</style>
+</head>
+<body>
+
+<div style="display:flex; flex-direction:column; align-items:center;">
+
+  <div class="phone" id="phone">
+    <div class="backdrop"></div>
+    <div class="pattern-wash"></div>
+    <div class="dust" id="dust"></div>
+    <div class="gilt-frame"></div>
+    <div class="letterbox top"></div>
+    <div class="letterbox bottom"></div>
+
+    <!-- Top header -->
+    <div class="header-row">
+      <div class="urgent-pill">
+        <div class="urg-dot"></div>
+        <span>SHOSHILINCH</span>
+      </div>
+      <div class="session-pause-pill">
+        <span class="pause-icon"><span></span><span></span></span>
+        <span>QUR'ON DARSI · TO'XTADI</span>
+      </div>
+    </div>
+
+    <!-- Brand seal -->
+    <div class="brand-seal">
+      <div class="ornament">
+        <div class="line"></div>
+        <div class="star">✦</div>
+        <div class="line"></div>
+      </div>
+      <div class="seal-text">murabbiy so'raydi</div>
+    </div>
+
+    <!-- Question -->
+    <div class="question">
+      <div class="label">SEN AYTDING — "SHOSHILINCH ISHIM CHIQDI"</div>
+      <div class="text">Yaxshi. <span class="em">Qancha vaqt</span> kerak?</div>
+    </div>
+
+    <!-- Time dial -->
+    <div class="dial-wrap">
+      <div class="dial-halo"></div>
+
+      <!-- SVG dial -->
+      <svg class="dial-svg" viewBox="0 0 240 240">
+        <circle class="dial-track"    cx="120" cy="120" r="108"/>
+        <circle id="dialProgress" class="dial-progress"
+                cx="120" cy="120" r="108"
+                stroke-dasharray="678.6" stroke-dashoffset="508.95"/>
+      </svg>
+
+      <!-- Tick marks (every 5 minutes from 0 to 60, so 12 ticks) -->
+      <svg class="dial-ticks" viewBox="0 0 240 240">
+        <g stroke="#8a6f44" stroke-width="0.8" opacity="0.5" id="dialTickGroup"></g>
+      </svg>
+
+      <!-- Number labels around dial -->
+      <div class="dial-labels" id="dialLabels"></div>
+
+      <!-- Selector cursor (rotates around the ring) -->
+      <div class="dial-cursor" id="dialCursor"></div>
+
+      <!-- Center -->
+      <div class="dial-center">
+        <div class="num" id="centerNum">15</div>
+        <div class="unit">DAQIQA</div>
+      </div>
+    </div>
+
+    <!-- Quick chips -->
+    <div class="chips" id="chips">
+      <div class="chip" data-min="5">5 daq</div>
+      <div class="chip" data-min="10">10 daq</div>
+      <div class="chip active" data-min="15">15 daq</div>
+      <div class="chip" data-min="30">30 daq</div>
+      <div class="chip" data-min="45">45 daq</div>
+      <div class="chip" data-min="60">1 soat</div>
+      <div class="chip custom" data-min="custom">boshqa…</div>
+    </div>
+
+    <!-- Reason input -->
+    <div class="reason-row">
+      <div class="mic-btn">
+        <svg viewBox="0 0 24 24"><path d="M12 14a3 3 0 0 0 3-3V5a3 3 0 0 0-6 0v6a3 3 0 0 0 3 3z M19 11a7 7 0 0 1-14 0 M12 18v3"/></svg>
+      </div>
+      <div class="text placeholder" id="reasonText">Sabab ayt (ixtiyoriy)…</div>
+    </div>
+
+    <!-- Pause info -->
+    <div class="pause-info">
+      <span class="label">QAYTADAN BOSHLANADI</span>
+      <span class="resume" id="resumeAt">14:50</span>
+    </div>
+
+    <!-- Bottom -->
+    <div class="bottom-bar">
+      <button class="grant-btn" id="grantBtn">15 daqiqaga ruxsat ber</button>
+      <button class="cancel-link">Bekor qil — sessiyaga qaytaman</button>
+    </div>
+
+    <div class="vignette"></div>
+  </div>
+
+  <div class="footer-info">
+    Shoshilinch vaqt — sessiya ichida murabbiy bilan kelishuv
+  </div>
+</div>
+
+<script>
+  // === Time selection logic ===
+  const MAX_MIN = 60; // dial maxes at 60
+  const RING_CIRC = 2 * Math.PI * 108;
+  const dialProgress = document.getElementById('dialProgress');
+  const dialCursor   = document.getElementById('dialCursor');
+  const centerNum    = document.getElementById('centerNum');
+  const grantBtn     = document.getElementById('grantBtn');
+  const resumeAt     = document.getElementById('resumeAt');
+
+  function setMinutes(min) {
+    centerNum.textContent = min;
+    const progress = Math.min(min, MAX_MIN) / MAX_MIN;
+    dialProgress.style.strokeDashoffset = (RING_CIRC * (1 - progress)).toFixed(1);
+    // rotate cursor
+    const angle = progress * 360;
+    dialCursor.style.transform = `translate(-50%, -50%) rotate(${angle}deg)`;
+    // button label
+    if (min < 60) {
+      grantBtn.textContent = `${min} daqiqaga ruxsat ber`;
+    } else {
+      const h = Math.floor(min / 60);
+      const m = min % 60;
+      grantBtn.textContent = `${h}s ${m ? m + 'daq ' : ''}ruxsat ber`;
+    }
+    // compute resume time (now + min)
+    const d = new Date();
+    d.setMinutes(d.getMinutes() + min);
+    resumeAt.textContent = String(d.getHours()).padStart(2,'0') + ':' + String(d.getMinutes()).padStart(2,'0');
+    // update active chip
+    document.querySelectorAll('.chip').forEach(c => c.classList.remove('active'));
+    const matching = document.querySelector(`.chip[data-min="${min}"]`);
+    if (matching) matching.classList.add('active');
+  }
+
+  // Tick marks (every 5 min)
+  const tickGroup = document.getElementById('dialTickGroup');
+  for (let i = 0; i <= 12; i++) {
+    const angle = (i / 12) * 360 - 90; // 0 at top
+    const rad = angle * Math.PI / 180;
+    const r1 = 100, r2 = (i % 3 === 0 ? 92 : 96);
+    const x1 = 120 + r1 * Math.cos(rad);
+    const y1 = 120 + r1 * Math.sin(rad);
+    const x2 = 120 + r2 * Math.cos(rad);
+    const y2 = 120 + r2 * Math.sin(rad);
+    const line = document.createElementNS('http://www.w3.org/2000/svg', 'line');
+    line.setAttribute('x1', x1); line.setAttribute('y1', y1);
+    line.setAttribute('x2', x2); line.setAttribute('y2', y2);
+    if (i % 3 === 0) line.setAttribute('stroke-width', '1.2');
+    tickGroup.appendChild(line);
+  }
+
+  // Number labels around dial (5, 15, 30, 45, 60 — major ticks)
+  const labels = [
+    { min: 60, angle: 0   }, // top
+    { min: 15, angle: 90  }, // right
+    { min: 30, angle: 180 }, // bottom
+    { min: 45, angle: 270 }  // left
+  ];
+  const labelHost = document.getElementById('dialLabels');
+  labels.forEach(({min, angle}) => {
+    const rad = (angle - 90) * Math.PI / 180;
+    const r = 84;
+    const x = 120 + r * Math.cos(rad);
+    const y = 120 + r * Math.sin(rad);
+    const el = document.createElement('div');
+    el.className = 'lbl';
+    el.style.left = (x / 240 * 100) + '%';
+    el.style.top  = (y / 240 * 100) + '%';
+    el.textContent = min;
+    labelHost.appendChild(el);
+  });
+
+  // Chip clicks
+  document.querySelectorAll('.chip').forEach(chip => {
+    chip.addEventListener('click', () => {
+      const v = chip.dataset.min;
+      if (v === 'custom') {
+        const input = prompt('Qancha daqiqa kerak?', '20');
+        const n = parseInt(input);
+        if (!isNaN(n) && n > 0 && n <= 240) setMinutes(n);
+      } else {
+        setMinutes(parseInt(v));
+      }
+    });
+  });
+
+  // Initial state
+  setMinutes(15);
+
+  // Spawn dust
+  function spawnDust() {
+    const dust = document.getElementById('dust');
+    for (let i = 0; i < 12; i++) {
+      const m = document.createElement('span');
+      m.style.left = Math.random() * 100 + '%';
+      m.style.animationDuration = (6 + Math.random() * 6) + 's';
+      m.style.animationDelay = (Math.random() * 6) + 's';
+      dust.appendChild(m);
+    }
+  }
+  spawnDust();
+</script>
+
+<script src="nav-overlay.js" defer></script>
+</body>
+</html>

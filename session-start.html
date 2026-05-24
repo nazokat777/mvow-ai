@@ -1,0 +1,987 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>M-VoW AI — Vaqt Keldi</title>
+<link rel="manifest" href="manifest.webmanifest">
+<meta name="theme-color" content="#04060B">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="M·VoW">
+<link rel="apple-touch-icon" href="assets/mnsm-logo.png">
+<link rel="icon" type="image/png" href="assets/mnsm-logo.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500&family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --void:        #04060B;
+    --void-2:      #0A0E16;
+    --shadow:      #11151D;
+    --steel:       #1A1F2A;
+
+    --text-primary: #F5F2EC;
+    --text-body:    #B8BBC2;
+    --text-muted:   #6B6E76;
+    --text-ghost:   #3A3D44;
+
+    --gold:        #E8C77E;
+    --gold-2:      #C7A36B;
+    --gold-deep:   #8a6f44;
+    --gold-flash:  #FFE9B5;
+
+    --crimson:     #B8334A;
+    --crimson-deep:#6B1F1F;
+  }
+
+  body {
+    background: #14171d;
+    font-family: 'Inter', sans-serif;
+    color: var(--text-primary);
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 24px;
+  }
+
+  /* === Phone === */
+  .phone {
+    width: 380px;
+    height: 800px;
+    background: var(--void);
+    border-radius: 40px;
+    overflow: hidden;
+    position: relative;
+    box-shadow:
+      0 0 0 8px #2a2e36,
+      0 30px 80px rgba(0,0,0,0.85),
+      0 0 100px rgba(232,199,126,0.07);
+  }
+
+  /* === Backdrop with severity-based glow === */
+  .backdrop {
+    position: absolute; inset: 0;
+    background:
+      radial-gradient(ellipse 90% 50% at 50% 25%, rgba(232,199,126,0.10), transparent 65%),
+      radial-gradient(ellipse 100% 70% at 50% 100%, rgba(232,199,126,0.08), transparent 70%),
+      linear-gradient(180deg, var(--void) 0%, var(--void-2) 60%, var(--void) 100%);
+    transition: background 1s ease;
+  }
+  .phone[data-sev="max"] .backdrop {
+    background:
+      radial-gradient(ellipse 90% 50% at 50% 25%, rgba(184,51,74,0.10), transparent 65%),
+      radial-gradient(ellipse 100% 70% at 50% 100%, rgba(232,199,126,0.10), transparent 70%),
+      linear-gradient(180deg, var(--void) 0%, #0A0810 60%, var(--void) 100%);
+  }
+
+  /* === ALERT mode — user not responding, escalation === */
+  .phone[data-sev="alert"] .backdrop {
+    background:
+      radial-gradient(ellipse 90% 50% at 50% 25%, rgba(184,51,74,0.22), transparent 60%),
+      radial-gradient(ellipse 100% 70% at 50% 100%, rgba(184,51,74,0.18), transparent 70%),
+      linear-gradient(180deg, #0F0508 0%, #1A0A0E 50%, #0F0508 100%);
+    animation: alert-bg 1.4s ease-in-out infinite;
+  }
+  @keyframes alert-bg {
+    0%, 100% { filter: brightness(1); }
+    50%      { filter: brightness(1.25); }
+  }
+
+  /* Alert pulsing border */
+  .alert-border {
+    position: absolute; inset: 0;
+    border-radius: 40px;
+    pointer-events: none;
+    z-index: 8;
+    box-shadow:
+      inset 0 0 0 2px var(--crimson),
+      inset 0 0 30px rgba(184,51,74,0.5),
+      0 0 40px rgba(184,51,74,0.4);
+    opacity: 0;
+    transition: opacity 0.3s;
+    animation: alert-flash 1.4s ease-in-out infinite;
+  }
+  .phone[data-sev="alert"] .alert-border { opacity: 1; }
+  @keyframes alert-flash {
+    0%, 100% { opacity: 0.4; }
+    50%      { opacity: 1; }
+  }
+
+  /* Phone shake (vibration) */
+  .phone[data-sev="alert"] {
+    animation: vibrate 0.15s linear infinite;
+  }
+  @keyframes vibrate {
+    0%   { transform: translateX(0); }
+    20%  { transform: translateX(-1.5px); }
+    40%  { transform: translateX(1.5px); }
+    60%  { transform: translateX(-1px); }
+    80%  { transform: translateX(1px); }
+    100% { transform: translateX(0); }
+  }
+
+  /* Alarm sound wave bar at top */
+  .alarm-wave {
+    position: absolute;
+    top: 50px; left: 50%;
+    transform: translateX(-50%);
+    display: none;
+    align-items: end;
+    gap: 2px;
+    height: 14px;
+    z-index: 6;
+  }
+  .phone[data-sev="alert"] .alarm-wave { display: flex; }
+  .alarm-wave .bar {
+    width: 2px;
+    background: var(--crimson);
+    border-radius: 1px;
+    box-shadow: 0 0 4px var(--crimson);
+    animation: alarm-wave 0.6s ease-in-out infinite;
+  }
+  @keyframes alarm-wave {
+    0%, 100% { height: 3px; opacity: 0.5; }
+    50%      { height: 14px; opacity: 1; }
+  }
+
+  /* Persistent call-back status (alert mode) */
+  .call-status {
+    position: absolute;
+    top: 96px; left: 0; right: 0;
+    text-align: center;
+    z-index: 6;
+    display: none;
+  }
+  .phone[data-sev="alert"] .call-status { display: block; }
+  .call-status .label {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 5px 12px;
+    border: 1px solid var(--crimson-deep);
+    border-radius: 999px;
+    background: rgba(184,51,74,0.10);
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 9px;
+    letter-spacing: 4px;
+    color: var(--crimson);
+    margin-bottom: 8px;
+  }
+  .call-status .label .ring-dot {
+    width: 5px; height: 5px;
+    border-radius: 50%;
+    background: var(--crimson);
+    box-shadow: 0 0 8px var(--crimson);
+    animation: ring-blink 0.7s ease-in-out infinite;
+  }
+  @keyframes ring-blink {
+    0%, 100% { opacity: 0.3; }
+    50%      { opacity: 1; }
+  }
+  .call-status .timer {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 28px;
+    font-weight: 500;
+    letter-spacing: 3px;
+    color: var(--crimson);
+    text-shadow: 0 0 16px rgba(184,51,74,0.6);
+    line-height: 1;
+  }
+  .call-status .sub {
+    margin-top: 8px;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-family: 'Cormorant Garamond', serif;
+    font-style: italic;
+    font-size: 12px;
+    color: var(--text-body);
+    letter-spacing: 0.5px;
+  }
+  .call-status .sub svg { width: 11px; height: 11px; fill: none; stroke: var(--crimson); stroke-width: 1.5; }
+
+  /* In alert mode, hide some normal elements that don't fit */
+  .phone[data-sev="alert"] .severity-badge { top: 24px; }
+  .phone[data-sev="alert"] .severity-pill {
+    color: var(--crimson);
+    border-color: var(--crimson);
+    background: rgba(184,51,74,0.12);
+  }
+  .phone[data-sev="alert"] .severity-pill .sev-dot {
+    background: var(--crimson); box-shadow: 0 0 10px var(--crimson);
+  }
+  .phone[data-sev="alert"] .hero { top: 220px; }
+  .phone[data-sev="alert"] .hero-title {
+    color: var(--crimson);
+    text-shadow: 0 0 30px rgba(184,51,74,0.6), 0 0 60px rgba(184,51,74,0.3);
+  }
+  .phone[data-sev="alert"] .start-btn {
+    background: linear-gradient(180deg, #FFB3BC 0%, var(--crimson) 50%, var(--crimson-deep) 100%);
+    box-shadow:
+      0 0 30px rgba(184,51,74,0.55),
+      inset 0 1px 0 rgba(255,255,255,0.4),
+      inset 0 -1px 0 rgba(0,0,0,0.2);
+    animation: btn-pulse-alert 1s ease-in-out infinite;
+  }
+  @keyframes btn-pulse-alert {
+    0%, 100% { box-shadow: 0 0 30px rgba(184,51,74,0.55), inset 0 1px 0 rgba(255,255,255,0.4), inset 0 -1px 0 rgba(0,0,0,0.2); }
+    50%      { box-shadow: 0 0 60px rgba(184,51,74,0.85), inset 0 1px 0 rgba(255,255,255,0.5), inset 0 -1px 0 rgba(0,0,0,0.2); }
+  }
+
+  /* Dawn horizon — gold light rising from bottom */
+  .horizon {
+    position: absolute;
+    bottom: 0; left: 0; right: 0;
+    height: 38%;
+    pointer-events: none;
+    z-index: 1;
+    background:
+      linear-gradient(180deg,
+        transparent 0%,
+        rgba(232,199,126,0.04) 30%,
+        rgba(232,199,126,0.10) 60%,
+        rgba(232,199,126,0.18) 85%,
+        rgba(232,199,126,0.25) 100%);
+    animation: dawn-rise 2s ease-out;
+  }
+  @keyframes dawn-rise {
+    from { transform: translateY(60%); opacity: 0; }
+    to   { transform: translateY(0);   opacity: 1; }
+  }
+  .horizon::before {
+    content: '';
+    position: absolute;
+    left: 8%; right: 8%;
+    height: 1px;
+    top: 16%;
+    background: linear-gradient(90deg, transparent, rgba(232,199,126,0.55), transparent);
+    box-shadow: 0 0 8px rgba(232,199,126,0.3);
+  }
+  .horizon::after {
+    content: '';
+    position: absolute;
+    left: 30%; right: 30%;
+    height: 1px;
+    top: 8%;
+    background: linear-gradient(90deg, transparent, rgba(232,199,126,0.25), transparent);
+  }
+
+  .gilt-frame {
+    position: absolute; inset: 14px;
+    border: 1px solid rgba(232,199,126,0.18);
+    border-radius: 26px;
+    pointer-events: none;
+    z-index: 4;
+  }
+
+  .pattern-wash {
+    position: absolute; inset: 0;
+    opacity: 0.025;
+    background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='100' height='100' viewBox='0 0 100 100'><g fill='none' stroke='%23E8C77E' stroke-width='0.5'><polygon points='50,5 62,38 95,38 70,58 80,90 50,72 20,90 30,58 5,38 38,38'/><circle cx='50' cy='50' r='20'/></g></svg>");
+    background-size: 130px 130px;
+    pointer-events: none;
+    z-index: 1;
+  }
+
+  /* Floating ember particles rising from bottom */
+  .embers {
+    position: absolute; inset: 0;
+    pointer-events: none;
+    z-index: 2;
+    overflow: hidden;
+  }
+  .embers span {
+    position: absolute;
+    width: 2px; height: 2px;
+    border-radius: 50%;
+    background: var(--gold);
+    box-shadow: 0 0 6px var(--gold-flash);
+    bottom: 0;
+    opacity: 0;
+    animation: ember 7s ease-in infinite;
+  }
+  @keyframes ember {
+    0%   { transform: translateY(0)     translateX(0); opacity: 0; }
+    15%  { opacity: 0.85; }
+    50%  { transform: translateY(-220px) translateX(12px); }
+    100% { transform: translateY(-520px) translateX(-8px); opacity: 0; }
+  }
+
+  /* Letterbox bars */
+  .letterbox {
+    position: absolute;
+    left: 0; right: 0;
+    height: 14px;
+    background: var(--void);
+    z-index: 7;
+    pointer-events: none;
+  }
+  .letterbox.top    { top: 0; box-shadow: 0 1px 8px rgba(0,0,0,0.6); }
+  .letterbox.bottom { bottom: 0; box-shadow: 0 -1px 8px rgba(0,0,0,0.6); }
+
+  /* === Lock-screen status bar === */
+  .lock-status {
+    position: absolute;
+    top: 22px; left: 24px; right: 24px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    z-index: 5;
+  }
+  .lock-status .now-time {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 2px;
+    color: var(--gold);
+  }
+  .lock-status .right {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 9px;
+    letter-spacing: 2px;
+    color: var(--gold-deep);
+  }
+  .lock-status .lock-icon { width: 10px; height: 10px; fill: none; stroke: var(--gold-deep); stroke-width: 1.5; }
+
+  /* === Severity badge === */
+  .severity-badge {
+    position: absolute;
+    top: 64px; left: 0; right: 0;
+    text-align: center;
+    z-index: 5;
+  }
+  .severity-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 6px 16px;
+    border: 1px solid var(--gold);
+    border-radius: 999px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 5px;
+    color: var(--gold);
+    background: rgba(232,199,126,0.06);
+    text-transform: uppercase;
+  }
+  .severity-pill .sev-dot {
+    width: 6px; height: 6px;
+    border-radius: 50%;
+    background: var(--gold);
+    box-shadow: 0 0 8px var(--gold);
+    animation: sev-pulse 1.6s ease-in-out infinite;
+  }
+  @keyframes sev-pulse {
+    0%, 100% { transform: scale(1); opacity: 1; }
+    50%      { transform: scale(1.4); opacity: 0.5; }
+  }
+  .phone[data-sev="max"]   .severity-pill { color: var(--crimson); border-color: var(--crimson); background: rgba(184,51,74,0.08); }
+  .phone[data-sev="max"]   .severity-pill .sev-dot { background: var(--crimson); box-shadow: 0 0 8px var(--crimson); }
+  .phone[data-sev="med"]   .severity-pill { color: var(--gold-2); border-color: var(--gold-deep); }
+  .phone[data-sev="low"]   .severity-pill { color: var(--gold-deep); border-color: var(--gold-deep); background: transparent; }
+  .phone[data-sev="low"]   .severity-pill .sev-dot { background: var(--gold-deep); box-shadow: none; animation: none; }
+
+  /* === Hero block === */
+  .hero {
+    position: absolute;
+    top: 130px; left: 0; right: 0;
+    text-align: center;
+    z-index: 4;
+    padding: 0 28px;
+  }
+  .hero-prelude {
+    font-family: 'Cormorant Garamond', serif;
+    font-style: italic;
+    font-size: 14px;
+    color: var(--gold-deep);
+    letter-spacing: 2px;
+    margin-bottom: 18px;
+    opacity: 0;
+    animation: fade-up 0.8s 0.2s ease forwards;
+  }
+
+  .hero-title {
+    font-family: 'Inter', sans-serif;
+    font-weight: 800;
+    font-size: 64px;
+    letter-spacing: 8px;
+    line-height: 1;
+    color: var(--gold);
+    text-shadow:
+      0 0 30px rgba(232,199,126,0.45),
+      0 0 60px rgba(232,199,126,0.2);
+    margin-bottom: 4px;
+  }
+  .hero-title .word {
+    display: inline-block;
+    opacity: 0;
+    transform: translateY(20px);
+    filter: blur(12px);
+    animation: title-in 1.0s cubic-bezier(0.16, 0.84, 0.32, 1) forwards;
+  }
+  @keyframes title-in {
+    to { opacity: 1; transform: translateY(0); filter: blur(0); }
+  }
+  .phone[data-sev="max"] .hero-title { color: var(--crimson); text-shadow: 0 0 30px rgba(184,51,74,0.5), 0 0 60px rgba(184,51,74,0.25); }
+
+  .hero-divider {
+    margin: 24px auto 16px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+    opacity: 0;
+    animation: fade-up 0.6s 1.4s ease forwards;
+  }
+  .hero-divider .line {
+    width: 50px; height: 1px;
+    background: linear-gradient(90deg, transparent, var(--gold-deep), transparent);
+  }
+  .hero-divider .star {
+    color: var(--gold);
+    font-size: 10px;
+  }
+
+  .task-title {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 26px;
+    font-weight: 600;
+    color: var(--text-primary);
+    letter-spacing: 1px;
+    margin-bottom: 12px;
+    opacity: 0;
+    animation: fade-up 0.8s 1.6s ease forwards;
+  }
+
+  .task-goal {
+    font-family: 'Cormorant Garamond', serif;
+    font-style: italic;
+    font-size: 15px;
+    color: var(--text-body);
+    line-height: 1.55;
+    opacity: 0;
+    animation: fade-up 0.8s 1.9s ease forwards;
+    padding: 0 12px;
+  }
+  .task-goal::before, .task-goal::after {
+    color: var(--gold-deep);
+    font-weight: 600;
+  }
+  .task-goal::before { content: '« '; }
+  .task-goal::after  { content: ' »'; }
+
+  @keyframes fade-up {
+    from { opacity: 0; transform: translateY(8px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  /* === Postponement warning === */
+  .postpone-warn {
+    position: absolute;
+    top: 462px; left: 0; right: 0;
+    text-align: center;
+    z-index: 4;
+    padding: 0 28px;
+    opacity: 0;
+    animation: fade-up 0.8s 2.4s ease forwards;
+  }
+  .postpone-warn-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 5px 12px;
+    border: 1px dashed var(--crimson-deep);
+    border-radius: 2px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 9px;
+    letter-spacing: 2px;
+    color: var(--crimson);
+    background: rgba(184,51,74,0.04);
+  }
+  .postpone-warn-pill svg { width: 10px; height: 10px; fill: none; stroke: var(--crimson); stroke-width: 1.5; }
+
+  /* === Streak / context strip === */
+  .context-strip {
+    position: absolute;
+    top: 510px; left: 24px; right: 24px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 8px 12px;
+    background: rgba(232,199,126,0.025);
+    border-top: 1px solid rgba(138,111,68,0.22);
+    border-bottom: 1px solid rgba(138,111,68,0.22);
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 9px;
+    letter-spacing: 2px;
+    color: var(--gold-deep);
+    z-index: 4;
+    opacity: 0;
+    animation: fade-up 0.8s 2.6s ease forwards;
+  }
+  .context-strip .streak {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    color: var(--gold);
+  }
+  .context-strip .streak .dot {
+    width: 4px; height: 4px;
+    border-radius: 50%;
+    background: var(--gold);
+    box-shadow: 0 0 6px var(--gold);
+  }
+  .context-strip .next-prayer {
+    color: var(--gold);
+  }
+  .context-strip .sep { color: var(--gold-deep); margin: 0 4px; }
+
+  /* === Bottom action === */
+  .bottom-bar {
+    position: absolute;
+    bottom: 28px; left: 24px; right: 24px;
+    z-index: 5;
+    opacity: 0;
+    animation: fade-up 0.8s 2.8s ease forwards;
+  }
+
+  .scheduled-info {
+    text-align: center;
+    margin-bottom: 14px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 9px;
+    letter-spacing: 3px;
+    color: var(--gold-deep);
+  }
+  .scheduled-info .scheduled-time {
+    color: var(--gold);
+    margin-left: 6px;
+  }
+  .scheduled-info .duration {
+    color: var(--text-muted);
+    margin-left: 8px;
+    padding-left: 8px;
+    border-left: 1px solid var(--text-ghost);
+  }
+
+  .start-btn {
+    width: 100%;
+    background: linear-gradient(180deg, var(--gold-flash) 0%, var(--gold) 50%, var(--gold-2) 100%);
+    color: var(--void);
+    padding: 18px;
+    font-size: 14px;
+    font-weight: 700;
+    letter-spacing: 8px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: all 0.3s;
+    font-family: 'Inter', sans-serif;
+    text-transform: uppercase;
+    position: relative;
+    overflow: hidden;
+    box-shadow:
+      0 0 30px rgba(232,199,126,0.35),
+      inset 0 1px 0 rgba(255,255,255,0.5),
+      inset 0 -1px 0 rgba(0,0,0,0.2);
+    animation: btn-pulse 2.5s ease-in-out infinite;
+  }
+  @keyframes btn-pulse {
+    0%, 100% { box-shadow: 0 0 30px rgba(232,199,126,0.35), inset 0 1px 0 rgba(255,255,255,0.5), inset 0 -1px 0 rgba(0,0,0,0.2); }
+    50%      { box-shadow: 0 0 50px rgba(232,199,126,0.6),  inset 0 1px 0 rgba(255,255,255,0.6), inset 0 -1px 0 rgba(0,0,0,0.2); }
+  }
+  .start-btn::before {
+    content: '';
+    position: absolute; inset: 0;
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.4), transparent);
+    transform: translateX(-100%);
+    animation: shimmer 3s ease-in-out infinite;
+  }
+  @keyframes shimmer {
+    0%   { transform: translateX(-100%); }
+    50%  { transform: translateX(100%);  }
+    100% { transform: translateX(100%);  }
+  }
+  .start-btn:hover { transform: scale(1.02); letter-spacing: 10px; }
+
+  .postpone-btn {
+    width: 100%;
+    margin-top: 10px;
+    background: transparent;
+    color: var(--text-muted);
+    padding: 12px;
+    font-size: 11px;
+    font-weight: 500;
+    letter-spacing: 4px;
+    border: 1px solid var(--text-ghost);
+    border-radius: 2px;
+    cursor: pointer;
+    font-family: 'Inter', sans-serif;
+    text-transform: uppercase;
+    transition: all 0.2s;
+  }
+  .postpone-btn:hover {
+    border-color: var(--gold-deep);
+    color: var(--text-body);
+  }
+  .postpone-btn.disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+    border-style: dashed;
+  }
+  .postpone-msg {
+    margin-top: 8px;
+    text-align: center;
+    font-family: 'Cormorant Garamond', serif;
+    font-style: italic;
+    font-size: 12px;
+    color: var(--text-muted);
+  }
+
+  .vignette {
+    position: absolute; inset: 0;
+    pointer-events: none;
+    background: radial-gradient(ellipse 110% 80% at 50% 50%, transparent 55%, rgba(0,0,0,0.5));
+    z-index: 6;
+  }
+
+  /* State tabs (preview only) */
+  .state-tabs {
+    display: flex;
+    justify-content: center;
+    gap: 6px;
+    margin-top: 18px;
+    flex-wrap: wrap;
+  }
+  .state-tab {
+    padding: 7px 14px;
+    border-radius: 2px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 2px;
+    color: rgba(255,255,255,0.4);
+    cursor: pointer;
+    border: 1px solid rgba(255,255,255,0.08);
+    user-select: none;
+    transition: all 0.2s;
+  }
+  .state-tab:hover { color: var(--gold); border-color: var(--gold-deep); }
+  .state-tab.active {
+    color: var(--gold);
+    border-color: var(--gold);
+    background: rgba(232,199,126,0.08);
+  }
+
+  .footer-info {
+    margin-top: 22px;
+    text-align: center;
+    color: rgba(255,255,255,0.45);
+    font-size: 13px;
+    line-height: 1.6;
+    font-family: 'Cormorant Garamond', serif;
+    font-style: italic;
+  }
+
+  @media (max-width: 480px) {
+    body { padding: 0; }
+    .phone {
+      width: 100vw;
+      height: 100vh;
+      border-radius: 0;
+      box-shadow: none;
+    }
+    .footer-info, .state-tabs { display: none; }
+  }
+</style>
+</head>
+<body>
+
+<div style="display:flex; flex-direction:column; align-items:center;">
+
+  <div class="phone" id="phone" data-sev="high">
+    <div class="backdrop"></div>
+    <div class="pattern-wash"></div>
+    <div class="horizon"></div>
+    <div class="embers" id="embers"></div>
+    <div class="gilt-frame"></div>
+    <div class="alert-border"></div>
+    <div class="letterbox top"></div>
+    <div class="letterbox bottom"></div>
+
+    <!-- Alarm sound wave (alert mode only) -->
+    <div class="alarm-wave">
+      <div class="bar" style="animation-delay:0s"></div>
+      <div class="bar" style="animation-delay:0.05s"></div>
+      <div class="bar" style="animation-delay:0.1s"></div>
+      <div class="bar" style="animation-delay:0.15s"></div>
+      <div class="bar" style="animation-delay:0.2s"></div>
+      <div class="bar" style="animation-delay:0.15s"></div>
+      <div class="bar" style="animation-delay:0.1s"></div>
+      <div class="bar" style="animation-delay:0.05s"></div>
+      <div class="bar" style="animation-delay:0s"></div>
+      <div class="bar" style="animation-delay:0.05s"></div>
+      <div class="bar" style="animation-delay:0.1s"></div>
+      <div class="bar" style="animation-delay:0.15s"></div>
+      <div class="bar" style="animation-delay:0.2s"></div>
+      <div class="bar" style="animation-delay:0.15s"></div>
+      <div class="bar" style="animation-delay:0.1s"></div>
+    </div>
+
+    <!-- Persistent call-back status (alert mode only) -->
+    <div class="call-status">
+      <div class="label">
+        <div class="ring-dot"></div>
+        <span>CHAQIRUV DAVOM ETMOQDA</span>
+      </div>
+      <div class="timer" id="callElapsed">07:14</div>
+      <div class="sub">
+        <svg viewBox="0 0 12 12">
+          <rect x="3" y="6" width="6" height="5" rx="1"/>
+          <path d="M4 6 V4 a2 2 0 0 1 4 0 V6"/>
+        </svg>
+        <span>boshqa ilovaga o'tib bo'lmaydi — javob ber</span>
+      </div>
+    </div>
+
+    <!-- Lock status -->
+    <div class="lock-status">
+      <div class="now-time" id="nowTime">14:30</div>
+      <div class="right">
+        <svg class="lock-icon" viewBox="0 0 12 12">
+          <rect x="3" y="6" width="6" height="5" rx="1"/>
+          <path d="M4 6 V4 a2 2 0 0 1 4 0 V6"/>
+        </svg>
+        <span>QULFLI</span>
+      </div>
+    </div>
+
+    <!-- Severity badge -->
+    <div class="severity-badge">
+      <div class="severity-pill">
+        <div class="sev-dot"></div>
+        <span id="severityLabel">MUQADDAS VAQT</span>
+      </div>
+    </div>
+
+    <!-- Hero -->
+    <div class="hero">
+      <div class="hero-prelude" id="prelude">murabbiy chaqirmoqda</div>
+
+      <div class="hero-title" id="heroTitle">
+        <span class="word" style="animation-delay: 0.5s">VAQT</span>
+        <span class="word" style="animation-delay: 0.9s">KELDI</span>
+      </div>
+
+      <div class="hero-divider">
+        <div class="line"></div>
+        <span class="star">✦</span>
+        <div class="line"></div>
+      </div>
+
+      <div class="task-title" id="taskTitle">Chuqur kod · API</div>
+      <div class="task-goal" id="taskGoal">Integratsiyani tugatib, testlarni yozish · 4 pomodoro tsikl</div>
+    </div>
+
+    <!-- Postponement warning -->
+    <div class="postpone-warn" id="postponeWarn">
+      <div class="postpone-warn-pill">
+        <svg viewBox="0 0 12 12">
+          <circle cx="6" cy="6" r="5"/>
+          <line x1="6" y1="3.5" x2="6" y2="6.5"/>
+          <circle cx="6" cy="8.3" r="0.5" fill="currentColor"/>
+        </svg>
+        <span>BUGUN 1 MARTA SURDDING</span>
+      </div>
+    </div>
+
+    <!-- Context strip: streak + next prayer -->
+    <div class="context-strip">
+      <div class="streak">
+        <div class="dot"></div>
+        <span>STREAK · 12 KUN</span>
+      </div>
+      <div class="middle">
+        <span>BUGUN · 3/8 SESSIYA</span>
+      </div>
+      <div class="next-prayer">
+        <span>ASR · 17:10</span>
+      </div>
+    </div>
+
+    <!-- Bottom -->
+    <div class="bottom-bar">
+      <div class="scheduled-info">
+        <span>REJA</span>
+        <span class="scheduled-time" id="schedTime">14:30 — 16:30</span>
+        <span class="duration" id="duration">2 SOAT</span>
+      </div>
+      <button class="start-btn">Boshlayman</button>
+      <button class="postpone-btn" id="postponeBtn">5 daqiqa orqaga surish</button>
+    </div>
+
+    <div class="vignette"></div>
+  </div>
+
+  <!-- State tabs -->
+  <div class="state-tabs">
+    <div class="state-tab" data-sev="max">MUQADDAS</div>
+    <div class="state-tab active" data-sev="high">YUQORI</div>
+    <div class="state-tab" data-sev="med">REJADAGI</div>
+    <div class="state-tab" data-sev="low">OPTSIYONAL</div>
+    <div class="state-tab" data-sev="alert" style="color:#B8334A;border-color:#6B1F1F;">⚠ ESHITMA</div>
+  </div>
+
+  <div class="footer-info">
+    SessionStartActivity — lock-screen ustida
+  </div>
+</div>
+
+<script>
+  const states = {
+    max: {
+      severity: 'MUQADDAS VAQT',
+      prelude: 'murabbiy chaqirmoqda',
+      title: 'Qur\'on darsi',
+      goal: 'Bugun yana bir bobni o\'zlashtirib, kechagi bilimingni mustahkamlash',
+      schedTime: '14:30 — 15:15',
+      duration: '45 DAQ',
+      postpones: 1,
+      canPostpone: false
+    },
+    high: {
+      severity: 'YUQORI USTUVORLIK',
+      prelude: 'rejani bajarish vaqti',
+      title: 'Chuqur fokus — kod',
+      goal: 'API integratsiyasini tugatish va testlarni yozish',
+      schedTime: '14:30 — 16:00',
+      duration: '90 DAQ',
+      postpones: 0,
+      canPostpone: true
+    },
+    med: {
+      severity: 'REJADAGI',
+      prelude: 'rejada belgilangan',
+      title: 'Sport — yugurish',
+      goal: '5 km masofani 30 daqiqada bosib o\'tish',
+      schedTime: '14:30 — 15:00',
+      duration: '30 DAQ',
+      postpones: 0,
+      canPostpone: true
+    },
+    low: {
+      severity: 'OPTSIYONAL',
+      prelude: 'agar fursat bo\'lsa',
+      title: 'Kitob o\'qish',
+      goal: 'Atomic Habits — 3 bobni nihoyasiga yetkazish',
+      schedTime: '14:30 — 15:30',
+      duration: '60 DAQ',
+      postpones: 0,
+      canPostpone: true
+    },
+    alert: {
+      severity: 'JAVOB KUTILMOQDA',
+      prelude: 'murabbiy chaqiruvi davom etmoqda',
+      title: 'Qur\'on darsi',
+      goal: 'Bu ekran javob bermaguningacha turaveradi. Boshlash yoki orqaga surishni tanla.',
+      schedTime: '14:30 — 15:15',
+      duration: '45 DAQ',
+      postpones: 0,
+      canPostpone: true
+    }
+  };
+
+  const phone   = document.getElementById('phone');
+  const sevLabel= document.getElementById('severityLabel');
+  const prelude = document.getElementById('prelude');
+  const taskT   = document.getElementById('taskTitle');
+  const taskG   = document.getElementById('taskGoal');
+  const schedT  = document.getElementById('schedTime');
+  const duration= document.getElementById('duration');
+  const postWarn= document.getElementById('postponeWarn');
+  const postBtn = document.getElementById('postponeBtn');
+
+  function applyState(sev) {
+    const s = states[sev];
+    phone.dataset.sev = sev;
+    sevLabel.textContent = s.severity;
+    prelude.textContent = s.prelude;
+    taskT.textContent = s.title;
+    taskG.textContent = s.goal;
+    schedT.textContent = s.schedTime;
+    duration.textContent = s.duration;
+
+    if (s.postpones > 0) {
+      postWarn.style.display = 'block';
+      postWarn.querySelector('span').textContent = `BUGUN ${s.postpones} MARTA SURDDING`;
+    } else {
+      postWarn.style.display = 'none';
+    }
+
+    if (!s.canPostpone) {
+      postBtn.classList.add('disabled');
+      postBtn.textContent = 'BUGUN LIMIT TUGADI · FAQAT BOSHLASH';
+    } else {
+      postBtn.classList.remove('disabled');
+      postBtn.textContent = '5 daqiqa orqaga surish';
+    }
+
+    // Restart hero animation
+    document.querySelectorAll('.hero-title .word').forEach((w, i) => {
+      w.style.animation = 'none';
+      void w.offsetWidth;
+      w.style.animation = `title-in 1.0s ${0.5 + i*0.4}s cubic-bezier(0.16, 0.84, 0.32, 1) forwards`;
+    });
+  }
+
+  // Spawn embers
+  function spawnEmbers() {
+    const embers = document.getElementById('embers');
+    for (let i = 0; i < 16; i++) {
+      const e = document.createElement('span');
+      e.style.left = Math.random() * 100 + '%';
+      e.style.animationDuration = (5 + Math.random() * 5) + 's';
+      e.style.animationDelay = (Math.random() * 5) + 's';
+      embers.appendChild(e);
+    }
+  }
+  spawnEmbers();
+
+  applyState('max');
+  document.querySelectorAll('.state-tab').forEach(tab => {
+    tab.addEventListener('click', () => {
+      document.querySelectorAll('.state-tab').forEach(t => t.classList.remove('active'));
+      tab.classList.add('active');
+      applyState(tab.dataset.sev);
+    });
+  });
+
+  // Live current time
+  function updateClock() {
+    const d = new Date();
+    document.getElementById('nowTime').textContent =
+      String(d.getHours()).padStart(2,'0') + ':' + String(d.getMinutes()).padStart(2,'0');
+  }
+  updateClock();
+  setInterval(updateClock, 30000);
+
+  // Persistent call elapsed counter (alert mode) — counts UP, never auto-stops
+  let elapsedSec = 7 * 60 + 14;
+  setInterval(() => {
+    if (phone.dataset.sev !== 'alert') return;
+    elapsedSec++;
+    const m = Math.floor(elapsedSec / 60);
+    const s = elapsedSec % 60;
+    document.getElementById('callElapsed').textContent =
+      String(m).padStart(2,'0') + ':' + String(s).padStart(2,'0');
+  }, 1000);
+</script>
+
+<script src="nav-overlay.js" defer></script>
+</body>
+</html>

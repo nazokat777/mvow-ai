@@ -1,0 +1,885 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>M·VoW — Tabriklar</title>
+<link rel="manifest" href="manifest.webmanifest">
+<meta name="theme-color" content="#04060B">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="M·VoW">
+<link rel="apple-touch-icon" href="assets/mnsm-logo.png">
+<link rel="icon" type="image/png" href="assets/mnsm-logo.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;600;700;900&family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500&family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --void:#04060B; --void-2:#0A0E16;
+    --text-primary:#F5F2EC; --text-body:#B8BBC2;
+    --text-muted:#6B6E76; --text-ghost:#3A3D44;
+    --gold:#E8C77E; --gold-2:#C7A36B; --gold-deep:#8a6f44;
+    --gold-flash:#FFE9B5; --honey:#D4A574; --cream:#F0E5D2;
+    --emerald:#4A8A5C; --emerald-bright:#6BAF7C; --emerald-deep:#1F3D2A;
+    --rose:#C28B8B; --crimson:#B8334A;
+    --sky:#7CA8C9;
+  }
+
+  body {
+    background:#14171d;
+    font-family:'Inter',sans-serif; color:var(--text-primary);
+    min-height:100vh;
+    display:flex; justify-content:center; align-items:center;
+    padding:24px;
+  }
+
+  .phone {
+    width:380px; height:800px;
+    background:var(--void); border-radius:40px;
+    overflow:hidden; position:relative;
+    box-shadow:0 0 0 8px #2a2e36, 0 30px 80px rgba(0,0,0,.85), 0 0 100px rgba(232,199,126,.10);
+  }
+
+  .gilt-frame{position:absolute;inset:14px;border:1px solid rgba(232,199,126,.18);border-radius:26px;pointer-events:none;z-index:6}
+  .letterbox{position:absolute;left:0;right:0;height:14px;background:var(--void);z-index:7;pointer-events:none}
+  .letterbox.top{top:0}.letterbox.bottom{bottom:0}
+
+  /* === Variant slot — only one visible at a time === */
+  .variant {
+    position:absolute; inset:0;
+    display:none;
+    flex-direction:column;
+    overflow:hidden;
+  }
+  .variant.active { display:flex; }
+
+  /* === Common header === */
+  .week-stamp {
+    position:absolute; top:26px; left:50%; transform:translateX(-50%);
+    z-index:10;
+    display:inline-flex; align-items:center; gap:8px;
+    padding:5px 14px; border:1px solid var(--gold);
+    border-radius:999px; background:rgba(232,199,126,.10);
+    font-family:'JetBrains Mono',monospace; font-size:9px;
+    letter-spacing:4px; color:var(--gold);
+  }
+  .week-stamp .star{color:var(--gold-flash);animation:spin-slow 8s linear infinite}
+  @keyframes spin-slow{to{transform:rotate(360deg)}}
+
+  /* Big "TABRIKLAYMAN" headline shared across variants */
+  .headline {
+    margin-top:88px; text-align:center;
+    z-index:5;
+  }
+  .headline .pre {
+    font-family:'JetBrains Mono',monospace; font-size:9px;
+    letter-spacing:5px; color:var(--gold-deep); margin-bottom:8px;
+  }
+  .headline .big {
+    font-family:'Cinzel',serif; font-weight:700;
+    font-size:34px; letter-spacing:6px; color:var(--gold);
+    text-shadow:0 0 28px rgba(232,199,126,.55), 0 0 60px rgba(232,199,126,.25);
+    line-height:1;
+    opacity:0; transform:translateY(8px); filter:blur(8px);
+    animation:hero-in 1.0s .3s cubic-bezier(.16,.84,.32,1) forwards;
+  }
+  @keyframes hero-in{to{opacity:1;transform:translateY(0);filter:blur(0)}}
+  .headline .name {
+    margin-top:6px;
+    font-family:'Cormorant Garamond',serif; font-style:italic;
+    font-size:18px; color:var(--honey); letter-spacing:1px;
+    opacity:0; animation:fade-in .8s 1s ease forwards;
+  }
+  @keyframes fade-in{to{opacity:1}}
+
+  /* === Mentor letter shared === */
+  .mentor-letter {
+    position:absolute; bottom:140px; left:24px; right:24px;
+    text-align:center; z-index:5;
+    opacity:0; animation:fade-up .8s 1.6s ease forwards;
+  }
+  @keyframes fade-up{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+  .mentor-letter .text {
+    font-family:'Cormorant Garamond',serif; font-style:italic;
+    font-size:14px; color:var(--text-body); line-height:1.55;
+    letter-spacing:.3px;
+  }
+  .mentor-letter .text .em{color:var(--gold);font-weight:600;font-style:normal}
+  .mentor-letter .signature {
+    margin-top:8px;
+    font-family:'Cormorant Garamond',serif; font-style:italic;
+    font-size:11.5px; color:var(--gold-deep);
+  }
+
+  /* === Bottom action === */
+  .bottom-bar {
+    position:absolute; bottom:24px; left:24px; right:24px; z-index:6;
+    opacity:0; animation:fade-up .8s 2s ease forwards;
+  }
+  .next-btn {
+    width:100%;
+    background:linear-gradient(180deg, var(--cream) 0%, var(--gold) 50%, var(--gold-deep) 100%);
+    color:var(--void); padding:14px;
+    font-size:12px; font-weight:700; letter-spacing:5px;
+    border:none; border-radius:4px; cursor:pointer;
+    text-transform:uppercase; font-family:'Inter',sans-serif;
+    box-shadow:0 0 22px rgba(232,199,126,.45), inset 0 1px 0 rgba(255,255,255,.5);
+  }
+  .stats-line {
+    margin-top:8px; text-align:center;
+    font-family:'JetBrains Mono',monospace; font-size:8.5px;
+    letter-spacing:2px; color:var(--gold-deep);
+  }
+  .stats-line .em{color:var(--gold)}
+
+  /* ============================================== */
+  /* === VARIANT 1 — MOUNTAIN SUMMIT (CHO'QQI)   === */
+  /* ============================================== */
+  .v-mountain {
+    background:
+      radial-gradient(ellipse 80% 40% at 50% 25%, rgba(124,168,201,.10), transparent 65%),
+      linear-gradient(180deg, var(--void) 0%, #0E1218 50%, #1A1410 100%);
+  }
+  .v-mountain svg.mountain-svg {
+    position:absolute; bottom:120px; left:0; right:0; width:100%; height:280px;
+    z-index:2;
+  }
+  .v-mountain .summit-light {
+    position:absolute; top:200px; left:50%;
+    width:8px; height:280px;
+    transform:translateX(-50%);
+    background:linear-gradient(180deg, var(--gold-flash), transparent);
+    filter:blur(6px); opacity:0;
+    animation:beam-rise 1.2s 1s ease forwards;
+  }
+  @keyframes beam-rise{to{opacity:.55}}
+  .v-mountain .summit-star {
+    position:absolute; top:198px; left:50%;
+    width:14px; height:14px; transform:translateX(-50%);
+    background:radial-gradient(circle,var(--gold-flash),var(--gold) 60%,transparent);
+    border-radius:50%;
+    box-shadow:0 0 28px var(--gold), 0 0 60px var(--gold);
+    z-index:3;
+    opacity:0; animation:fade-in .8s 1.2s ease forwards;
+  }
+
+  /* ============================================== */
+  /* === VARIANT 2 — STARS CONSTELLATION         === */
+  /* ============================================== */
+  .v-stars {
+    background:
+      radial-gradient(ellipse 80% 30% at 50% 25%, rgba(124,168,201,.06), transparent 65%),
+      radial-gradient(ellipse 80% 50% at 50% 100%, rgba(232,199,126,.05), transparent 70%),
+      linear-gradient(180deg, #050810 0%, #0A0E16 50%, #050810 100%);
+  }
+  .v-stars .twinkle {
+    position:absolute; inset:0; pointer-events:none;
+  }
+  .v-stars .twinkle span {
+    position:absolute; width:2px; height:2px;
+    border-radius:50%; background:var(--cream);
+    box-shadow:0 0 4px var(--cream);
+    animation:tw 3s ease-in-out infinite;
+  }
+  @keyframes tw{0%,100%{opacity:.3;transform:scale(.8)}50%{opacity:1;transform:scale(1.3)}}
+  .v-stars svg.constellation-svg {
+    position:absolute; top:230px; left:50%; transform:translateX(-50%);
+    width:300px; height:240px; z-index:3;
+  }
+  .v-stars .constellation-svg circle {
+    fill:var(--gold-flash);
+    filter:drop-shadow(0 0 6px var(--gold));
+  }
+  .v-stars .constellation-svg .line-anim {
+    stroke:var(--gold); stroke-width:1.2; fill:none;
+    stroke-dasharray:200; stroke-dashoffset:200;
+    animation:line-draw 2s 1s ease forwards;
+  }
+  @keyframes line-draw{to{stroke-dashoffset:0}}
+
+  /* ============================================== */
+  /* === VARIANT 3 — HARVEST (HOSIL TO'PLANDI) === */
+  /* ============================================== */
+  .v-harvest {
+    background:
+      radial-gradient(ellipse 90% 60% at 50% 100%, rgba(212,165,116,.18), transparent 65%),
+      radial-gradient(ellipse 100% 35% at 50% 30%, rgba(232,199,126,.08), transparent 70%),
+      linear-gradient(180deg, #050810 0%, #100C06 60%, #1A1408 100%);
+  }
+  .v-harvest .wheat {
+    position:absolute;
+    bottom:170px;
+    width:40px; height:180px;
+    transform-origin:50% 100%;
+    transform:scaleY(0);
+    animation:wheat-grow 1.4s cubic-bezier(.34,1.20,.64,1) forwards;
+  }
+  @keyframes wheat-grow{to{transform:scaleY(1)}}
+  .v-harvest .wheat svg{width:100%;height:100%}
+
+  /* ============================================== */
+  /* === VARIANT 5 — RIVER (DARYO KECHILDI)      === */
+  /* ============================================== */
+  .v-river {
+    background:
+      radial-gradient(ellipse 80% 50% at 50% 70%, rgba(124,168,201,.14), transparent 70%),
+      linear-gradient(180deg, var(--void) 0%, #08111A 50%, #0F1E2C 100%);
+  }
+  .v-river .water {
+    position:absolute; bottom:0; left:0; right:0; height:50%;
+    background: linear-gradient(180deg,
+      transparent 0%,
+      rgba(124,168,201,0.10) 30%,
+      rgba(124,168,201,0.25) 100%);
+    overflow:hidden;
+  }
+  .v-river .ripple {
+    position:absolute; bottom:30%; left:50%;
+    width:100px; height:100px;
+    border:1px solid rgba(232,199,126,.4);
+    border-radius:50%;
+    transform:translate(-50%,-50%);
+    animation:ripple-out 4s linear infinite;
+  }
+  @keyframes ripple-out {
+    0%   { transform:translate(-50%,-50%) scale(0.4); opacity:0.8; }
+    100% { transform:translate(-50%,-50%) scale(2.6); opacity:0; }
+  }
+  .v-river .stones {
+    position:absolute; bottom:18%; left:0; right:0;
+    display:flex; justify-content:space-around; padding:0 30px;
+    z-index:2;
+  }
+  .v-river .stone {
+    width:18px; height:6px; border-radius:50%;
+    background:linear-gradient(180deg, var(--gold), var(--gold-deep));
+    box-shadow:0 0 8px rgba(232,199,126,.5);
+  }
+
+  /* ============================================== */
+  /* === VARIANT 6 — DAWN (TONG KELDI)           === */
+  /* ============================================== */
+  .v-dawn {
+    background:
+      radial-gradient(ellipse 100% 60% at 50% 100%, rgba(232,199,126,.32), transparent 60%),
+      radial-gradient(ellipse 100% 30% at 50% 100%, rgba(194,139,139,.18), transparent 70%),
+      linear-gradient(180deg, #050810 0%, #1A1410 50%, #2A1810 100%);
+  }
+  .v-dawn .sun {
+    position:absolute; bottom:170px; left:50%;
+    width:140px; height:140px;
+    transform:translateX(-50%);
+    background:radial-gradient(circle at 50% 50%, var(--gold-flash), var(--gold) 50%, transparent);
+    border-radius:50%;
+    filter:blur(4px); opacity:0;
+    animation:sun-rise 2.5s 1s ease forwards;
+  }
+  @keyframes sun-rise {
+    from { transform:translateX(-50%) translateY(60px); opacity:0; }
+    to   { transform:translateX(-50%) translateY(0); opacity:0.85; }
+  }
+  .v-dawn .horizon-line {
+    position:absolute; bottom:170px; left:0; right:0;
+    height:1px;
+    background:linear-gradient(90deg, transparent, rgba(232,199,126,.55), transparent);
+    box-shadow:0 0 14px rgba(232,199,126,.4);
+  }
+  .v-dawn .ray {
+    position:absolute; bottom:170px; left:50%;
+    width:2px; height:140px;
+    transform-origin:bottom center;
+    background:linear-gradient(180deg, transparent, var(--gold), transparent);
+    opacity:0;
+    animation:ray-burst 3s 1.5s ease infinite;
+  }
+  @keyframes ray-burst { 0%{opacity:0}50%{opacity:.7}100%{opacity:0} }
+
+  /* ============================================== */
+  /* === VARIANT 7 — PHOENIX (FENIX QAYTA TUG'ILDI) === */
+  /* ============================================== */
+  .v-phoenix {
+    background:
+      radial-gradient(ellipse 80% 50% at 50% 50%, rgba(184,51,74,.10), transparent 65%),
+      radial-gradient(ellipse 80% 40% at 50% 30%, rgba(232,199,126,.18), transparent 65%),
+      linear-gradient(180deg, var(--void) 0%, #1A0810 50%, var(--void) 100%);
+  }
+  .v-phoenix .ember {
+    position:absolute; bottom:0;
+    width:3px; height:3px; border-radius:50%;
+    background:var(--gold-flash);
+    box-shadow:0 0 8px var(--gold), 0 0 16px var(--crimson);
+    opacity:0;
+    animation:ember-rise 5s linear infinite;
+  }
+  @keyframes ember-rise {
+    0%   { transform:translateY(0) translateX(0); opacity:0; }
+    20%  { opacity:1; }
+    100% { transform:translateY(-100vh) translateX(40px); opacity:0; }
+  }
+  .v-phoenix svg.phoenix-svg {
+    position:absolute; top:240px; left:50%; transform:translateX(-50%);
+    width:240px; height:200px; z-index:3;
+  }
+  .v-phoenix .phoenix-svg path {
+    stroke:var(--gold); stroke-width:2; fill:none;
+    stroke-dasharray:500; stroke-dashoffset:500;
+    animation:phoenix-draw 2.5s 1s ease forwards;
+    filter:drop-shadow(0 0 8px var(--gold-flash));
+  }
+  @keyframes phoenix-draw{to{stroke-dashoffset:0}}
+
+  /* ============================================== */
+  /* === VARIANT 8 — KEY (KALIT QO'LLANGINGDA)   === */
+  /* ============================================== */
+  .v-key {
+    background:
+      radial-gradient(ellipse 80% 40% at 50% 35%, rgba(232,199,126,.18), transparent 65%),
+      linear-gradient(180deg, var(--void) 0%, #14100A 50%, var(--void) 100%);
+  }
+  .v-key svg.key-svg {
+    position:absolute; top:230px; left:50%; transform:translateX(-50%);
+    width:200px; height:200px; z-index:3;
+    animation:key-spin 6s linear infinite, key-glow 2s ease-in-out infinite;
+  }
+  @keyframes key-spin{to{transform:translateX(-50%) rotate(360deg)}}
+  @keyframes key-glow{0%,100%{filter:drop-shadow(0 0 12px rgba(232,199,126,.5))}50%{filter:drop-shadow(0 0 28px rgba(232,199,126,.9))}}
+
+  /* ============================================== */
+  /* === VARIANT 4 — TREE OF LIGHT (NUR DARAXTI) === */
+  /* ============================================== */
+  .v-tree {
+    background:
+      radial-gradient(ellipse 80% 40% at 50% 30%, rgba(232,199,126,.18), transparent 65%),
+      linear-gradient(180deg, var(--void) 0%, #1A1410 50%, var(--void) 100%);
+  }
+  .v-tree svg.tree-svg {
+    position:absolute; bottom:130px; left:50%; transform:translateX(-50%);
+    width:280px; height:280px; z-index:3;
+  }
+  .v-tree .tree-svg path {
+    stroke:var(--gold); stroke-width:1.5; fill:none;
+    stroke-dasharray:600; stroke-dashoffset:600;
+    animation:tree-grow 2.5s 1s ease forwards;
+    filter:drop-shadow(0 0 6px rgba(232,199,126,.5));
+  }
+  @keyframes tree-grow{to{stroke-dashoffset:0}}
+  .v-tree .tree-svg circle.leaf{fill:var(--gold-flash);opacity:0;animation:leaf-pop .5s ease forwards}
+  @keyframes leaf-pop{to{opacity:1;transform:scale(1.2)}}
+
+  /* === Floating gold particles (used by some variants) === */
+  .particles {
+    position:absolute; inset:0; pointer-events:none; z-index:1;
+  }
+  .particles span {
+    position:absolute; width:3px; height:3px;
+    border-radius:50%; background:var(--gold-flash);
+    box-shadow:0 0 6px var(--gold);
+    opacity:0;
+    animation:rise 6s linear infinite;
+  }
+  @keyframes rise{
+    0%{transform:translateY(100vh) translateX(0);opacity:0}
+    20%{opacity:.85}
+    100%{transform:translateY(-10vh) translateX(20px);opacity:0}
+  }
+
+  /* === Variant tabs (preview only) === */
+  .variant-tabs {
+    display:flex; justify-content:center; gap:6px;
+    margin-top:18px; flex-wrap:wrap;
+  }
+  .variant-tab {
+    padding:7px 14px; border-radius:2px;
+    font-family:'JetBrains Mono',monospace; font-size:10px;
+    letter-spacing:2px; color:rgba(255,255,255,.4);
+    cursor:pointer; border:1px solid rgba(255,255,255,.08);
+    user-select:none; transition:all .2s;
+  }
+  .variant-tab:hover{color:var(--gold);border-color:var(--gold-deep)}
+  .variant-tab.active{color:var(--gold);border-color:var(--gold);background:rgba(232,199,126,.08)}
+
+  .footer-info {
+    margin-top:22px; text-align:center;
+    color:rgba(255,255,255,.45); font-size:13px; line-height:1.6;
+    font-family:'Cormorant Garamond',serif; font-style:italic;
+  }
+
+  @media (max-width:480px){
+    body{padding:0 !important; align-items:stretch !important; min-height:100vh}
+    .phone{
+      width:100vw !important; height:100vh !important;
+      min-height:100vh !important; border-radius:0 !important;
+      box-shadow:none !important; padding:0 !important;
+      overflow:hidden !important;
+    }
+    .variant {
+      width:100vw !important; height:100vh !important;
+      min-height:100vh !important;
+      padding:60px 0 130px !important;
+    }
+    .variant .headline { padding: 0 22px !important; }
+    .variant .mentor-letter { margin: 14px 22px !important; }
+    .variant .bottom-bar {
+      position:absolute !important;
+      bottom:24px !important; left:24px !important; right:24px !important;
+      transform:none !important;
+    }
+    .footer-info,.variant-tabs{display:none}
+  }
+</style>
+</head>
+<body>
+
+<div style="display:flex;flex-direction:column;align-items:center;">
+
+<div class="phone">
+
+  <div class="gilt-frame"></div>
+  <div class="letterbox top"></div>
+  <div class="letterbox bottom"></div>
+
+  <!-- Week stamp shared across variants -->
+  <div class="week-stamp">
+    <span class="star">✦</span>
+    <span>HAFTA TUGADI · 7 KUN</span>
+  </div>
+
+  <!-- VARIANT 1: Mountain Summit -->
+  <div class="variant v-mountain active">
+    <div class="particles" data-particles="1"></div>
+    <svg class="mountain-svg" viewBox="0 0 380 280" preserveAspectRatio="none">
+      <defs>
+        <linearGradient id="mtnGrad" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%" stop-color="#1A1410"/>
+          <stop offset="100%" stop-color="#04060B"/>
+        </linearGradient>
+        <linearGradient id="mtnEdge" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%" stop-color="#E8C77E" stop-opacity="0.8"/>
+          <stop offset="100%" stop-color="#8a6f44" stop-opacity="0.2"/>
+        </linearGradient>
+      </defs>
+      <!-- Back mountain -->
+      <polygon points="0,280 110,90 220,180 280,40 380,280" fill="#0A0E16" opacity="0.9"/>
+      <polyline points="0,280 110,90 220,180 280,40 380,280" stroke="url(#mtnEdge)" stroke-width="1" fill="none"/>
+      <!-- Front mountain -->
+      <polygon points="0,280 80,170 190,80 280,200 380,280" fill="url(#mtnGrad)"/>
+      <polyline points="0,280 80,170 190,80 280,200" stroke="#E8C77E" stroke-width="1.2" fill="none"/>
+    </svg>
+    <div class="summit-light"></div>
+    <div class="summit-star"></div>
+
+    <div class="headline">
+      <div class="pre">CHO'QQIGA YETDING</div>
+      <div class="big">TABRIKLAYMAN</div>
+      <div class="name">birinchi cho'qqi · senga aytaman</div>
+    </div>
+
+    <div class="mentor-letter">
+      <div class="text">
+        Bir hafta. <span class="em">7 kun</span> sen tepaga qarading va <span class="em">qadam tashladding</span>. Ko'pchilik birinchi yon bag'irda to'xtaydi. Sen — yo'lda. Yuqorida yana cho'qqilar bor — lekin bugun bu seniki.
+      </div>
+      <div class="signature">— men sen bilan birgaman</div>
+    </div>
+
+    <div class="bottom-bar">
+      <button class="next-btn">YANGI HAFTA</button>
+      <div class="stats-line"><span class="em">47</span> SOAT · <span class="em">38</span> SESSIYA · <span class="em">+12%</span></div>
+    </div>
+  </div>
+
+  <!-- VARIANT 2: Stars Constellation -->
+  <div class="variant v-stars">
+    <div class="twinkle" data-twinkle="1"></div>
+    <svg class="constellation-svg" viewBox="0 0 300 240">
+      <!-- Lines connecting stars -->
+      <path class="line-anim" d="M 40 50 L 110 90 L 90 160 L 180 130 L 230 60 L 260 180 L 150 200" />
+      <!-- Stars on the path -->
+      <circle cx="40"  cy="50"  r="3"/>
+      <circle cx="110" cy="90"  r="4"/>
+      <circle cx="90"  cy="160" r="3"/>
+      <circle cx="180" cy="130" r="4.5"/>
+      <circle cx="230" cy="60"  r="3"/>
+      <circle cx="260" cy="180" r="3.5"/>
+      <circle cx="150" cy="200" r="4"/>
+    </svg>
+
+    <div class="headline">
+      <div class="pre">YULDUZLARING YONDI</div>
+      <div class="big">TABRIKLAYMAN</div>
+      <div class="name">7 yulduz · har biri sening</div>
+    </div>
+
+    <div class="mentor-letter">
+      <div class="text">
+        Har bajarilgan kun — <span class="em">bir yulduz</span>. Bu hafta sen <span class="em">7 ta yondirding</span>. Bir-biriga ulansa — yo'l ko'rinadi. Bu yo'l sennikiga aylanmoqda.
+      </div>
+      <div class="signature">— sening osmonda izing bor</div>
+    </div>
+
+    <div class="bottom-bar">
+      <button class="next-btn">YANGI YULDUZ TUTAMIZ</button>
+      <div class="stats-line"><span class="em">7/7</span> KUN · <span class="em">95%</span> BAJARILDI</div>
+    </div>
+  </div>
+
+  <!-- VARIANT 3: Harvest (HOSIL) — wheat stalks rising from sown effort -->
+  <div class="variant v-harvest">
+    <div class="particles" data-particles="1"></div>
+
+    <!-- 5 wheat stalks rising — each = one habit -->
+    <div class="wheat" style="left:50px;animation-delay:.5s">
+      <svg viewBox="0 0 40 180" preserveAspectRatio="xMidYEnd meet">
+        <line x1="20" y1="180" x2="20" y2="40" stroke="#8a6f44" stroke-width="1.6"/>
+        <g fill="#E8C77E">
+          <ellipse cx="20" cy="42" rx="3" ry="6"/>
+          <ellipse cx="14" cy="55" rx="3" ry="6" transform="rotate(-25 14 55)"/>
+          <ellipse cx="26" cy="55" rx="3" ry="6" transform="rotate(25 26 55)"/>
+          <ellipse cx="14" cy="70" rx="3" ry="6" transform="rotate(-25 14 70)"/>
+          <ellipse cx="26" cy="70" rx="3" ry="6" transform="rotate(25 26 70)"/>
+          <ellipse cx="14" cy="85" rx="3" ry="6" transform="rotate(-25 14 85)"/>
+          <ellipse cx="26" cy="85" rx="3" ry="6" transform="rotate(25 26 85)"/>
+        </g>
+      </svg>
+    </div>
+    <div class="wheat" style="left:115px;animation-delay:.9s">
+      <svg viewBox="0 0 40 180" preserveAspectRatio="xMidYEnd meet">
+        <line x1="20" y1="180" x2="20" y2="30" stroke="#8a6f44" stroke-width="1.6"/>
+        <g fill="#FFE9B5">
+          <ellipse cx="20" cy="32" rx="3" ry="6.5"/>
+          <ellipse cx="13" cy="46" rx="3" ry="6.5" transform="rotate(-25 13 46)"/>
+          <ellipse cx="27" cy="46" rx="3" ry="6.5" transform="rotate(25 27 46)"/>
+          <ellipse cx="13" cy="62" rx="3" ry="6.5" transform="rotate(-25 13 62)"/>
+          <ellipse cx="27" cy="62" rx="3" ry="6.5" transform="rotate(25 27 62)"/>
+          <ellipse cx="13" cy="78" rx="3" ry="6.5" transform="rotate(-25 13 78)"/>
+          <ellipse cx="27" cy="78" rx="3" ry="6.5" transform="rotate(25 27 78)"/>
+        </g>
+      </svg>
+    </div>
+    <div class="wheat" style="left:180px;animation-delay:1.3s">
+      <svg viewBox="0 0 40 180" preserveAspectRatio="xMidYEnd meet">
+        <line x1="20" y1="180" x2="20" y2="20" stroke="#8a6f44" stroke-width="1.6"/>
+        <g fill="#E8C77E">
+          <ellipse cx="20" cy="22" rx="3" ry="7"/>
+          <ellipse cx="13" cy="38" rx="3" ry="7" transform="rotate(-25 13 38)"/>
+          <ellipse cx="27" cy="38" rx="3" ry="7" transform="rotate(25 27 38)"/>
+          <ellipse cx="13" cy="54" rx="3" ry="7" transform="rotate(-25 13 54)"/>
+          <ellipse cx="27" cy="54" rx="3" ry="7" transform="rotate(25 27 54)"/>
+          <ellipse cx="13" cy="70" rx="3" ry="7" transform="rotate(-25 13 70)"/>
+          <ellipse cx="27" cy="70" rx="3" ry="7" transform="rotate(25 27 70)"/>
+        </g>
+      </svg>
+    </div>
+    <div class="wheat" style="left:245px;animation-delay:1.7s">
+      <svg viewBox="0 0 40 180" preserveAspectRatio="xMidYEnd meet">
+        <line x1="20" y1="180" x2="20" y2="40" stroke="#8a6f44" stroke-width="1.6"/>
+        <g fill="#D4A574">
+          <ellipse cx="20" cy="42" rx="3" ry="6"/>
+          <ellipse cx="14" cy="55" rx="3" ry="6" transform="rotate(-25 14 55)"/>
+          <ellipse cx="26" cy="55" rx="3" ry="6" transform="rotate(25 26 55)"/>
+          <ellipse cx="14" cy="70" rx="3" ry="6" transform="rotate(-25 14 70)"/>
+          <ellipse cx="26" cy="70" rx="3" ry="6" transform="rotate(25 26 70)"/>
+        </g>
+      </svg>
+    </div>
+    <div class="wheat" style="left:300px;animation-delay:2.1s">
+      <svg viewBox="0 0 40 180" preserveAspectRatio="xMidYEnd meet">
+        <line x1="20" y1="180" x2="20" y2="50" stroke="#8a6f44" stroke-width="1.6"/>
+        <g fill="#E8C77E">
+          <ellipse cx="20" cy="52" rx="3" ry="6"/>
+          <ellipse cx="14" cy="65" rx="3" ry="6" transform="rotate(-25 14 65)"/>
+          <ellipse cx="26" cy="65" rx="3" ry="6" transform="rotate(25 26 65)"/>
+          <ellipse cx="14" cy="80" rx="3" ry="6" transform="rotate(-25 14 80)"/>
+          <ellipse cx="26" cy="80" rx="3" ry="6" transform="rotate(25 26 80)"/>
+        </g>
+      </svg>
+    </div>
+
+    <div class="headline">
+      <div class="pre">HOSIL TO'PLADING</div>
+      <div class="big">TABRIKLAYMAN</div>
+      <div class="name">5 odat — 5 boshoq</div>
+    </div>
+
+    <div class="mentor-letter">
+      <div class="text">
+        Sen <span class="em">5 ta urug'</span> ekkanding. Hosil keldi. Ertalabki sport, kitob, fokus, niyat, kun ko'rigi — har biri sabring va mehnatingdan. Bu hosil sening — yana ek, yana o'r.
+      </div>
+      <div class="signature">— men sen bilan birga turgan edim</div>
+    </div>
+
+    <div class="bottom-bar">
+      <button class="next-btn">YANGI YERGA URUG' SOCHAMIZ</button>
+      <div class="stats-line"><span class="em">5</span> ODAT · <span class="em">+1</span> BU HAFTA</div>
+    </div>
+  </div>
+
+  <!-- VARIANT 4: Tree of Light -->
+  <div class="variant v-tree">
+    <div class="particles" data-particles="1"></div>
+    <svg class="tree-svg" viewBox="0 0 280 280">
+      <!-- Trunk and branches -->
+      <path d="M 140 280 L 140 150
+               M 140 200 L 90 160
+               M 140 200 L 190 160
+               M 140 180 L 110 130
+               M 140 180 L 170 130
+               M 140 160 L 80 110
+               M 140 160 L 200 110
+               M 140 150 L 100 90
+               M 140 150 L 180 90
+               M 140 130 L 130 80
+               M 140 130 L 150 80"/>
+      <!-- Leaf clusters -->
+      <circle class="leaf" cx="140" cy="150" r="8" style="animation-delay:2.5s"/>
+      <circle class="leaf" cx="90" cy="160" r="6" style="animation-delay:2.7s"/>
+      <circle class="leaf" cx="190" cy="160" r="6" style="animation-delay:2.7s"/>
+      <circle class="leaf" cx="110" cy="130" r="5" style="animation-delay:2.9s"/>
+      <circle class="leaf" cx="170" cy="130" r="5" style="animation-delay:2.9s"/>
+      <circle class="leaf" cx="80" cy="110" r="6" style="animation-delay:3.0s"/>
+      <circle class="leaf" cx="200" cy="110" r="6" style="animation-delay:3.0s"/>
+      <circle class="leaf" cx="100" cy="90" r="5" style="animation-delay:3.2s"/>
+      <circle class="leaf" cx="180" cy="90" r="5" style="animation-delay:3.2s"/>
+      <circle class="leaf" cx="130" cy="80" r="4" style="animation-delay:3.4s"/>
+      <circle class="leaf" cx="150" cy="80" r="4" style="animation-delay:3.4s"/>
+      <circle class="leaf" cx="140" cy="60" r="7" style="animation-delay:3.5s"/>
+    </svg>
+
+    <div class="headline">
+      <div class="pre">DARAXTING O'SDI</div>
+      <div class="big">TABRIKLAYMAN</div>
+      <div class="name">+1 halqa · ildiz mustahkam</div>
+    </div>
+
+    <div class="mentor-letter">
+      <div class="text">
+        Daraxtning kuchi <span class="em">shoxchadan emas, ildizdan</span>. Sen 7 kun ildizingni mustahkamlading. Bu hafta ko'rinmadi — keyingi yili guvohlik beradi.
+      </div>
+      <div class="signature">— shoxlaringga meva keladi</div>
+    </div>
+
+    <div class="bottom-bar">
+      <button class="next-btn">YANA O'SAMIZ</button>
+      <div class="stats-line"><span class="em">12</span> HALQA · <span class="em">∞</span> ILDIZ</div>
+    </div>
+  </div>
+
+  <!-- VARIANT 5: River Crossed -->
+  <div class="variant v-river">
+    <div class="water"></div>
+    <div class="ripple"></div>
+    <div class="ripple" style="animation-delay:1.3s"></div>
+    <div class="ripple" style="animation-delay:2.6s"></div>
+    <div class="stones">
+      <div class="stone"></div><div class="stone"></div>
+      <div class="stone"></div><div class="stone"></div>
+      <div class="stone"></div><div class="stone"></div>
+      <div class="stone"></div>
+    </div>
+
+    <div class="headline">
+      <div class="pre">DARYONI KECHDING</div>
+      <div class="big">TABRIKLAYMAN</div>
+      <div class="name">7 tosh · 7 qadam · narigi qirg'oqda</div>
+    </div>
+
+    <div class="mentor-letter">
+      <div class="text">
+        Bir hafta — bir <span class="em">daryo</span>. Sen yetti toshdan sakrab kechib o'tding. Suv tagiga tushish mumkin edi — sen <span class="em">qadam aniq qo'yding</span>. Narigi qirg'oqda — yangi yo'l.
+      </div>
+      <div class="signature">— ko'prik kerak emas — sening qadaming bor</div>
+    </div>
+
+    <div class="bottom-bar">
+      <button class="next-btn">KEYINGI DARYO</button>
+      <div class="stats-line"><span class="em">7</span> TOSH · <span class="em">0</span> SUVGA TUSHGAN</div>
+    </div>
+  </div>
+
+  <!-- VARIANT 6: Dawn Rising -->
+  <div class="variant v-dawn">
+    <div class="ray" style="transform:translateX(-50%) rotate(-25deg);animation-delay:0s"></div>
+    <div class="ray" style="transform:translateX(-50%) rotate(0deg);animation-delay:.5s"></div>
+    <div class="ray" style="transform:translateX(-50%) rotate(25deg);animation-delay:1s"></div>
+    <div class="ray" style="transform:translateX(-50%) rotate(-50deg);animation-delay:1.5s"></div>
+    <div class="ray" style="transform:translateX(-50%) rotate(50deg);animation-delay:2s"></div>
+    <div class="sun"></div>
+    <div class="horizon-line"></div>
+
+    <div class="headline">
+      <div class="pre">YANGI TONG</div>
+      <div class="big">TABRIKLAYMAN</div>
+      <div class="name">qorong'udan — yorug'likka</div>
+    </div>
+
+    <div class="mentor-letter">
+      <div class="text">
+        Tong — bu yangi <span class="em">imkoniyat</span>. Sen bir hafta avval boshqa eding — bugungi <span class="em">kun seniki bilan boshlanadi</span>. Quyosh ko'tarilganda — sen ham ko'tarildilng.
+      </div>
+      <div class="signature">— har tong yangi sen tug'iladi</div>
+    </div>
+
+    <div class="bottom-bar">
+      <button class="next-btn">YANGI HAFTANI BOSHLAYMIZ</button>
+      <div class="stats-line">7 TONG · <span class="em">7</span> YANGI BOSHLANISH</div>
+    </div>
+  </div>
+
+  <!-- VARIANT 7: Phoenix Rising -->
+  <div class="variant v-phoenix">
+    <span class="ember" style="left:10%;animation-delay:0s"></span>
+    <span class="ember" style="left:25%;animation-delay:1s"></span>
+    <span class="ember" style="left:40%;animation-delay:2s"></span>
+    <span class="ember" style="left:55%;animation-delay:.5s"></span>
+    <span class="ember" style="left:70%;animation-delay:1.5s"></span>
+    <span class="ember" style="left:85%;animation-delay:3s"></span>
+
+    <svg class="phoenix-svg" viewBox="0 0 240 200">
+      <!-- Stylized phoenix wings -->
+      <path d="M 120 180
+               Q 60 140, 30 80
+               Q 50 60, 90 70
+               Q 110 50, 120 30
+               Q 130 50, 150 70
+               Q 190 60, 210 80
+               Q 180 140, 120 180 Z" />
+      <!-- Tail feathers -->
+      <path d="M 120 180 Q 110 170, 100 175 M 120 180 Q 130 170, 140 175 M 120 180 Q 120 195, 120 200" />
+    </svg>
+
+    <div class="headline">
+      <div class="pre">QAYTA TUG'ILGANSAN</div>
+      <div class="big">TABRIKLAYMAN</div>
+      <div class="name">kechagi sen — bugungi sen emas</div>
+    </div>
+
+    <div class="mentor-letter">
+      <div class="text">
+        Bir hafta avval qiyin paytlar bo'ldi — esingdami? Sen <span class="em">o'sha holatdan</span> ko'tarildilng. Ko'pchilik tushib qoladi. Sen — <span class="em">qaytadan o'rnatilding</span>.
+      </div>
+      <div class="signature">— kuling, sen yorqin yondirding</div>
+    </div>
+
+    <div class="bottom-bar">
+      <button class="next-btn">YANA YONAMIZ</button>
+      <div class="stats-line">2 CHEKINISH · <span class="em">2</span> QAYTA URINISH</div>
+    </div>
+  </div>
+
+  <!-- VARIANT 8: Key Unlocked -->
+  <div class="variant v-key">
+    <div class="particles" data-particles="1"></div>
+    <svg class="key-svg" viewBox="0 0 200 200">
+      <defs>
+        <radialGradient id="keyGrad" cx="50%" cy="50%" r="50%">
+          <stop offset="0%" stop-color="#FFE9B5"/>
+          <stop offset="100%" stop-color="#8a6f44"/>
+        </radialGradient>
+      </defs>
+      <!-- Octagonal lock with star inside -->
+      <polygon points="100,30 130,50 130,90 110,110 90,110 70,90 70,50"
+               fill="none" stroke="url(#keyGrad)" stroke-width="2"/>
+      <polygon points="100,50 110,75 135,75 115,90 122,115 100,100 78,115 85,90 65,75 90,75"
+               fill="url(#keyGrad)" opacity="0.85"/>
+      <!-- Key shaft -->
+      <rect x="96" y="110" width="8" height="50" fill="url(#keyGrad)"/>
+      <rect x="92" y="155" width="16" height="6" fill="url(#keyGrad)"/>
+      <rect x="92" y="148" width="14" height="4" fill="url(#keyGrad)"/>
+    </svg>
+
+    <div class="headline">
+      <div class="pre">KALIT TOPILDI</div>
+      <div class="big">TABRIKLAYMAN</div>
+      <div class="name">o'zingdan — o'zingga</div>
+    </div>
+
+    <div class="mentor-letter">
+      <div class="text">
+        Bir hafta intizom — bu <span class="em">kalit topish</span>. Sen o'zingdan eshik ochding. Ortda ne bor edi — endi sennikiga aylanyapti. <span class="em">Qaytarib bo'lmaydi</span> — kalitni qaytarmaysan.
+      </div>
+      <div class="signature">— kalit qo'lingda, eshik oldda</div>
+    </div>
+
+    <div class="bottom-bar">
+      <button class="next-btn">KEYINGI ESHIK</button>
+      <div class="stats-line"><span class="em">1</span>-KALIT · YANA <span class="em">∞</span> KUTYAPTI</div>
+    </div>
+  </div>
+
+</div>
+
+<!-- Variant tabs (preview only) — 8 creative celebrations -->
+<div class="variant-tabs">
+  <div class="variant-tab active" data-variant="mountain">CHO'QQI</div>
+  <div class="variant-tab" data-variant="stars">YULDUZLAR</div>
+  <div class="variant-tab" data-variant="harvest">HOSIL</div>
+  <div class="variant-tab" data-variant="tree">DARAXT</div>
+  <div class="variant-tab" data-variant="river">DARYO</div>
+  <div class="variant-tab" data-variant="dawn">TONG</div>
+  <div class="variant-tab" data-variant="phoenix">QAYTA TUG'ILDIM</div>
+  <div class="variant-tab" data-variant="key">KALIT</div>
+</div>
+
+<div class="footer-info">
+  Tabriklar — har hafta boshqa kreativ shaklda
+</div>
+
+</div>
+
+<script>
+  // Tab switcher
+  const variants = document.querySelectorAll('.variant');
+  document.querySelectorAll('.variant-tab').forEach(tab => {
+    tab.addEventListener('click', () => {
+      document.querySelectorAll('.variant-tab').forEach(t => t.classList.remove('active'));
+      tab.classList.add('active');
+      variants.forEach(v => v.classList.remove('active'));
+      const target = document.querySelector('.v-' + tab.dataset.variant);
+      if (target) target.classList.add('active');
+      // Re-trigger animations by removing & re-adding
+      target.style.animation = 'none';
+      void target.offsetWidth;
+      target.style.animation = '';
+    });
+  });
+
+  // Spawn particles
+  document.querySelectorAll('[data-particles]').forEach(host => {
+    for (let i = 0; i < 14; i++) {
+      const p = document.createElement('span');
+      p.style.left = Math.random() * 100 + '%';
+      p.style.animationDuration = (5 + Math.random() * 4) + 's';
+      p.style.animationDelay = (Math.random() * 6) + 's';
+      host.appendChild(p);
+    }
+  });
+
+  // Spawn twinkle stars
+  document.querySelectorAll('[data-twinkle]').forEach(host => {
+    for (let i = 0; i < 28; i++) {
+      const s = document.createElement('span');
+      s.style.left = Math.random() * 100 + '%';
+      s.style.top = (Math.random() * 70 + 5) + '%';
+      s.style.animationDuration = (2 + Math.random() * 3) + 's';
+      s.style.animationDelay = Math.random() * 4 + 's';
+      host.appendChild(s);
+    }
+  });
+
+  // === Auto-pick a variant of the week (deterministic per ISO week) ===
+  // (Tabs override this so user can preview all 4)
+  function autoPickVariant() {
+    const week = Math.floor((Date.now() / 86400000) / 7);
+    const order = ['mountain','stars','harvest','tree','river','dawn','phoenix','key'];
+    const pick = order[week % order.length];
+    const tab = document.querySelector('.variant-tab[data-variant="' + pick + '"]');
+    if (tab) tab.click();
+  }
+  autoPickVariant();
+</script>
+
+<script src="nav-overlay.js" defer></script>
+</body>
+</html>

@@ -1,0 +1,550 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>M-VoW AI — Tayyormiz</title>
+<link rel="manifest" href="manifest.webmanifest">
+<meta name="theme-color" content="#04060B">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="M·VoW">
+<link rel="apple-touch-icon" href="assets/mnsm-logo.png">
+<link rel="icon" type="image/png" href="assets/mnsm-logo.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;600;700;900&family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500&family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --void:        #04060B;
+    --void-2:      #0A0E16;
+    --shadow:      #11151D;
+
+    --text-primary: #F5F2EC;
+    --text-body:    #B8BBC2;
+    --text-muted:   #6B6E76;
+    --text-ghost:   #3A3D44;
+
+    --gold:        #E8C77E;
+    --gold-2:      #C7A36B;
+    --gold-deep:   #8a6f44;
+    --gold-flash:  #FFE9B5;
+    --honey:       #D4A574;
+    --cream:       #F0E5D2;
+    --rose:        #C28B8B;
+
+    --emerald:     #4A8A5C;
+    --emerald-bright: #6BAF7C;
+    --emerald-deep:#1F3D2A;
+  }
+
+  body {
+    background: #14171d;
+    font-family: 'Inter', sans-serif;
+    color: var(--text-primary);
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 24px;
+  }
+
+  .phone {
+    width: 380px;
+    height: 800px;
+    background: var(--void);
+    border-radius: 40px;
+    overflow: hidden;
+    position: relative;
+    box-shadow:
+      0 0 0 8px #2a2e36,
+      0 30px 80px rgba(0,0,0,0.85),
+      0 0 100px rgba(232,199,126,0.20);
+  }
+
+  /* Strong cinematic gold backdrop */
+  .backdrop {
+    position: absolute; inset: 0;
+    background:
+      radial-gradient(ellipse 100% 70% at 50% 35%, rgba(232,199,126,0.25), transparent 60%),
+      radial-gradient(ellipse 100% 50% at 50% 100%, rgba(212,165,116,0.15), transparent 70%),
+      linear-gradient(180deg, var(--void) 0%, #1A140A 50%, var(--void) 100%);
+  }
+
+  .gilt-frame {
+    position: absolute; inset: 14px;
+    border: 1px solid rgba(232,199,126,0.32);
+    border-radius: 26px;
+    pointer-events: none;
+    z-index: 4;
+    box-shadow: inset 0 0 30px rgba(232,199,126,0.10);
+  }
+
+  .pattern-wash {
+    position: absolute; inset: 0;
+    opacity: 0.04;
+    background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='100' height='100' viewBox='0 0 100 100'><g fill='none' stroke='%23E8C77E' stroke-width='0.5'><polygon points='50,5 62,38 95,38 70,58 80,90 50,72 20,90 30,58 5,38 38,38'/></g></svg>");
+    background-size: 130px 130px;
+    pointer-events: none;
+    z-index: 1;
+  }
+
+  /* Confetti / golden snow */
+  .confetti {
+    position: absolute; inset: 0;
+    pointer-events: none;
+    z-index: 2;
+    overflow: hidden;
+  }
+  .confetti span {
+    position: absolute;
+    width: 6px; height: 3px;
+    border-radius: 1px;
+    transform-origin: center;
+    animation: confetti-fall 8s linear infinite;
+    opacity: 0;
+  }
+  .confetti span:nth-child(4n)   { background: var(--gold); }
+  .confetti span:nth-child(4n+1) { background: var(--cream); }
+  .confetti span:nth-child(4n+2) { background: var(--honey); }
+  .confetti span:nth-child(4n+3) { background: var(--rose); }
+  @keyframes confetti-fall {
+    0%   { transform: translateY(-30px) rotate(0deg); opacity: 0; }
+    10%  { opacity: 0.85; }
+    100% { transform: translateY(110vh) rotate(720deg); opacity: 0; }
+  }
+
+  /* Light rays from orb */
+  .rays {
+    position: absolute;
+    top: 100px; left: 50%;
+    transform: translateX(-50%);
+    width: 400px; height: 400px;
+    pointer-events: none;
+    z-index: 2;
+    background:
+      conic-gradient(from 0deg at 50% 50%,
+        transparent 0deg, rgba(232,199,126,0.08) 30deg, transparent 60deg,
+        transparent 90deg, rgba(232,199,126,0.08) 120deg, transparent 150deg,
+        transparent 180deg, rgba(232,199,126,0.08) 210deg, transparent 240deg,
+        transparent 270deg, rgba(232,199,126,0.08) 300deg, transparent 330deg);
+    animation: rays-spin 40s linear infinite;
+    opacity: 0.6;
+  }
+  @keyframes rays-spin { to { transform: translateX(-50%) rotate(360deg); } }
+
+  .letterbox {
+    position: absolute;
+    left: 0; right: 0;
+    height: 14px;
+    background: var(--void);
+    z-index: 7;
+    pointer-events: none;
+  }
+  .letterbox.top { top: 0; }
+  .letterbox.bottom { bottom: 0; }
+
+  /* === Top stamp === */
+  .top-stamp {
+    position: absolute;
+    top: 28px; left: 0; right: 0;
+    text-align: center;
+    z-index: 5;
+  }
+  .complete-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 5px 14px;
+    border: 1px solid var(--emerald-bright);
+    border-radius: 999px;
+    background: rgba(74,138,92,0.12);
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 9px;
+    letter-spacing: 4px;
+    color: var(--emerald-bright);
+    opacity: 0;
+    animation: fade-in 0.8s 0.2s ease forwards;
+  }
+  @keyframes fade-in { from { opacity: 0; } to { opacity: 1; } }
+  .complete-pill .check { color: var(--emerald-bright); font-size: 11px; }
+
+  /* === Mentor orb hero === */
+  .orb-hero {
+    position: absolute;
+    top: 88px; left: 50%;
+    transform: translateX(-50%);
+    width: 120px; height: 120px;
+    z-index: 4;
+  }
+  .orb-halo {
+    position: absolute; inset: -30px;
+    border-radius: 50%;
+    background: radial-gradient(circle, var(--gold-flash) 0%, transparent 65%);
+    opacity: 0;
+    filter: blur(28px);
+    animation: halo-in 1.4s 0.6s ease forwards, breathe 4s 2.5s ease-in-out infinite;
+  }
+  @keyframes halo-in {
+    from { opacity: 0; transform: scale(0.6); }
+    to   { opacity: 0.55; transform: scale(1); }
+  }
+  @keyframes breathe {
+    0%, 100% { opacity: 0.45; transform: scale(0.95); }
+    50%      { opacity: 0.75; transform: scale(1.10); }
+  }
+  .orb-core {
+    position: relative;
+    width: 100%; height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1;
+    opacity: 0;
+    transform: scale(0.7);
+    animation: orb-emerge 1.4s 0.5s cubic-bezier(0.16, 0.84, 0.32, 1) forwards;
+  }
+  .orb-core img {
+    width: 100%; height: 100%;
+    object-fit: contain;
+    filter: drop-shadow(0 0 20px rgba(232,199,126,0.45));
+  }
+  @keyframes orb-emerge {
+    to { opacity: 1; transform: scale(1); }
+  }
+
+  /* === Hero title === */
+  .hero-title {
+    position: absolute;
+    top: 240px; left: 0; right: 0;
+    text-align: center;
+    z-index: 4;
+    padding: 0 24px;
+  }
+  .hero-title .big {
+    font-family: 'Cinzel', serif;
+    font-weight: 700;
+    font-size: 36px;
+    letter-spacing: 6px;
+    color: var(--gold);
+    text-shadow: 0 0 32px rgba(232,199,126,0.5), 0 0 60px rgba(232,199,126,0.3);
+    line-height: 1;
+    opacity: 0;
+    transform: translateY(8px);
+    filter: blur(8px);
+    animation: title-in 1.0s 1.4s cubic-bezier(0.16, 0.84, 0.32, 1) forwards;
+  }
+  @keyframes title-in {
+    to { opacity: 1; transform: translateY(0); filter: blur(0); }
+  }
+
+  .hero-title .sub {
+    margin-top: 10px;
+    font-family: 'Cormorant Garamond', serif;
+    font-style: italic;
+    font-size: 16px;
+    color: var(--honey);
+    letter-spacing: 1px;
+    opacity: 0;
+    animation: fade-in 0.8s 2.1s ease forwards;
+  }
+
+  /* === Setup recap === */
+  .recap {
+    position: absolute;
+    top: 340px; left: 24px; right: 24px;
+    z-index: 4;
+    opacity: 0;
+    animation: fade-up 0.8s 2.4s ease forwards;
+  }
+  @keyframes fade-up {
+    from { opacity: 0; transform: translateY(8px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+  .recap-row {
+    display: flex; gap: 6px; flex-wrap: wrap; justify-content: center;
+  }
+  .recap-chip {
+    display: inline-flex; align-items: center; gap: 4px;
+    padding: 3px 8px;
+    border-radius: 999px;
+    border: 1px solid var(--emerald-deep);
+    background: rgba(74,138,92,0.08);
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 7.5px;
+    letter-spacing: 1px;
+    color: var(--emerald-bright);
+  }
+  .recap-chip .check { color: var(--emerald-bright); }
+
+  /* === Mentor's first words === */
+  .first-words {
+    position: absolute;
+    top: 440px; left: 28px; right: 28px;
+    text-align: center;
+    z-index: 4;
+    opacity: 0;
+    animation: fade-up 0.8s 2.7s ease forwards;
+  }
+  .first-words .lbl {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 9px;
+    letter-spacing: 5px;
+    color: var(--gold-deep);
+    margin-bottom: 8px;
+  }
+  .first-words .text {
+    font-family: 'Cormorant Garamond', serif;
+    font-style: italic;
+    font-size: 15px;
+    line-height: 1.45;
+    color: var(--text-primary);
+    font-weight: 500;
+    text-shadow: 0 0 20px rgba(232,199,126,0.20);
+  }
+  .first-words .text .em { color: var(--gold); font-weight: 600; font-style: normal; }
+
+  .first-words .signature {
+    margin-top: 14px;
+    font-family: 'Cormorant Garamond', serif;
+    font-style: italic;
+    font-size: 13px;
+    color: var(--gold-deep);
+  }
+
+  /* === First step preview === */
+  .first-step {
+    position: absolute;
+    bottom: 120px; left: 24px; right: 24px;
+    padding: 12px 14px;
+    background: rgba(232,199,126,0.06);
+    border: 1px solid rgba(232,199,126,0.30);
+    border-radius: 4px;
+    z-index: 4;
+    opacity: 0;
+    animation: fade-up 0.8s 3.2s ease forwards;
+  }
+  .first-step .lbl {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 8.5px;
+    letter-spacing: 4px;
+    color: var(--gold-deep);
+    margin-bottom: 4px;
+  }
+  .first-step .what {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 15px;
+    font-weight: 600;
+    color: var(--text-primary);
+    line-height: 1.2;
+  }
+  .first-step .when {
+    margin-top: 4px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 9px;
+    letter-spacing: 1.5px;
+    color: var(--gold);
+  }
+
+  /* === Bottom action === */
+  .bottom-bar {
+    position: absolute;
+    bottom: 24px; left: 24px; right: 24px;
+    z-index: 5;
+    opacity: 0;
+    animation: fade-up 0.8s 3.5s ease forwards;
+  }
+  .start-btn {
+    width: 100%;
+    background: linear-gradient(180deg, var(--cream) 0%, var(--gold) 50%, var(--gold-deep) 100%);
+    color: var(--void);
+    padding: 16px;
+    font-size: 13px;
+    font-weight: 700;
+    letter-spacing: 8px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    text-transform: uppercase;
+    font-family: 'Inter', sans-serif;
+    box-shadow:
+      0 0 30px rgba(232,199,126,0.55),
+      inset 0 1px 0 rgba(255,255,255,0.5);
+    transition: all 0.25s;
+    position: relative;
+    overflow: hidden;
+  }
+  .start-btn::before {
+    content: '';
+    position: absolute; inset: 0;
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.4), transparent);
+    transform: translateX(-100%);
+    animation: shimmer 3s ease-in-out infinite;
+    animation-delay: 4s;
+  }
+  @keyframes shimmer {
+    0%   { transform: translateX(-100%); }
+    50%  { transform: translateX(100%);  }
+    100% { transform: translateX(100%);  }
+  }
+  .start-btn:hover { transform: scale(1.02); letter-spacing: 10px; }
+
+  .vignette {
+    position: absolute; inset: 0;
+    pointer-events: none;
+    background: radial-gradient(ellipse 110% 80% at 50% 50%, transparent 60%, rgba(0,0,0,0.4));
+    z-index: 6;
+  }
+
+  .footer-info {
+    margin-top: 22px;
+    text-align: center;
+    color: rgba(255,255,255,0.45);
+    font-size: 13px;
+    line-height: 1.6;
+    font-family: 'Cormorant Garamond', serif;
+    font-style: italic;
+  }
+
+  @media (max-width: 480px) {
+    body {
+      padding: 0 !important;
+      align-items: flex-start !important;
+      min-height: 100vh;
+    }
+    .phone {
+      width: 100vw !important;
+      height: auto !important;
+      min-height: 100vh !important;
+      border-radius: 0 !important;
+      box-shadow: none !important;
+      overflow-y: auto !important;
+      overflow-x: hidden !important;
+      padding: 60px 0 220px !important;
+    }
+    /* Decorative layers stay full-screen fixed */
+    .phone .backdrop, .phone .pattern-wash, .phone .gilt-frame,
+    .phone .letterbox, .phone .vignette, .phone .rays {
+      position: fixed !important;
+    }
+    /* Content blocks flow normally so they never overlap */
+    .top-stamp, .orb-hero, .hero-title, .recap, .first-words, .first-step, .bottom-bar {
+      position: static !important;
+      top: auto !important; bottom: auto !important;
+      left: auto !important; right: auto !important;
+      margin: 14px auto !important;
+      padding-left: 24px !important;
+      padding-right: 24px !important;
+      max-width: 100%;
+      transform: none !important;
+    }
+    .orb-hero { width: 130px; height: 130px; margin: 22px auto !important; }
+    .hero-title .big { font-size: 32px !important; letter-spacing: 5px !important; }
+    .recap-row { flex-wrap: wrap; gap: 5px !important; }
+    .recap-chip { font-size: 8px !important; padding: 3px 8px !important; }
+    .bottom-bar {
+      position: fixed !important;
+      bottom: 0 !important; left: 0 !important; right: 0 !important;
+      padding: 14px 18px env(safe-area-inset-bottom, 14px) !important;
+      background: linear-gradient(180deg, transparent, rgba(4,6,11,0.92) 30%) !important;
+      z-index: 30 !important;
+    }
+    .footer-info { display: none; }
+    .confetti { display: none; } /* avoid jank when scrolling */
+  }
+</style>
+</head>
+<body>
+
+<div style="display:flex; flex-direction:column; align-items:center;">
+
+  <div class="phone">
+    <div class="backdrop"></div>
+    <div class="pattern-wash"></div>
+    <div class="rays"></div>
+    <div class="confetti" id="confetti"></div>
+    <div class="gilt-frame"></div>
+    <div class="letterbox top"></div>
+    <div class="letterbox bottom"></div>
+
+    <!-- Top complete pill -->
+    <div class="top-stamp">
+      <div class="complete-pill">
+        <span class="check">✓</span>
+        <span>BARCHA TAYYOR</span>
+      </div>
+    </div>
+
+    <!-- Mentor presence — MNSM brand mark -->
+    <div class="orb-hero">
+      <div class="orb-halo"></div>
+      <div class="orb-core"><img src="assets/mnsm-logo.png" alt="MNSM"/></div>
+    </div>
+
+    <!-- Hero title -->
+    <div class="hero-title">
+      <div class="big">TAYYORMIZ</div>
+      <div class="sub">birga yo'lga chiqamiz, Aziz</div>
+    </div>
+
+    <!-- Setup recap -->
+    <div class="recap">
+      <div class="recap-row">
+        <span class="recap-chip"><span class="check">✓</span><span>NIYAT</span></span>
+        <span class="recap-chip"><span class="check">✓</span><span>VA'DA</span></span>
+        <span class="recap-chip"><span class="check">✓</span><span>RUXSATLAR</span></span>
+        <span class="recap-chip"><span class="check">✓</span><span>BLOKLASH</span></span>
+        <span class="recap-chip"><span class="check">✓</span><span>NAMOZ VAQTLARI</span></span>
+      </div>
+    </div>
+
+    <!-- Mentor's first words -->
+    <div class="first-words">
+      <div class="lbl">MURABBIY · BIRINCHI VA'DA</div>
+      <div class="text">
+        Sen mendan yordam so'rab kelding. Men ham senga va'da qilaman — <span class="em">sen bilan birga</span> bo'laman. <span class="em">Qiyin paytda eshitadigan</span>, sevinch paytda nishonlaydigan, dam kerak bo'lganda tushunadigan do'st.
+      </div>
+      <div class="signature">— ertangi tongdan boshlab</div>
+    </div>
+
+    <!-- First scheduled action -->
+    <div class="first-step">
+      <div class="lbl">BIRINCHI UCHRASHUVIMIZ</div>
+      <div class="what">Tonggi xabar — Qur'on darsiga tayyorlanish</div>
+      <div class="when">ERTAGA · 06:42</div>
+    </div>
+
+    <!-- Bottom -->
+    <div class="bottom-bar">
+      <button class="start-btn">YO'LGA CHIQAMIZ</button>
+    </div>
+
+    <div class="vignette"></div>
+  </div>
+
+  <div class="footer-info">
+    Tayyormiz — birinchi qadam ertangi tongda
+  </div>
+</div>
+
+<script>
+  // Spawn confetti
+  function spawnConfetti() {
+    const c = document.getElementById('confetti');
+    for (let i = 0; i < 32; i++) {
+      const p = document.createElement('span');
+      p.style.left = Math.random() * 100 + '%';
+      p.style.animationDuration = (6 + Math.random() * 5) + 's';
+      p.style.animationDelay = (Math.random() * 6) + 's';
+      p.style.transform = `rotate(${Math.random() * 360}deg)`;
+      c.appendChild(p);
+    }
+  }
+  spawnConfetti();
+</script>
+
+<script src="nav-overlay.js" defer></script>
+</body>
+</html>
