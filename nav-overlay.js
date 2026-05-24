@@ -145,22 +145,29 @@
     replaceUserName();
   }
 
-  // MVP scope (2026-05-24) — faqat 6 ta zarur ekran. Boshqalar /preview/
-  // papkasida qoladi (galereya orqali ko'rinadi) lekin asosiy oqimga kirmaydi.
-  //
-  // 1. Tanishuv (welcome)
-  // 2. Maqsadi (goal)
-  // 3. Ruxsatlar (permissions)
-  // 4. Kun tartibini tuzish (routine)
-  // 5. Taymer + ekran qulflanish — hard-lock day-flow ichida state sifatida
-  // 6. Natijalar — 1 kun / 1 hafta / 1 oy (weekly-review)
+  // MVP scope (2026-05-24, kengaytirilgan) — 13 ta zarur ekran.
+  //   • Onboarding (1-6): tanishuv → mentor → maqsad → sozlamalar → ruxsatlar → tayyor
+  //   • Rejalashtirish (7-8): AI bilan kun tartibi + tonggi tasdiq
+  //   • Ish (9-11): taymer, qulflash, baho
+  //   • Natijalar (12-13): tahlil va bayram
   const SEQ = [
-    'welcome.html',        // 1. Tanishuv — ism + til
-    'goal.html',           // 2. Maqsadingni so'rash
-    'permissions.html',    // 3. Ruxsatlar (texnik kerakli)
-    'routine.html',        // 4. Kun tartibini tuzish — AI bilan
-    'day-flow.html',       // 5. Taymer + nazorat (ish paytida ekran qulflanadi)
-    'weekly-review.html'   // 6. Natijalar — 1 kun / 1 hafta / 1 oy
+    // Onboarding (1-6)
+    'welcome.html',           // 1. Tanishuv — ism + til
+    'voice-commitment.html',  // 2. Mentor bilan tanishuv (do'stona)
+    'goal.html',              // 3. Maqsadingni so'rash
+    'settings.html',          // 4. Sozlamalar — ohang, bloklash, davomiylik (avval tanlash)
+    'permissions.html',       // 5. Ruxsatlar (sozlamalar ishlashi uchun)
+    'done.html',              // 6. "Tayyormiz"
+    // Rejalashtirish (7-8)
+    'routine.html',           // 7. AI bilan kun tartibi
+    'morning-confirm.html',   // 8. Tonggi tasdiq
+    // Ish (9-11)
+    'day-flow.html',          // 9. Taymer + nazorat
+    'hard-lock.html',         // 10. Ekran qulflash (bloklash ishlayotgan ekran)
+    'session-reflection.html',// 11. Sessiya tugadi — baho
+    // Natijalar (12-13)
+    'weekly-review.html',     // 12. Natijalar — 1 kun / 1 hafta / 1 oy
+    'celebrate.html'          // 13. Haftalik bayram
   ];
 
   const file = (location.pathname.split('/').pop() || 'welcome.html').toLowerCase();
