@@ -797,7 +797,7 @@
       </div>
       <div class="pill">
         <div class="live-dot"></div>
-        <span>CHUQUR KOD · API</span>
+        <span>ARAB GRAMMATIKASI</span>
       </div>
     </div>
 
@@ -808,7 +808,7 @@
         <div class="star">✦</div>
         <div class="line"></div>
       </div>
-      <div class="seal-text" id="seal">murabbiy huzurida</div>
+      <div class="seal-text" id="seal">murabbiy javobi</div>
     </div>
 
     <!-- Prayer strip (location-based reminder) -->
@@ -938,7 +938,7 @@
     <!-- Bottom -->
     <div class="bottom-bar">
       <div class="sacred-meta">
-        <span class="label">MUQADDAS VAQT</span>
+        <span class="label">FOKUS VAQT</span>
         <div class="progress-rail" id="progress-rail"></div>
         <span id="progress-label">11/45 DAQ</span>
       </div>
@@ -958,14 +958,14 @@
   </div>
 
   <div class="footer-info">
-    Murabbiy huzurida — hikmat va vaqt
+    Murabbiy yonida — sababingni tinglaydi, qarorga keladi
   </div>
 </div>
 
 <script>
   const states = {
     awaiting: {
-      seal: 'murabbiy quloq tutadi',
+      seal: 'murabbiy eshityapti',
       counter: 'BUGUN · OVOZ KUT',
       reason: '',
       showWaveform: true,
@@ -976,34 +976,34 @@
       flash: false, shake: false
     },
     thinking: {
-      seal: 'murabbiy mulohazada',
+      seal: 'murabbiy o\'ylayapti',
       counter: 'BUGUN · 1-TALAB',
       reason: '"Instagram\'da do\'stim xabar yubordi"',
       showWaveform: false,
-      stamp: 'MULOHAZA · TAROZIDA',
+      stamp: 'MULOHAZA · O\'YLAB KO\'RYAPTI',
       mentor: 'Sababing <span class="accent">tarozida</span>.<br>Bir lahza shoshilmasdan…',
       hikmat: '<span class="em">Adolat</span> shoshilmaydi — ammo o\'tib ham ketmaydi.',
       btn: 'Kuting',
       flash: false, shake: false
     },
     denied: {
-      seal: 'murabbiy hukmida',
+      seal: 'murabbiy javobi',
       counter: 'BUGUN · 1-TALAB',
       reason: '"Instagram\'da do\'stim xabar yubordi"',
       showWaveform: false,
       stamp: 'RAD · BUGUNGI 1-TALAB',
-      mentor: 'Aziz, hozir <span class="accent">Qur\'on darsidasan</span>.<br>Do\'sting kuta oladi.',
+      mentor: 'Aziz, hozir <span class="accent">Arab grammatikasi</span> vaqti.<br>Do\'sting kuta oladi.',
       hikmat: 'Har bir <span class="em">"yo\'q"</span> — kelajakdagi <span class="em">"ha"</span>ning poydevoridir.',
       btn: 'Qaytish',
       flash: true, shake: true
     },
     granted: {
-      seal: 'murabbiy ijozati',
+      seal: 'murabbiy ruxsati',
       counter: 'BUGUN · 1-TALAB',
       reason: '"Onamga muhim qo\'ng\'iroq qilishim kerak"',
       showWaveform: false,
-      stamp: 'IJOZAT · 5 DAQIQA',
-      mentor: 'Ona haqi <span class="accent">o\'tkir</span>.<br>Besh daqiqa — so\'ng yana fokusing.',
+      stamp: 'RUXSAT · 5 DAQIQA',
+      mentor: 'Ona haqi <span class="accent">muhim</span>.<br>Besh daqiqa — so\'ng yana fokusing.',
       hikmat: 'Eng yaxshi qaror — <span class="em">eng to\'g\'ri vaqtda</span> kelgani.',
       btn: 'Qo\'ng\'iroq qilish',
       flash: true, shake: false
