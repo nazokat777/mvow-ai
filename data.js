@@ -28,10 +28,12 @@
 
   const DATA = {
     brand: {
-      name:    'M·VoW',
+      // Vaqtincha placeholder — haqiqiy nom keyin shu yerda yangilanadi
+      // va butun ilov bo'ylab avtomatik tarqaladi.
+      name:    'brend',
       tagline: "sening intizom do'sting",
-      monogram:'M',
-      by:      'MNSM'
+      monogram:'',
+      by:      ''
     },
 
     today: {
@@ -89,10 +91,21 @@
   }
 
   function applyBindings() {
+    // <title>{brand} — X</title> — sahifa nomida {brand} placeholder'ni almashtir
+    if (document.title.includes('{brand}')) {
+      document.title = document.title.replace(/\{brand\}/g, DATA.brand.name);
+    }
+
     // data-brand="name|tagline|monogram|by"
     document.querySelectorAll('[data-brand]').forEach(el => {
       const v = DATA.brand[el.dataset.brand];
-      if (v != null) el.textContent = v;
+      // Bo'sh qiymat (masalan brand.by='') bo'lsa, butun elementni yashiramiz
+      if (v === '' || v == null) {
+        el.style.display = 'none';
+      } else {
+        el.textContent = v;
+        el.style.display = '';
+      }
     });
 
     // data-mvow="today.label", "totals.sessions", "totals.focusLabel", "streak", h.k.
