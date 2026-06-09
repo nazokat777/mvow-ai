@@ -2,857 +2,136 @@
 <html lang="uz">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>{brand} — Hafta Bayrami</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>{brand} — Natijalar</title>
 <link rel="manifest" href="manifest.webmanifest">
 <meta name="theme-color" content="#04060B">
-<meta name="apple-mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<meta name="apple-mobile-web-app-title" content="M·VoW">
 <link rel="apple-touch-icon" href="assets/mnsm-logo.png">
 <link rel="icon" type="image/png" href="assets/mnsm-logo.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500&family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
 <style>
   * { box-sizing: border-box; margin: 0; padding: 0; }
+  :root { --void:#04060B; --void-soft:#0C0F16; --text:#F5F2EC; --text-mid:#8A8D94; --text-dim:#4A4D54; --accent:#00E5D4; --accent-soft:#00B5A8; }
+  body { background: var(--void); font-family:'Inter',sans-serif; color: var(--text); min-height: 100vh; display:flex; justify-content:center; align-items:flex-start; padding: 24px; -webkit-font-smoothing: antialiased; }
+  .phone { width: 380px; min-height: 800px; background: var(--void); border-radius: 40px; overflow: hidden; position: relative; box-shadow: 0 0 0 8px #1a1d24, 0 30px 80px rgba(0,0,0,.7); }
+  .container { padding: 60px 32px 40px; }
 
-  :root {
-    --void:        #06080F;
-    --void-2:      #0E1119;
-    --shadow:      #11151D;
+  .tabs { display:flex; gap: 4px; padding: 4px; background: var(--void-soft); border-radius: 8px; margin-bottom: 40px; }
+  .tab { flex:1; padding: 10px; text-align:center; font-size: 11px; letter-spacing: 2px; text-transform: uppercase; color: var(--text-mid); cursor: pointer; border-radius: 6px; }
+  .tab.on { background: var(--accent); color: var(--void); font-weight: 600; }
 
-    --text-primary: #F5F2EC;
-    --text-body:    #B8BBC2;
-    --text-muted:   #6B6E76;
-    --text-ghost:   #3A3D44;
-
-    --accent:        #00E5D4;
-    --accent-2:      #00C9BC;
-    --accent-deep:   #007D75;
-    --accent-flash:  #7AF5EC;
-
-    --accent-soft:       #00B5A8;
-    --accent-cream:       #D6F5F2;
-    --rose:        #C28B8B;
-    --rose-deep:   #8B5C5C;
-
-    --emerald:     #4A8A5C;
-    --emerald-deep:#1F3D2A;
-    --sage:        #8AA876;
-  }
-
-  body {
-    background: #14171d;
-    font-family: 'Inter', sans-serif;
-    color: var(--text-primary);
-    min-height: 100vh;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    padding: 24px;
-  }
-
-  .phone {
-    width: 380px;
-    height: 800px;
-    background: var(--void);
-    border-radius: 40px;
-    overflow: hidden;
-    position: relative;
-    box-shadow:
-      0 0 0 8px #2a2e36,
-      0 30px 80px rgba(0,0,0,0.85),
-      0 0 100px rgba(0,229,212,0.10);
-  }
-
-  .backdrop {
-    position: absolute; inset: 0;
-    background:
-      radial-gradient(ellipse 90% 50% at 50% 25%, rgba(0,229,212,0.18), transparent 65%),
-      radial-gradient(ellipse 100% 60% at 50% 100%, rgba(74,138,92,0.10), transparent 70%),
-      linear-gradient(180deg, var(--void) 0%, #1A1410 50%, var(--void) 100%);
-  }
-
-  .gilt-frame {
-    position: absolute; inset: 14px;
-    border: 1px solid rgba(0,229,212,0.22);
-    border-radius: 26px;
-    pointer-events: none;
-    z-index: 4;
-  }
-
-  .pattern-wash {
-    position: absolute; inset: 0;
-    opacity: 0.025;
-    background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='100' height='100' viewBox='0 0 100 100'><g fill='none' stroke='%2300E5D4' stroke-width='0.5'><polygon points='50,5 62,38 95,38 70,58 80,90 50,72 20,90 30,58 5,38 38,38'/></g></svg>");
-    background-size: 130px 130px;
-    pointer-events: none;
-    z-index: 1;
-  }
-
-  /* Confetti — celebratory particles */
-  .confetti {
-    position: absolute; inset: 0;
-    pointer-events: none;
-    z-index: 2;
-    overflow: hidden;
-  }
-  .confetti span {
-    position: absolute;
-    width: 6px; height: 3px;
-    border-radius: 1px;
-    transform-origin: center;
-    animation: confetti-fall 9s linear infinite;
-    opacity: 0;
-  }
-  .confetti span:nth-child(4n)   { background: var(--accent); }
-  .confetti span:nth-child(4n+1) { background: var(--rose); }
-  .confetti span:nth-child(4n+2) { background: var(--accent-cream); }
-  .confetti span:nth-child(4n+3) { background: var(--accent-soft); }
-  @keyframes confetti-fall {
-    0%   { transform: translateY(-20px) rotate(0deg); opacity: 0; }
-    10%  { opacity: 0.85; }
-    100% { transform: translateY(110vh) rotate(720deg); opacity: 0; }
-  }
-
-  .letterbox {
-    position: absolute;
-    left: 0; right: 0;
-    height: 14px;
-    background: var(--void);
-    z-index: 7;
-    pointer-events: none;
-  }
-  .letterbox.top { top: 0; }
-  .letterbox.bottom { bottom: 0; }
-
-  /* === Header === */
-  .header-row {
-    position: absolute;
-    top: 26px; left: 24px; right: 24px;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    z-index: 5;
-  }
-  .week-stamp {
-    display: inline-flex;
-    align-items: center;
-    gap: 8px;
-    padding: 5px 12px;
-    border: 1px solid var(--accent);
-    border-radius: 999px;
-    background: rgba(0,229,212,0.08);
-    font-family: 'JetBrains Mono', monospace;
-    font-size: 9px;
-    letter-spacing: 4px;
+  /* Hero — bitta katta raqam */
+  .hero { text-align: center; margin-bottom: 48px; }
+  .hero .big {
+    font-family:'Cormorant Garamond',serif;
+    font-weight: 500;
+    font-size: 96px;
     color: var(--accent);
-  }
-  .week-stamp .star { color: var(--accent-flash); animation: spin-slow 8s linear infinite; }
-  @keyframes spin-slow { to { transform: rotate(360deg); } }
-  .close-btn {
-    width: 28px; height: 28px;
-    display: flex; align-items: center; justify-content: center;
-    border: 1px solid var(--accent-deep);
-    border-radius: 50%;
-    cursor: pointer;
-    background: rgba(0,229,212,0.04);
-    color: var(--accent);
-    font-family: 'Inter', sans-serif;
-    font-size: 14px;
     line-height: 1;
   }
+  .hero .lbl { font-size: 11px; letter-spacing: 4px; color: var(--text-mid); text-transform: uppercase; margin-top: 4px; }
 
-  /* === Period tabs (KUN/HAFTA/OY) === */
-  .period-tabs {
-    position: absolute;
-    top: 50px; left: 24px; right: 24px;
-    display: flex; gap: 4px;
-    z-index: 5;
-    background: rgba(0,229,212,0.04);
-    border: 1px solid var(--accent-deep);
-    border-radius: 999px;
-    padding: 3px;
-  }
-  .ptab {
-    flex: 1;
-    background: transparent; border: none;
-    font-family: 'JetBrains Mono', monospace;
-    font-size: 9.5px; letter-spacing: 2px;
-    color: var(--accent-deep);
-    padding: 7px 0; border-radius: 999px;
-    cursor: pointer;
-    transition: all 0.25s;
-  }
-  .ptab:hover { color: var(--accent); }
-  .ptab.active {
-    background: linear-gradient(180deg, var(--accent-flash) 0%, var(--accent) 50%, var(--accent-2) 100%);
-    color: var(--void); font-weight: 700;
-    box-shadow: 0 0 12px rgba(0,229,212,0.4);
-  }
-
-  /* === Title (greeting) === */
-  .title-block {
-    position: absolute;
-    top: 96px; left: 24px; right: 24px;
-    z-index: 4;
-  }
-  .title-block .label {
-    font-family: 'JetBrains Mono', monospace;
-    font-size: 9px;
-    letter-spacing: 5px;
-    color: var(--accent-deep);
-    margin-bottom: 4px;
-  }
-  .title-block .title {
-    font-family: 'Cormorant Garamond', serif;
-    font-style: italic;
-    font-size: 23px;
-    font-weight: 600;
-    color: var(--text-primary);
-    line-height: 1.25;
-  }
-  .title-block .title .em { color: var(--accent); }
-
-  /* === Hero stat === */
-  .hero-stat {
-    position: absolute;
-    top: 144px; left: 24px; right: 24px;
-    padding: 18px 20px;
-    border: 1px solid rgba(0,229,212,0.28);
-    border-radius: 6px;
-    background:
-      radial-gradient(ellipse at 75% 50%, rgba(0,229,212,0.15), transparent 70%),
-      rgba(0,229,212,0.04);
-    z-index: 4;
-    overflow: hidden;
-  }
-  .hero-stat::after {
-    content: '✦';
-    position: absolute;
-    top: -10px; right: -8px;
-    font-size: 80px;
-    color: rgba(0,229,212,0.10);
-    pointer-events: none;
-  }
-  .hero-stat .lbl {
-    font-family: 'JetBrains Mono', monospace;
-    font-size: 9px;
-    letter-spacing: 5px;
-    color: var(--accent-deep);
-    margin-bottom: 4px;
-  }
-  .hero-stat .val {
-    font-family: 'JetBrains Mono', monospace;
-    font-size: 56px;
-    font-weight: 500;
-    color: var(--accent);
-    line-height: 1;
-    text-shadow: 0 0 24px rgba(0,229,212,0.5);
-    letter-spacing: 1px;
-    display: flex;
-    align-items: baseline;
-    gap: 8px;
-  }
-  .hero-stat .val .unit {
-    font-size: 14px;
-    color: var(--accent-deep);
-    letter-spacing: 4px;
-  }
-  .hero-stat .val .delta {
-    font-family: 'JetBrains Mono', monospace;
-    font-size: 11px;
-    color: var(--emerald);
-    margin-left: auto;
-    font-weight: 500;
-  }
-  .hero-stat .sub {
-    margin-top: 6px;
-    font-family: 'Cormorant Garamond', serif;
-    font-style: italic;
-    font-size: 12px;
-    color: var(--text-muted);
-    letter-spacing: 0.3px;
-  }
-  .hero-stat .sub .em { color: var(--accent); font-weight: 600; font-style: normal; }
-
-  /* === Day chart === */
-  .day-chart {
-    position: absolute;
-    top: 270px; left: 24px; right: 24px;
-    z-index: 4;
-  }
-  .day-chart .head {
-    display: flex; justify-content: space-between; align-items: center;
-    margin-bottom: 12px;
-  }
-  .day-chart .head .lbl {
-    font-family: 'JetBrains Mono', monospace;
-    font-size: 9px;
-    letter-spacing: 4px;
-    color: var(--accent-deep);
-  }
-  .day-chart .head .legend {
-    display: flex; gap: 8px;
-    font-family: 'JetBrains Mono', monospace;
-    font-size: 7.5px;
-    letter-spacing: 1.5px;
-    color: var(--text-ghost);
-  }
-  .day-chart .head .legend .l-item {
-    display: inline-flex; align-items: center; gap: 4px;
-  }
-  .day-chart .head .legend .lc {
-    width: 8px; height: 2px; border-radius: 1px;
-  }
-  .day-chart .head .legend .lc.gold { background: var(--accent); }
-  .day-chart .head .legend .lc.em { background: var(--emerald); }
-
-  .bars {
+  /* Bar chart — 7 kun */
+  .chart {
     display: grid;
     grid-template-columns: repeat(7, 1fr);
-    gap: 6px;
-    height: 90px;
+    gap: 8px;
     align-items: end;
+    height: 110px;
+    margin-bottom: 12px;
   }
-  .bar-col {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    height: 100%;
-    justify-content: flex-end;
-    gap: 6px;
-    position: relative;
+  .bar {
+    background: var(--accent);
+    border-radius: 4px 4px 0 0;
+    transition: opacity .2s;
   }
-  .bar-col .bar-wrap {
-    width: 100%;
-    height: 70px;
-    display: flex;
-    align-items: end;
-    justify-content: center;
+  .bar.dim { opacity: .25; }
+  .days {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 8px;
+    margin-bottom: 40px;
   }
-  .bar-col .bar {
-    width: 70%;
-    background: linear-gradient(180deg, var(--accent-flash) 0%, var(--accent) 50%, var(--accent-deep) 100%);
-    border-radius: 2px 2px 0 0;
-    box-shadow: 0 0 8px rgba(0,229,212,0.3);
-    animation: bar-rise 1.2s cubic-bezier(0.16, 0.84, 0.32, 1) backwards;
-    min-height: 2px;
-  }
-  .bar-col.best .bar {
-    background: linear-gradient(180deg, #DDF1E0 0%, var(--emerald) 50%, var(--emerald-deep) 100%);
-    box-shadow: 0 0 12px rgba(74,138,92,0.4);
-  }
-  .bar-col.rest .bar {
-    background: linear-gradient(180deg, rgba(0,181,168,0.4) 0%, rgba(0,125,117,0.5) 100%);
-    box-shadow: none;
-  }
-  @keyframes bar-rise {
-    from { height: 0; }
-  }
-  .bar-col .bar-day {
-    font-family: 'JetBrains Mono', monospace;
-    font-size: 8px;
-    letter-spacing: 1px;
-    color: var(--accent-deep);
-  }
-  .bar-col.today .bar-day { color: var(--accent); font-weight: 600; }
-  .bar-col.best .bar-day { color: var(--emerald); }
+  .days span { text-align:center; font-size: 9px; letter-spacing: 1px; color: var(--text-dim); text-transform: uppercase; }
 
-  .bar-col .bar-val {
-    position: absolute;
-    top: -16px;
-    font-family: 'JetBrains Mono', monospace;
-    font-size: 9px;
-    color: var(--accent);
-    font-weight: 500;
-    letter-spacing: 0.5px;
-  }
-  .bar-col.best .bar-val { color: var(--emerald); }
-
-  /* === Records cards === */
-  .records {
-    position: absolute;
-    top: 410px; left: 24px; right: 24px;
+  /* 3 ta minimal stat */
+  .stats {
     display: grid;
     grid-template-columns: 1fr 1fr 1fr;
-    gap: 6px;
-    z-index: 4;
+    gap: 16px;
+    padding-top: 24px;
+    border-top: 1px solid rgba(255,255,255,.04);
   }
-  .record {
-    padding: 10px 8px;
-    background: rgba(0,229,212,0.04);
-    border: 1px solid rgba(0,125,117,0.30);
-    border-radius: 4px;
-    text-align: center;
-    position: relative;
-  }
-  .record::before {
-    content: 'REKORD';
-    position: absolute;
-    top: -8px; left: 50%;
-    transform: translateX(-50%);
-    padding: 2px 8px;
-    background: var(--void);
-    font-family: 'JetBrains Mono', monospace;
-    font-size: 7px;
-    letter-spacing: 2px;
-    color: var(--rose);
-  }
-  .record .ic {
-    font-size: 18px;
-    margin: 4px 0 4px;
-    color: var(--accent);
-  }
-  .record .v {
-    font-family: 'JetBrains Mono', monospace;
-    font-size: 14px;
-    font-weight: 500;
-    color: var(--accent);
-    line-height: 1;
-    margin-bottom: 4px;
-  }
-  .record .l {
-    font-family: 'JetBrains Mono', monospace;
-    font-size: 7.5px;
-    letter-spacing: 1px;
-    color: var(--accent-deep);
-    line-height: 1.3;
-  }
+  .stat { text-align: center; }
+  .stat .v { font-family:'Cormorant Garamond',serif; font-size: 22px; font-weight: 500; color: var(--accent); }
+  .stat .l { font-size: 9px; letter-spacing: 2px; color: var(--text-mid); text-transform: uppercase; margin-top: 4px; }
 
-  /* === Mentor letter === */
-  .mentor-letter {
-    position: absolute;
-    top: 510px; left: 24px; right: 24px;
-    padding: 14px 18px 16px;
-    border-left: 2px solid var(--accent);
-    background: rgba(0,229,212,0.05);
-    border-radius: 2px;
-    z-index: 4;
-  }
-  .mentor-letter .head {
-    display: flex; justify-content: space-between; align-items: center;
-    margin-bottom: 8px;
-  }
-  .mentor-letter .label {
-    font-family: 'JetBrains Mono', monospace;
-    font-size: 9px;
-    letter-spacing: 4px;
-    color: var(--accent-deep);
-  }
-  .mentor-letter .who {
-    font-family: 'Cormorant Garamond', serif;
-    font-style: italic;
-    font-size: 11px;
-    color: var(--accent);
-  }
-  .mentor-letter .text {
-    font-family: 'Cormorant Garamond', serif;
-    font-style: italic;
-    font-size: 14px;
-    color: var(--text-body);
-    line-height: 1.55;
-    letter-spacing: 0.3px;
-  }
-  .mentor-letter .text .em { color: var(--accent); font-weight: 600; font-style: normal; }
-  .mentor-letter .signature {
-    margin-top: 10px;
-    font-family: 'Cormorant Garamond', serif;
-    font-style: italic;
-    font-size: 12px;
-    color: var(--accent-deep);
-  }
-
-  /* === Mini stats grid === */
-  .mini-stats {
-    position: absolute;
-    top: 654px; left: 24px; right: 24px;
-    display: grid;
-    grid-template-columns: 1fr 1fr 1fr 1fr;
-    gap: 4px;
-    padding: 8px 6px;
-    background: rgba(0,229,212,0.025);
-    border-top: 1px solid rgba(0,125,117,0.22);
-    border-bottom: 1px solid rgba(0,125,117,0.22);
-    z-index: 4;
-  }
-  .mini-stat {
-    text-align: center;
-  }
-  .mini-stat .v {
-    font-family: 'JetBrains Mono', monospace;
-    font-size: 14px;
-    font-weight: 500;
-    color: var(--accent);
-    line-height: 1;
-  }
-  .mini-stat .l {
-    margin-top: 2px;
-    font-family: 'JetBrains Mono', monospace;
-    font-size: 7px;
-    letter-spacing: 1px;
-    color: var(--accent-deep);
-  }
-
-  /* === Bottom action === */
-  .bottom-bar {
-    position: absolute;
-    bottom: 24px; left: 24px; right: 24px;
-    z-index: 5;
-  }
-  .primary-btn {
-    width: 100%;
-    background: linear-gradient(180deg, var(--accent-cream) 0%, var(--accent) 50%, var(--accent-deep) 100%);
-    color: var(--void);
-    padding: 14px;
-    font-size: 12px;
-    font-weight: 700;
-    letter-spacing: 5px;
-    border: none;
-    border-radius: 4px;
-    cursor: pointer;
-    text-transform: uppercase;
-    font-family: 'Inter', sans-serif;
-    box-shadow:
-      0 0 22px rgba(0,229,212,0.40),
-      inset 0 1px 0 rgba(255,255,255,0.5);
-    transition: all 0.2s;
-    position: relative; overflow: hidden;
-  }
-  .primary-btn::before {
-    content: '';
-    position: absolute; inset: 0;
-    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.4), transparent);
-    transform: translateX(-100%);
-    animation: shimmer 3s ease-in-out infinite;
-  }
-  @keyframes shimmer {
-    0% { transform: translateX(-100%); }
-    50%  { transform: translateX(100%);  }
-    100% { transform: translateX(100%);  }
-  }
-  .primary-btn:hover { transform: scale(1.02); letter-spacing: 6px; }
-
-  .secondary-row {
-    display: flex; gap: 6px; margin-top: 8px;
-  }
-  .secondary-btn {
-    flex: 1;
-    background: none;
-    border: 1px solid var(--accent-deep);
-    color: var(--accent-deep);
-    padding: 8px;
-    font-size: 10px;
-    letter-spacing: 2px;
-    border-radius: 2px;
-    cursor: pointer;
-    font-family: 'Inter', sans-serif;
-    text-transform: uppercase;
-    transition: all 0.2s;
-  }
-  .secondary-btn:hover { color: var(--accent); border-color: var(--accent); }
-
-  .vignette {
-    position: absolute; inset: 0;
-    pointer-events: none;
-    background: radial-gradient(ellipse 110% 80% at 50% 50%, transparent 60%, rgba(0,0,0,0.4));
-    z-index: 6;
-  }
-
-  .footer-info {
-    margin-top: 22px;
-    text-align: center;
-    color: rgba(255,255,255,0.45);
-    font-size: 13px;
-    line-height: 1.6;
-    font-family: 'Cormorant Garamond', serif;
-    font-style: italic;
-  }
-
-  @media (max-width: 480px) {
-    body { padding: 0; }
-    .phone {
-      width: 100vw;
-      height: 100vh;
-      border-radius: 0;
-      box-shadow: none;
-    }
-    .footer-info { display: none; }
-  }
+  @media (max-width: 480px) { body { padding: 0; } .phone { width: 100vw; min-height: 100vh; border-radius: 0; box-shadow: none; } }
 </style>
 </head>
 <body>
 
-<div style="display:flex; flex-direction:column; align-items:center;">
+<div class="phone">
+  <div class="container">
 
-  <div class="phone">
-    <div class="backdrop"></div>
-    <div class="pattern-wash"></div>
-    <div class="confetti" id="confetti"></div>
-    <div class="gilt-frame"></div>
-    <div class="letterbox top"></div>
-    <div class="letterbox bottom"></div>
+    <div class="tabs">
+      <div class="tab">Kun</div>
+      <div class="tab on">Hafta</div>
+      <div class="tab">Oy</div>
+    </div>
 
-    <!-- Header -->
-    <div class="header-row">
-      <div class="week-stamp" id="periodStamp">
-        <span class="star">✦</span>
-        <span id="periodLabel">HAFTA · 19 (4 — 10 MAY)</span>
+    <div class="hero">
+      <div class="big" data-mvow="week.focusHours">38</div>
+      <div class="lbl">Soat fokus</div>
+    </div>
+
+    <div class="chart" id="chart"></div>
+    <div class="days" id="days"></div>
+
+    <div class="stats">
+      <div class="stat">
+        <div class="v" data-mvow="week.sessionCount">38</div>
+        <div class="l">Sessiya</div>
       </div>
-      <div class="close-btn">×</div>
-    </div>
-
-    <!-- Period tabs: KUN / HAFTA / OY -->
-    <div class="period-tabs" id="periodTabs">
-      <button class="ptab" data-period="day">1 KUN</button>
-      <button class="ptab active" data-period="week">1 HAFTA</button>
-      <button class="ptab" data-period="month">1 OY</button>
-    </div>
-
-    <!-- Title -->
-    <div class="title-block">
-      <div class="label">DO'STING — MURABBIY</div>
-      <div class="title" id="titleText">Aziz, qara <span class="em">nima qilding</span> bu hafta.</div>
-    </div>
-
-    <!-- Hero stat -->
-    <div class="hero-stat">
-      <div class="lbl" id="heroLbl">JAMI FOKUS · BU HAFTA</div>
-      <div class="val">
-        <span id="heroVal">0</span>
-        <span class="unit" id="heroUnit">SOAT</span>
-        <span class="delta" id="heroDelta">↑ +12% o'tgan hafta</span>
+      <div class="stat">
+        <div class="v" data-mvow="streak">12</div>
+        <div class="l">Streak</div>
       </div>
-      <div class="sub" id="heroSub">Bu — <span class="em">38 sessiya</span>. Hech qachon shuncha qilmagansan.</div>
-    </div>
-
-    <!-- Day chart -->
-    <div class="day-chart">
-      <div class="head">
-        <span class="lbl">KUNLAR · SOATDA</span>
-        <div class="legend">
-          <div class="l-item"><div class="lc gold"></div><span>FOKUS</span></div>
-          <div class="l-item"><div class="lc em"></div><span>EN YAXSHI</span></div>
-        </div>
-      </div>
-      <div class="bars">
-        <div class="bar-col">
-          <div class="bar-val">5.5</div>
-          <div class="bar-wrap"><div class="bar" style="height: 65%; animation-delay: 0.1s;"></div></div>
-          <div class="bar-day">DU</div>
-        </div>
-        <div class="bar-col">
-          <div class="bar-val">7.2</div>
-          <div class="bar-wrap"><div class="bar" style="height: 85%; animation-delay: 0.2s;"></div></div>
-          <div class="bar-day">SE</div>
-        </div>
-        <div class="bar-col">
-          <div class="bar-val">6.0</div>
-          <div class="bar-wrap"><div class="bar" style="height: 71%; animation-delay: 0.3s;"></div></div>
-          <div class="bar-day">CH</div>
-        </div>
-        <div class="bar-col best">
-          <div class="bar-val">8.3</div>
-          <div class="bar-wrap"><div class="bar" style="height: 98%; animation-delay: 0.4s;"></div></div>
-          <div class="bar-day">PA</div>
-        </div>
-        <div class="bar-col">
-          <div class="bar-val">7.0</div>
-          <div class="bar-wrap"><div class="bar" style="height: 83%; animation-delay: 0.5s;"></div></div>
-          <div class="bar-day">JU</div>
-        </div>
-        <div class="bar-col rest">
-          <div class="bar-val">2.0</div>
-          <div class="bar-wrap"><div class="bar" style="height: 24%; animation-delay: 0.6s;"></div></div>
-          <div class="bar-day">SH</div>
-        </div>
-        <div class="bar-col today">
-          <div class="bar-val">3.5</div>
-          <div class="bar-wrap"><div class="bar" style="height: 41%; animation-delay: 0.7s;"></div></div>
-          <div class="bar-day">YA</div>
-        </div>
+      <div class="stat">
+        <div class="v" data-mvow="week.change">+12%</div>
+        <div class="l">O'zgarish</div>
       </div>
     </div>
 
-    <!-- Records -->
-    <div class="records">
-      <div class="record">
-        <div class="ic">⏱</div>
-        <div class="v">2s 14daq</div>
-        <div class="l">EN UZUN<br>SESSIYA</div>
-      </div>
-      <div class="record">
-        <div class="ic">☀</div>
-        <div class="v">04:42</div>
-        <div class="l">EN ERTA<br>UYG'ONISH</div>
-      </div>
-      <div class="record">
-        <div class="ic">∞</div>
-        <div class="v">12 KUN</div>
-        <div class="l">YANGI<br>STREAK</div>
-      </div>
-    </div>
-
-    <!-- Mentor letter -->
-    <div class="mentor-letter">
-      <div class="head">
-        <span class="label">MURABBIY HAQ-QO'NI</span>
-        <span class="who">— Sening do'sting</span>
-      </div>
-      <div class="text">
-        Sen <span class="em">payshanba</span> kuni <span class="em">8 soat 18 daqiqa</span> fokusda turding. Bu — daraxtingda yana bir halqa. <span class="em">Shanbada dam olding</span> — to'g'ri qilding. Daraxtning kuchi shoxchadan emas, ildizdan keladi.
-      </div>
-      <div class="signature">— birgaman, ertaga ham</div>
-    </div>
-
-    <!-- Mini stats -->
-    <div class="mini-stats">
-      <div class="mini-stat"><div class="v">38</div><div class="l">SESSIYA</div></div>
-      <div class="mini-stat"><div class="v">2</div><div class="l">CHEKINISH</div></div>
-      <div class="mini-stat"><div class="v">95%</div><div class="l">BAJARILDI</div></div>
-      <div class="mini-stat"><div class="v">5/5</div><div class="l">NAMOZ · O'RTA</div></div>
-    </div>
-
-    <!-- Bottom -->
-    <div class="bottom-bar">
-      <button class="primary-btn">YANGI HAFTANI BOSHLAYMAN</button>
-      <div class="secondary-row">
-        <button class="secondary-btn">Ulashish</button>
-        <button class="secondary-btn">To'liq tahlil</button>
-      </div>
-    </div>
-
-    <div class="vignette"></div>
-  </div>
-
-  <div class="footer-info">
-    Hafta bayrami — yutuqlarni nishonlash, charchashga emas, kuchayishga olib boradi
   </div>
 </div>
 
-<script>
-  // === Period data ===
-  // KUN — har kechqurun. HAFTA — 7 kundan keyin. OY — 30 kundan keyin.
-  const PERIODS = {
-    day: {
-      stamp: 'BUGUN · 10 MAY · YAKSHANBA',
-      title: 'Aziz, qara <span class="em">nima qilding</span> bugun.',
-      heroLbl: 'BUGUNGI FOKUS',
-      heroVal: 5.75,
-      heroUnit: 'SOAT',
-      heroDelta: '↑ +30 daq kechagidan',
-      heroSub: 'Bu — <span class="em">5 sessiya</span>. Bomdod, Arab grammatikasi, SMM, Loyiha, Kitob.',
-      bars: [
-        { day: '04-06', val: 2.0, best: false },
-        { day: '06-07', val: 1.0, best: false },
-        { day: '10-12', val: 2.0, best: true  },
-        { day: '13-14', val: 1.5, best: false },
-        { day: '15-16', val: 0.75, best: false }
-      ]
-    },
-    week: {
-      stamp: 'HAFTA · 19 (4 — 10 MAY)',
-      title: 'Aziz, qara <span class="em">nima qilding</span> bu hafta.',
-      heroLbl: 'JAMI FOKUS · BU HAFTA',
-      heroVal: 47,
-      heroUnit: 'SOAT',
-      heroDelta: '↑ +12% o\'tgan hafta',
-      heroSub: 'Bu — <span class="em">38 sessiya</span>. Hech qachon shuncha qilmagansan.',
-      bars: [
-        { day: 'DU', val: 5.5, best: false },
-        { day: 'SE', val: 7.2, best: false },
-        { day: 'CH', val: 6.0, best: false },
-        { day: 'PA', val: 8.3, best: true  },
-        { day: 'JU', val: 7.0, best: false },
-        { day: 'SH', val: 2.0, best: false },
-        { day: 'YA', val: 3.5, best: false }
-      ]
-    },
-    month: {
-      stamp: 'MAY · 2026',
-      title: 'Aziz, qara <span class="em">nima qilding</span> bu oy.',
-      heroLbl: 'JAMI FOKUS · BU OY',
-      heroVal: 188,
-      heroUnit: 'SOAT',
-      heroDelta: '↑ +25% o\'tgan oy',
-      heroSub: 'Bu — <span class="em">152 sessiya · 4 hafta</span>. Streak uzilmaganda.',
-      bars: [
-        { day: 'H 16', val: 38, best: false },
-        { day: 'H 17', val: 42, best: false },
-        { day: 'H 18', val: 47, best: false },
-        { day: 'H 19', val: 47, best: false },
-        { day: 'H 20', val: 14, best: false }
-      ]
-    }
-  };
-
-  // Hero counter animation
-  let currentTarget = PERIODS.week.heroVal;
-  let counterTimer = null;
-  function animateHero(target) {
-    if (counterTimer) clearInterval(counterTimer);
-    const el = document.getElementById('heroVal');
-    let n = 0;
-    const step = Math.max(1, Math.ceil(target / 50));
-    counterTimer = setInterval(() => {
-      n += step;
-      if (n >= target) { n = target; clearInterval(counterTimer); }
-      el.textContent = (target % 1 === 0) ? n : n.toFixed(1);
-    }, 30);
-  }
-
-  // Render bars
-  function renderBars(bars) {
-    const container = document.querySelector('.day-chart .bars');
-    if (!container) return;
-    const maxVal = Math.max(...bars.map(b => b.val));
-    container.innerHTML = bars.map((b, i) => `
-      <div class="bar-col${b.best ? ' best' : ''}">
-        <div class="bar-val">${b.val}</div>
-        <div class="bar-wrap"><div class="bar" style="height:${(b.val/maxVal)*92}%;animation-delay:${0.1+i*0.1}s"></div></div>
-        <div class="bar-day">${b.day}</div>
-      </div>`).join('');
-  }
-
-  // Switch period
-  function switchPeriod(key) {
-    const p = PERIODS[key];
-    if (!p) return;
-    document.getElementById('periodLabel').innerHTML = p.stamp;
-    document.getElementById('titleText').innerHTML = p.title;
-    document.getElementById('heroLbl').textContent = p.heroLbl;
-    document.getElementById('heroUnit').textContent = p.heroUnit;
-    document.getElementById('heroDelta').innerHTML = p.heroDelta;
-    document.getElementById('heroSub').innerHTML = p.heroSub;
-    renderBars(p.bars);
-    animateHero(p.heroVal);
-    document.querySelectorAll('.ptab').forEach(t => t.classList.toggle('active', t.dataset.period === key));
-  }
-
-  document.querySelectorAll('.ptab').forEach(t => {
-    t.addEventListener('click', () => switchPeriod(t.dataset.period));
-  });
-
-  // Default — week view
-  switchPeriod('week');
-
-  // Spawn confetti
-  function spawnConfetti() {
-    const c = document.getElementById('confetti');
-    for (let i = 0; i < 30; i++) {
-      const p = document.createElement('span');
-      p.style.left = Math.random() * 100 + '%';
-      p.style.animationDuration = (7 + Math.random() * 6) + 's';
-      p.style.animationDelay = (Math.random() * 8) + 's';
-      p.style.transform = `rotate(${Math.random() * 360}deg)`;
-      c.appendChild(p);
-    }
-  }
-  spawnConfetti();
-</script>
-
 <script src="data.js" defer></script>
 <script src="nav-overlay.js" defer></script>
+<script>
+  document.addEventListener('DOMContentLoaded', () => {
+    const data = window.MVOW_DATA ? MVOW_DATA.week.days : [5.5,7.2,6,5,8,4,2];
+    const max = Math.max(...data);
+    const chart = document.getElementById('chart');
+    const days = document.getElementById('days');
+    const labels = ['Du','Se','Ch','Pa','Ju','Sh','Ya'];
+    data.forEach((v, i) => {
+      const bar = document.createElement('div');
+      bar.className = 'bar' + (v < max * .5 ? ' dim' : '');
+      bar.style.height = ((v / max) * 100) + '%';
+      chart.appendChild(bar);
+      const lbl = document.createElement('span');
+      lbl.textContent = labels[i];
+      days.appendChild(lbl);
+    });
+  });
+  document.querySelectorAll('.tab').forEach(t => t.addEventListener('click', () => {
+    document.querySelectorAll('.tab').forEach(x => x.classList.remove('on'));
+    t.classList.add('on');
+  }));
+</script>
+
 </body>
 </html>

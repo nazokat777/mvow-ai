@@ -6,615 +6,188 @@
 <title>{brand} — Bugungi yo'l</title>
 <link rel="manifest" href="manifest.webmanifest">
 <meta name="theme-color" content="#04060B">
-<meta name="apple-mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<meta name="apple-mobile-web-app-title" content="M·VoW">
 <link rel="apple-touch-icon" href="assets/mnsm-logo.png">
 <link rel="icon" type="image/png" href="assets/mnsm-logo.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;600;700&family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500&family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500&family=Inter:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
 <style>
   * { box-sizing: border-box; margin: 0; padding: 0; }
   :root {
-    --void:#04060B; --void-2:#0A0E16;
-    --text-primary:#F5F2EC; --text-body:#B8BBC2;
-    --text-muted:#6B6E76; --text-ghost:#3A3D44;
-    --accent:#00E5D4; --accent-2:#00C9BC; --accent-deep:#007D75;
-    --accent-flash:#7AF5EC; --accent-soft:#00B5A8; --accent-cream:#D6F5F2;
-    --emerald:#4A8A5C; --emerald-bright:#6BAF7C; --emerald-deep:#1F3D2A;
-    --crimson:#B8334A; --rose:#C28B8B;
-    --sky:#7CA8C9;
+    --void:#04060B;
+    --text:#F5F2EC; --text-mid:#8A8D94; --text-dim:#4A4D54;
+    --accent:#00E5D4; --accent-soft:#00B5A8;
   }
   body {
-    background:#14171d; font-family:'Inter',sans-serif;
-    color:var(--text-primary); min-height:100vh;
-    display:flex; justify-content:center; align-items:center; padding:24px;
+    background: var(--void);
+    font-family: 'Inter', sans-serif;
+    color: var(--text);
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    padding: 24px;
+    -webkit-font-smoothing: antialiased;
   }
   .phone {
-    width:380px; height:800px;
-    background:var(--void); border-radius:40px;
-    overflow:hidden; position:relative;
-    box-shadow:0 0 0 8px #2a2e36, 0 30px 80px rgba(0,0,0,.85), 0 0 100px rgba(0,229,212,.10);
-    transition: background 1s ease;
+    width: 380px;
+    min-height: 800px;
+    background: var(--void);
+    border-radius: 40px;
+    overflow: hidden;
+    position: relative;
+    box-shadow: 0 0 0 8px #1a1d24, 0 30px 80px rgba(0,0,0,.7);
+    display: flex;
+    flex-direction: column;
   }
-  .phone[data-theme="break"] { background:#0E1218; }
-  .phone[data-theme="done"] { background:#0E1610; }
-
-  /* Backdrop */
-  .backdrop {
-    position:absolute; inset:0;
-    background:
-      radial-gradient(ellipse 80% 35% at 50% 30%, rgba(0,229,212,.10), transparent 65%),
-      linear-gradient(180deg, var(--void) 0%, var(--void-2) 50%, var(--void) 100%);
-    transition:background 1s ease;
-  }
-  .phone[data-theme="break"] .backdrop {
-    background:
-      radial-gradient(ellipse 80% 35% at 50% 30%, rgba(124,168,201,.12), transparent 65%),
-      linear-gradient(180deg, var(--void) 0%, #0E1218 50%, var(--void) 100%);
-  }
-  .phone[data-theme="done"] .backdrop {
-    background:
-      radial-gradient(ellipse 80% 35% at 50% 30%, rgba(74,138,92,.14), transparent 65%),
-      linear-gradient(180deg, var(--void) 0%, #0E1610 50%, var(--void) 100%);
+  .container {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 80px 32px 120px;
+    gap: 32px;
   }
 
-  .gilt-frame{position:absolute;inset:14px;border:1px solid rgba(0,229,212,.18);border-radius:26px;pointer-events:none;z-index:4}
-  .pattern-wash{position:absolute;inset:0;opacity:.025;background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='100' height='100' viewBox='0 0 100 100'><g fill='none' stroke='%2300E5D4' stroke-width='0.5'><polygon points='50,5 62,38 95,38 70,58 80,90 50,72 20,90 30,58 5,38 38,38'/></g></svg>");background-size:130px 130px;pointer-events:none;z-index:1}
-  .letterbox{position:absolute;left:0;right:0;height:14px;background:var(--void);z-index:7;pointer-events:none}
-  .letterbox.top{top:0}.letterbox.bottom{bottom:0}
-
-  /* === Top: day progress (3/7 dots) === */
-  .day-progress {
-    position:absolute; top:24px; left:24px; right:24px;
-    display:flex; flex-direction:column; align-items:center; gap:8px;
-    z-index:5;
+  /* Vazifa nomi — bitta qator */
+  .task {
+    text-align: center;
   }
-  .day-progress .label {
-    font-family:'JetBrains Mono',monospace; font-size:9px;
-    letter-spacing:4px; color:var(--accent-deep);
+  .task .name {
+    font-family: 'Cormorant Garamond', serif;
+    font-weight: 500;
+    font-size: 26px;
+    color: var(--text);
+    letter-spacing: 0.5px;
   }
-  .day-progress .label .em { color:var(--accent); font-weight:600; }
-  .day-progress .dots {
-    display:flex; gap:6px; align-items:center;
-  }
-  .day-progress .dot {
-    width:10px; height:10px; border-radius:50%;
-    background:var(--text-ghost);
-    transition:all .3s;
-  }
-  .day-progress .dot.done {
-    background:var(--emerald);
-    box-shadow:0 0 6px rgba(74,138,92,.4);
-  }
-  .day-progress .dot.current {
-    background:var(--accent-flash);
-    box-shadow:0 0 12px var(--accent);
-    animation:dot-pulse 1.6s ease-in-out infinite;
-  }
-  @keyframes dot-pulse{0%,100%{transform:scale(1)}50%{transform:scale(1.4)}}
-
-  /* === Bugungi jadval — gorizontal scroll strip === */
-  .day-schedule {
-    position:absolute; top:56px; left:0; right:0; z-index:4;
-    padding:8px 14px;
-    overflow-x:auto; overflow-y:hidden; white-space:nowrap;
-    scrollbar-width:none;
-  }
-  .day-schedule::-webkit-scrollbar { display:none; }
-  .day-schedule .chip {
-    display:inline-block; vertical-align:middle;
-    padding:5px 10px; margin-right:5px;
-    border-radius:6px; border:1px solid var(--accent-deep);
-    background:rgba(0,229,212,.05);
-    font-family:'JetBrains Mono',monospace; font-size:8px;
-    letter-spacing:.5px; color:var(--accent);
-  }
-  .day-schedule .chip .time { color:var(--accent-flash); font-weight:600; }
-  .day-schedule .chip .name { color:var(--text-body); margin-left:4px; }
-  .day-schedule .chip .dur  { color:var(--accent-deep); margin-left:3px; font-size:7px; }
-  .day-schedule .chip.done {
-    border-color:var(--emerald); background:rgba(74,138,92,.10);
-  }
-  .day-schedule .chip.done .time,
-  .day-schedule .chip.done .name { color:var(--emerald); }
-  .day-schedule .chip.now {
-    border-color:var(--accent); background:rgba(0,229,212,.18);
-    box-shadow:0 0 10px rgba(0,229,212,.4);
-    animation:chip-pulse 1.8s ease-in-out infinite;
-  }
-  .day-schedule .chip.now .name { color:var(--text-primary); }
-  .day-schedule .chip.upcoming {
-    opacity:.7;
-  }
-  .day-schedule .rest {
-    display:inline-block; vertical-align:middle;
-    padding:5px 8px; margin-right:5px;
-    border-radius:6px; border:1px dashed var(--text-ghost);
-    background:rgba(124,168,201,.04);
-    font-family:'JetBrains Mono',monospace; font-size:7.5px;
-    letter-spacing:1px; color:var(--text-muted);
-  }
-  .day-schedule .rest::before { content:"☾ "; color:var(--sky); }
-  @keyframes chip-pulse {
-    0%,100% { box-shadow:0 0 10px rgba(0,229,212,.4); }
-    50%     { box-shadow:0 0 18px rgba(0,229,212,.7); }
+  .task .time {
+    font-size: 11px;
+    letter-spacing: 3px;
+    color: var(--text-mid);
+    text-transform: uppercase;
+    margin-top: 8px;
   }
 
-  /* === Task title === */
-  .task-block {
-    position:absolute; top:112px; left:24px; right:24px;
-    text-align:center; z-index:4;
+  /* Taymer halqa — yagona katta element */
+  .ring-wrap {
+    position: relative;
+    width: 240px;
+    height: 240px;
   }
-  .task-block .pre {
-    font-family:'JetBrains Mono',monospace; font-size:9px;
-    letter-spacing:4px; color:var(--accent-deep); margin-bottom:5px;
+  .ring-svg {
+    width: 100%;
+    height: 100%;
+    transform: rotate(-90deg);
   }
-  .task-block .title {
-    font-family:'Cormorant Garamond',serif; font-style:italic; font-weight:600;
-    font-size:20px; color:var(--text-primary); line-height:1.2;
-    letter-spacing:.4px; margin-bottom:4px;
+  .ring-track {
+    fill: none;
+    stroke: rgba(255,255,255,.06);
+    stroke-width: 3;
   }
-  .phone[data-theme="break"] .task-block .title { color:var(--sky); }
-  .phone[data-theme="done"] .task-block .title { color:var(--emerald-bright); }
-  .task-block .goal {
-    font-family:'Cormorant Garamond',serif; font-style:italic; font-size:13px;
-    color:var(--text-muted); line-height:1.4; padding:0 8px;
+  .ring-prog {
+    fill: none;
+    stroke: var(--accent);
+    stroke-width: 3;
+    stroke-linecap: round;
+    transition: stroke-dashoffset 1s linear;
   }
-
-  /* === Circular timer with MNSM logo center === */
-  .timer-wrap {
-    position:absolute; top:208px; left:50%; transform:translateX(-50%);
-    width:240px; height:240px;
-    z-index:4;
+  .ring-center {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
   }
-  .timer-halo {
-    position:absolute; inset:-20px;
-    border-radius:50%;
-    background:radial-gradient(circle, var(--accent) 0%, transparent 60%);
-    opacity:.30; filter:blur(28px);
-    animation:breathe 4s ease-in-out infinite;
+  .ring-center .digits {
+    font-family: 'Inter', sans-serif;
+    font-size: 44px;
+    font-weight: 300;
+    color: var(--accent);
+    letter-spacing: 1px;
   }
-  .phone[data-theme="break"] .timer-halo {
-    background:radial-gradient(circle, var(--sky) 0%, transparent 60%);
-  }
-  .phone[data-theme="done"] .timer-halo {
-    background:radial-gradient(circle, var(--emerald) 0%, transparent 60%);
-  }
-  @keyframes breathe{0%,100%{opacity:.30;transform:scale(.92)}50%{opacity:.55;transform:scale(1.08)}}
-
-  .timer-svg {
-    position:absolute; inset:0; width:100%; height:100%;
-    transform:rotate(-90deg);
-    filter:drop-shadow(0 0 12px rgba(0,229,212,.45));
-  }
-  .timer-track { fill:none; stroke:rgba(0,125,117,.32); stroke-width:3; }
-  .timer-progress {
-    fill:none; stroke:var(--accent); stroke-width:3.5;
-    stroke-linecap:round;
-    transition:stroke-dashoffset 1s linear, stroke .6s;
-  }
-  .phone[data-theme="break"] .timer-progress { stroke:var(--sky); }
-  .phone[data-theme="done"] .timer-progress { stroke:var(--emerald); }
-
-  /* MNSM logo in center of timer */
-  .timer-logo {
-    position:absolute; top:50%; left:50%;
-    transform:translate(-50%, -50%);
-    width:90px; height:90px;
-    background:url(assets/mnsm-logo.png) center/contain no-repeat;
-    filter:drop-shadow(0 0 14px rgba(0,229,212,.55));
-    opacity:.85;
-    z-index:2;
+  .ring-center .sub {
+    font-size: 9px;
+    letter-spacing: 3px;
+    color: var(--text-dim);
+    text-transform: uppercase;
   }
 
-  /* Digital time below logo */
-  .timer-digits {
-    position:absolute; top:62%; left:50%;
-    transform:translate(-50%, 0);
-    font-family:'JetBrains Mono',monospace; font-size:24px;
-    color:var(--accent); font-weight:500; letter-spacing:2px;
-    text-shadow:0 0 12px rgba(0,229,212,.6);
-    z-index:3;
-  }
-  .phone[data-theme="break"] .timer-digits { color:var(--sky); text-shadow:0 0 12px rgba(124,168,201,.6); }
-  .phone[data-theme="done"] .timer-digits { color:var(--emerald-bright); }
-  .timer-label {
-    position:absolute; top:80%; left:50%;
-    transform:translate(-50%, 0);
-    font-family:'JetBrains Mono',monospace; font-size:8px;
-    letter-spacing:3px; color:var(--accent-deep); z-index:3;
-  }
-
-  /* Pomodoro indicator (small dots) */
-  .pomodoro-row {
-    position:absolute; top:463px; left:50%; transform:translateX(-50%);
-    display:flex; align-items:center; gap:4px;
-    z-index:4;
-  }
-  .pomodoro-row .lbl {
-    font-family:'JetBrains Mono',monospace; font-size:8px;
-    letter-spacing:2px; color:var(--accent-deep); margin-right:4px;
-  }
-  .pomodoro-row .pdot {
-    width:6px; height:6px; border-radius:50%;
-    background:var(--text-ghost);
-  }
-  .pomodoro-row .pdot.done { background:var(--accent); }
-  .pomodoro-row .pdot.current { background:var(--accent-flash); box-shadow:0 0 6px var(--accent); }
-
-  /* === Mentor message === */
-  .mentor {
-    position:absolute; top:504px; left:24px; right:24px;
-    display:flex; align-items:flex-start; gap:10px;
-    padding:12px 14px;
-    background:rgba(0,229,212,.04);
-    border-left:2px solid var(--accent);
-    border-radius:0 4px 4px 0;
-    z-index:4;
-  }
-  .phone[data-theme="break"] .mentor { border-left-color:var(--sky); background:rgba(124,168,201,.05); }
-  .phone[data-theme="done"] .mentor { border-left-color:var(--emerald); background:rgba(74,138,92,.06); }
-  .mentor .orb {
-    width:24px; height:24px; flex-shrink:0;
-    background:url(assets/mnsm-logo.png) center/contain no-repeat;
-    filter:drop-shadow(0 0 6px rgba(0,229,212,.4));
-    margin-top:2px;
-  }
-  .mentor .text {
-    flex:1;
-    font-family:'Cormorant Garamond',serif; font-style:italic;
-    font-size:13.5px; color:var(--text-body); line-height:1.5;
-  }
-  .mentor .text .em { color:var(--accent); font-weight:600; font-style:normal; }
-  .phone[data-theme="break"] .mentor .text .em { color:var(--sky); }
-  .phone[data-theme="done"] .mentor .text .em { color:var(--emerald-bright); }
-
-  /* === Energy check bar === */
-  .energy-row {
-    position:absolute; top:618px; left:24px; right:24px;
-    display:flex; align-items:center; gap:6px; flex-wrap:wrap;
-    justify-content:center;
-    z-index:4;
-  }
-  .energy-row .lbl {
-    width:100%; text-align:center;
-    font-family:'JetBrains Mono',monospace; font-size:8.5px;
-    letter-spacing:3px; color:var(--accent-deep); margin-bottom:4px;
-  }
-  .energy-chip {
-    padding:5px 12px; border-radius:999px;
-    border:1px solid var(--accent-deep);
-    background:rgba(0,229,212,.04);
-    font-family:'JetBrains Mono',monospace; font-size:8.5px;
-    letter-spacing:1.5px; color:var(--accent-deep); cursor:pointer;
-  }
-  .energy-chip.active {
-    color:var(--accent); border-color:var(--accent);
-    background:rgba(0,229,212,.10); box-shadow:0 0 8px rgba(0,229,212,.3);
-  }
-  .energy-chip.tired { color:var(--rose); border-color:var(--rose); }
-  .energy-chip.tired.active { background:rgba(194,139,139,.12); }
-
-  /* === Bottom action === */
   .bottom-bar {
-    position:absolute; bottom:24px; left:24px; right:24px; z-index:5;
+    padding: 24px 32px env(safe-area-inset-bottom, 24px);
+    background: linear-gradient(180deg, transparent, var(--void) 30%);
   }
-  .primary-btn {
-    width:100%; padding:14px;
-    background:linear-gradient(180deg, var(--accent-cream) 0%, var(--accent) 50%, var(--accent-deep) 100%);
-    color:var(--void); font-size:12px; font-weight:700;
-    letter-spacing:5px; border:none; border-radius:4px;
-    cursor:pointer; text-transform:uppercase;
-    box-shadow:0 0 22px rgba(0,229,212,.40), inset 0 1px 0 rgba(255,255,255,.5);
-    transition:all .3s;
-  }
-  .phone[data-theme="break"] .primary-btn {
-    background:linear-gradient(180deg, #C5DBED 0%, var(--sky) 50%, #4D7090 100%);
-    box-shadow:0 0 22px rgba(124,168,201,.4);
-  }
-  .phone[data-theme="done"] .primary-btn {
-    background:linear-gradient(180deg, #DDF1E0 0%, var(--emerald) 50%, var(--emerald-deep) 100%);
-    color:var(--text-primary);
-    box-shadow:0 0 22px rgba(74,138,92,.4);
-  }
-  .secondary-row { display:flex; gap:14px; margin-top:10px; justify-content:center; }
-  .secondary-btn {
-    background:none; border:none;
-    color:var(--text-muted); font-style:italic;
-    padding:4px 6px; font-size:11px; letter-spacing:0.5px;
-    font-family:'Cormorant Garamond',serif;
-    cursor:pointer; text-transform:none;
-    opacity:0.7; transition:opacity 0.2s;
-  }
-  .secondary-btn:hover { opacity:1; color:var(--accent-deep); }
-
-  /* === Running state: focus mode — hide non-essential controls === */
-  /* User is in flow. App should not demand attention. */
-  .phone[data-state="running"] .energy-row,
-  .phone[data-state="running"] .primary-btn {
-    display:none;
-  }
-  .phone[data-state="running"] .bottom-bar {
-    background:none; box-shadow:none;
+  .cta {
+    display: block;
+    width: 100%;
+    padding: 16px;
+    background: linear-gradient(180deg, var(--accent), var(--accent-soft));
+    color: var(--void);
+    font-size: 13px;
+    font-weight: 600;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    text-align: center;
+    text-decoration: none;
   }
 
-  .vignette{position:absolute;inset:0;pointer-events:none;background:radial-gradient(ellipse 110% 80% at 50% 50%, transparent 60%, rgba(0,0,0,.4));z-index:6}
-
-  .state-tabs {
-    display:flex; justify-content:center; gap:6px;
-    margin-top:18px; flex-wrap:wrap;
-  }
-  .state-tab {
-    padding:7px 14px; border-radius:2px;
-    font-family:'JetBrains Mono',monospace; font-size:10px;
-    letter-spacing:2px; color:rgba(255,255,255,.4);
-    cursor:pointer; border:1px solid rgba(255,255,255,.08);
-  }
-  .state-tab.active { color:var(--accent); border-color:var(--accent); background:rgba(0,229,212,.08); }
-
-  .footer-info {
-    margin-top:22px; text-align:center;
-    color:rgba(255,255,255,.45); font-size:13px; line-height:1.6;
-    font-family:'Cormorant Garamond',serif; font-style:italic;
-  }
-
-  @media (max-width:480px){
-    body{padding:0}
-    .phone{width:100vw;height:100vh;border-radius:0;box-shadow:none}
-    .footer-info,.state-tabs{display:none}
+  @media (max-width: 480px) {
+    body { padding: 0; }
+    .phone { width: 100vw; min-height: 100vh; border-radius: 0; box-shadow: none; }
   }
 </style>
 </head>
 <body>
 
-<div style="display:flex;flex-direction:column;align-items:center;">
+<div class="phone">
+  <div class="container">
 
-<div class="phone" id="phone" data-state="running">
-  <div class="backdrop"></div>
-  <div class="pattern-wash"></div>
-  <div class="gilt-frame"></div>
-  <div class="letterbox top"></div>
-  <div class="letterbox bottom"></div>
-
-  <!-- Day progress -->
-  <div class="day-progress">
-    <div class="label">BUGUNGI YO'L · <span class="em" id="dayCounter">2</span> / <span data-mvow="totals.sessions">5</span></div>
-  </div>
-
-  <!-- Bugungi jadval — vaqt + nom + davomiylik, dam'lar bilan -->
-  <div class="day-schedule" id="daySchedule">
-    <span class="chip done"><span class="time">04:00</span><span class="name">Qur'on darsi</span><span class="dur">·2s</span></span>
-    <span class="rest">20 daq</span>
-    <span class="chip now"><span class="time">06:20</span><span class="name">Arab grammatikasi</span><span class="dur">·1s</span></span>
-    <span class="rest">2 soat 40 daq</span>
-    <span class="chip upcoming"><span class="time">10:00</span><span class="name">SMM darslari</span><span class="dur">·2s</span></span>
-    <span class="rest">1 soat</span>
-    <span class="chip upcoming"><span class="time">13:00</span><span class="name">Loyiha · kod</span><span class="dur">·1.5s</span></span>
-    <span class="rest">30 daq</span>
-    <span class="chip upcoming"><span class="time">15:00</span><span class="name">Kitob · mutolaa</span><span class="dur">·45 daq</span></span>
-  </div>
-
-  <!-- Task -->
-  <div class="task-block">
-    <div class="pre" id="taskPre">2-ISH · 06:20 — 07:20</div>
-    <div class="title" id="taskTitle">Arab grammatikasi</div>
-    <div class="goal" id="taskGoal">"Sarf-nahv asoslari — 1 soatlik fokus"</div>
-  </div>
-
-  <!-- Circular timer with MNSM logo center -->
-  <div class="timer-wrap">
-    <div class="timer-halo"></div>
-    <svg class="timer-svg" viewBox="0 0 240 240">
-      <circle class="timer-track" cx="120" cy="120" r="110"/>
-      <circle id="timerProgress" class="timer-progress"
-              cx="120" cy="120" r="110"
-              stroke-dasharray="691.15" stroke-dashoffset="276.46"/>
-    </svg>
-    <div class="timer-logo"></div>
-    <div class="timer-digits" id="timerDigits">23:42</div>
-    <div class="timer-label" id="timerLabel">QOLDI</div>
-  </div>
-
-  <!-- Pomodoro indicator -->
-  <div class="pomodoro-row" id="pomodoroRow">
-    <span class="lbl">POMODORO</span>
-    <div class="pdot done"></div>
-    <div class="pdot current"></div>
-    <div class="pdot"></div>
-    <div class="pdot"></div>
-  </div>
-
-  <!-- Mentor message -->
-  <div class="mentor" id="mentor">
-    <div class="orb"></div>
-    <div class="text" id="mentorText">
-      <span class="em">2-pomodoro</span> davom etmoqda. Ko'zlaringni 20 soniya uzoq narsaga qaratsang — diqqat tiniqlashadi. Davom et.
+    <div class="task">
+      <div class="name" id="taskName">Arab grammatikasi</div>
+      <div class="time" id="taskTime">06:20 — 07:20</div>
     </div>
+
+    <div class="ring-wrap">
+      <svg class="ring-svg" viewBox="0 0 240 240">
+        <circle class="ring-track" cx="120" cy="120" r="116"/>
+        <circle id="ring" class="ring-prog" cx="120" cy="120" r="116"
+                stroke-dasharray="729" stroke-dashoffset="0"/>
+      </svg>
+      <div class="ring-center">
+        <div class="digits" id="digits">25:00</div>
+        <div class="sub" id="sub">kutyapti</div>
+      </div>
+    </div>
+
   </div>
 
-  <!-- Energy check -->
-  <div class="energy-row" id="energyRow">
-    <div class="lbl">HOZIRGI ENERGIYANG?</div>
-    <div class="energy-chip">⚡ KUCHLI</div>
-    <div class="energy-chip active">🌥 O'RTA</div>
-    <div class="energy-chip tired">🌙 CHARCHAYAPMAN</div>
-  </div>
-
-  <!-- Bottom -->
   <div class="bottom-bar">
-    <button class="primary-btn" id="primaryBtn">DAVOM ETAMAN</button>
-    <div class="secondary-row" id="secondaryRow">
-      <button class="secondary-btn" id="laterBtn">⏰ 5 daq keyin</button>
-      <button class="secondary-btn" id="skipBtn">⏭ O'tkazib yub</button>
-    </div>
+    <a class="cta" id="startBtn" href="hard-lock.html">Boshlayman</a>
   </div>
-
-  <div class="vignette"></div>
 </div>
-
-<!-- State tabs (preview) -->
-<div class="state-tabs">
-  <div class="state-tab" data-state="ready">TAYYORLAN</div>
-  <div class="state-tab active" data-state="running">DAVOM</div>
-  <div class="state-tab" data-state="break">DAM 5 DAQ</div>
-  <div class="state-tab" data-state="done">TUGADI</div>
-  <div class="state-tab" data-state="tired">CHARCHADIM</div>
-</div>
-
-<div class="footer-info">
-  Bugungi yo'l — 7 ish, ketma-ket, taymer + mentor savollari
-</div>
-
-</div>
-
-<script>
-  // === Day flow states ===
-  const states = {
-    ready: {
-      data: 'running',
-      pre: '2-ISH · 06:20 — 07:20', title: 'Arab grammatikasi',
-      goal: '"Sarf-nahv asoslari — 1 soatlik fokus"',
-      timerText: '25:00', timerLabel: 'TAYMER · KUTYAPTI',
-      progress: 0,
-      mentor: '<span class="em">Boshlayveraymi?</span> Birinchi 25 daqiqalik pomodoro tayyor. Sen "ha" desang yonadi.',
-      btn: 'HA, BOSHLAYMAN',
-      pomo: false
-    },
-    running: {
-      data: 'running',
-      pre: '2-ISH · 06:20 — 07:20', title: 'Arab grammatikasi',
-      goal: '"Sarf-nahv asoslari — 1 soatlik fokus"',
-      timerText: '42:18', timerLabel: 'QOLDI',
-      progress: 0.30,
-      mentor: '<span class="em">42 daqiqa</span> qoldi. Yozuvga e\'tibor qarat — har qoidani bir misol bilan eslab qol. Soat 07:20 da tugaydi.',
-      btn: 'DAVOM ETAMAN',
-      pomo: false
-    },
-    break: {
-      data: 'break',
-      pre: 'POMODORO TANAFFUS · 5 DAQ', title: 'Dam ol — ko\'z ber',
-      goal: '"Stol oldidan tur, derazaga qara, 5 daqiqa nafas ol"',
-      timerText: '04:38', timerLabel: 'DAM',
-      progress: 0.07,
-      mentor: 'Dam — bekorchilik emas, <span class="em">miyangning sifatli ish vaqti</span>. Qaytib kelganingda fokus 30% kuchayadi.',
-      btn: 'KEYINGI POMODOROGA',
-      pomo: true, pomoCurrent: 2
-    },
-    done: {
-      data: 'done',
-      pre: '2-ISH BAJARILDI ✓', title: 'Arab grammatikasi · TUGADI',
-      goal: '"1 soat fokus tugadi — soat 07:20"',
-      timerText: '00:00', timerLabel: 'BAJARDING',
-      progress: 1,
-      mentor: '<span class="em">Bajarding.</span> Yana bir halqa daraxtingda. Keyingi ish — soat 10:00 da SMM darslari. Hozir biroz dam va boshqa ishlaringga vaqt.',
-      btn: 'KEYINGI ISHGA — 10:00',
-      pomo: false
-    },
-    tired: {
-      data: 'break',
-      pre: 'CHARCHOQ SEZILDI', title: 'To\'xtaylik — sen muhim',
-      goal: '"Charchagan miya — yomon qaror chiqaradi. Hozir to\'xtash — ertaga g\'olib bo\'lish."',
-      timerText: '15:00', timerLabel: 'DAM TAVSIYA',
-      progress: 0.5,
-      mentor: 'Sen <span class="em">"charchayapman"</span> dedding. Eshityapman. Keyingi 2 ish ertaga ko\'chiriladi. Hozir — chuqurroq dam ol. Bu ham fokus turi.',
-      btn: '15 DAQIQA DAM OLAMAN',
-      pomo: false
-    }
-  };
-
-  const phone = document.getElementById('phone');
-  const taskPre = document.getElementById('taskPre');
-  const taskTitle = document.getElementById('taskTitle');
-  const taskGoal = document.getElementById('taskGoal');
-  const timerDigits = document.getElementById('timerDigits');
-  const timerLabel = document.getElementById('timerLabel');
-  const timerProgress = document.getElementById('timerProgress');
-  const mentorText = document.getElementById('mentorText');
-  const primaryBtn = document.getElementById('primaryBtn');
-  const pomoRow = document.getElementById('pomodoroRow');
-  const energyRow = document.getElementById('energyRow');
-  const RING = 691.15;
-
-  function applyState(name) {
-    const s = states[name];
-    phone.dataset.state = name;     // logical state (ready/running/break/done/tired)
-    phone.dataset.theme = s.data;   // visual theme
-    taskPre.textContent = s.pre;
-    taskTitle.textContent = s.title;
-    taskGoal.textContent = s.goal;
-    timerDigits.textContent = s.timerText;
-    timerLabel.textContent = s.timerLabel;
-    timerProgress.style.strokeDashoffset = (RING * (1 - s.progress)).toFixed(1);
-    mentorText.innerHTML = s.mentor;
-    primaryBtn.textContent = s.btn;
-    pomoRow.style.display = s.pomo ? 'flex' : 'none';
-    if (s.pomo) {
-      const dots = pomoRow.querySelectorAll('.pdot');
-      dots.forEach((d, i) => {
-        d.className = 'pdot';
-        if (i < s.pomoCurrent - 1) d.classList.add('done');
-        else if (i === s.pomoCurrent - 1) d.classList.add('current');
-      });
-    }
-    // Auto-select tired energy chip if tired state
-    energyRow.querySelectorAll('.energy-chip').forEach(c => c.classList.remove('active'));
-    if (name === 'tired') energyRow.querySelector('.energy-chip.tired').classList.add('active');
-    else if (name === 'ready' || name === 'running') energyRow.querySelectorAll('.energy-chip')[1].classList.add('active');
-  }
-
-  // Default to READY ("Boshlayveraymi?") — user must explicitly confirm to start the timer
-  applyState('ready');
-  // Update tabs to match
-  document.querySelectorAll('.state-tab').forEach(t =>
-    t.classList.toggle('active', t.dataset.state === 'ready'));
-
-  // Primary button — when in READY, "HA BOSHLAYMAN" → switch to RUNNING (timer fires)
-  document.getElementById('primaryBtn').addEventListener('click', () => {
-    if (phone.dataset.state === 'ready') {
-      applyState('running');
-      document.querySelectorAll('.state-tab').forEach(t =>
-        t.classList.toggle('active', t.dataset.state === 'running'));
-    }
-  });
-
-  document.querySelectorAll('.state-tab').forEach(tab => {
-    tab.addEventListener('click', () => {
-      document.querySelectorAll('.state-tab').forEach(t => t.classList.remove('active'));
-      tab.classList.add('active');
-      applyState(tab.dataset.state);
-    });
-  });
-
-  // Energy chip clicks
-  energyRow.addEventListener('click', e => {
-    const chip = e.target.closest('.energy-chip');
-    if (!chip) return;
-    energyRow.querySelectorAll('.energy-chip').forEach(c => c.classList.remove('active'));
-    chip.classList.add('active');
-    if (chip.classList.contains('tired')) {
-      applyState('tired');
-      document.querySelectorAll('.state-tab').forEach(t =>
-        t.classList.toggle('active', t.dataset.state === 'tired'));
-    }
-  });
-
-  // Live timer countdown (only in running state)
-  let totalSec = 23 * 60 + 42;
-  setInterval(() => {
-    if (phone.dataset.state !== 'running') return;
-    if (totalSec <= 0) totalSec = 25 * 60;
-    const m = Math.floor(totalSec / 60);
-    const s = totalSec % 60;
-    timerDigits.textContent = String(m).padStart(2,'0') + ':' + String(s).padStart(2,'0');
-    const total = 25 * 60;
-    timerProgress.style.strokeDashoffset = (RING * (1 - totalSec / total)).toFixed(1);
-    totalSec--;
-  }, 1000);
-</script>
 
 <script src="data.js" defer></script>
 <script src="nav-overlay.js" defer></script>
+<script>
+  document.addEventListener('DOMContentLoaded', () => {
+    if (window.MVOW_DATA) {
+      const cur = MVOW_DATA.currentSession() || MVOW_DATA.sessions[0];
+      if (cur) {
+        document.getElementById('taskName').textContent = cur.name;
+        const start = cur.time;
+        const startMin = (+start.split(':')[0]) * 60 + (+start.split(':')[1]);
+        const endMin = startMin + cur.mins;
+        const end = String(Math.floor(endMin/60)).padStart(2,'0') + ':' + String(endMin%60).padStart(2,'0');
+        document.getElementById('taskTime').textContent = `${start} — ${end}`;
+      }
+    }
+  });
+</script>
+
 </body>
 </html>

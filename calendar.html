@@ -2,654 +2,110 @@
 <html lang="uz">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <title>{brand} — Kalendar</title>
 <link rel="manifest" href="manifest.webmanifest">
 <meta name="theme-color" content="#04060B">
-<meta name="apple-mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<meta name="apple-mobile-web-app-title" content="M·VoW">
 <link rel="apple-touch-icon" href="assets/mnsm-logo.png">
 <link rel="icon" type="image/png" href="assets/mnsm-logo.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,500&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
 <style>
   * { box-sizing: border-box; margin: 0; padding: 0; }
-
-  :root {
-    --void:        #04060B;
-    --void-2:      #0A0E16;
-    --shadow:      #11151D;
-    --steel:       #1A1F2A;
-
-    --text-primary: #F5F2EC;
-    --text-body:    #B8BBC2;
-    --text-muted:   #6B6E76;
-    --text-ghost:   #3A3D44;
-
-    --accent:        #00E5D4;
-    --accent-2:      #00C9BC;
-    --accent-deep:   #007D75;
-    --accent-flash:  #7AF5EC;
-    --accent-soft:       #00B5A8;
-
-    --crimson:     #B8334A;
-    --crimson-deep:#6B1F1F;
-    --emerald:     #4A8A5C;
-    --emerald-deep:#1F3D2A;
-  }
-
-  body {
-    background: #14171d;
-    font-family: 'Inter', sans-serif;
-    color: var(--text-primary);
-    min-height: 100vh;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    padding: 24px;
-  }
-
-  .phone {
-    width: 380px;
-    height: 800px;
-    background: var(--void);
-    border-radius: 40px;
-    overflow: hidden;
-    position: relative;
-    box-shadow:
-      0 0 0 8px #2a2e36,
-      0 30px 80px rgba(0,0,0,0.85),
-      0 0 100px rgba(0,229,212,0.07);
-  }
-
-  .backdrop {
-    position: absolute; inset: 0;
-    background:
-      radial-gradient(ellipse 80% 30% at 50% 15%, rgba(0,229,212,0.06), transparent 65%),
-      linear-gradient(180deg, var(--void) 0%, var(--void-2) 50%, var(--void) 100%);
-  }
-
-  .gilt-frame {
-    position: absolute; inset: 14px;
-    border: 1px solid rgba(0,229,212,0.18);
-    border-radius: 26px;
-    pointer-events: none;
-    z-index: 4;
-  }
-
-  .pattern-wash {
-    position: absolute; inset: 0;
-    opacity: 0.02;
-    background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='100' height='100' viewBox='0 0 100 100'><g fill='none' stroke='%2300E5D4' stroke-width='0.5'><polygon points='50,5 62,38 95,38 70,58 80,90 50,72 20,90 30,58 5,38 38,38'/></g></svg>");
-    background-size: 130px 130px;
-    pointer-events: none;
-    z-index: 1;
-  }
-
-  .letterbox {
-    position: absolute;
-    left: 0; right: 0;
-    height: 14px;
-    background: var(--void);
-    z-index: 7;
-    pointer-events: none;
-  }
-  .letterbox.top { top: 0; }
-  .letterbox.bottom { bottom: 0; }
-
-  /* === Header === */
-  .header-row {
-    position: absolute;
-    top: 26px; left: 24px; right: 24px;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    z-index: 5;
-  }
-  .icon-btn {
-    width: 28px; height: 28px;
-    display: flex; align-items: center; justify-content: center;
-    border: 1px solid var(--accent-deep);
-    border-radius: 50%;
+  :root { --void:#04060B; --void-soft:#0C0F16; --text:#F5F2EC; --text-mid:#8A8D94; --text-dim:#4A4D54; --accent:#00E5D4; --accent-soft:#00B5A8; --emerald:#4A8A5C; }
+  body { background: var(--void); font-family:'Inter',sans-serif; color: var(--text); min-height: 100vh; display:flex; justify-content:center; align-items:flex-start; padding: 24px; -webkit-font-smoothing: antialiased; }
+  .phone { width: 380px; min-height: 800px; background: var(--void); border-radius: 40px; overflow: hidden; position: relative; box-shadow: 0 0 0 8px #1a1d24, 0 30px 80px rgba(0,0,0,.7); }
+  .container { padding: 60px 24px 60px; }
+  .header { text-align: center; margin-bottom: 32px; }
+  .header .month { font-family:'Cormorant Garamond',serif; font-size: 24px; font-weight: 500; }
+  .tabs { display: flex; gap: 4px; padding: 4px; background: var(--void-soft); border-radius: 8px; margin-bottom: 32px; }
+  .tab { flex: 1; padding: 10px; text-align:center; font-size: 11px; letter-spacing: 2px; text-transform: uppercase; color: var(--text-mid); cursor: pointer; border-radius: 6px; transition: all .15s; }
+  .tab.on { background: var(--accent); color: var(--void); font-weight: 600; }
+  .week-row { display: grid; grid-template-columns: repeat(7, 1fr); gap: 4px; margin-bottom: 24px; }
+  .day {
+    display: flex; flex-direction: column; align-items: center; gap: 6px;
+    padding: 12px 4px;
+    border-radius: 8px;
     cursor: pointer;
-    background: rgba(0,229,212,0.04);
-    color: var(--accent);
   }
-  .icon-btn svg { width: 12px; height: 12px; fill: none; stroke: currentColor; stroke-width: 1.8; }
-
-  .month-title {
-    font-family: 'Cormorant Garamond', serif;
-    font-style: italic;
-    font-size: 18px;
-    color: var(--text-primary);
-    letter-spacing: 1px;
-  }
-  .month-title .em { color: var(--accent); }
-
-  /* === View toggle === */
-  .view-toggle {
-    position: absolute;
-    top: 70px; left: 24px; right: 24px;
-    display: flex;
-    background: rgba(0,229,212,0.03);
-    border: 1px solid rgba(0,125,117,0.30);
-    border-radius: 999px;
-    padding: 3px;
-    z-index: 5;
-  }
-  .view-btn {
-    flex: 1;
-    padding: 6px 10px;
-    text-align: center;
-    border-radius: 999px;
-    font-family: 'JetBrains Mono', monospace;
-    font-size: 9px;
-    letter-spacing: 3px;
-    color: var(--accent-deep);
-    cursor: pointer;
-    transition: all 0.2s;
-  }
-  .view-btn:hover { color: var(--accent); }
-  .view-btn.active {
-    background: linear-gradient(180deg, var(--accent-flash) 0%, var(--accent) 50%, var(--accent-2) 100%);
-    color: var(--void);
-    box-shadow: 0 0 12px rgba(0,229,212,0.35);
-    font-weight: 600;
-  }
-
-  /* === Days bar (week-view) === */
-  .week-bar {
-    position: absolute;
-    top: 116px; left: 24px; right: 24px;
+  .day .d { font-size: 9px; letter-spacing: 1px; color: var(--text-dim); text-transform: uppercase; }
+  .day .n { font-size: 14px; color: var(--text); }
+  .day.today { background: var(--accent); }
+  .day.today .d, .day.today .n { color: var(--void); font-weight: 600; }
+  .sessions { display:flex; flex-direction: column; gap: 0; }
+  .session-row {
     display: grid;
-    grid-template-columns: 30px repeat(7, 1fr);
-    gap: 2px;
-    z-index: 4;
+    grid-template-columns: 56px 1fr auto;
+    align-items: baseline;
+    gap: 12px;
+    padding: 14px 0;
+    border-bottom: 1px solid rgba(255,255,255,.04);
   }
-  .week-bar .corner {
-    /* spacer */
-  }
-  .day-cell {
-    text-align: center;
-    padding: 4px 0;
-    cursor: pointer;
-    border-radius: 4px;
-    transition: background 0.2s;
-  }
-  .day-cell .day-name {
-    font-family: 'JetBrains Mono', monospace;
-    font-size: 8px;
-    letter-spacing: 1.5px;
-    color: var(--accent-deep);
-    margin-bottom: 2px;
-  }
-  .day-cell .day-num {
-    font-family: 'JetBrains Mono', monospace;
-    font-size: 13px;
-    color: var(--text-body);
-    font-weight: 500;
-  }
-  .day-cell.today {
-    background: rgba(0,229,212,0.08);
-  }
-  .day-cell.today .day-name { color: var(--accent); }
-  .day-cell.today .day-num { color: var(--accent); font-weight: 700; text-shadow: 0 0 8px rgba(0,229,212,0.4); }
-  .day-cell.past .day-num { color: var(--text-ghost); }
-
-  /* === Calendar grid === */
-  .cal-grid {
-    position: absolute;
-    top: 168px; left: 24px; right: 24px; bottom: 134px;
-    display: grid;
-    grid-template-columns: 30px repeat(7, 1fr);
-    grid-auto-rows: 36px;
-    gap: 1px;
-    background: rgba(0,125,117,0.10);
-    border: 1px solid rgba(0,125,117,0.20);
-    border-radius: 4px;
-    z-index: 4;
-    overflow: hidden;
-    overflow-y: auto;
-    scrollbar-width: thin;
-    scrollbar-color: rgba(0,229,212,0.3) transparent;
-  }
-  .cal-grid::-webkit-scrollbar { width: 4px; }
-  .cal-grid::-webkit-scrollbar-thumb { background: rgba(0,229,212,0.3); border-radius: 2px; }
-
-  .hour-cell {
-    background: rgba(10,14,22,0.5);
-    border-right: 1px solid rgba(0,125,117,0.15);
-    text-align: right;
-    padding: 4px 6px 0 0;
-    font-family: 'JetBrains Mono', monospace;
-    font-size: 8px;
-    letter-spacing: 0.5px;
-    color: var(--text-ghost);
-  }
-  .hour-cell.major { color: var(--accent-deep); }
-
-  .day-col-cell {
-    background: rgba(10,14,22,0.6);
-    position: relative;
-  }
-  .day-col-cell.today-col {
-    background: rgba(0,229,212,0.04);
-  }
-
-  /* Sessions plotted */
-  /* === HOLAT RANGLARI ===
-     Default (sariq) = kutilmoqda · .done (yashil) = bajarildi · .missed (kulrang) = bajarilmagan */
-  .session-bar {
-    position: absolute;
-    left: 2px; right: 2px;
-    border-radius: 2px;
-    padding: 3px 4px;
-    cursor: pointer;
-    overflow: hidden;
-    border: 1px solid;
-    background: rgba(0,229,212,0.10);
-    border-color: var(--accent);
-    transition: transform 0.15s, box-shadow 0.15s;
-  }
-  .session-bar:hover {
-    transform: scale(1.04);
-    z-index: 5;
-    box-shadow: 0 0 12px rgba(0,229,212,0.35);
-  }
-  /* Bajarildi — yashil */
-  .session-bar.done {
-    background: rgba(74,138,92,0.15);
-    border-color: var(--emerald);
-  }
-  /* Bajarilmagan — rangsizroq (kulrang faded) */
-  .session-bar.missed {
-    background: rgba(107,110,118,0.10);
-    border-color: var(--text-muted);
-    border-style: dashed;
-    opacity: 0.55;
-  }
-  /* Onlayn dars — qisman shaffof */
-  .session-bar.online {
-    background: rgba(0,181,168,0.10);
-    border-color: var(--accent-soft);
-    border-style: dashed;
-  }
-  /* Muhim/Muqaddas — qizil (juda kam ishlatish) */
-  .session-bar.muqaddas {
-    background: rgba(184,51,74,0.15);
-    border-color: var(--crimson);
-  }
-  .session-bar .name {
-    font-family: 'JetBrains Mono', monospace;
-    font-size: 7.5px;
-    letter-spacing: 0.5px;
-    color: var(--accent);
-    line-height: 1.2;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-  }
-  .session-bar.done .name    { color: var(--emerald); }
-  .session-bar.missed .name  { color: var(--text-muted); text-decoration: line-through; }
-  .session-bar.online .name  { color: var(--accent-soft); }
-  .session-bar.muqaddas .name{ color: var(--crimson); }
-  .session-bar .check {
-    position: absolute;
-    top: 1px; right: 3px;
-    font-size: 8px;
-    color: var(--emerald);
-  }
-  .session-bar.missed .check { color: var(--text-muted); content: '×'; }
-
-  /* HOZIR cursor — horizontal line */
-  .now-line {
-    position: absolute;
-    left: 30px; right: 0;
-    height: 2px;
-    background: var(--accent-flash);
-    box-shadow: 0 0 8px var(--accent);
-    z-index: 6;
-    pointer-events: none;
-  }
-  .now-line::before {
-    content: '';
-    position: absolute;
-    left: -4px; top: 50%;
-    transform: translateY(-50%);
-    width: 8px; height: 8px;
-    border-radius: 50%;
-    background: var(--accent-flash);
-    box-shadow: 0 0 10px var(--accent);
-    animation: pulse 1.6s ease-in-out infinite;
-  }
-  @keyframes pulse {
-    0%, 100% { transform: translateY(-50%) scale(1); }
-    50%      { transform: translateY(-50%) scale(1.3); }
-  }
-  .now-line::after {
-    content: 'HOZIR · 14:30';
-    position: absolute;
-    left: 8px; top: -14px;
-    font-family: 'JetBrains Mono', monospace;
-    font-size: 7.5px;
-    letter-spacing: 1.5px;
-    color: var(--accent);
-    background: var(--void);
-    padding: 1px 5px;
-  }
-
-  /* === Quick stats bar === */
-  .stats-bar {
-    position: absolute;
-    bottom: 80px; left: 24px; right: 24px;
-    display: flex;
-    justify-content: space-between;
-    padding: 8px 12px;
-    background: rgba(0,229,212,0.025);
-    border-top: 1px solid rgba(0,125,117,0.22);
-    border-bottom: 1px solid rgba(0,125,117,0.22);
-    z-index: 5;
-  }
-  .stats-bar .stat {
-    display: flex; flex-direction: column; align-items: center;
-    flex: 1;
-  }
-  .stats-bar .stat .v {
-    font-family: 'JetBrains Mono', monospace;
-    font-size: 14px;
-    color: var(--accent);
-    font-weight: 500;
-  }
-  .stats-bar .stat .v .unit {
-    font-size: 9px; color: var(--accent-deep); margin-left: 2px;
-  }
-  .stats-bar .stat .l {
-    font-family: 'JetBrains Mono', monospace;
-    font-size: 7px;
-    letter-spacing: 1.5px;
-    color: var(--accent-deep);
-    margin-top: 1px;
-  }
-
-  /* === Floating FAB === */
-  .fab {
-    position: absolute;
-    bottom: 32px; right: 24px;
-    width: 50px; height: 50px;
-    border-radius: 50%;
-    background: linear-gradient(180deg, var(--accent-flash) 0%, var(--accent) 50%, var(--accent-2) 100%);
-    display: flex; align-items: center; justify-content: center;
-    box-shadow:
-      0 0 24px rgba(0,229,212,0.50),
-      inset 0 1px 0 rgba(255,255,255,0.5);
-    cursor: pointer;
-    z-index: 6;
-    transition: transform 0.2s;
-  }
-  .fab:hover { transform: scale(1.08) rotate(90deg); }
-  .fab svg { width: 22px; height: 22px; stroke: var(--void); stroke-width: 2.5; fill: none; }
-
-  /* === Legend === */
-  .legend {
-    position: absolute;
-    bottom: 36px; left: 24px;
-    display: flex;
-    flex-direction: column;
-    gap: 4px;
-    z-index: 5;
-  }
-  .legend .l-item {
-    display: flex; align-items: center; gap: 6px;
-    font-family: 'JetBrains Mono', monospace;
-    font-size: 7.5px;
-    letter-spacing: 1px;
-    color: var(--text-ghost);
-  }
-  .legend .l-item .swatch {
-    width: 14px; height: 6px; border-radius: 2px;
-    border: 1px solid;
-  }
-  .legend .l-item .swatch.gld { background: rgba(0,229,212,0.10); border-color: var(--accent); }
-  .legend .l-item .swatch.don { background: rgba(74,138,92,0.15); border-color: var(--emerald); }
-  .legend .l-item .swatch.mis { background: rgba(107,110,118,0.10); border-color: var(--text-muted); border-style: dashed; opacity:.55; }
-  .legend .l-item .swatch.onl { background: rgba(0,181,168,0.10); border-color: var(--accent-soft); border-style: dashed; }
-  .legend .l-item .swatch.muq { background: rgba(184,51,74,0.15); border-color: var(--crimson); }
-
-  .vignette {
-    position: absolute; inset: 0;
-    pointer-events: none;
-    background: radial-gradient(ellipse 110% 80% at 50% 50%, transparent 60%, rgba(0,0,0,0.4));
-    z-index: 6;
-  }
-
-  .footer-info {
-    margin-top: 22px;
-    text-align: center;
-    color: rgba(255,255,255,0.45);
-    font-size: 13px;
-    line-height: 1.6;
-    font-family: 'Cormorant Garamond', serif;
-    font-style: italic;
-  }
-
-  @media (max-width: 480px) {
-    body { padding: 0; }
-    .phone {
-      width: 100vw;
-      height: 100vh;
-      border-radius: 0;
-      box-shadow: none;
-    }
-    .footer-info { display: none; }
-  }
+  .session-row .t { font-size: 13px; color: var(--accent); }
+  .session-row .name { font-size: 14px; }
+  .session-row .dur { font-size: 11px; color: var(--text-dim); }
+  .session-row.done .name { color: var(--emerald); }
+  .session-row.done .t { color: var(--emerald); }
+  .session-row.missed .name { color: var(--text-dim); text-decoration: line-through; }
+  @media (max-width: 480px) { body { padding: 0; } .phone { width: 100vw; min-height: 100vh; border-radius: 0; box-shadow: none; } }
 </style>
 </head>
 <body>
 
-<div style="display:flex; flex-direction:column; align-items:center;">
+<div class="phone">
+  <div class="container">
 
-  <div class="phone">
-    <div class="backdrop"></div>
-    <div class="pattern-wash"></div>
-    <div class="gilt-frame"></div>
-    <div class="letterbox top"></div>
-    <div class="letterbox bottom"></div>
-
-    <!-- Header -->
-    <div class="header-row">
-      <div class="icon-btn" title="Bosh sahifa">
-        <svg viewBox="0 0 12 12"><path d="M8 2 L4 6 L8 10"/></svg>
-      </div>
-      <div class="month-title">
-        <span class="em">May</span> 2026
-      </div>
-      <div class="icon-btn" title="Sozlamalar">
-        <svg viewBox="0 0 12 12"><circle cx="6" cy="6" r="1.5"/><path d="M6 1 v1.5 M6 9.5 V11 M1 6 h1.5 M9.5 6 H11"/></svg>
-      </div>
+    <div class="header">
+      <div class="month">May 2026</div>
     </div>
 
-    <!-- View toggle -->
-    <div class="view-toggle">
-      <div class="view-btn">KUN</div>
-      <div class="view-btn active">HAFTA</div>
-      <div class="view-btn">OY</div>
+    <div class="tabs">
+      <div class="tab">Kun</div>
+      <div class="tab on">Hafta</div>
+      <div class="tab">Oy</div>
     </div>
 
-    <!-- Days bar -->
-    <div class="week-bar">
-      <div class="corner"></div>
-      <div class="day-cell past"><div class="day-name">DU</div><div class="day-num">4</div></div>
-      <div class="day-cell past"><div class="day-name">SE</div><div class="day-num">5</div></div>
-      <div class="day-cell past"><div class="day-name">CH</div><div class="day-num">6</div></div>
-      <div class="day-cell past"><div class="day-name">PA</div><div class="day-num">7</div></div>
-      <div class="day-cell past"><div class="day-name">JU</div><div class="day-num">8</div></div>
-      <div class="day-cell past"><div class="day-name">SH</div><div class="day-num">9</div></div>
-      <div class="day-cell today"><div class="day-name">YA</div><div class="day-num">10</div></div>
-    </div>
+    <div class="week-row" id="weekRow"></div>
 
-    <!-- Cal grid -->
-    <div class="cal-grid" id="calGrid">
-      <!-- filled by JS -->
-    </div>
+    <div class="sessions" id="sessions"></div>
 
-    <!-- Stats bar -->
-    <div class="stats-bar">
-      <div class="stat">
-        <div class="v">38</div>
-        <div class="l">SESSIYA</div>
-      </div>
-      <div class="stat">
-        <div class="v">47<span class="unit">S</span></div>
-        <div class="l">FOKUS</div>
-      </div>
-      <div class="stat">
-        <div class="v">12<span class="unit">K</span></div>
-        <div class="l">STREAK</div>
-      </div>
-      <div class="stat">
-        <div class="v">95<span class="unit">%</span></div>
-        <div class="l">BAJARILDI</div>
-      </div>
-    </div>
-
-    <!-- Legend -->
-    <div class="legend">
-      <div class="l-item"><div class="swatch gld"></div><span>KUTILMOQDA</span></div>
-      <div class="l-item"><div class="swatch don"></div><span>BAJARILDI</span></div>
-      <div class="l-item"><div class="swatch mis"></div><span>BAJARILMAGAN</span></div>
-      <div class="l-item"><div class="swatch onl"></div><span>ONLINE</span></div>
-    </div>
-
-    <!-- FAB -->
-    <div class="fab" title="Yangi sessiya">
-      <svg viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
-    </div>
-
-    <div class="vignette"></div>
-  </div>
-
-  <div class="footer-info">
-    Kalendar — savolsiz, 30 soniyada haftani ko'rasan
   </div>
 </div>
 
-<script>
-  // === Calendar grid build ===
-  // Hours: 06:00 to 22:00 (16 hours, 1 row per hour = 16 rows)
-  // Columns: hour-label + 7 days
-
-  const calGrid = document.getElementById('calGrid');
-  const days = ['DU', 'SE', 'CH', 'PA', 'JU', 'SH', 'YA'];
-  const HOURS_START = 6;
-  const HOURS_END = 22;
-
-  // Build hour rows
-  for (let h = HOURS_START; h <= HOURS_END; h++) {
-    // Hour label cell
-    const hCell = document.createElement('div');
-    hCell.className = 'hour-cell' + (h % 3 === 0 ? ' major' : '');
-    hCell.textContent = String(h).padStart(2,'0');
-    calGrid.appendChild(hCell);
-
-    // 7 day cells
-    for (let d = 0; d < 7; d++) {
-      const dc = document.createElement('div');
-      dc.className = 'day-col-cell' + (d === 6 ? ' today-col' : '');
-      dc.dataset.hour = h;
-      dc.dataset.day = d;
-      calGrid.appendChild(dc);
-    }
-  }
-
-  // === Sessions data (this week, 4-10 May) ===
-  // start/end in HH:MM, day = 0-6 (Mon-Sun)
-  const sessions = [
-    // Past sessions (done)
-    { day: 0, start: '07:00', end: '07:30', name: 'BOMDOD',     type: 'done' },
-    { day: 0, start: '08:30', end: '09:30', name: 'SPORT',      type: 'done' },
-    { day: 0, start: '10:00', end: '11:30', name: 'KOD',        type: 'done' },
-    { day: 0, start: '15:00', end: '15:45', name: 'QUR\'ON',    type: 'done' },
-    { day: 1, start: '07:00', end: '07:30', name: 'BOMDOD',     type: 'done' },
-    { day: 1, start: '09:00', end: '11:00', name: 'CHUQUR FOKUS', type: 'done' },
-    { day: 1, start: '15:00', end: '15:45', name: 'QUR\'ON',    type: 'done' },
-    { day: 1, start: '19:30', end: '21:00', name: 'ALG. DARS',  type: 'online done' },
-    { day: 2, start: '07:00', end: '07:30', name: 'BOMDOD',     type: 'done' },
-    { day: 2, start: '11:00', end: '12:00', name: 'KITOB',      type: 'done' },
-    { day: 2, start: '14:30', end: '15:15', name: 'QUR\'ON',    type: 'missed' },
-    { day: 3, start: '07:00', end: '07:30', name: 'BOMDOD',     type: 'done' },
-    { day: 3, start: '08:00', end: '09:30', name: 'YUGURISH',   type: 'done' },
-    { day: 3, start: '10:00', end: '13:00', name: 'CHUQUR · 3S', type: 'done' },
-    { day: 3, start: '15:00', end: '15:45', name: 'QUR\'ON',    type: 'done' },
-    { day: 3, start: '20:00', end: '21:30', name: 'INGLIZ TILI', type: 'online done' },
-    { day: 4, start: '07:00', end: '07:30', name: 'BOMDOD',     type: 'done' },
-    { day: 4, start: '09:00', end: '11:00', name: 'KOD',        type: 'done' },
-    { day: 4, start: '14:30', end: '15:15', name: 'QUR\'ON',    type: 'done' },
-    { day: 4, start: '17:00', end: '17:30', name: 'KO\'RIK',    type: 'missed' },
-    { day: 5, start: '08:00', end: '09:00', name: 'KITOB',      type: 'done' }, // shanba — light
-    // Today (Sunday — 10 May)
-    { day: 6, start: '07:00', end: '07:30', name: 'BOMDOD',     type: 'done' },
-    { day: 6, start: '08:30', end: '09:30', name: 'SPORT',      type: 'done' },
-    { day: 6, start: '10:00', end: '11:30', name: 'KOD',        type: 'done' },
-    { day: 6, start: '14:30', end: '15:15', name: 'QUR\'ON',    type: '' },
-    { day: 6, start: '17:00', end: '17:30', name: 'KO\'RIK',    type: '' },
-    { day: 6, start: '19:30', end: '21:00', name: 'ALG. DARS',  type: 'online' }
-  ];
-
-  function timeToMinutes(t) {
-    const [h, m] = t.split(':').map(Number);
-    return h * 60 + m;
-  }
-
-  function placeSessions() {
-    sessions.forEach(s => {
-      const startMin = timeToMinutes(s.start);
-      const endMin = timeToMinutes(s.end);
-      const startOffset = (startMin - HOURS_START * 60) / 60; // hours from grid start
-      const duration = (endMin - startMin) / 60; // hours
-
-      const row = Math.floor(startOffset);
-      const subOffset = startOffset - row; // 0-1 within row
-
-      // Find target cell
-      const cells = calGrid.querySelectorAll(`.day-col-cell[data-day="${s.day}"][data-hour="${HOURS_START + row}"]`);
-      if (!cells[0]) return;
-      const cell = cells[0];
-
-      const bar = document.createElement('div');
-      bar.className = 'session-bar ' + (s.type || '');
-      bar.style.top = (subOffset * 36) + 'px';
-      bar.style.height = (duration * 36 - 2) + 'px';
-      bar.title = `${s.name} · ${s.start}–${s.end}`;
-      bar.innerHTML = `<div class="name">${s.name}</div>` + (s.type.includes('done') ? '<div class="check">✓</div>' : '');
-      cell.appendChild(bar);
-    });
-  }
-
-  placeSessions();
-
-  // Place "now" line — today (column 6 = YA), 14:30 = 8.5 hours from 06:00
-  function placeNowLine() {
-    const minutesFromStart = (14 * 60 + 30) - (HOURS_START * 60);
-    const topPx = 168 + (minutesFromStart / 60) * 36 - calGrid.scrollTop; // approximate
-    // Actually we'll absolute position within cal-grid
-    const nowLine = document.createElement('div');
-    nowLine.className = 'now-line';
-    // place at row * 36 + subRow * 36
-    const offsetWithinGrid = (minutesFromStart / 60) * 36;
-    nowLine.style.top = offsetWithinGrid + 'px';
-    nowLine.style.left = '30px';
-    nowLine.style.right = '0';
-    calGrid.appendChild(nowLine);
-    // Scroll to today's relevant area
-    calGrid.scrollTop = Math.max(0, offsetWithinGrid - 200);
-  }
-
-  placeNowLine();
-</script>
-
 <script src="data.js" defer></script>
 <script src="nav-overlay.js" defer></script>
+<script>
+  // Hafta kunlari
+  const days = ['DU','SE','CH','PA','JU','SH','YA'];
+  const dates = [4,5,6,7,8,9,10];
+  const today = 6;
+  const wr = document.getElementById('weekRow');
+  dates.forEach((n, i) => {
+    const c = document.createElement('div');
+    c.className = 'day' + (i === today ? ' today' : '');
+    c.innerHTML = `<span class="d">${days[i]}</span><span class="n">${n}</span>`;
+    wr.appendChild(c);
+  });
+
+  document.querySelectorAll('.tab').forEach(t => t.addEventListener('click', () => {
+    document.querySelectorAll('.tab').forEach(x => x.classList.remove('on'));
+    t.classList.add('on');
+  }));
+
+  // Sessiyalar
+  document.addEventListener('DOMContentLoaded', () => {
+    if (!window.MVOW_DATA) return;
+    const list = document.getElementById('sessions');
+    list.innerHTML = MVOW_DATA.sessions.map(s => `
+      <div class="session-row ${s.status === 'done' ? 'done' : ''}">
+        <span class="t">${s.time}</span>
+        <span class="name">${s.name}</span>
+        <span class="dur">${s.dur}</span>
+      </div>
+    `).join('');
+  });
+</script>
+
 </body>
 </html>

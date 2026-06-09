@@ -2,611 +2,81 @@
 <html lang="uz">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>{brand} — Bildirishnomalar</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>{brand} — Xabarlar</title>
 <link rel="manifest" href="manifest.webmanifest">
 <meta name="theme-color" content="#04060B">
-<meta name="apple-mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<meta name="apple-mobile-web-app-title" content="M·VoW">
 <link rel="apple-touch-icon" href="assets/mnsm-logo.png">
 <link rel="icon" type="image/png" href="assets/mnsm-logo.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,500&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
 <style>
   * { box-sizing: border-box; margin: 0; padding: 0; }
-
-  :root {
-    --void:        #04060B;
-    --void-2:      #0A0E16;
-    --shadow:      #11151D;
-    --steel:       #1A1F2A;
-
-    --text-primary: #F5F2EC;
-    --text-body:    #B8BBC2;
-    --text-muted:   #6B6E76;
-    --text-ghost:   #3A3D44;
-
-    --accent:        #00E5D4;
-    --accent-2:      #00C9BC;
-    --accent-deep:   #007D75;
-    --accent-flash:  #7AF5EC;
-    --accent-soft:       #00B5A8;
-
-    --crimson:     #B8334A;
-    --crimson-deep:#6B1F1F;
-    --emerald:     #4A8A5C;
-    --emerald-deep:#1F3D2A;
-    --emerald-bright: #6BAF7C;
-  }
-
-  body {
-    background: #14171d;
-    font-family: 'Inter', sans-serif;
-    color: var(--text-primary);
-    min-height: 100vh;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    padding: 24px;
-  }
-
-  .phone {
-    width: 380px;
-    height: 800px;
-    background: var(--void);
-    border-radius: 40px;
-    overflow: hidden;
-    position: relative;
-    box-shadow:
-      0 0 0 8px #2a2e36,
-      0 30px 80px rgba(0,0,0,0.85),
-      0 0 100px rgba(0,229,212,0.07);
-  }
-
-  .backdrop {
-    position: absolute; inset: 0;
-    background:
-      radial-gradient(ellipse 80% 30% at 50% 15%, rgba(0,229,212,0.06), transparent 65%),
-      linear-gradient(180deg, var(--void) 0%, var(--void-2) 50%, var(--void) 100%);
-  }
-
-  .gilt-frame {
-    position: absolute; inset: 14px;
-    border: 1px solid rgba(0,229,212,0.18);
-    border-radius: 26px;
-    pointer-events: none;
-    z-index: 4;
-  }
-
-  .pattern-wash {
-    position: absolute; inset: 0;
-    opacity: 0.025;
-    background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='100' height='100' viewBox='0 0 100 100'><g fill='none' stroke='%2300E5D4' stroke-width='0.5'><polygon points='50,5 62,38 95,38 70,58 80,90 50,72 20,90 30,58 5,38 38,38'/></g></svg>");
-    background-size: 130px 130px;
-    pointer-events: none;
-    z-index: 1;
-  }
-
-  .letterbox {
-    position: absolute;
-    left: 0; right: 0;
-    height: 14px;
-    background: var(--void);
-    z-index: 7;
-    pointer-events: none;
-  }
-  .letterbox.top { top: 0; }
-  .letterbox.bottom { bottom: 0; }
-
-  /* === Header === */
-  .header-row {
-    position: absolute;
-    top: 26px; left: 24px; right: 24px;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    z-index: 5;
-  }
-  .icon-btn {
-    width: 28px; height: 28px;
-    display: flex; align-items: center; justify-content: center;
-    border: 1px solid var(--accent-deep);
-    border-radius: 50%;
-    cursor: pointer;
-    background: rgba(0,229,212,0.04);
-    color: var(--accent);
-  }
-  .icon-btn svg { width: 12px; height: 12px; fill: none; stroke: currentColor; stroke-width: 1.8; }
-
-  .title-stamp {
-    display: inline-flex;
-    align-items: center;
-    gap: 8px;
-    padding: 5px 12px;
-    border: 1px solid var(--accent);
-    border-radius: 999px;
-    background: rgba(0,229,212,0.06);
-    font-family: 'JetBrains Mono', monospace;
-    font-size: 9px;
-    letter-spacing: 4px;
-    color: var(--accent);
-  }
-
-  /* === Filter chips === */
-  .filters {
-    position: absolute;
-    top: 70px; left: 24px; right: 24px;
-    display: flex;
-    gap: 6px;
-    z-index: 5;
-  }
-  .filter-chip {
-    flex: 1;
-    text-align: center;
-    padding: 6px 0;
-    font-family: 'JetBrains Mono', monospace;
-    font-size: 9px;
-    letter-spacing: 2.5px;
-    color: var(--accent-deep);
-    border: 1px solid var(--accent-deep);
-    border-radius: 999px;
-    background: rgba(0,229,212,0.03);
-    cursor: pointer;
-    transition: all 0.2s;
-  }
-  .filter-chip:hover { color: var(--accent); border-color: var(--accent); }
-  .filter-chip.active {
-    color: var(--void);
-    background: linear-gradient(180deg, var(--accent-flash) 0%, var(--accent) 50%, var(--accent-2) 100%);
-    border-color: var(--accent);
-    font-weight: 600;
-    box-shadow: 0 0 12px rgba(0,229,212,0.3);
-  }
-  .filter-chip .badge {
-    margin-left: 4px;
-    color: var(--crimson);
-    font-weight: 700;
-  }
-  .filter-chip.active .badge { color: var(--void); }
-
-  /* === Notifications list === */
-  .notifs {
-    position: absolute;
-    top: 110px; bottom: 80px; left: 24px; right: 24px;
-    overflow-y: auto;
-    padding-right: 4px;
-    z-index: 4;
-    scrollbar-width: thin;
-    scrollbar-color: rgba(0,229,212,0.3) transparent;
-  }
-  .notifs::-webkit-scrollbar { width: 4px; }
-  .notifs::-webkit-scrollbar-thumb { background: rgba(0,229,212,0.3); border-radius: 2px; }
-
-  .day-divider {
-    display: flex; align-items: center; gap: 10px;
-    margin: 14px 0 10px;
-  }
-  .day-divider:first-child { margin-top: 4px; }
-  .day-divider .line {
-    flex: 1; height: 1px;
-    background: linear-gradient(90deg, transparent, var(--accent-deep), transparent);
-  }
-  .day-divider .day {
-    font-family: 'JetBrains Mono', monospace;
-    font-size: 8.5px;
-    letter-spacing: 3px;
-    color: var(--accent-deep);
-  }
-
-  .notif {
-    display: flex;
-    gap: 10px;
-    padding: 10px 12px;
-    margin-bottom: 8px;
-    background: rgba(0,229,212,0.025);
-    border: 1px solid rgba(0,125,117,0.22);
-    border-radius: 4px;
-    transition: all 0.2s;
-    cursor: pointer;
-  }
-  .notif:hover { background: rgba(0,229,212,0.05); border-color: var(--accent-deep); }
-  .notif.unread {
-    background: rgba(0,229,212,0.06);
-    border-color: rgba(0,229,212,0.30);
-  }
-  .notif.unread::before {
-    content: '';
-    position: absolute;
-    width: 6px; height: 6px;
-    border-radius: 50%;
-    background: var(--accent);
-    box-shadow: 0 0 6px var(--accent);
-    margin-left: -16px;
-    margin-top: 8px;
-  }
-  .notif.read { opacity: 0.65; }
-
-  /* Notification mentor orb */
-  .notif-orb {
-    flex-shrink: 0;
-    width: 28px; height: 28px;
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    margin-top: 2px;
-  }
-  .notif-orb.mentor {
-    background: radial-gradient(circle at 35% 35%, var(--accent-flash), var(--accent) 60%, var(--accent-deep));
-    box-shadow: 0 0 8px rgba(0,229,212,0.45);
-  }
-  .notif-orb.system {
-    background: rgba(58,61,68,0.4);
-    border: 1px solid var(--accent-deep);
-    color: var(--accent-deep);
-    font-size: 12px;
-    font-family: 'Inter', sans-serif;
-  }
-  .notif-orb.alert {
-    background: radial-gradient(circle at 35% 35%, #FFD9DD, var(--crimson) 60%, var(--crimson-deep));
-    box-shadow: 0 0 8px rgba(184,51,74,0.5);
-  }
-  .notif-orb.celebrate {
-    background: radial-gradient(circle at 35% 35%, #DDF1E0, var(--emerald) 60%, var(--emerald-deep));
-    box-shadow: 0 0 8px rgba(74,138,92,0.5);
-  }
-
-  .notif-body {
-    flex: 1;
-    min-width: 0;
-  }
-  .notif-head {
-    display: flex;
-    justify-content: space-between;
+  :root { --void:#04060B; --text:#F5F2EC; --text-mid:#8A8D94; --text-dim:#4A4D54; --accent:#00E5D4; --accent-soft:#00B5A8; --emerald:#4A8A5C; --crimson:#B8334A; }
+  body { background: var(--void); font-family:'Inter',sans-serif; color: var(--text); min-height: 100vh; display:flex; justify-content:center; align-items:flex-start; padding: 24px; -webkit-font-smoothing: antialiased; }
+  .phone { width: 380px; min-height: 800px; background: var(--void); border-radius: 40px; overflow: hidden; position: relative; box-shadow: 0 0 0 8px #1a1d24, 0 30px 80px rgba(0,0,0,.7); }
+  .container { padding: 60px 24px 40px; }
+  .h { text-align:center; margin-bottom: 32px; }
+  .h .title { font-family:'Cormorant Garamond',serif; font-size: 26px; font-weight:500; }
+  .h .day { font-size: 10px; letter-spacing: 3px; color: var(--text-mid); text-transform: uppercase; margin-top: 4px; }
+  .item {
+    display: grid;
+    grid-template-columns: 60px 1fr;
+    gap: 14px;
     align-items: baseline;
-    margin-bottom: 3px;
+    padding: 16px 0;
+    border-bottom: 1px solid rgba(255,255,255,.04);
   }
-  .notif-type {
-    font-family: 'JetBrains Mono', monospace;
-    font-size: 7.5px;
-    letter-spacing: 2px;
-    color: var(--accent-deep);
-    text-transform: uppercase;
+  .item .at {
+    font-size: 11px;
+    color: var(--text-dim);
+    letter-spacing: 1px;
+    font-feature-settings: "tnum";
   }
-  .notif.alert .notif-type { color: var(--crimson); }
-  .notif.celebrate .notif-type { color: var(--emerald-bright); }
-  .notif-time {
-    font-family: 'JetBrains Mono', monospace;
-    font-size: 8px;
-    color: var(--text-ghost);
-    letter-spacing: 0.5px;
-  }
-  .notif-text {
-    font-family: 'Cormorant Garamond', serif;
-    font-style: italic;
-    font-size: 13px;
-    color: var(--text-body);
-    line-height: 1.4;
-    letter-spacing: 0.2px;
-  }
-  .notif.unread .notif-text { color: var(--text-primary); }
-  .notif-text .em { color: var(--accent); font-weight: 600; font-style: normal; }
-  .notif.alert .notif-text .em { color: var(--crimson); }
-  .notif.celebrate .notif-text .em { color: var(--emerald-bright); }
-  .notif-action {
-    margin-top: 6px;
-    display: inline-flex;
-    align-items: center;
-    gap: 4px;
-    padding: 3px 8px;
-    border-radius: 999px;
-    border: 1px solid var(--accent-deep);
-    background: rgba(0,229,212,0.06);
-    font-family: 'JetBrains Mono', monospace;
-    font-size: 7.5px;
-    letter-spacing: 1.5px;
-    color: var(--accent);
-    cursor: pointer;
-  }
-  .notif-action:hover { color: var(--accent-flash); border-color: var(--accent); }
-  .notif-action .arrow { font-size: 10px; }
-
-  /* === Bottom nav === */
-  .bottom-nav {
-    position: absolute;
-    bottom: 22px; left: 24px; right: 24px;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 10px 16px;
-    background: rgba(17,21,29,0.7);
-    backdrop-filter: blur(8px);
-    border: 1px solid rgba(0,125,117,0.30);
-    border-radius: 999px;
-    z-index: 5;
-  }
-  .nav-item {
-    display: flex; flex-direction: column; gap: 2px; align-items: center;
-    cursor: pointer;
-    padding: 4px 8px;
-  }
-  .nav-item svg { width: 16px; height: 16px; fill: none; stroke: var(--text-muted); stroke-width: 1.5; }
-  .nav-item .lbl {
-    font-family: 'JetBrains Mono', monospace;
-    font-size: 7px;
-    letter-spacing: 1.5px;
-    color: var(--text-muted);
-  }
-  .nav-item.active svg { stroke: var(--accent); }
-  .nav-item.active .lbl { color: var(--accent); }
-  .nav-item.fab {
-    background: linear-gradient(180deg, var(--accent-flash) 0%, var(--accent) 50%, var(--accent-2) 100%);
-    border-radius: 50%;
-    width: 42px; height: 42px;
-    display: flex; align-items: center; justify-content: center;
-    box-shadow: 0 0 20px rgba(0,229,212,0.4);
-    margin-top: -28px;
-    flex-direction: row;
-  }
-  .nav-item.fab svg { stroke: var(--void); width: 20px; height: 20px; }
-  .nav-item.fab .lbl { display: none; }
-
-  .vignette {
-    position: absolute; inset: 0;
-    pointer-events: none;
-    background: radial-gradient(ellipse 110% 80% at 50% 50%, transparent 60%, rgba(0,0,0,0.4));
-    z-index: 6;
-  }
-
-  .footer-info {
-    margin-top: 22px;
-    text-align: center;
-    color: rgba(255,255,255,0.45);
-    font-size: 13px;
-    line-height: 1.6;
-    font-family: 'Cormorant Garamond', serif;
-    font-style: italic;
-  }
-
-  @media (max-width: 480px) {
-    body { padding: 0; }
-    .phone {
-      width: 100vw;
-      height: 100vh;
-      border-radius: 0;
-      box-shadow: none;
-    }
-    .footer-info { display: none; }
-  }
+  .item .text { font-size: 14px; color: var(--text-mid); line-height: 1.4; }
+  .item.win .text { color: var(--accent); }
+  .item.bad .text { color: var(--crimson); }
+  .item.now .text { color: var(--text); }
+  @media (max-width: 480px) { body { padding: 0; } .phone { width: 100vw; min-height: 100vh; border-radius: 0; box-shadow: none; } }
 </style>
 </head>
 <body>
 
-<div style="display:flex; flex-direction:column; align-items:center;">
+<div class="phone">
+  <div class="container">
 
-  <div class="phone">
-    <div class="backdrop"></div>
-    <div class="pattern-wash"></div>
-    <div class="gilt-frame"></div>
-    <div class="letterbox top"></div>
-    <div class="letterbox bottom"></div>
-
-    <!-- Header -->
-    <div class="header-row">
-      <div class="icon-btn" title="Orqa">
-        <svg viewBox="0 0 12 12"><path d="M8 2 L4 6 L8 10"/></svg>
-      </div>
-      <div class="title-stamp">MURABBIY · XABARLAR</div>
-      <div class="icon-btn" title="Tozalash">
-        <svg viewBox="0 0 12 12"><path d="M3 4 L4 11 H8 L9 4 M2 4 H10 M5 6 V9 M7 6 V9 M5 4 V2 H7 V4"/></svg>
-      </div>
+    <div class="h">
+      <div class="title">Xabarlar</div>
+      <div class="day"><span data-mvow="today.date">10-MAY</span></div>
     </div>
 
-    <!-- Filters -->
-    <div class="filters">
-      <div class="filter-chip active">BARCHA <span class="badge">3</span></div>
-      <div class="filter-chip">MURABBIY</div>
-      <div class="filter-chip">TIZIM</div>
+    <div class="item now">
+      <span class="at">14:30</span>
+      <span class="text">Keyingi sessiya 30 daqiqadan keyin.</span>
+    </div>
+    <div class="item win">
+      <span class="at">12:00</span>
+      <span class="text">12 kun streak. Yutuq.</span>
+    </div>
+    <div class="item">
+      <span class="at">07:20</span>
+      <span class="text">Arab grammatikasi — bajardim.</span>
+    </div>
+    <div class="item bad">
+      <span class="at">06:45</span>
+      <span class="text">Instagram so'rading — rad.</span>
+    </div>
+    <div class="item">
+      <span class="at">04:00</span>
+      <span class="text">Qur'on darsi — boshlandi.</span>
     </div>
 
-    <!-- Notifications list -->
-    <div class="notifs">
-
-      <!-- Today -->
-      <div class="day-divider">
-        <div class="line"></div>
-        <div class="day">BUGUN · 10 MAY</div>
-        <div class="line"></div>
-      </div>
-
-      <div class="notif unread">
-        <div class="notif-orb mentor"></div>
-        <div class="notif-body">
-          <div class="notif-head">
-            <span class="notif-type">MURABBIY · KUN OXIRGI</span>
-            <span class="notif-time">22:14</span>
-          </div>
-          <div class="notif-text">
-            Bugun <span class="em"><span data-mvow="totals.sessions">5</span> ish</span> bajarding · <span class="em" data-mvow="totals.focusLabel">7 soat 15 daq</span> fokus. Daraxtingda yana bir halqa. Erta yot — ertaga 04:00 da Qur'on darsi.
-          </div>
-          <div class="notif-action">QISQA BAHO BERAY <span class="arrow">→</span></div>
-        </div>
-      </div>
-
-      <div class="notif unread celebrate">
-        <div class="notif-orb celebrate"></div>
-        <div class="notif-body">
-          <div class="notif-head">
-            <span class="notif-type">YANGI YUTUQ</span>
-            <span class="notif-time">15:45</span>
-          </div>
-          <div class="notif-text">
-            <span class="em">12 kun streak</span> — yangi yuqori darajang. O'tgan oydan 4 kun ko'p.
-          </div>
-        </div>
-      </div>
-
-      <div class="notif unread">
-        <div class="notif-orb mentor"></div>
-        <div class="notif-body">
-          <div class="notif-head">
-            <span class="notif-type">MURABBIY · 5 DAQIQA OLDIN</span>
-            <span class="notif-time">09:55</span>
-          </div>
-          <div class="notif-text">
-            <span class="em">SMM darslari</span> 5 daqiqada (10:00 da boshlanadi). Telefoningni qo'l ostidan uzoqroqqa qo'y — fokus shu kichik harakatdan boshlanadi.
-          </div>
-        </div>
-      </div>
-
-      <div class="notif read alert">
-        <div class="notif-orb alert"></div>
-        <div class="notif-body">
-          <div class="notif-head">
-            <span class="notif-type">CHEKINISH · INSTAGRAM</span>
-            <span class="notif-time">07:42</span>
-          </div>
-          <div class="notif-text">
-            Arab grammatikasi sessiyasidan keyin Instagram'ga urinding. Negotiation: sabab eshitildi, <span class="em">mentor inkor etdi</span> — keyingi ishga o'tding.
-          </div>
-        </div>
-      </div>
-
-      <div class="notif read">
-        <div class="notif-orb mentor"></div>
-        <div class="notif-body">
-          <div class="notif-head">
-            <span class="notif-type">MURABBIY · BIRINCHI ISH OLDIDAN</span>
-            <span class="notif-time">03:55</span>
-          </div>
-          <div class="notif-text">
-            Aziz, <span class="em">Qur'on darsi</span> 5 daqiqada (04:00 da boshlanadi). 2 soatlik chuqur ish — eng tinch payt. Telefoningni uzoqqa qo'y, kitobni och.
-          </div>
-          <div class="notif-action">TAYYORMAN <span class="arrow">→</span></div>
-        </div>
-      </div>
-
-      <!-- Yesterday -->
-      <div class="day-divider">
-        <div class="line"></div>
-        <div class="day">KECHA · 9 MAY · SHANBA</div>
-        <div class="line"></div>
-      </div>
-
-      <div class="notif read">
-        <div class="notif-orb mentor"></div>
-        <div class="notif-body">
-          <div class="notif-head">
-            <span class="notif-type">MURABBIY · DAM KUNI</span>
-            <span class="notif-time">10:00</span>
-          </div>
-          <div class="notif-text">
-            Bugun shanba — <span class="em">dam ol</span>. Hech qanday alarm. Telefoning seniki. Murabbiy ertaga qaytadi.
-          </div>
-        </div>
-      </div>
-
-      <!-- 8 May -->
-      <div class="day-divider">
-        <div class="line"></div>
-        <div class="day">8 MAY · JUMA</div>
-        <div class="line"></div>
-      </div>
-
-      <div class="notif read celebrate">
-        <div class="notif-orb celebrate"></div>
-        <div class="notif-body">
-          <div class="notif-head">
-            <span class="notif-type">HAFTA YAKUNI</span>
-            <span class="notif-time">21:30</span>
-          </div>
-          <div class="notif-text">
-            <span class="em">47 soat fokus</span>, 38 sessiya, 95% bajarildi. Bayram lahzasi tayyor.
-          </div>
-          <div class="notif-action">HAFTA BAHOSI <span class="arrow">→</span></div>
-        </div>
-      </div>
-
-      <div class="notif read">
-        <div class="notif-orb mentor"></div>
-        <div class="notif-body">
-          <div class="notif-head">
-            <span class="notif-type">MURABBIY · YARIM KUN</span>
-            <span class="notif-time">13:15</span>
-          </div>
-          <div class="notif-text">
-            <span class="em">Yarim kun o'tdi</span>. Sen 4/8 sessiyani bajarding. Energiyang qaerda — ertalabki kabimi yoki tushgan?
-          </div>
-        </div>
-      </div>
-
-      <div class="notif read">
-        <div class="notif-orb system">i</div>
-        <div class="notif-body">
-          <div class="notif-head">
-            <span class="notif-type">TIZIM · SESSIYA</span>
-            <span class="notif-time">09:00</span>
-          </div>
-          <div class="notif-text">
-            Chuqur fokus sessiyasi boshlandi. Bloklangan: 5 ilova. Ruxsat etilgan: VS Code, GitHub.
-          </div>
-        </div>
-      </div>
-
-    </div>
-
-    <!-- Bottom nav -->
-    <div class="bottom-nav">
-      <div class="nav-item">
-        <svg viewBox="0 0 24 24"><path d="M3 12 L12 4 L21 12 V20 H3 Z"/></svg>
-        <span class="lbl">UY</span>
-      </div>
-      <div class="nav-item">
-        <svg viewBox="0 0 24 24"><rect x="4" y="6" width="16" height="14" rx="2"/><line x1="4" y1="10" x2="20" y2="10"/></svg>
-        <span class="lbl">KALENDAR</span>
-      </div>
-      <div class="nav-item fab" title="Yangi sessiya">
-        <svg viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
-      </div>
-      <div class="nav-item active">
-        <svg viewBox="0 0 24 24"><path d="M18 8 a6 6 0 0 0 -12 0 c0 7 -3 9 -3 9 h18 s-3 -2 -3 -9 M9 17 c0 1.66 1.34 3 3 3 s3 -1.34 3 -3"/></svg>
-        <span class="lbl">XABAR</span>
-      </div>
-      <div class="nav-item">
-        <svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 21 c0,-4 4,-7 8,-7 s8,3 8,7"/></svg>
-        <span class="lbl">SEN</span>
-      </div>
-    </div>
-
-    <div class="vignette"></div>
-  </div>
-
-  <div class="footer-info">
-    Bildirishnomalar — mentor ovozining kun davomidagi izlari
   </div>
 </div>
 
-<script>
-  // Filter chip clicks
-  document.querySelectorAll('.filter-chip').forEach(chip => {
-    chip.addEventListener('click', () => {
-      document.querySelectorAll('.filter-chip').forEach(c => c.classList.remove('active'));
-      chip.classList.add('active');
-    });
-  });
-
-  // Mark all as read on click for demo
-  document.querySelectorAll('.notif').forEach(n => {
-    n.addEventListener('click', () => {
-      n.classList.remove('unread');
-      n.classList.add('read');
-    });
-  });
-</script>
-
 <script src="data.js" defer></script>
 <script src="nav-overlay.js" defer></script>
+
 </body>
 </html>
