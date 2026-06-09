@@ -33,12 +33,12 @@
     --text-muted:   #6B6E76;
     --text-ghost:   #3A3D44;
 
-    --gold:        #E8C77E;
-    --gold-2:      #C7A36B;
-    --gold-deep:   #8a6f44;
-    --gold-flash:  #FFE9B5;
-    --honey:       #D4A574;
-    --cream:       #F0E5D2;
+    --accent:        #00E5D4;
+    --accent-2:      #00C9BC;
+    --accent-deep:   #007D75;
+    --accent-flash:  #7AF5EC;
+    --accent-soft:       #00B5A8;
+    --accent-cream:       #D6F5F2;
 
     --emerald:     #4A8A5C;
     --crimson:     #B8334A;
@@ -46,8 +46,8 @@
 
   html, body {
     background:
-      radial-gradient(ellipse 100% 30% at 50% 10%, rgba(232,199,126,0.08), transparent 70%),
-      radial-gradient(ellipse 80% 20% at 50% 100%, rgba(212,165,116,0.06), transparent 70%),
+      radial-gradient(ellipse 100% 30% at 50% 10%, rgba(0,229,212,0.08), transparent 70%),
+      radial-gradient(ellipse 80% 20% at 50% 100%, rgba(0,181,168,0.06), transparent 70%),
       var(--void);
     font-family: 'Inter', sans-serif;
     color: var(--text-primary);
@@ -61,7 +61,7 @@
     content: '';
     position: fixed; inset: 0;
     opacity: 0.03;
-    background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='120' height='120' viewBox='0 0 120 120'><g fill='none' stroke='%23E8C77E' stroke-width='0.5'><polygon points='60,10 74,42 110,42 80,62 92,98 60,80 28,98 40,62 10,42 46,42'/></g></svg>");
+    background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='120' height='120' viewBox='0 0 120 120'><g fill='none' stroke='%2300E5D4' stroke-width='0.5'><polygon points='60,10 74,42 110,42 80,62 92,98 60,80 28,98 40,62 10,42 46,42'/></g></svg>");
     background-size: 160px 160px;
     pointer-events: none;
     z-index: 0;
@@ -85,7 +85,7 @@
     font-family: 'JetBrains Mono', monospace;
     font-size: 11px;
     letter-spacing: 8px;
-    color: var(--gold-deep);
+    color: var(--accent-deep);
     margin-bottom: 14px;
   }
   .hero .title {
@@ -93,8 +93,8 @@
     font-weight: 700;
     font-size: 48px;
     letter-spacing: 12px;
-    color: var(--gold);
-    text-shadow: 0 0 32px rgba(232,199,126,0.40);
+    color: var(--accent);
+    text-shadow: 0 0 32px rgba(0,229,212,0.40);
     line-height: 1;
     margin-bottom: 12px;
   }
@@ -102,7 +102,7 @@
     font-family: 'Cormorant Garamond', serif;
     font-style: italic;
     font-size: 18px;
-    color: var(--honey);
+    color: var(--accent-soft);
     letter-spacing: 1px;
     margin-bottom: 20px;
   }
@@ -115,24 +115,24 @@
   }
   .hero .ornament .line {
     width: 60px; height: 1px;
-    background: linear-gradient(90deg, transparent, var(--gold), transparent);
+    background: linear-gradient(90deg, transparent, var(--accent), transparent);
   }
-  .hero .ornament .star { color: var(--gold); font-size: 11px; }
+  .hero .ornament .star { color: var(--accent); font-size: 11px; }
 
   .hero .stats {
     display: inline-flex;
     align-items: center;
     gap: 18px;
     padding: 8px 20px;
-    border: 1px solid var(--gold-deep);
+    border: 1px solid var(--accent-deep);
     border-radius: 999px;
-    background: rgba(232,199,126,0.04);
+    background: rgba(0,229,212,0.04);
     font-family: 'JetBrains Mono', monospace;
     font-size: 10px;
     letter-spacing: 3px;
-    color: var(--gold-deep);
+    color: var(--accent-deep);
   }
-  .hero .stats .em { color: var(--gold); font-weight: 600; }
+  .hero .stats .em { color: var(--accent); font-weight: 600; }
 
   /* === Section title === */
   .section {
@@ -148,7 +148,7 @@
     font-family: 'Cinzel', serif;
     font-weight: 600;
     font-size: 22px;
-    color: var(--gold);
+    color: var(--accent);
     letter-spacing: 3px;
     line-height: 1;
   }
@@ -166,13 +166,13 @@
     font-family: 'JetBrains Mono', monospace;
     font-size: 9px;
     letter-spacing: 2.5px;
-    color: var(--gold-deep);
+    color: var(--accent-deep);
   }
   .section-head::after {
     content: '';
     flex: 0 0 auto;
     width: 60px; height: 1px;
-    background: var(--gold-deep);
+    background: var(--accent-deep);
     margin-left: 8px;
   }
 
@@ -205,14 +205,14 @@
     box-shadow:
       0 0 0 4px #2a2e36,
       0 12px 30px rgba(0,0,0,0.7),
-      0 0 30px rgba(232,199,126,0.05);
+      0 0 30px rgba(0,229,212,0.05);
     transition: box-shadow 0.25s ease;
   }
   .card:hover .phone-thumb {
     box-shadow:
       0 0 0 4px #3a3a3e,
       0 16px 40px rgba(0,0,0,0.8),
-      0 0 50px rgba(232,199,126,0.20);
+      0 0 50px rgba(0,229,212,0.20);
   }
 
   /* iframe inside scaled */
@@ -243,7 +243,7 @@
     font-weight: 600;
     font-size: 12px;
     letter-spacing: 3px;
-    color: var(--gold);
+    color: var(--accent);
     text-transform: uppercase;
     line-height: 1.2;
   }
@@ -267,7 +267,7 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    color: var(--gold);
+    color: var(--accent);
     font-size: 11px;
     font-family: 'JetBrains Mono', monospace;
     opacity: 0;
@@ -281,20 +281,20 @@
     margin-top: 80px;
     text-align: center;
     padding-top: 40px;
-    border-top: 1px solid rgba(138,111,68,0.20);
+    border-top: 1px solid rgba(0,125,117,0.20);
     font-family: 'Cormorant Garamond', serif;
     font-style: italic;
     font-size: 14px;
     color: var(--text-muted);
     line-height: 1.7;
   }
-  .footer .em { color: var(--gold); font-weight: 600; }
+  .footer .em { color: var(--accent); font-weight: 600; }
   .footer .signature {
     margin-top: 8px;
     font-family: 'JetBrains Mono', monospace;
     font-size: 9px;
     letter-spacing: 4px;
-    color: var(--gold-deep);
+    color: var(--accent-deep);
     text-transform: uppercase;
   }
 
@@ -324,9 +324,9 @@
     <div class="sub" data-brand="tagline">sening intizom do'sting</div>
     <div class="stats">
       <span><span class="em">17</span> EKRAN</span>
-      <span class="em" style="color: var(--gold-deep);">·</span>
+      <span class="em" style="color: var(--accent-deep);">·</span>
       <span><span class="em">MVP</span> PREVIEW</span>
-      <span class="em" style="color: var(--gold-deep);">·</span>
+      <span class="em" style="color: var(--accent-deep);">·</span>
       <span><span class="em">2026</span></span>
     </div>
   </div>
@@ -559,10 +559,10 @@
     const banner = document.createElement('div');
     banner.style.cssText = `
       position: fixed; bottom: 16px; left: 50%; transform: translateX(-50%);
-      background: linear-gradient(180deg, #FFE9B5, #E8C77E, #8a6f44);
+      background: linear-gradient(180deg, #7AF5EC, #00E5D4, #007D75);
       color: #04060B; padding: 12px 20px; border-radius: 999px;
       font-family: 'Inter', sans-serif; font-size: 13px; font-weight: 600;
-      box-shadow: 0 8px 24px rgba(0,0,0,0.5), 0 0 30px rgba(232,199,126,0.4);
+      box-shadow: 0 8px 24px rgba(0,0,0,0.5), 0 0 30px rgba(0,229,212,0.4);
       z-index: 1000; display: flex; gap: 12px; align-items: center;
       cursor: pointer; max-width: 90%;
     `;
@@ -595,22 +595,22 @@
       hint.style.cssText = `
         position: fixed; bottom: 16px; left: 16px; right: 16px;
         background: rgba(20,16,10,0.95); backdrop-filter: blur(12px);
-        border: 1px solid rgba(232,199,126,0.4); border-radius: 12px;
+        border: 1px solid rgba(0,229,212,0.4); border-radius: 12px;
         padding: 14px 16px; color: #F5F2EC;
         font-family: 'Inter', sans-serif; font-size: 12.5px; line-height: 1.5;
         box-shadow: 0 12px 32px rgba(0,0,0,0.7);
         z-index: 1000;
       `;
       hint.innerHTML = `
-        <div style="font-family:'Cormorant Garamond',serif; font-style:italic; font-size:14px; color:#E8C77E; margin-bottom:6px;">
+        <div style="font-family:'Cormorant Garamond',serif; font-style:italic; font-size:14px; color:#00E5D4; margin-bottom:6px;">
           M·VoW'ni iPhone'ga o'rnatish:
         </div>
-        <div>1. Pastdagi <span style="color:#E8C77E;">⎋ Share</span> tugmasini bos<br>
+        <div>1. Pastdagi <span style="color:#00E5D4;">⎋ Share</span> tugmasini bos<br>
         2. <b>«Add to Home Screen»</b>ni tanla<br>
         3. App home ekranda — to'liq ekranda ochiladi</div>
         <div style="text-align:right; margin-top:8px;">
           <button onclick="this.parentElement.parentElement.remove(); sessionStorage.setItem('ios-hint-dismissed','1');"
-                  style="background:none; border:1px solid #8a6f44; color:#E8C77E; padding:5px 12px; border-radius:999px; font-family:'JetBrains Mono',monospace; font-size:10px; letter-spacing:1.5px; cursor:pointer;">
+                  style="background:none; border:1px solid #007D75; color:#00E5D4; padding:5px 12px; border-radius:999px; font-family:'JetBrains Mono',monospace; font-size:10px; letter-spacing:1.5px; cursor:pointer;">
             TUSHUNDIM
           </button>
         </div>

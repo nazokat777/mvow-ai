@@ -26,13 +26,13 @@
     --text-muted:   #6B6E76;
     --text-ghost:   #3A3D44;
 
-    --gold:        #E8C77E;
-    --gold-2:      #C7A36B;
-    --gold-deep:   #8a6f44;
-    --gold-flash:  #FFE9B5;
+    --accent:        #00E5D4;
+    --accent-2:      #00C9BC;
+    --accent-deep:   #007D75;
+    --accent-flash:  #7AF5EC;
 
-    --honey:       #D4A574;
-    --cream:       #F0E5D2;
+    --accent-soft:       #00B5A8;
+    --accent-cream:       #D6F5F2;
     --rose:        #C28B8B;
 
     --emerald:     #4A8A5C;
@@ -60,28 +60,28 @@
     box-shadow:
       0 0 0 8px #2a2e36,
       0 30px 80px rgba(0,0,0,0.85),
-      0 0 100px rgba(212,165,116,0.10);
+      0 0 100px rgba(0,181,168,0.10);
   }
 
   /* Warm welcoming backdrop */
   .backdrop {
     position: absolute; inset: 0;
     background:
-      radial-gradient(ellipse 90% 60% at 50% 35%, rgba(212,165,116,0.16), transparent 65%),
-      radial-gradient(ellipse 100% 60% at 50% 100%, rgba(232,199,126,0.06), transparent 70%),
+      radial-gradient(ellipse 90% 60% at 50% 35%, rgba(0,181,168,0.16), transparent 65%),
+      radial-gradient(ellipse 100% 60% at 50% 100%, rgba(0,229,212,0.06), transparent 70%),
       linear-gradient(180deg, var(--void) 0%, #110D18 50%, var(--void) 100%);
     transition: background 1.2s ease;
   }
   .phone[data-state="sealed"] .backdrop {
     background:
-      radial-gradient(ellipse 90% 60% at 50% 35%, rgba(232,199,126,0.20), transparent 65%),
+      radial-gradient(ellipse 90% 60% at 50% 35%, rgba(0,229,212,0.20), transparent 65%),
       radial-gradient(ellipse 100% 60% at 50% 100%, rgba(74,138,92,0.08), transparent 70%),
       linear-gradient(180deg, var(--void) 0%, #1A1410 50%, var(--void) 100%);
   }
 
   .gilt-frame {
     position: absolute; inset: 14px;
-    border: 1px solid rgba(212,165,116,0.20);
+    border: 1px solid rgba(0,181,168,0.20);
     border-radius: 26px;
     pointer-events: none;
     z-index: 4;
@@ -90,7 +90,7 @@
   .pattern-wash {
     position: absolute; inset: 0;
     opacity: 0.025;
-    background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='100' height='100' viewBox='0 0 100 100'><g fill='none' stroke='%23D4A574' stroke-width='0.5'><circle cx='50' cy='50' r='28'/><circle cx='50' cy='50' r='14'/><circle cx='50' cy='50' r='42'/></g></svg>");
+    background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='100' height='100' viewBox='0 0 100 100'><g fill='none' stroke='%2300B5A8' stroke-width='0.5'><circle cx='50' cy='50' r='28'/><circle cx='50' cy='50' r='14'/><circle cx='50' cy='50' r='42'/></g></svg>");
     background-size: 130px 130px;
     pointer-events: none;
     z-index: 1;
@@ -107,8 +107,8 @@
     position: absolute;
     width: 2px; height: 2px;
     border-radius: 50%;
-    background: var(--honey);
-    box-shadow: 0 0 4px var(--cream);
+    background: var(--accent-soft);
+    box-shadow: 0 0 4px var(--accent-cream);
     opacity: 0;
     animation: drift 10s ease-in-out infinite;
   }
@@ -142,16 +142,16 @@
     align-items: center;
     gap: 8px;
     padding: 5px 14px;
-    border: 1px solid var(--honey);
+    border: 1px solid var(--accent-soft);
     border-radius: 999px;
-    background: rgba(212,165,116,0.08);
+    background: rgba(0,181,168,0.08);
     font-family: 'JetBrains Mono', monospace;
     font-size: 9px;
     letter-spacing: 4px;
-    color: var(--honey);
+    color: var(--accent-soft);
   }
   .step-pill .step-num {
-    color: var(--gold);
+    color: var(--accent);
     font-weight: 600;
   }
   .step-pill .dots {
@@ -160,11 +160,11 @@
   .step-pill .dot {
     width: 4px; height: 4px;
     border-radius: 50%;
-    background: var(--gold-deep);
+    background: var(--accent-deep);
   }
   .step-pill .dot.active {
-    background: var(--gold);
-    box-shadow: 0 0 6px var(--gold);
+    background: var(--accent);
+    box-shadow: 0 0 6px var(--accent);
   }
 
   /* === Brand seal === */
@@ -180,14 +180,14 @@
   }
   .brand-seal .ornament .line {
     width: 50px; height: 1px;
-    background: linear-gradient(90deg, transparent, var(--honey), transparent);
+    background: linear-gradient(90deg, transparent, var(--accent-soft), transparent);
   }
-  .brand-seal .ornament .star { color: var(--honey); font-size: 10px; }
+  .brand-seal .ornament .star { color: var(--accent-soft); font-size: 10px; }
   .brand-seal .seal-text {
     font-family: 'Cormorant Garamond', serif;
     font-style: italic;
     font-size: 14px;
-    color: var(--honey);
+    color: var(--accent-soft);
     letter-spacing: 2px;
   }
 
@@ -203,7 +203,7 @@
     font-family: 'JetBrains Mono', monospace;
     font-size: 9px;
     letter-spacing: 5px;
-    color: var(--gold-deep);
+    color: var(--accent-deep);
     margin-bottom: 12px;
   }
   .invite .title {
@@ -214,9 +214,9 @@
     line-height: 1.2;
     color: var(--text-primary);
     margin-bottom: 14px;
-    text-shadow: 0 0 24px rgba(212,165,116,0.25);
+    text-shadow: 0 0 24px rgba(0,181,168,0.25);
   }
-  .invite .title .em { color: var(--honey); }
+  .invite .title .em { color: var(--accent-soft); }
   .invite .title .word {
     display: inline-block;
     opacity: 0;
@@ -237,7 +237,7 @@
     opacity: 0;
     animation: fade-in 0.8s 1.4s ease forwards;
   }
-  .invite .body .em { color: var(--honey); font-weight: 600; }
+  .invite .body .em { color: var(--accent-soft); font-weight: 600; }
   @keyframes fade-in {
     from { opacity: 0; transform: translateY(6px); }
     to   { opacity: 1; transform: translateY(0); }
@@ -264,7 +264,7 @@
     position: absolute;
     width: 100px; height: 100px;
     border-radius: 50%;
-    border: 1px solid var(--honey);
+    border: 1px solid var(--accent-soft);
     opacity: 0;
     transform: scale(0.7);
     pointer-events: none;
@@ -281,7 +281,7 @@
     position: absolute;
     width: 100px; height: 100px;
     border-radius: 50%;
-    background: radial-gradient(circle, var(--honey) 0%, transparent 70%);
+    background: radial-gradient(circle, var(--accent-soft) 0%, transparent 70%);
     opacity: 0.35;
     filter: blur(18px);
     animation: breathe 3s ease-in-out infinite;
@@ -295,11 +295,11 @@
     position: relative;
     width: 88px; height: 88px;
     border-radius: 50%;
-    background: linear-gradient(180deg, var(--cream) 0%, var(--honey) 50%, var(--gold-deep) 100%);
+    background: linear-gradient(180deg, var(--accent-cream) 0%, var(--accent-soft) 50%, var(--accent-deep) 100%);
     display: flex; align-items: center; justify-content: center;
     cursor: pointer;
     box-shadow:
-      0 0 24px rgba(212,165,116,0.45),
+      0 0 24px rgba(0,181,168,0.45),
       inset 0 1px 0 rgba(255,255,255,0.5),
       inset 0 -2px 4px rgba(0,0,0,0.2);
     z-index: 2;
@@ -309,9 +309,9 @@
   .mic-button:active { transform: scale(0.96); }
   .mic-button svg { width: 36px; height: 36px; fill: var(--void); }
   .phone[data-state="recording"] .mic-button {
-    background: linear-gradient(180deg, var(--gold-flash) 0%, var(--gold) 50%, var(--gold-2) 100%);
+    background: linear-gradient(180deg, var(--accent-flash) 0%, var(--accent) 50%, var(--accent-2) 100%);
     box-shadow:
-      0 0 36px rgba(232,199,126,0.7),
+      0 0 36px rgba(0,229,212,0.7),
       inset 0 1px 0 rgba(255,255,255,0.6);
   }
   .phone[data-state="sealed"] .mic-button {
@@ -324,10 +324,10 @@
     font-family: 'JetBrains Mono', monospace;
     font-size: 10px;
     letter-spacing: 4px;
-    color: var(--honey);
+    color: var(--accent-soft);
   }
   .phone[data-state="recording"] .mic-prompt {
-    color: var(--gold);
+    color: var(--accent);
     animation: blink-text 1.4s ease-in-out infinite;
   }
   @keyframes blink-text {
@@ -341,7 +341,7 @@
     margin-top: 6px;
     font-family: 'JetBrains Mono', monospace;
     font-size: 12px;
-    color: var(--gold);
+    color: var(--accent);
     letter-spacing: 2px;
     visibility: hidden;
   }
@@ -358,16 +358,16 @@
   .vow-frame {
     position: relative;
     padding: 16px 20px 20px;
-    background: rgba(212,165,116,0.04);
-    border: 1px dashed var(--gold-deep);
+    background: rgba(0,181,168,0.04);
+    border: 1px dashed var(--accent-deep);
     border-radius: 4px;
     min-height: 100px;
   }
   .phone[data-state="reviewing"] .vow-frame,
   .phone[data-state="sealed"]    .vow-frame {
     border-style: solid;
-    border-color: var(--gold);
-    background: rgba(232,199,126,0.06);
+    border-color: var(--accent);
+    background: rgba(0,229,212,0.06);
   }
   .vow-frame .vow-label {
     position: absolute;
@@ -377,7 +377,7 @@
     font-family: 'JetBrains Mono', monospace;
     font-size: 8.5px;
     letter-spacing: 4px;
-    color: var(--gold-deep);
+    color: var(--accent-deep);
   }
   .phone[data-state="sealed"] .vow-frame .vow-label { color: var(--emerald); }
 
@@ -397,7 +397,7 @@
     display: inline-block;
     width: 2px;
     height: 16px;
-    background: var(--gold);
+    background: var(--accent);
     vertical-align: middle;
     margin-left: 2px;
     animation: cursor-blink 0.8s steps(2) infinite;
@@ -442,7 +442,7 @@
 
   .primary-btn {
     width: 100%;
-    background: linear-gradient(180deg, var(--cream) 0%, var(--honey) 50%, var(--gold-deep) 100%);
+    background: linear-gradient(180deg, var(--accent-cream) 0%, var(--accent-soft) 50%, var(--accent-deep) 100%);
     color: var(--void);
     padding: 14px;
     font-size: 12px;
@@ -454,7 +454,7 @@
     text-transform: uppercase;
     font-family: 'Inter', sans-serif;
     box-shadow:
-      0 0 22px rgba(212,165,116,0.35),
+      0 0 22px rgba(0,181,168,0.35),
       inset 0 1px 0 rgba(255,255,255,0.5);
     transition: all 0.2s;
   }
@@ -479,7 +479,7 @@
     visibility: hidden;
   }
   .phone[data-state="reviewing"] .secondary-link { visibility: visible; }
-  .secondary-link:hover { color: var(--honey); }
+  .secondary-link:hover { color: var(--accent-soft); }
 
   .vignette {
     position: absolute; inset: 0;
@@ -508,11 +508,11 @@
     user-select: none;
     transition: all 0.2s;
   }
-  .state-tab:hover { color: var(--honey); border-color: var(--gold-deep); }
+  .state-tab:hover { color: var(--accent-soft); border-color: var(--accent-deep); }
   .state-tab.active {
-    color: var(--honey);
-    border-color: var(--honey);
-    background: rgba(212,165,116,0.10);
+    color: var(--accent-soft);
+    border-color: var(--accent-soft);
+    background: rgba(0,181,168,0.10);
   }
 
   .footer-info {
@@ -652,7 +652,7 @@
       inviteTitle: ['Eshityapman.', '<span class="em">Bemalol</span>', 'gapir.'],
       inviteBody: 'Shoshilma. <span class="em">Yuragingdan</span> chiqqan so\'z eng kuchli ahd bo\'ladi.',
       vowLabel: 'JONLI YOZUV',
-      vowText: 'Men &mdash; <span style="color:var(--gold);">Aziz</span>. Hayotimni izga solishni xohlayman. Kunda 6 sessiya. Qur\'on darsini hech qachon o\'tkazmayman. Instagramda ko\'p vaqt yo\'qotmayman.',
+      vowText: 'Men &mdash; <span style="color:var(--accent);">Aziz</span>. Hayotimni izga solishni xohlayman. Kunda 6 sessiya. Qur\'on darsini hech qachon o\'tkazmayman. Instagramda ko\'p vaqt yo\'qotmayman.',
       micPrompt: 'YOZILMOQDA',
       primaryBtn: 'Yozishni to\'xtatish',
       typing: true
@@ -663,7 +663,7 @@
       inviteTitle: ['Mana,', '<span class="em">o\'z ovozing</span>.', ''],
       inviteBody: 'Yaxshi qaror? Agar ko\'nglingdan o\'tdi — <span class="em">muhrlay</span>. Yoki qaytadan ayt — vaqting bor.',
       vowLabel: 'SENING VA\'DANG · 00:23',
-      vowText: 'Men — <span style="color:var(--gold);">Aziz</span>. Hayotimni izga solishni xohlayman. Kunda 6 sessiya. Qur\'on darsini hech qachon o\'tkazmayman. Instagramda ko\'p vaqt yo\'qotmayman.',
+      vowText: 'Men — <span style="color:var(--accent);">Aziz</span>. Hayotimni izga solishni xohlayman. Kunda 6 sessiya. Qur\'on darsini hech qachon o\'tkazmayman. Instagramda ko\'p vaqt yo\'qotmayman.',
       micPrompt: 'TANGLAB OL',
       primaryBtn: 'Va\'dani muhrlash',
       typing: false
@@ -674,7 +674,7 @@
       inviteTitle: ['Rahmat,', '<span class="em">Aziz</span>.', 'Birgaman.'],
       inviteBody: 'Bu lahzadan <span class="em">men sen bilan birgaman</span>. Qiyin paytda — bu ovozni qaytarib eshitamiz. Sen aytding, sen qila olasan.',
       vowLabel: 'MUHRLANGAN VA\'DA · ABADIY',
-      vowText: 'Men — <span style="color:var(--gold);">Aziz</span>. Hayotimni izga solishni xohlayman. Kunda 6 sessiya. Qur\'on darsini hech qachon o\'tkazmayman. Instagramda ko\'p vaqt yo\'qotmayman.',
+      vowText: 'Men — <span style="color:var(--accent);">Aziz</span>. Hayotimni izga solishni xohlayman. Kunda 6 sessiya. Qur\'on darsini hech qachon o\'tkazmayman. Instagramda ko\'p vaqt yo\'qotmayman.',
       micPrompt: 'TINGLA · QAYTA QAYTA',
       primaryBtn: 'Yo\'lga chiqamiz',
       typing: false

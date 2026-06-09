@@ -28,10 +28,10 @@
     --text-muted:   #6B6E76;
     --text-ghost:   #3A3D44;
 
-    --gold:        #E8C77E;
-    --gold-2:      #C7A36B;
-    --gold-deep:   #8a6f44;
-    --gold-flash:  #FFE9B5;
+    --accent:        #00E5D4;
+    --accent-2:      #00C9BC;
+    --accent-deep:   #007D75;
+    --accent-flash:  #7AF5EC;
 
     --crimson:     #B8334A;
     --crimson-deep:#6B1F1F;
@@ -62,21 +62,21 @@
     box-shadow:
       0 0 0 8px #2a2e36,
       0 30px 80px rgba(0,0,0,0.85),
-      0 0 100px rgba(232,199,126,0.07);
+      0 0 100px rgba(0,229,212,0.07);
   }
 
   /* === Backdrop === */
   .backdrop {
     position: absolute; inset: 0;
     background:
-      radial-gradient(ellipse 80% 60% at 50% 28%, rgba(232,199,126,0.10), transparent 70%),
+      radial-gradient(ellipse 80% 60% at 50% 28%, rgba(0,229,212,0.10), transparent 70%),
       radial-gradient(ellipse 100% 60% at 50% 100%, rgba(184,51,74,0.04), transparent 70%),
       linear-gradient(180deg, var(--void) 0%, var(--void-2) 50%, var(--void) 100%);
     transition: background 1.5s ease;
   }
   .phone[data-state="granted"] .backdrop {
     background:
-      radial-gradient(ellipse 80% 60% at 50% 28%, rgba(232,199,126,0.13), transparent 70%),
+      radial-gradient(ellipse 80% 60% at 50% 28%, rgba(0,229,212,0.13), transparent 70%),
       radial-gradient(ellipse 100% 60% at 50% 100%, rgba(74,138,92,0.10), transparent 70%),
       linear-gradient(180deg, var(--void) 0%, var(--void-2) 50%, var(--void) 100%);
   }
@@ -89,7 +89,7 @@
 
   .gilt-frame {
     position: absolute; inset: 14px;
-    border: 1px solid rgba(232,199,126,0.18);
+    border: 1px solid rgba(0,229,212,0.18);
     border-radius: 26px;
     pointer-events: none;
     z-index: 2;
@@ -98,7 +98,7 @@
   .pattern-wash {
     position: absolute; inset: 0;
     opacity: 0.03;
-    background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='100' height='100' viewBox='0 0 100 100'><g fill='none' stroke='%23E8C77E' stroke-width='0.5'><polygon points='50,5 62,38 95,38 70,58 80,90 50,72 20,90 30,58 5,38 38,38'/><circle cx='50' cy='50' r='20'/></g></svg>");
+    background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='100' height='100' viewBox='0 0 100 100'><g fill='none' stroke='%2300E5D4' stroke-width='0.5'><polygon points='50,5 62,38 95,38 70,58 80,90 50,72 20,90 30,58 5,38 38,38'/><circle cx='50' cy='50' r='20'/></g></svg>");
     background-size: 130px 130px;
     pointer-events: none;
     z-index: 1;
@@ -114,8 +114,8 @@
     position: absolute;
     width: 2px; height: 2px;
     border-radius: 50%;
-    background: var(--gold);
-    box-shadow: 0 0 4px var(--gold);
+    background: var(--accent);
+    box-shadow: 0 0 4px var(--accent);
     opacity: 0;
     animation: float 8s linear infinite;
   }
@@ -152,19 +152,19 @@
     align-items: center;
     gap: 6px;
     padding: 4px 10px;
-    border: 1px solid var(--gold-deep);
+    border: 1px solid var(--accent-deep);
     border-radius: 2px;
-    background: rgba(232,199,126,0.04);
+    background: rgba(0,229,212,0.04);
     font-family: 'JetBrains Mono', monospace;
     font-size: 9px;
     letter-spacing: 2px;
-    color: var(--gold);
+    color: var(--accent);
   }
   .pill .dot {
     width: 4px; height: 4px;
     border-radius: 50%;
-    background: var(--gold);
-    box-shadow: 0 0 6px var(--gold);
+    background: var(--accent);
+    box-shadow: 0 0 6px var(--accent);
   }
   .pill .live-dot {
     width: 6px; height: 6px;
@@ -194,14 +194,14 @@
   }
   .brand-seal .ornament .line {
     width: 40px; height: 1px;
-    background: linear-gradient(90deg, transparent, var(--gold-deep), transparent);
+    background: linear-gradient(90deg, transparent, var(--accent-deep), transparent);
   }
-  .brand-seal .ornament .star { color: var(--gold); font-size: 8px; }
+  .brand-seal .ornament .star { color: var(--accent); font-size: 8px; }
   .brand-seal .seal-text {
     font-family: 'Cormorant Garamond', serif;
     font-style: italic;
     font-size: 14px;
-    color: var(--gold);
+    color: var(--accent);
     letter-spacing: 2px;
     font-weight: 400;
   }
@@ -215,9 +215,9 @@
     justify-content: space-between;
     z-index: 5;
     padding: 6px 10px;
-    background: rgba(232,199,126,0.025);
-    border-top: 1px solid rgba(138,111,68,0.22);
-    border-bottom: 1px solid rgba(138,111,68,0.22);
+    background: rgba(0,229,212,0.025);
+    border-top: 1px solid rgba(0,125,117,0.22);
+    border-bottom: 1px solid rgba(0,125,117,0.22);
   }
   .prayer-strip .loc {
     display: flex;
@@ -226,9 +226,9 @@
     font-family: 'JetBrains Mono', monospace;
     font-size: 8px;
     letter-spacing: 2px;
-    color: var(--gold-deep);
+    color: var(--accent-deep);
   }
-  .prayer-strip .loc svg { width: 8px; height: 8px; fill: none; stroke: var(--gold-deep); stroke-width: 1.5; }
+  .prayer-strip .loc svg { width: 8px; height: 8px; fill: none; stroke: var(--accent-deep); stroke-width: 1.5; }
 
   .prayer-strip .schedule {
     display: flex;
@@ -247,34 +247,34 @@
   .prayer-strip .pt .ptdot {
     width: 4px; height: 4px;
     border-radius: 50%;
-    background: var(--gold-deep);
+    background: var(--accent-deep);
   }
   .prayer-strip .pt.done { color: var(--text-ghost); }
   .prayer-strip .pt.done .ptdot { background: var(--text-ghost); }
-  .prayer-strip .pt.next { color: var(--gold); font-weight: 500; }
+  .prayer-strip .pt.next { color: var(--accent); font-weight: 500; }
   .prayer-strip .pt.next .ptdot {
-    background: var(--gold);
-    box-shadow: 0 0 8px var(--gold);
+    background: var(--accent);
+    box-shadow: 0 0 8px var(--accent);
     animation: prayer-pulse 1.6s ease-in-out infinite;
   }
   @keyframes prayer-pulse {
     0%, 100% { transform: scale(1); }
     50%      { transform: scale(1.5); }
   }
-  .prayer-strip .pt.future { color: var(--gold-deep); }
+  .prayer-strip .pt.future { color: var(--accent-deep); }
 
   .prayer-strip .countdown {
     margin-left: 6px;
     padding-left: 8px;
-    border-left: 1px solid rgba(138,111,68,0.3);
+    border-left: 1px solid rgba(0,125,117,0.3);
     font-family: 'JetBrains Mono', monospace;
     font-size: 9px;
     letter-spacing: 0.5px;
-    color: var(--gold);
+    color: var(--accent);
     text-align: right;
     line-height: 1.3;
   }
-  .prayer-strip .countdown .left { color: var(--gold-deep); font-size: 7.5px; }
+  .prayer-strip .countdown .left { color: var(--accent-deep); font-size: 7.5px; }
 
   /* === User reason === */
   .user-reason {
@@ -310,10 +310,10 @@
   }
   .waveform .bar {
     width: 2px;
-    background: var(--gold);
+    background: var(--accent);
     border-radius: 1px;
     animation: wave 1.4s ease-in-out infinite;
-    box-shadow: 0 0 4px var(--gold);
+    box-shadow: 0 0 4px var(--accent);
   }
   @keyframes wave {
     0%, 100% { height: 3px;  opacity: 0.4; }
@@ -333,7 +333,7 @@
   .portal-halo {
     position: absolute; inset: -30px;
     border-radius: 50%;
-    background: radial-gradient(circle, var(--gold) 0%, transparent 60%);
+    background: radial-gradient(circle, var(--accent) 0%, transparent 60%);
     opacity: 0.30;
     filter: blur(24px);
     animation: breathe 4.2s ease-in-out infinite;
@@ -356,7 +356,7 @@
     width: 60px; height: 60px;
     margin-top: -30px; margin-left: -30px;
     border-radius: 50%;
-    border: 1px solid var(--gold);
+    border: 1px solid var(--accent);
     transform: scale(0);
     opacity: 0;
     animation: echo-out 4s linear infinite;
@@ -389,14 +389,14 @@
     transform: translateX(-50%);
     width: 5px; height: 5px;
     border-radius: 50%;
-    background: var(--gold);
-    box-shadow: 0 0 10px var(--gold), 0 0 18px rgba(232,199,126,0.5);
+    background: var(--accent);
+    box-shadow: 0 0 10px var(--accent), 0 0 18px rgba(0,229,212,0.5);
   }
-  .orbit .particle.small { width: 3px; height: 3px; box-shadow: 0 0 6px var(--gold); }
+  .orbit .particle.small { width: 3px; height: 3px; box-shadow: 0 0 6px var(--accent); }
   .orbit .particle.tail {
     width: 24px; height: 1px;
     border-radius: 0;
-    background: linear-gradient(90deg, var(--gold), transparent);
+    background: linear-gradient(90deg, var(--accent), transparent);
     top: 1px; left: 50%;
     transform: translateX(-100%);
     box-shadow: none;
@@ -422,16 +422,16 @@
     width: 100%; height: 100%;
     transform: rotate(-90deg);
     z-index: 2;
-    filter: drop-shadow(0 0 12px rgba(232,199,126,0.45));
+    filter: drop-shadow(0 0 12px rgba(0,229,212,0.45));
   }
   .timer-ring-track {
     fill: none;
-    stroke: rgba(138,111,68,0.35);
+    stroke: rgba(0,125,117,0.35);
     stroke-width: 2;
   }
   .timer-ring-progress {
     fill: none;
-    stroke: var(--gold);
+    stroke: var(--accent);
     stroke-width: 2.5;
     stroke-linecap: round;
     transition: stroke-dashoffset 1s linear;
@@ -455,8 +455,8 @@
     width: 7px; height: 7px;
     margin-left: -3.5px; margin-top: -3.5px;
     border-radius: 50%;
-    background: var(--gold-flash);
-    box-shadow: 0 0 12px var(--gold-flash), 0 0 24px var(--gold);
+    background: var(--accent-flash);
+    box-shadow: 0 0 12px var(--accent-flash), 0 0 24px var(--accent);
   }
   .phone[data-state="denied"]  .ring-spark::before { background: #FFD9DD; box-shadow: 0 0 12px #FFD9DD, 0 0 24px var(--crimson); }
   .phone[data-state="granted"] .ring-spark::before { background: #DDF1E0; box-shadow: 0 0 12px #DDF1E0, 0 0 24px var(--emerald); }
@@ -469,10 +469,10 @@
     width: 110px; height: 110px;
     border-radius: 50%;
     background: radial-gradient(circle, var(--void) 60%, rgba(4,6,11,0.9) 100%);
-    border: 1px solid var(--gold-deep);
+    border: 1px solid var(--accent-deep);
     box-shadow:
       inset 0 0 24px rgba(0,0,0,0.85),
-      0 0 18px rgba(232,199,126,0.28);
+      0 0 18px rgba(0,229,212,0.28);
     z-index: 4;
     transition: border-color 0.6s, box-shadow 0.6s;
   }
@@ -492,16 +492,16 @@
     font-size: 24px;
     font-weight: 500;
     letter-spacing: 2px;
-    color: var(--gold);
+    color: var(--accent);
     line-height: 1;
-    text-shadow: 0 0 12px rgba(232,199,126,0.6);
+    text-shadow: 0 0 12px rgba(0,229,212,0.6);
   }
   .core-time .label {
     margin-top: 6px;
     font-family: 'JetBrains Mono', monospace;
     font-size: 8px;
     letter-spacing: 3px;
-    color: var(--gold-deep);
+    color: var(--accent-deep);
   }
   .phone[data-state="denied"] .core-time .digits { color: var(--crimson); text-shadow: 0 0 12px rgba(184,51,74,0.6); }
   .phone[data-state="denied"] .core-time .label { color: var(--crimson-deep); }
@@ -525,17 +525,17 @@
     font-family: 'JetBrains Mono', monospace;
     font-size: 10px;
     letter-spacing: 4px;
-    color: var(--gold);
-    border: 1px solid var(--gold-deep);
+    color: var(--accent);
+    border: 1px solid var(--accent-deep);
     border-radius: 2px;
     margin-bottom: 14px;
-    background: rgba(232,199,126,0.04);
+    background: rgba(0,229,212,0.04);
     transition: all 0.6s;
   }
   .verdict-stamp .seal-dot {
     width: 5px; height: 5px;
     border-radius: 50%;
-    background: var(--gold);
+    background: var(--accent);
     box-shadow: 0 0 8px currentColor;
   }
   .phone[data-state="denied"]  .verdict-stamp { color: var(--crimson); border-color: var(--crimson-deep); background: rgba(184,51,74,0.06); }
@@ -553,7 +553,7 @@
     min-height: 50px;
     margin-bottom: 14px;
   }
-  .mentor-address .accent { color: var(--gold); font-style: italic; font-weight: 600; }
+  .mentor-address .accent { color: var(--accent); font-style: italic; font-weight: 600; }
   .phone[data-state="denied"]  .mentor-address .accent { color: var(--crimson); }
   .phone[data-state="granted"] .mentor-address .accent { color: var(--emerald); }
   .mentor-address .word {
@@ -577,12 +577,12 @@
   .ms-divider .line {
     flex: 1;
     height: 1px;
-    background: linear-gradient(90deg, transparent, var(--gold-deep) 30%, var(--gold-deep) 70%, transparent);
+    background: linear-gradient(90deg, transparent, var(--accent-deep) 30%, var(--accent-deep) 70%, transparent);
     max-width: 70px;
   }
   .ms-divider .ornament {
     width: 14px; height: 14px;
-    color: var(--gold-deep);
+    color: var(--accent-deep);
   }
 
   /* === Hikmat (wisdom) block === */
@@ -593,7 +593,7 @@
   .hikmat-card::before, .hikmat-card::after {
     position: absolute;
     font-family: 'Cormorant Garamond', serif;
-    color: var(--gold-deep);
+    color: var(--accent-deep);
     font-size: 36px;
     line-height: 1;
     font-weight: 600;
@@ -614,13 +614,13 @@
     color: var(--text-primary);
     font-weight: 500;
     letter-spacing: 0.3px;
-    text-shadow: 0 0 16px rgba(232,199,126,0.15);
+    text-shadow: 0 0 16px rgba(0,229,212,0.15);
     opacity: 0;
     transform: scale(0.95);
     animation: hikmat-reveal 1.0s 0.5s cubic-bezier(0.2, 0.8, 0.2, 1) forwards;
   }
   .hikmat-text .em {
-    color: var(--gold);
+    color: var(--accent);
     font-weight: 600;
     font-style: normal;
   }
@@ -648,12 +648,12 @@
     margin-bottom: 12px;
     padding: 0 4px;
   }
-  .sacred-meta .label { color: var(--gold-deep); letter-spacing: 4px; }
+  .sacred-meta .label { color: var(--accent-deep); letter-spacing: 4px; }
   .sacred-meta .progress-rail {
     flex: 1;
     height: 1px;
     margin: 0 12px;
-    background: rgba(232,199,126,0.15);
+    background: rgba(0,229,212,0.15);
     position: relative;
     overflow: hidden;
   }
@@ -662,20 +662,20 @@
     position: absolute;
     left: 0; top: 0;
     width: var(--fill, 22%); height: 100%;
-    background: var(--gold);
-    box-shadow: 0 0 6px var(--gold);
+    background: var(--accent);
+    box-shadow: 0 0 6px var(--accent);
     transition: width 1s linear;
   }
 
   .return-btn {
     width: 100%;
     background: transparent;
-    color: var(--gold);
+    color: var(--accent);
     padding: 14px;
     font-size: 12px;
     font-weight: 500;
     letter-spacing: 6px;
-    border: 1px solid var(--gold-deep);
+    border: 1px solid var(--accent-deep);
     border-radius: 2px;
     cursor: pointer;
     transition: all 0.25s;
@@ -687,12 +687,12 @@
   .return-btn::before {
     content: '';
     position: absolute; inset: 0;
-    background: linear-gradient(90deg, transparent, rgba(232,199,126,0.18), transparent);
+    background: linear-gradient(90deg, transparent, rgba(0,229,212,0.18), transparent);
     transform: translateX(-100%);
     transition: transform 0.6s;
   }
   .return-btn:hover::before { transform: translateX(100%); }
-  .return-btn:hover { background: rgba(232,199,126,0.06); border-color: var(--gold); letter-spacing: 8px; }
+  .return-btn:hover { background: rgba(0,229,212,0.06); border-color: var(--accent); letter-spacing: 8px; }
   .phone[data-state="denied"]  .return-btn { color: var(--crimson); border-color: var(--crimson-deep); }
   .phone[data-state="denied"]  .return-btn:hover { background: rgba(184,51,74,0.06); border-color: var(--crimson); }
   .phone[data-state="granted"] .return-btn { color: var(--emerald); border-color: var(--emerald-deep); }
@@ -709,7 +709,7 @@
     position: absolute; inset: 0;
     pointer-events: none;
     z-index: 10;
-    background: radial-gradient(circle at 50% 40%, var(--gold-flash) 0%, transparent 60%);
+    background: radial-gradient(circle at 50% 40%, var(--accent-flash) 0%, transparent 60%);
     opacity: 0;
   }
   .flash-overlay.fire { animation: flash 0.9s ease-out; }
@@ -748,11 +748,11 @@
     user-select: none;
     transition: all 0.2s;
   }
-  .state-tab:hover { color: var(--gold); border-color: var(--gold-deep); }
+  .state-tab:hover { color: var(--accent); border-color: var(--accent-deep); }
   .state-tab.active {
-    color: var(--gold);
-    border-color: var(--gold);
-    background: rgba(232,199,126,0.08);
+    color: var(--accent);
+    border-color: var(--accent);
+    background: rgba(0,229,212,0.08);
   }
 
   .footer-info {
@@ -875,7 +875,7 @@
 
       <!-- Subtle 8-tick ring (only this one minimal geometric element) -->
       <svg class="ring-ticks" viewBox="0 0 200 200">
-        <g stroke="#8a6f44" stroke-width="0.8" opacity="0.55">
+        <g stroke="#007D75" stroke-width="0.8" opacity="0.55">
           <line x1="100" y1="2"   x2="100" y2="10"/>
           <line x1="100" y1="190" x2="100" y2="198"/>
           <line x1="2"   y1="100" x2="10"  y2="100"/>

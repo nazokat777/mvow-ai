@@ -20,8 +20,8 @@
     --void:#04060B; --void-2:#0A0E16;
     --text-primary:#F5F2EC; --text-body:#B8BBC2;
     --text-muted:#6B6E76; --text-ghost:#3A3D44;
-    --gold:#E8C77E; --gold-2:#C7A36B; --gold-deep:#8a6f44;
-    --gold-flash:#FFE9B5; --honey:#D4A574; --cream:#F0E5D2;
+    --accent:#00E5D4; --accent-2:#00C9BC; --accent-deep:#007D75;
+    --accent-flash:#7AF5EC; --accent-soft:#00B5A8; --accent-cream:#D6F5F2;
     --emerald:#4A8A5C; --emerald-bright:#6BAF7C;
     --crimson:#B8334A; --rose:#C28B8B; --sky:#7CA8C9;
   }
@@ -35,7 +35,7 @@
     width:380px; min-height:800px;
     background:var(--void); border-radius:40px;
     overflow:hidden; position:relative;
-    box-shadow:0 0 0 8px #2a2e36, 0 30px 80px rgba(0,0,0,.85), 0 0 100px rgba(232,199,126,.10);
+    box-shadow:0 0 0 8px #2a2e36, 0 30px 80px rgba(0,0,0,.85), 0 0 100px rgba(0,229,212,.10);
     transition:background 1s ease;
   }
   .phone[data-state="generating"] {
@@ -49,7 +49,7 @@
   .backdrop {
     position:absolute; inset:0;
     background:
-      radial-gradient(ellipse 90% 30% at 50% 18%, rgba(232,199,126,.10), transparent 65%),
+      radial-gradient(ellipse 90% 30% at 50% 18%, rgba(0,229,212,.10), transparent 65%),
       linear-gradient(180deg, var(--void) 0%, var(--void-2) 50%, var(--void) 100%);
     transition:background 1s;
   }
@@ -64,7 +64,7 @@
       linear-gradient(180deg, var(--void) 0%, #0E1610 50%, var(--void) 100%);
   }
 
-  .gilt-frame{position:absolute;inset:14px;border:1px solid rgba(232,199,126,.18);border-radius:26px;pointer-events:none;z-index:4}
+  .gilt-frame{position:absolute;inset:14px;border:1px solid rgba(0,229,212,.18);border-radius:26px;pointer-events:none;z-index:4}
   .letterbox{position:absolute;left:0;right:0;height:14px;background:var(--void);z-index:7;pointer-events:none}
   .letterbox.top{top:0}.letterbox.bottom{bottom:0}
 
@@ -78,23 +78,23 @@
   .step-pill {
     display:inline-flex; align-items:center; gap:8px;
     padding:5px 12px; border-radius:999px;
-    border:1px solid var(--gold);
-    background:rgba(232,199,126,.08);
+    border:1px solid var(--accent);
+    background:rgba(0,229,212,.08);
     font-family:'JetBrains Mono',monospace; font-size:9px;
-    letter-spacing:3px; color:var(--gold);
+    letter-spacing:3px; color:var(--accent);
   }
   .step-pill .dots { display:flex; gap:3px; }
   .step-pill .d {
-    width:5px; height:5px; border-radius:50%; background:var(--gold-deep);
+    width:5px; height:5px; border-radius:50%; background:var(--accent-deep);
   }
-  .step-pill .d.active { background:var(--gold); box-shadow:0 0 6px var(--gold); }
+  .step-pill .d.active { background:var(--accent); box-shadow:0 0 6px var(--accent); }
   .phone[data-state="generating"] .step-pill { border-color:var(--sky); color:var(--sky); background:rgba(124,168,201,.10); }
   .phone[data-state="plan"] .step-pill { border-color:var(--emerald); color:var(--emerald-bright); background:rgba(74,138,92,.10); }
 
   .back-btn {
-    padding:5px 12px; border:1px solid var(--gold-deep);
-    border-radius:999px; background:rgba(232,199,126,.04);
-    color:var(--gold); text-decoration:none;
+    padding:5px 12px; border:1px solid var(--accent-deep);
+    border-radius:999px; background:rgba(0,229,212,.04);
+    color:var(--accent); text-decoration:none;
     font-family:'JetBrains Mono',monospace; font-size:9px; letter-spacing:2px;
   }
 
@@ -106,7 +106,7 @@
   .mentor-q .orb {
     width:30px; height:30px; flex-shrink:0; margin-top:2px;
     background:url(assets/mnsm-logo.png) center/contain no-repeat;
-    filter:drop-shadow(0 0 8px rgba(232,199,126,.55));
+    filter:drop-shadow(0 0 8px rgba(0,229,212,.55));
     animation:breathe 3s ease-in-out infinite;
   }
   @keyframes breathe{0%,100%{transform:scale(.92)}50%{transform:scale(1.08)}}
@@ -116,11 +116,11 @@
     font-weight:600; font-size:21px; color:var(--text-primary);
     line-height:1.3; letter-spacing:.3px;
   }
-  .mentor-q .text .em { color:var(--gold); font-style:normal; }
+  .mentor-q .text .em { color:var(--accent); font-style:normal; }
 
   .prompt {
     font-family:'JetBrains Mono',monospace; font-size:8.5px;
-    letter-spacing:4px; color:var(--gold-deep); margin-bottom:10px; margin-left:42px;
+    letter-spacing:4px; color:var(--accent-deep); margin-bottom:10px; margin-left:42px;
   }
 
   /* Answer chips */
@@ -128,18 +128,18 @@
   .answer-chip {
     display:flex; align-items:center; gap:10px;
     padding:11px 14px;
-    background:rgba(232,199,126,.04);
-    border:1px solid var(--gold-deep);
+    background:rgba(0,229,212,.04);
+    border:1px solid var(--accent-deep);
     border-radius:8px;
     cursor:pointer; transition:all .15s;
   }
   .answer-chip:active { transform:scale(.99); }
   .answer-chip.selected {
-    border-color:var(--gold);
-    background:rgba(232,199,126,.14);
-    box-shadow:0 0 12px rgba(232,199,126,.25);
+    border-color:var(--accent);
+    background:rgba(0,229,212,.14);
+    box-shadow:0 0 12px rgba(0,229,212,.25);
   }
-  .answer-chip .ic { font-size:18px; width:22px; text-align:center; color:var(--gold); }
+  .answer-chip .ic { font-size:18px; width:22px; text-align:center; color:var(--accent); }
   .answer-chip .body { flex:1; }
   .answer-chip .name {
     font-family:'Cormorant Garamond',serif; font-style:italic; font-weight:600;
@@ -148,23 +148,23 @@
   .answer-chip .sub {
     margin-top:2px;
     font-family:'JetBrains Mono',monospace; font-size:8px;
-    letter-spacing:1.5px; color:var(--gold-deep);
+    letter-spacing:1.5px; color:var(--accent-deep);
   }
 
   /* Voice input */
   .voice-row {
     display:flex; align-items:center; gap:10px;
     padding:11px 14px;
-    background:rgba(232,199,126,.04);
-    border:1px dashed var(--gold-deep);
+    background:rgba(0,229,212,.04);
+    border:1px dashed var(--accent-deep);
     border-radius:8px; margin-bottom:18px;
   }
   .voice-row .mic-btn {
     width:32px; height:32px; border-radius:50%;
-    background:linear-gradient(180deg, var(--gold-flash), var(--gold), var(--gold-2));
+    background:linear-gradient(180deg, var(--accent-flash), var(--accent), var(--accent-2));
     color:var(--void);
     display:flex; align-items:center; justify-content:center;
-    box-shadow:0 0 10px rgba(232,199,126,.4); flex-shrink:0;
+    box-shadow:0 0 10px rgba(0,229,212,.4); flex-shrink:0;
   }
   .voice-row .mic-btn svg { width:14px; height:14px; fill:currentColor; }
   .voice-row .lbl {
@@ -172,7 +172,7 @@
     font-family:'Cormorant Garamond',serif; font-style:italic;
     font-size:13px; color:var(--text-muted);
   }
-  .voice-row .lbl .em { color:var(--gold); }
+  .voice-row .lbl .em { color:var(--accent); }
 
   /* === Generating state === */
   .generating {
@@ -213,7 +213,7 @@
     font-family:'JetBrains Mono',monospace; font-size:8.5px;
     letter-spacing:4px; color:var(--emerald-bright); margin-bottom:6px;
   }
-  .plan-block .pre .em { color:var(--gold-flash); font-weight:600; }
+  .plan-block .pre .em { color:var(--accent-flash); font-weight:600; }
   .plan-block .title {
     font-family:'Cormorant Garamond',serif; font-style:italic; font-weight:600;
     font-size:20px; color:var(--text-primary); line-height:1.3;
@@ -233,7 +233,7 @@
   .plan-task .time {
     text-align:center;
     font-family:'JetBrains Mono',monospace; font-size:11px;
-    letter-spacing:1px; color:var(--gold); line-height:1.3;
+    letter-spacing:1px; color:var(--accent); line-height:1.3;
   }
   .plan-task.severity-max .time { color:var(--crimson); }
   .plan-task.rest .time { color:var(--sky); }
@@ -244,9 +244,9 @@
   .plan-task .meta {
     margin-top:3px;
     font-family:'JetBrains Mono',monospace; font-size:7.5px;
-    letter-spacing:1.5px; color:var(--gold-deep);
+    letter-spacing:1.5px; color:var(--accent-deep);
   }
-  .plan-task .meta .dur { color:var(--gold); }
+  .plan-task .meta .dur { color:var(--accent); }
   .plan-task.severity-max .meta .dur { color:var(--crimson); }
   .plan-task.rest .meta .dur { color:var(--sky); }
 
@@ -256,42 +256,42 @@
     display:flex; align-items:center; gap:8px;
   }
   .timer-edit .slider {
-    flex:1; height:3px; background:rgba(232,199,126,.18);
+    flex:1; height:3px; background:rgba(0,229,212,.18);
     border-radius:2px; position:relative; cursor:pointer;
   }
   .timer-edit .slider .fill {
     position:absolute; left:0; top:0; height:100%;
-    background:var(--gold); border-radius:2px;
-    box-shadow:0 0 6px rgba(232,199,126,.4);
+    background:var(--accent); border-radius:2px;
+    box-shadow:0 0 6px rgba(0,229,212,.4);
   }
   .timer-edit .slider .knob {
     position:absolute; top:50%; transform:translate(-50%,-50%);
     width:11px; height:11px; border-radius:50%;
-    background:var(--gold-flash);
-    box-shadow:0 0 8px var(--gold);
+    background:var(--accent-flash);
+    box-shadow:0 0 8px var(--accent);
   }
   .timer-edit .val {
     font-family:'JetBrains Mono',monospace; font-size:9px;
-    letter-spacing:1px; color:var(--gold); width:36px; text-align:right;
+    letter-spacing:1px; color:var(--accent); width:36px; text-align:right;
   }
 
   /* Plan summary */
   .plan-summary {
     margin-top:14px; padding:12px 14px;
-    background:rgba(232,199,126,.05);
-    border:1px solid rgba(232,199,126,.30);
+    background:rgba(0,229,212,.05);
+    border:1px solid rgba(0,229,212,.30);
     border-radius:8px;
   }
   .plan-summary .lbl {
     font-family:'JetBrains Mono',monospace; font-size:8.5px;
-    letter-spacing:3px; color:var(--gold-deep); margin-bottom:6px;
+    letter-spacing:3px; color:var(--accent-deep); margin-bottom:6px;
   }
   .plan-summary .row {
     display:flex; justify-content:space-between;
     font-family:'Cormorant Garamond',serif; font-style:italic;
     font-size:13px; color:var(--text-body); margin:3px 0;
   }
-  .plan-summary .row .v { color:var(--gold); font-weight:600; font-style:normal; }
+  .plan-summary .row .v { color:var(--accent); font-weight:600; font-style:normal; }
 
   /* Mentor's note in plan state */
   .plan-note {
@@ -313,11 +313,11 @@
   }
   .next-btn {
     width:100%; padding:14px;
-    background:linear-gradient(180deg, var(--cream), var(--gold), var(--gold-deep));
+    background:linear-gradient(180deg, var(--accent-cream), var(--accent), var(--accent-deep));
     color:var(--void); font-size:12px; font-weight:700;
     letter-spacing:5px; border:none; border-radius:4px;
     cursor:pointer; text-transform:uppercase;
-    box-shadow:0 0 22px rgba(232,199,126,.40), inset 0 1px 0 rgba(255,255,255,.5);
+    box-shadow:0 0 22px rgba(0,229,212,.40), inset 0 1px 0 rgba(255,255,255,.5);
     transition:all .25s;
   }
   .phone[data-state="plan"] .next-btn {
@@ -338,7 +338,7 @@
     letter-spacing:2px; color:rgba(255,255,255,.4);
     cursor:pointer; border:1px solid rgba(255,255,255,.08);
   }
-  .state-tab.active { color:var(--gold); border-color:var(--gold); background:rgba(232,199,126,.08); }
+  .state-tab.active { color:var(--accent); border-color:var(--accent); background:rgba(0,229,212,.08); }
 
   .footer-info{margin-top:22px;text-align:center;color:rgba(255,255,255,.45);font-size:13px;line-height:1.6;font-family:'Cormorant Garamond',serif;font-style:italic}
 
@@ -436,7 +436,7 @@
 
       <!-- Tasks generated dynamically based on user's input -->
       <div class="plan-task">
-        <div class="time">07:00<br><span style="font-size:7.5px;color:var(--gold-deep)">45 daq</span></div>
+        <div class="time">07:00<br><span style="font-size:7.5px;color:var(--accent-deep)">45 daq</span></div>
         <div class="body">
           <div class="name">Yugurish · 5 km</div>
           <div class="meta">⊙ TANANI UYG'OTISH · <span class="dur">45 DAQ</span></div>
@@ -448,7 +448,7 @@
       </div>
 
       <div class="plan-task severity-max">
-        <div class="time">09:00<br><span style="font-size:7.5px;color:var(--gold-deep)">2 soat</span></div>
+        <div class="time">09:00<br><span style="font-size:7.5px;color:var(--accent-deep)">2 soat</span></div>
         <div class="body">
           <div class="name">Imtihonga tayyorlanish</div>
           <div class="meta">▦ POMODORO · 4 SIKL · <span class="dur">2S</span></div>
@@ -460,7 +460,7 @@
       </div>
 
       <div class="plan-task rest">
-        <div class="time">11:00<br><span style="font-size:7.5px;color:var(--gold-deep)">15 daq</span></div>
+        <div class="time">11:00<br><span style="font-size:7.5px;color:var(--accent-deep)">15 daq</span></div>
         <div class="body">
           <div class="name">Dam · sayr</div>
           <div class="meta">∼ HAVODA YURISH · <span class="dur">15 DAQ</span></div>
@@ -472,7 +472,7 @@
       </div>
 
       <div class="plan-task">
-        <div class="time">14:00<br><span style="font-size:7.5px;color:var(--gold-deep)">1 soat</span></div>
+        <div class="time">14:00<br><span style="font-size:7.5px;color:var(--accent-deep)">1 soat</span></div>
         <div class="body">
           <div class="name">Loyiha · kod yozish</div>
           <div class="meta">◆ CHUQUR ISH · <span class="dur">60 DAQ</span></div>
@@ -484,7 +484,7 @@
       </div>
 
       <div class="plan-task">
-        <div class="time">19:00<br><span style="font-size:7.5px;color:var(--gold-deep)">45 daq</span></div>
+        <div class="time">19:00<br><span style="font-size:7.5px;color:var(--accent-deep)">45 daq</span></div>
         <div class="body">
           <div class="name">Oilaga vaqt · birga ovqat</div>
           <div class="meta">∞ TELEFONSIZ · <span class="dur">45 DAQ</span></div>

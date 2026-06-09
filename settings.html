@@ -27,11 +27,11 @@
     --text-muted:   #6B6E76;
     --text-ghost:   #3A3D44;
 
-    --gold:        #E8C77E;
-    --gold-2:      #C7A36B;
-    --gold-deep:   #8a6f44;
-    --gold-flash:  #FFE9B5;
-    --honey:       #D4A574;
+    --accent:        #00E5D4;
+    --accent-2:      #00C9BC;
+    --accent-deep:   #007D75;
+    --accent-flash:  #7AF5EC;
+    --accent-soft:       #00B5A8;
 
     --crimson:     #B8334A;
     --emerald:     #4A8A5C;
@@ -58,19 +58,19 @@
     box-shadow:
       0 0 0 8px #2a2e36,
       0 30px 80px rgba(0,0,0,0.85),
-      0 0 100px rgba(232,199,126,0.07);
+      0 0 100px rgba(0,229,212,0.07);
   }
 
   .backdrop {
     position: absolute; inset: 0;
     background:
-      radial-gradient(ellipse 80% 25% at 50% 12%, rgba(232,199,126,0.06), transparent 65%),
+      radial-gradient(ellipse 80% 25% at 50% 12%, rgba(0,229,212,0.06), transparent 65%),
       linear-gradient(180deg, var(--void) 0%, var(--void-2) 50%, var(--void) 100%);
   }
 
   .gilt-frame {
     position: absolute; inset: 14px;
-    border: 1px solid rgba(232,199,126,0.18);
+    border: 1px solid rgba(0,229,212,0.18);
     border-radius: 26px;
     pointer-events: none;
     z-index: 4;
@@ -79,7 +79,7 @@
   .pattern-wash {
     position: absolute; inset: 0;
     opacity: 0.025;
-    background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='100' height='100' viewBox='0 0 100 100'><g fill='none' stroke='%23E8C77E' stroke-width='0.5'><polygon points='50,5 62,38 95,38 70,58 80,90 50,72 20,90 30,58 5,38 38,38'/></g></svg>");
+    background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='100' height='100' viewBox='0 0 100 100'><g fill='none' stroke='%2300E5D4' stroke-width='0.5'><polygon points='50,5 62,38 95,38 70,58 80,90 50,72 20,90 30,58 5,38 38,38'/></g></svg>");
     background-size: 130px 130px;
     pointer-events: none;
     z-index: 1;
@@ -108,11 +108,11 @@
   .icon-btn {
     width: 28px; height: 28px;
     display: flex; align-items: center; justify-content: center;
-    border: 1px solid var(--gold-deep);
+    border: 1px solid var(--accent-deep);
     border-radius: 50%;
     cursor: pointer;
-    background: rgba(232,199,126,0.04);
-    color: var(--gold);
+    background: rgba(0,229,212,0.04);
+    color: var(--accent);
   }
   .icon-btn svg { width: 12px; height: 12px; fill: none; stroke: currentColor; stroke-width: 1.8; }
 
@@ -121,13 +121,13 @@
     align-items: center;
     gap: 8px;
     padding: 5px 12px;
-    border: 1px solid var(--gold);
+    border: 1px solid var(--accent);
     border-radius: 999px;
-    background: rgba(232,199,126,0.06);
+    background: rgba(0,229,212,0.06);
     font-family: 'JetBrains Mono', monospace;
     font-size: 9px;
     letter-spacing: 4px;
-    color: var(--gold);
+    color: var(--accent);
   }
 
   /* === Profile mini === */
@@ -138,18 +138,18 @@
     align-items: center;
     gap: 12px;
     padding: 10px 14px;
-    background: rgba(232,199,126,0.04);
-    border: 1px solid rgba(138,111,68,0.30);
+    background: rgba(0,229,212,0.04);
+    border: 1px solid rgba(0,125,117,0.30);
     border-radius: 4px;
     cursor: pointer;
     z-index: 4;
   }
-  .profile-mini:hover { background: rgba(232,199,126,0.08); }
+  .profile-mini:hover { background: rgba(0,229,212,0.08); }
   .profile-mini .orb {
     width: 36px; height: 36px;
     border-radius: 50%;
-    background: radial-gradient(circle at 35% 35%, var(--gold-flash), var(--gold) 50%, var(--gold-deep));
-    box-shadow: 0 0 12px rgba(232,199,126,0.45);
+    background: radial-gradient(circle at 35% 35%, var(--accent-flash), var(--accent) 50%, var(--accent-deep));
+    box-shadow: 0 0 12px rgba(0,229,212,0.45);
     flex-shrink: 0;
   }
   .profile-mini .info { flex: 1; }
@@ -165,10 +165,10 @@
     font-family: 'JetBrains Mono', monospace;
     font-size: 8px;
     letter-spacing: 1.5px;
-    color: var(--gold-deep);
+    color: var(--accent-deep);
   }
-  .profile-mini .meta .em { color: var(--gold); }
-  .profile-mini .arrow { color: var(--gold-deep); font-size: 14px; }
+  .profile-mini .meta .em { color: var(--accent); }
+  .profile-mini .arrow { color: var(--accent-deep); font-size: 14px; }
 
   /* === Settings list === */
   .settings-list {
@@ -178,16 +178,16 @@
     padding-right: 4px;
     z-index: 4;
     scrollbar-width: thin;
-    scrollbar-color: rgba(232,199,126,0.3) transparent;
+    scrollbar-color: rgba(0,229,212,0.3) transparent;
   }
   .settings-list::-webkit-scrollbar { width: 4px; }
-  .settings-list::-webkit-scrollbar-thumb { background: rgba(232,199,126,0.3); border-radius: 2px; }
+  .settings-list::-webkit-scrollbar-thumb { background: rgba(0,229,212,0.3); border-radius: 2px; }
 
   .section-title {
     font-family: 'JetBrains Mono', monospace;
     font-size: 8.5px;
     letter-spacing: 4px;
-    color: var(--gold-deep);
+    color: var(--accent-deep);
     margin: 18px 4px 8px;
   }
   .section-title:first-child { margin-top: 4px; }
@@ -197,19 +197,19 @@
     align-items: center;
     gap: 12px;
     padding: 11px 14px;
-    background: rgba(232,199,126,0.025);
-    border: 1px solid rgba(138,111,68,0.22);
+    background: rgba(0,229,212,0.025);
+    border: 1px solid rgba(0,125,117,0.22);
     border-radius: 4px;
     margin-bottom: 6px;
     cursor: pointer;
     transition: all 0.2s;
   }
-  .setting-row:hover { background: rgba(232,199,126,0.06); border-color: var(--gold-deep); }
+  .setting-row:hover { background: rgba(0,229,212,0.06); border-color: var(--accent-deep); }
 
   .setting-row .ic {
     width: 24px; height: 24px;
     display: flex; align-items: center; justify-content: center;
-    color: var(--gold);
+    color: var(--accent);
     font-size: 14px;
     flex-shrink: 0;
   }
@@ -232,10 +232,10 @@
     font-family: 'JetBrains Mono', monospace;
     font-size: 9.5px;
     letter-spacing: 1.5px;
-    color: var(--gold);
+    color: var(--accent);
   }
   .setting-row .arrow {
-    color: var(--gold-deep);
+    color: var(--accent-deep);
     font-size: 14px;
     margin-left: 4px;
   }
@@ -260,7 +260,7 @@
     transition: all 0.2s;
   }
   .toggle.on {
-    background: linear-gradient(180deg, var(--gold-flash) 0%, var(--gold) 100%);
+    background: linear-gradient(180deg, var(--accent-flash) 0%, var(--accent) 100%);
   }
   .toggle.on::after {
     left: 18px;
@@ -270,8 +270,8 @@
   /* Mentor tone slider */
   .mentor-card {
     padding: 12px 14px;
-    background: rgba(232,199,126,0.04);
-    border: 1px solid rgba(232,199,126,0.25);
+    background: rgba(0,229,212,0.04);
+    border: 1px solid rgba(0,229,212,0.25);
     border-radius: 4px;
     margin-bottom: 6px;
   }
@@ -287,17 +287,17 @@
     color: var(--text-primary);
     letter-spacing: 0.5px;
   }
-  .mentor-card .head .ttl .ic { color: var(--gold); font-size: 14px; }
+  .mentor-card .head .ttl .ic { color: var(--accent); font-size: 14px; }
   .mentor-card .head .val {
     font-family: 'JetBrains Mono', monospace;
     font-size: 9px;
     letter-spacing: 1px;
-    color: var(--gold);
+    color: var(--accent);
   }
   .mentor-card .slider {
     position: relative;
     height: 4px;
-    background: rgba(138,111,68,0.30);
+    background: rgba(0,125,117,0.30);
     border-radius: 2px;
     margin: 6px 0 18px;
   }
@@ -305,9 +305,9 @@
     position: absolute;
     left: 0; top: 0;
     height: 100%;
-    background: linear-gradient(90deg, var(--gold-deep), var(--gold));
+    background: linear-gradient(90deg, var(--accent-deep), var(--accent));
     border-radius: 2px;
-    box-shadow: 0 0 6px rgba(232,199,126,0.4);
+    box-shadow: 0 0 6px rgba(0,229,212,0.4);
   }
   .mentor-card .slider .knob {
     position: absolute;
@@ -315,8 +315,8 @@
     transform: translate(-50%, -50%);
     width: 14px; height: 14px;
     border-radius: 50%;
-    background: linear-gradient(180deg, var(--gold-flash), var(--gold));
-    box-shadow: 0 0 8px rgba(232,199,126,0.6);
+    background: linear-gradient(180deg, var(--accent-flash), var(--accent));
+    box-shadow: 0 0 8px rgba(0,229,212,0.6);
     cursor: pointer;
   }
   .mentor-card .scale {
@@ -324,20 +324,20 @@
     font-family: 'JetBrains Mono', monospace;
     font-size: 7.5px;
     letter-spacing: 1px;
-    color: var(--gold-deep);
+    color: var(--accent-deep);
   }
 
   .mentor-card .body {
     margin-top: 8px;
     padding-top: 10px;
-    border-top: 1px dashed rgba(138,111,68,0.30);
+    border-top: 1px dashed rgba(0,125,117,0.30);
     font-family: 'Cormorant Garamond', serif;
     font-style: italic;
     font-size: 12px;
     color: var(--text-muted);
     line-height: 1.4;
   }
-  .mentor-card .body .em { color: var(--honey); }
+  .mentor-card .body .em { color: var(--accent-soft); }
 
   /* Logout */
   .logout-row {

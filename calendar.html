@@ -28,11 +28,11 @@
     --text-muted:   #6B6E76;
     --text-ghost:   #3A3D44;
 
-    --gold:        #E8C77E;
-    --gold-2:      #C7A36B;
-    --gold-deep:   #8a6f44;
-    --gold-flash:  #FFE9B5;
-    --honey:       #D4A574;
+    --accent:        #00E5D4;
+    --accent-2:      #00C9BC;
+    --accent-deep:   #007D75;
+    --accent-flash:  #7AF5EC;
+    --accent-soft:       #00B5A8;
 
     --crimson:     #B8334A;
     --crimson-deep:#6B1F1F;
@@ -61,19 +61,19 @@
     box-shadow:
       0 0 0 8px #2a2e36,
       0 30px 80px rgba(0,0,0,0.85),
-      0 0 100px rgba(232,199,126,0.07);
+      0 0 100px rgba(0,229,212,0.07);
   }
 
   .backdrop {
     position: absolute; inset: 0;
     background:
-      radial-gradient(ellipse 80% 30% at 50% 15%, rgba(232,199,126,0.06), transparent 65%),
+      radial-gradient(ellipse 80% 30% at 50% 15%, rgba(0,229,212,0.06), transparent 65%),
       linear-gradient(180deg, var(--void) 0%, var(--void-2) 50%, var(--void) 100%);
   }
 
   .gilt-frame {
     position: absolute; inset: 14px;
-    border: 1px solid rgba(232,199,126,0.18);
+    border: 1px solid rgba(0,229,212,0.18);
     border-radius: 26px;
     pointer-events: none;
     z-index: 4;
@@ -82,7 +82,7 @@
   .pattern-wash {
     position: absolute; inset: 0;
     opacity: 0.02;
-    background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='100' height='100' viewBox='0 0 100 100'><g fill='none' stroke='%23E8C77E' stroke-width='0.5'><polygon points='50,5 62,38 95,38 70,58 80,90 50,72 20,90 30,58 5,38 38,38'/></g></svg>");
+    background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='100' height='100' viewBox='0 0 100 100'><g fill='none' stroke='%2300E5D4' stroke-width='0.5'><polygon points='50,5 62,38 95,38 70,58 80,90 50,72 20,90 30,58 5,38 38,38'/></g></svg>");
     background-size: 130px 130px;
     pointer-events: none;
     z-index: 1;
@@ -111,11 +111,11 @@
   .icon-btn {
     width: 28px; height: 28px;
     display: flex; align-items: center; justify-content: center;
-    border: 1px solid var(--gold-deep);
+    border: 1px solid var(--accent-deep);
     border-radius: 50%;
     cursor: pointer;
-    background: rgba(232,199,126,0.04);
-    color: var(--gold);
+    background: rgba(0,229,212,0.04);
+    color: var(--accent);
   }
   .icon-btn svg { width: 12px; height: 12px; fill: none; stroke: currentColor; stroke-width: 1.8; }
 
@@ -126,15 +126,15 @@
     color: var(--text-primary);
     letter-spacing: 1px;
   }
-  .month-title .em { color: var(--gold); }
+  .month-title .em { color: var(--accent); }
 
   /* === View toggle === */
   .view-toggle {
     position: absolute;
     top: 70px; left: 24px; right: 24px;
     display: flex;
-    background: rgba(232,199,126,0.03);
-    border: 1px solid rgba(138,111,68,0.30);
+    background: rgba(0,229,212,0.03);
+    border: 1px solid rgba(0,125,117,0.30);
     border-radius: 999px;
     padding: 3px;
     z-index: 5;
@@ -147,15 +147,15 @@
     font-family: 'JetBrains Mono', monospace;
     font-size: 9px;
     letter-spacing: 3px;
-    color: var(--gold-deep);
+    color: var(--accent-deep);
     cursor: pointer;
     transition: all 0.2s;
   }
-  .view-btn:hover { color: var(--gold); }
+  .view-btn:hover { color: var(--accent); }
   .view-btn.active {
-    background: linear-gradient(180deg, var(--gold-flash) 0%, var(--gold) 50%, var(--gold-2) 100%);
+    background: linear-gradient(180deg, var(--accent-flash) 0%, var(--accent) 50%, var(--accent-2) 100%);
     color: var(--void);
-    box-shadow: 0 0 12px rgba(232,199,126,0.35);
+    box-shadow: 0 0 12px rgba(0,229,212,0.35);
     font-weight: 600;
   }
 
@@ -182,7 +182,7 @@
     font-family: 'JetBrains Mono', monospace;
     font-size: 8px;
     letter-spacing: 1.5px;
-    color: var(--gold-deep);
+    color: var(--accent-deep);
     margin-bottom: 2px;
   }
   .day-cell .day-num {
@@ -192,10 +192,10 @@
     font-weight: 500;
   }
   .day-cell.today {
-    background: rgba(232,199,126,0.08);
+    background: rgba(0,229,212,0.08);
   }
-  .day-cell.today .day-name { color: var(--gold); }
-  .day-cell.today .day-num { color: var(--gold); font-weight: 700; text-shadow: 0 0 8px rgba(232,199,126,0.4); }
+  .day-cell.today .day-name { color: var(--accent); }
+  .day-cell.today .day-num { color: var(--accent); font-weight: 700; text-shadow: 0 0 8px rgba(0,229,212,0.4); }
   .day-cell.past .day-num { color: var(--text-ghost); }
 
   /* === Calendar grid === */
@@ -206,21 +206,21 @@
     grid-template-columns: 30px repeat(7, 1fr);
     grid-auto-rows: 36px;
     gap: 1px;
-    background: rgba(138,111,68,0.10);
-    border: 1px solid rgba(138,111,68,0.20);
+    background: rgba(0,125,117,0.10);
+    border: 1px solid rgba(0,125,117,0.20);
     border-radius: 4px;
     z-index: 4;
     overflow: hidden;
     overflow-y: auto;
     scrollbar-width: thin;
-    scrollbar-color: rgba(232,199,126,0.3) transparent;
+    scrollbar-color: rgba(0,229,212,0.3) transparent;
   }
   .cal-grid::-webkit-scrollbar { width: 4px; }
-  .cal-grid::-webkit-scrollbar-thumb { background: rgba(232,199,126,0.3); border-radius: 2px; }
+  .cal-grid::-webkit-scrollbar-thumb { background: rgba(0,229,212,0.3); border-radius: 2px; }
 
   .hour-cell {
     background: rgba(10,14,22,0.5);
-    border-right: 1px solid rgba(138,111,68,0.15);
+    border-right: 1px solid rgba(0,125,117,0.15);
     text-align: right;
     padding: 4px 6px 0 0;
     font-family: 'JetBrains Mono', monospace;
@@ -228,14 +228,14 @@
     letter-spacing: 0.5px;
     color: var(--text-ghost);
   }
-  .hour-cell.major { color: var(--gold-deep); }
+  .hour-cell.major { color: var(--accent-deep); }
 
   .day-col-cell {
     background: rgba(10,14,22,0.6);
     position: relative;
   }
   .day-col-cell.today-col {
-    background: rgba(232,199,126,0.04);
+    background: rgba(0,229,212,0.04);
   }
 
   /* Sessions plotted */
@@ -249,14 +249,14 @@
     cursor: pointer;
     overflow: hidden;
     border: 1px solid;
-    background: rgba(232,199,126,0.10);
-    border-color: var(--gold);
+    background: rgba(0,229,212,0.10);
+    border-color: var(--accent);
     transition: transform 0.15s, box-shadow 0.15s;
   }
   .session-bar:hover {
     transform: scale(1.04);
     z-index: 5;
-    box-shadow: 0 0 12px rgba(232,199,126,0.35);
+    box-shadow: 0 0 12px rgba(0,229,212,0.35);
   }
   /* Bajarildi — yashil */
   .session-bar.done {
@@ -272,8 +272,8 @@
   }
   /* Onlayn dars — qisman shaffof */
   .session-bar.online {
-    background: rgba(212,165,116,0.10);
-    border-color: var(--honey);
+    background: rgba(0,181,168,0.10);
+    border-color: var(--accent-soft);
     border-style: dashed;
   }
   /* Muhim/Muqaddas — qizil (juda kam ishlatish) */
@@ -285,7 +285,7 @@
     font-family: 'JetBrains Mono', monospace;
     font-size: 7.5px;
     letter-spacing: 0.5px;
-    color: var(--gold);
+    color: var(--accent);
     line-height: 1.2;
     white-space: nowrap;
     overflow: hidden;
@@ -293,7 +293,7 @@
   }
   .session-bar.done .name    { color: var(--emerald); }
   .session-bar.missed .name  { color: var(--text-muted); text-decoration: line-through; }
-  .session-bar.online .name  { color: var(--honey); }
+  .session-bar.online .name  { color: var(--accent-soft); }
   .session-bar.muqaddas .name{ color: var(--crimson); }
   .session-bar .check {
     position: absolute;
@@ -308,8 +308,8 @@
     position: absolute;
     left: 30px; right: 0;
     height: 2px;
-    background: var(--gold-flash);
-    box-shadow: 0 0 8px var(--gold);
+    background: var(--accent-flash);
+    box-shadow: 0 0 8px var(--accent);
     z-index: 6;
     pointer-events: none;
   }
@@ -320,8 +320,8 @@
     transform: translateY(-50%);
     width: 8px; height: 8px;
     border-radius: 50%;
-    background: var(--gold-flash);
-    box-shadow: 0 0 10px var(--gold);
+    background: var(--accent-flash);
+    box-shadow: 0 0 10px var(--accent);
     animation: pulse 1.6s ease-in-out infinite;
   }
   @keyframes pulse {
@@ -335,7 +335,7 @@
     font-family: 'JetBrains Mono', monospace;
     font-size: 7.5px;
     letter-spacing: 1.5px;
-    color: var(--gold);
+    color: var(--accent);
     background: var(--void);
     padding: 1px 5px;
   }
@@ -347,9 +347,9 @@
     display: flex;
     justify-content: space-between;
     padding: 8px 12px;
-    background: rgba(232,199,126,0.025);
-    border-top: 1px solid rgba(138,111,68,0.22);
-    border-bottom: 1px solid rgba(138,111,68,0.22);
+    background: rgba(0,229,212,0.025);
+    border-top: 1px solid rgba(0,125,117,0.22);
+    border-bottom: 1px solid rgba(0,125,117,0.22);
     z-index: 5;
   }
   .stats-bar .stat {
@@ -359,17 +359,17 @@
   .stats-bar .stat .v {
     font-family: 'JetBrains Mono', monospace;
     font-size: 14px;
-    color: var(--gold);
+    color: var(--accent);
     font-weight: 500;
   }
   .stats-bar .stat .v .unit {
-    font-size: 9px; color: var(--gold-deep); margin-left: 2px;
+    font-size: 9px; color: var(--accent-deep); margin-left: 2px;
   }
   .stats-bar .stat .l {
     font-family: 'JetBrains Mono', monospace;
     font-size: 7px;
     letter-spacing: 1.5px;
-    color: var(--gold-deep);
+    color: var(--accent-deep);
     margin-top: 1px;
   }
 
@@ -379,10 +379,10 @@
     bottom: 32px; right: 24px;
     width: 50px; height: 50px;
     border-radius: 50%;
-    background: linear-gradient(180deg, var(--gold-flash) 0%, var(--gold) 50%, var(--gold-2) 100%);
+    background: linear-gradient(180deg, var(--accent-flash) 0%, var(--accent) 50%, var(--accent-2) 100%);
     display: flex; align-items: center; justify-content: center;
     box-shadow:
-      0 0 24px rgba(232,199,126,0.50),
+      0 0 24px rgba(0,229,212,0.50),
       inset 0 1px 0 rgba(255,255,255,0.5);
     cursor: pointer;
     z-index: 6;
@@ -411,10 +411,10 @@
     width: 14px; height: 6px; border-radius: 2px;
     border: 1px solid;
   }
-  .legend .l-item .swatch.gld { background: rgba(232,199,126,0.10); border-color: var(--gold); }
+  .legend .l-item .swatch.gld { background: rgba(0,229,212,0.10); border-color: var(--accent); }
   .legend .l-item .swatch.don { background: rgba(74,138,92,0.15); border-color: var(--emerald); }
   .legend .l-item .swatch.mis { background: rgba(107,110,118,0.10); border-color: var(--text-muted); border-style: dashed; opacity:.55; }
-  .legend .l-item .swatch.onl { background: rgba(212,165,116,0.10); border-color: var(--honey); border-style: dashed; }
+  .legend .l-item .swatch.onl { background: rgba(0,181,168,0.10); border-color: var(--accent-soft); border-style: dashed; }
   .legend .l-item .swatch.muq { background: rgba(184,51,74,0.15); border-color: var(--crimson); }
 
   .vignette {

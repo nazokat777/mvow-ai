@@ -21,8 +21,8 @@
     --void:#04060B; --void-2:#0A0E16;
     --text-primary:#F5F2EC; --text-body:#B8BBC2;
     --text-muted:#6B6E76; --text-ghost:#3A3D44;
-    --gold:#E8C77E; --gold-2:#C7A36B; --gold-deep:#8a6f44;
-    --gold-flash:#FFE9B5; --honey:#D4A574; --cream:#F0E5D2;
+    --accent:#00E5D4; --accent-2:#00C9BC; --accent-deep:#007D75;
+    --accent-flash:#7AF5EC; --accent-soft:#00B5A8; --accent-cream:#D6F5F2;
     --emerald:#4A8A5C; --emerald-bright:#6BAF7C; --emerald-deep:#1F3D2A;
     --rose:#C28B8B; --crimson:#B8334A;
     --sky:#7CA8C9;
@@ -40,10 +40,10 @@
     width:380px; height:800px;
     background:var(--void); border-radius:40px;
     overflow:hidden; position:relative;
-    box-shadow:0 0 0 8px #2a2e36, 0 30px 80px rgba(0,0,0,.85), 0 0 100px rgba(232,199,126,.10);
+    box-shadow:0 0 0 8px #2a2e36, 0 30px 80px rgba(0,0,0,.85), 0 0 100px rgba(0,229,212,.10);
   }
 
-  .gilt-frame{position:absolute;inset:14px;border:1px solid rgba(232,199,126,.18);border-radius:26px;pointer-events:none;z-index:6}
+  .gilt-frame{position:absolute;inset:14px;border:1px solid rgba(0,229,212,.18);border-radius:26px;pointer-events:none;z-index:6}
   .letterbox{position:absolute;left:0;right:0;height:14px;background:var(--void);z-index:7;pointer-events:none}
   .letterbox.top{top:0}.letterbox.bottom{bottom:0}
 
@@ -61,12 +61,12 @@
     position:absolute; top:26px; left:50%; transform:translateX(-50%);
     z-index:10;
     display:inline-flex; align-items:center; gap:8px;
-    padding:5px 14px; border:1px solid var(--gold);
-    border-radius:999px; background:rgba(232,199,126,.10);
+    padding:5px 14px; border:1px solid var(--accent);
+    border-radius:999px; background:rgba(0,229,212,.10);
     font-family:'JetBrains Mono',monospace; font-size:9px;
-    letter-spacing:4px; color:var(--gold);
+    letter-spacing:4px; color:var(--accent);
   }
-  .week-stamp .star{color:var(--gold-flash);animation:spin-slow 8s linear infinite}
+  .week-stamp .star{color:var(--accent-flash);animation:spin-slow 8s linear infinite}
   @keyframes spin-slow{to{transform:rotate(360deg)}}
 
   /* Big "TABRIKLAYMAN" headline shared across variants */
@@ -76,12 +76,12 @@
   }
   .headline .pre {
     font-family:'JetBrains Mono',monospace; font-size:9px;
-    letter-spacing:5px; color:var(--gold-deep); margin-bottom:8px;
+    letter-spacing:5px; color:var(--accent-deep); margin-bottom:8px;
   }
   .headline .big {
     font-family:'Cinzel',serif; font-weight:700;
-    font-size:34px; letter-spacing:6px; color:var(--gold);
-    text-shadow:0 0 28px rgba(232,199,126,.55), 0 0 60px rgba(232,199,126,.25);
+    font-size:34px; letter-spacing:6px; color:var(--accent);
+    text-shadow:0 0 28px rgba(0,229,212,.55), 0 0 60px rgba(0,229,212,.25);
     line-height:1;
     opacity:0; transform:translateY(8px); filter:blur(8px);
     animation:hero-in 1.0s .3s cubic-bezier(.16,.84,.32,1) forwards;
@@ -90,7 +90,7 @@
   .headline .name {
     margin-top:6px;
     font-family:'Cormorant Garamond',serif; font-style:italic;
-    font-size:18px; color:var(--honey); letter-spacing:1px;
+    font-size:18px; color:var(--accent-soft); letter-spacing:1px;
     opacity:0; animation:fade-in .8s 1s ease forwards;
   }
   @keyframes fade-in{to{opacity:1}}
@@ -107,11 +107,11 @@
     font-size:14px; color:var(--text-body); line-height:1.55;
     letter-spacing:.3px;
   }
-  .mentor-letter .text .em{color:var(--gold);font-weight:600;font-style:normal}
+  .mentor-letter .text .em{color:var(--accent);font-weight:600;font-style:normal}
   .mentor-letter .signature {
     margin-top:8px;
     font-family:'Cormorant Garamond',serif; font-style:italic;
-    font-size:11.5px; color:var(--gold-deep);
+    font-size:11.5px; color:var(--accent-deep);
   }
 
   /* === Bottom action === */
@@ -121,19 +121,19 @@
   }
   .next-btn {
     width:100%;
-    background:linear-gradient(180deg, var(--cream) 0%, var(--gold) 50%, var(--gold-deep) 100%);
+    background:linear-gradient(180deg, var(--accent-cream) 0%, var(--accent) 50%, var(--accent-deep) 100%);
     color:var(--void); padding:14px;
     font-size:12px; font-weight:700; letter-spacing:5px;
     border:none; border-radius:4px; cursor:pointer;
     text-transform:uppercase; font-family:'Inter',sans-serif;
-    box-shadow:0 0 22px rgba(232,199,126,.45), inset 0 1px 0 rgba(255,255,255,.5);
+    box-shadow:0 0 22px rgba(0,229,212,.45), inset 0 1px 0 rgba(255,255,255,.5);
   }
   .stats-line {
     margin-top:8px; text-align:center;
     font-family:'JetBrains Mono',monospace; font-size:8.5px;
-    letter-spacing:2px; color:var(--gold-deep);
+    letter-spacing:2px; color:var(--accent-deep);
   }
-  .stats-line .em{color:var(--gold)}
+  .stats-line .em{color:var(--accent)}
 
   /* === Per-variant mentor letter — yangi kartochkalar bilan almashtirildi === */
   .variant .mentor-letter { display:none !important; }
@@ -142,7 +142,7 @@
   .change-result {
     position:absolute; bottom:310px; left:24px; right:24px;
     z-index:8; padding:11px 12px;
-    background:linear-gradient(135deg, rgba(74,138,92,.10), rgba(232,199,126,.06));
+    background:linear-gradient(135deg, rgba(74,138,92,.10), rgba(0,229,212,.06));
     border:1px solid rgba(74,138,92,.4);
     border-radius:6px;
     text-align:center;
@@ -154,9 +154,9 @@
   }
   .change-result .big {
     font-family:'Cinzel',serif; font-weight:700;
-    font-size:34px; color:var(--gold-flash);
+    font-size:34px; color:var(--accent-flash);
     line-height:1; margin:4px 0;
-    text-shadow:0 0 16px rgba(255,233,181,.45);
+    text-shadow:0 0 16px rgba(122,245,236,.45);
   }
   .change-result .label {
     font-family:'Cormorant Garamond',serif; font-style:italic;
@@ -166,7 +166,7 @@
   .change-result .compare {
     display:flex; justify-content:space-around; align-items:center;
     margin-top:8px; padding-top:8px;
-    border-top:1px dashed rgba(232,199,126,.18);
+    border-top:1px dashed rgba(0,229,212,.18);
     font-family:'JetBrains Mono',monospace; font-size:9px;
     letter-spacing:1px;
   }
@@ -183,19 +183,19 @@
   .change-result .compare .arrow {
     color:var(--emerald-bright); font-size:14px; padding:0 6px;
   }
-  .change-result .compare .side.now .v { color:var(--gold-flash); font-weight:700; }
+  .change-result .compare .side.now .v { color:var(--accent-flash); font-weight:700; }
 
   /* === ODAT ZANJIRI · natija kartasi ostida === */
   .habit-chain {
     position:absolute; bottom:130px; left:24px; right:24px;
     z-index:8; padding:10px 12px;
-    background:rgba(232,199,126,.05);
-    border:1px solid rgba(232,199,126,.25);
+    background:rgba(0,229,212,.05);
+    border:1px solid rgba(0,229,212,.25);
     border-radius:6px;
   }
   .habit-chain .head {
     font-family:'JetBrains Mono',monospace; font-size:8px;
-    letter-spacing:3px; color:var(--gold-deep);
+    letter-spacing:3px; color:var(--accent-deep);
     margin-bottom:7px;
   }
   .habit-chain .row {
@@ -204,15 +204,15 @@
     font-family:'Cormorant Garamond',serif; font-size:12px;
     color:var(--text-body);
   }
-  .habit-chain .row .name { color:var(--gold-flash); font-style:italic; font-weight:600; }
+  .habit-chain .row .name { color:var(--accent-flash); font-style:italic; font-weight:600; }
   .habit-chain .row .days { color:var(--emerald-bright); font-family:'JetBrains Mono',monospace; font-size:9px; letter-spacing:1px; }
   .habit-chain .note {
     margin-top:8px; padding-top:7px;
-    border-top:1px dashed rgba(232,199,126,.18);
+    border-top:1px dashed rgba(0,229,212,.18);
     font-family:'Cormorant Garamond',serif; font-style:italic;
     font-size:10.5px; line-height:1.4; color:var(--text-body);
   }
-  .habit-chain .note .em { color:var(--gold); font-weight:600; font-style:normal; }
+  .habit-chain .note .em { color:var(--accent); font-weight:600; font-style:normal; }
 
   /* ============================================== */
   /* === VARIANT 1 — MOUNTAIN SUMMIT (CHO'QQI)   === */
@@ -230,7 +230,7 @@
     position:absolute; top:200px; left:50%;
     width:8px; height:280px;
     transform:translateX(-50%);
-    background:linear-gradient(180deg, var(--gold-flash), transparent);
+    background:linear-gradient(180deg, var(--accent-flash), transparent);
     filter:blur(6px); opacity:0;
     animation:beam-rise 1.2s 1s ease forwards;
   }
@@ -238,9 +238,9 @@
   .v-mountain .summit-star {
     position:absolute; top:198px; left:50%;
     width:14px; height:14px; transform:translateX(-50%);
-    background:radial-gradient(circle,var(--gold-flash),var(--gold) 60%,transparent);
+    background:radial-gradient(circle,var(--accent-flash),var(--accent) 60%,transparent);
     border-radius:50%;
-    box-shadow:0 0 28px var(--gold), 0 0 60px var(--gold);
+    box-shadow:0 0 28px var(--accent), 0 0 60px var(--accent);
     z-index:3;
     opacity:0; animation:fade-in .8s 1.2s ease forwards;
   }
@@ -251,7 +251,7 @@
   .v-stars {
     background:
       radial-gradient(ellipse 80% 30% at 50% 25%, rgba(124,168,201,.06), transparent 65%),
-      radial-gradient(ellipse 80% 50% at 50% 100%, rgba(232,199,126,.05), transparent 70%),
+      radial-gradient(ellipse 80% 50% at 50% 100%, rgba(0,229,212,.05), transparent 70%),
       linear-gradient(180deg, #050810 0%, #0A0E16 50%, #050810 100%);
   }
   .v-stars .twinkle {
@@ -259,8 +259,8 @@
   }
   .v-stars .twinkle span {
     position:absolute; width:2px; height:2px;
-    border-radius:50%; background:var(--cream);
-    box-shadow:0 0 4px var(--cream);
+    border-radius:50%; background:var(--accent-cream);
+    box-shadow:0 0 4px var(--accent-cream);
     animation:tw 3s ease-in-out infinite;
   }
   @keyframes tw{0%,100%{opacity:.3;transform:scale(.8)}50%{opacity:1;transform:scale(1.3)}}
@@ -269,11 +269,11 @@
     width:300px; height:240px; z-index:3;
   }
   .v-stars .constellation-svg circle {
-    fill:var(--gold-flash);
-    filter:drop-shadow(0 0 6px var(--gold));
+    fill:var(--accent-flash);
+    filter:drop-shadow(0 0 6px var(--accent));
   }
   .v-stars .constellation-svg .line-anim {
-    stroke:var(--gold); stroke-width:1.2; fill:none;
+    stroke:var(--accent); stroke-width:1.2; fill:none;
     stroke-dasharray:200; stroke-dashoffset:200;
     animation:line-draw 2s 1s ease forwards;
   }
@@ -284,8 +284,8 @@
   /* ============================================== */
   .v-harvest {
     background:
-      radial-gradient(ellipse 90% 60% at 50% 100%, rgba(212,165,116,.18), transparent 65%),
-      radial-gradient(ellipse 100% 35% at 50% 30%, rgba(232,199,126,.08), transparent 70%),
+      radial-gradient(ellipse 90% 60% at 50% 100%, rgba(0,181,168,.18), transparent 65%),
+      radial-gradient(ellipse 100% 35% at 50% 30%, rgba(0,229,212,.08), transparent 70%),
       linear-gradient(180deg, #050810 0%, #100C06 60%, #1A1408 100%);
   }
   .v-harvest .wheat {
@@ -318,7 +318,7 @@
   .v-river .ripple {
     position:absolute; bottom:30%; left:50%;
     width:100px; height:100px;
-    border:1px solid rgba(232,199,126,.4);
+    border:1px solid rgba(0,229,212,.4);
     border-radius:50%;
     transform:translate(-50%,-50%);
     animation:ripple-out 4s linear infinite;
@@ -334,8 +334,8 @@
   }
   .v-river .stone {
     width:18px; height:6px; border-radius:50%;
-    background:linear-gradient(180deg, var(--gold), var(--gold-deep));
-    box-shadow:0 0 8px rgba(232,199,126,.5);
+    background:linear-gradient(180deg, var(--accent), var(--accent-deep));
+    box-shadow:0 0 8px rgba(0,229,212,.5);
   }
 
   /* ============================================== */
@@ -343,7 +343,7 @@
   /* ============================================== */
   .v-dawn {
     background:
-      radial-gradient(ellipse 100% 60% at 50% 100%, rgba(232,199,126,.32), transparent 60%),
+      radial-gradient(ellipse 100% 60% at 50% 100%, rgba(0,229,212,.32), transparent 60%),
       radial-gradient(ellipse 100% 30% at 50% 100%, rgba(194,139,139,.18), transparent 70%),
       linear-gradient(180deg, #050810 0%, #1A1410 50%, #2A1810 100%);
   }
@@ -351,7 +351,7 @@
     position:absolute; bottom:170px; left:50%;
     width:140px; height:140px;
     transform:translateX(-50%);
-    background:radial-gradient(circle at 50% 50%, var(--gold-flash), var(--gold) 50%, transparent);
+    background:radial-gradient(circle at 50% 50%, var(--accent-flash), var(--accent) 50%, transparent);
     border-radius:50%;
     filter:blur(4px); opacity:0;
     animation:sun-rise 2.5s 1s ease forwards;
@@ -363,14 +363,14 @@
   .v-dawn .horizon-line {
     position:absolute; bottom:170px; left:0; right:0;
     height:1px;
-    background:linear-gradient(90deg, transparent, rgba(232,199,126,.55), transparent);
-    box-shadow:0 0 14px rgba(232,199,126,.4);
+    background:linear-gradient(90deg, transparent, rgba(0,229,212,.55), transparent);
+    box-shadow:0 0 14px rgba(0,229,212,.4);
   }
   .v-dawn .ray {
     position:absolute; bottom:170px; left:50%;
     width:2px; height:140px;
     transform-origin:bottom center;
-    background:linear-gradient(180deg, transparent, var(--gold), transparent);
+    background:linear-gradient(180deg, transparent, var(--accent), transparent);
     opacity:0;
     animation:ray-burst 3s 1.5s ease infinite;
   }
@@ -382,14 +382,14 @@
   .v-phoenix {
     background:
       radial-gradient(ellipse 80% 50% at 50% 50%, rgba(184,51,74,.10), transparent 65%),
-      radial-gradient(ellipse 80% 40% at 50% 30%, rgba(232,199,126,.18), transparent 65%),
+      radial-gradient(ellipse 80% 40% at 50% 30%, rgba(0,229,212,.18), transparent 65%),
       linear-gradient(180deg, var(--void) 0%, #1A0810 50%, var(--void) 100%);
   }
   .v-phoenix .ember {
     position:absolute; bottom:0;
     width:3px; height:3px; border-radius:50%;
-    background:var(--gold-flash);
-    box-shadow:0 0 8px var(--gold), 0 0 16px var(--crimson);
+    background:var(--accent-flash);
+    box-shadow:0 0 8px var(--accent), 0 0 16px var(--crimson);
     opacity:0;
     animation:ember-rise 5s linear infinite;
   }
@@ -403,10 +403,10 @@
     width:150px; height:120px; z-index:3;
   }
   .v-phoenix .phoenix-svg path {
-    stroke:var(--gold); stroke-width:1.5; fill:rgba(232,199,126,.08);
+    stroke:var(--accent); stroke-width:1.5; fill:rgba(0,229,212,.08);
     stroke-dasharray:400; stroke-dashoffset:400;
     animation:phoenix-draw 2s 0.6s ease forwards;
-    filter:drop-shadow(0 0 10px var(--gold-flash));
+    filter:drop-shadow(0 0 10px var(--accent-flash));
   }
   @keyframes phoenix-draw{to{stroke-dashoffset:0}}
 
@@ -415,7 +415,7 @@
   /* ============================================== */
   .v-key {
     background:
-      radial-gradient(ellipse 80% 40% at 50% 35%, rgba(232,199,126,.18), transparent 65%),
+      radial-gradient(ellipse 80% 40% at 50% 35%, rgba(0,229,212,.18), transparent 65%),
       linear-gradient(180deg, var(--void) 0%, #14100A 50%, var(--void) 100%);
   }
   .v-key svg.key-svg {
@@ -424,14 +424,14 @@
     animation:key-spin 6s linear infinite, key-glow 2s ease-in-out infinite;
   }
   @keyframes key-spin{to{transform:translateX(-50%) rotate(360deg)}}
-  @keyframes key-glow{0%,100%{filter:drop-shadow(0 0 12px rgba(232,199,126,.5))}50%{filter:drop-shadow(0 0 28px rgba(232,199,126,.9))}}
+  @keyframes key-glow{0%,100%{filter:drop-shadow(0 0 12px rgba(0,229,212,.5))}50%{filter:drop-shadow(0 0 28px rgba(0,229,212,.9))}}
 
   /* ============================================== */
   /* === VARIANT 4 — TREE OF LIGHT (NUR DARAXTI) === */
   /* ============================================== */
   .v-tree {
     background:
-      radial-gradient(ellipse 80% 40% at 50% 30%, rgba(232,199,126,.18), transparent 65%),
+      radial-gradient(ellipse 80% 40% at 50% 30%, rgba(0,229,212,.18), transparent 65%),
       linear-gradient(180deg, var(--void) 0%, #1A1410 50%, var(--void) 100%);
   }
   .v-tree svg.tree-svg {
@@ -439,13 +439,13 @@
     width:280px; height:280px; z-index:3;
   }
   .v-tree .tree-svg path {
-    stroke:var(--gold); stroke-width:1.5; fill:none;
+    stroke:var(--accent); stroke-width:1.5; fill:none;
     stroke-dasharray:600; stroke-dashoffset:600;
     animation:tree-grow 2.5s 1s ease forwards;
-    filter:drop-shadow(0 0 6px rgba(232,199,126,.5));
+    filter:drop-shadow(0 0 6px rgba(0,229,212,.5));
   }
   @keyframes tree-grow{to{stroke-dashoffset:0}}
-  .v-tree .tree-svg circle.leaf{fill:var(--gold-flash);opacity:0;animation:leaf-pop .5s ease forwards}
+  .v-tree .tree-svg circle.leaf{fill:var(--accent-flash);opacity:0;animation:leaf-pop .5s ease forwards}
   @keyframes leaf-pop{to{opacity:1;transform:scale(1.2)}}
 
   /* === Floating gold particles (used by some variants) === */
@@ -454,8 +454,8 @@
   }
   .particles span {
     position:absolute; width:3px; height:3px;
-    border-radius:50%; background:var(--gold-flash);
-    box-shadow:0 0 6px var(--gold);
+    border-radius:50%; background:var(--accent-flash);
+    box-shadow:0 0 6px var(--accent);
     opacity:0;
     animation:rise 6s linear infinite;
   }
@@ -477,8 +477,8 @@
     cursor:pointer; border:1px solid rgba(255,255,255,.08);
     user-select:none; transition:all .2s;
   }
-  .variant-tab:hover{color:var(--gold);border-color:var(--gold-deep)}
-  .variant-tab.active{color:var(--gold);border-color:var(--gold);background:rgba(232,199,126,.08)}
+  .variant-tab:hover{color:var(--accent);border-color:var(--accent-deep)}
+  .variant-tab.active{color:var(--accent);border-color:var(--accent);background:rgba(0,229,212,.08)}
 
   .footer-info {
     margin-top:22px; text-align:center;
@@ -507,13 +507,13 @@
     .mobile-celebrate-header .pre {
       font-family:'JetBrains Mono',monospace;
       font-size:9px; letter-spacing:4px;
-      color:var(--gold-deep); margin-bottom:8px;
+      color:var(--accent-deep); margin-bottom:8px;
     }
     .mobile-celebrate-header .big {
       font-family:'Cinzel',serif; font-weight:700;
       font-size:38px; letter-spacing:2px;
-      color:var(--gold-flash);
-      text-shadow:0 0 30px rgba(232,199,126,.55);
+      color:var(--accent-flash);
+      text-shadow:0 0 30px rgba(0,229,212,.55);
       margin-bottom:6px;
     }
     .mobile-celebrate-header .sub {
@@ -532,11 +532,11 @@
     }
     .mobile-celebrate-bar .btn {
       width:100%; padding:14px;
-      background:linear-gradient(180deg, var(--cream), var(--gold), var(--gold-deep));
+      background:linear-gradient(180deg, var(--accent-cream), var(--accent), var(--accent-deep));
       color:var(--void); font-size:12px; font-weight:700;
       letter-spacing:4px; border:none; border-radius:4px;
       cursor:pointer; text-transform:uppercase;
-      box-shadow:0 0 22px rgba(232,199,126,.40), inset 0 1px 0 rgba(255,255,255,.5);
+      box-shadow:0 0 22px rgba(0,229,212,.40), inset 0 1px 0 rgba(255,255,255,.5);
     }
 
     .footer-info,.variant-tabs{display:none}
@@ -578,8 +578,8 @@
           <stop offset="100%" stop-color="#04060B"/>
         </linearGradient>
         <linearGradient id="mtnEdge" x1="0" y1="0" x2="0" y2="1">
-          <stop offset="0%" stop-color="#E8C77E" stop-opacity="0.8"/>
-          <stop offset="100%" stop-color="#8a6f44" stop-opacity="0.2"/>
+          <stop offset="0%" stop-color="#00E5D4" stop-opacity="0.8"/>
+          <stop offset="100%" stop-color="#007D75" stop-opacity="0.2"/>
         </linearGradient>
       </defs>
       <!-- Back mountain -->
@@ -587,7 +587,7 @@
       <polyline points="0,280 110,90 220,180 280,40 380,280" stroke="url(#mtnEdge)" stroke-width="1" fill="none"/>
       <!-- Front mountain -->
       <polygon points="0,280 80,170 190,80 280,200 380,280" fill="url(#mtnGrad)"/>
-      <polyline points="0,280 80,170 190,80 280,200" stroke="#E8C77E" stroke-width="1.2" fill="none"/>
+      <polyline points="0,280 80,170 190,80 280,200" stroke="#00E5D4" stroke-width="1.2" fill="none"/>
     </svg>
     <div class="summit-light"></div>
     <div class="summit-star"></div>
@@ -653,8 +653,8 @@
     <!-- 5 wheat stalks rising — each = one habit -->
     <div class="wheat" style="left:50px;animation-delay:.5s">
       <svg viewBox="0 0 40 180" preserveAspectRatio="xMidYMax meet">
-        <line x1="20" y1="180" x2="20" y2="40" stroke="#8a6f44" stroke-width="1.6"/>
-        <g fill="#E8C77E">
+        <line x1="20" y1="180" x2="20" y2="40" stroke="#007D75" stroke-width="1.6"/>
+        <g fill="#00E5D4">
           <ellipse cx="20" cy="42" rx="3" ry="6"/>
           <ellipse cx="14" cy="55" rx="3" ry="6" transform="rotate(-25 14 55)"/>
           <ellipse cx="26" cy="55" rx="3" ry="6" transform="rotate(25 26 55)"/>
@@ -667,8 +667,8 @@
     </div>
     <div class="wheat" style="left:115px;animation-delay:.9s">
       <svg viewBox="0 0 40 180" preserveAspectRatio="xMidYMax meet">
-        <line x1="20" y1="180" x2="20" y2="30" stroke="#8a6f44" stroke-width="1.6"/>
-        <g fill="#FFE9B5">
+        <line x1="20" y1="180" x2="20" y2="30" stroke="#007D75" stroke-width="1.6"/>
+        <g fill="#7AF5EC">
           <ellipse cx="20" cy="32" rx="3" ry="6.5"/>
           <ellipse cx="13" cy="46" rx="3" ry="6.5" transform="rotate(-25 13 46)"/>
           <ellipse cx="27" cy="46" rx="3" ry="6.5" transform="rotate(25 27 46)"/>
@@ -681,8 +681,8 @@
     </div>
     <div class="wheat" style="left:180px;animation-delay:1.3s">
       <svg viewBox="0 0 40 180" preserveAspectRatio="xMidYMax meet">
-        <line x1="20" y1="180" x2="20" y2="20" stroke="#8a6f44" stroke-width="1.6"/>
-        <g fill="#E8C77E">
+        <line x1="20" y1="180" x2="20" y2="20" stroke="#007D75" stroke-width="1.6"/>
+        <g fill="#00E5D4">
           <ellipse cx="20" cy="22" rx="3" ry="7"/>
           <ellipse cx="13" cy="38" rx="3" ry="7" transform="rotate(-25 13 38)"/>
           <ellipse cx="27" cy="38" rx="3" ry="7" transform="rotate(25 27 38)"/>
@@ -695,8 +695,8 @@
     </div>
     <div class="wheat" style="left:245px;animation-delay:1.7s">
       <svg viewBox="0 0 40 180" preserveAspectRatio="xMidYMax meet">
-        <line x1="20" y1="180" x2="20" y2="40" stroke="#8a6f44" stroke-width="1.6"/>
-        <g fill="#D4A574">
+        <line x1="20" y1="180" x2="20" y2="40" stroke="#007D75" stroke-width="1.6"/>
+        <g fill="#00B5A8">
           <ellipse cx="20" cy="42" rx="3" ry="6"/>
           <ellipse cx="14" cy="55" rx="3" ry="6" transform="rotate(-25 14 55)"/>
           <ellipse cx="26" cy="55" rx="3" ry="6" transform="rotate(25 26 55)"/>
@@ -707,8 +707,8 @@
     </div>
     <div class="wheat" style="left:300px;animation-delay:2.1s">
       <svg viewBox="0 0 40 180" preserveAspectRatio="xMidYMax meet">
-        <line x1="20" y1="180" x2="20" y2="50" stroke="#8a6f44" stroke-width="1.6"/>
-        <g fill="#E8C77E">
+        <line x1="20" y1="180" x2="20" y2="50" stroke="#007D75" stroke-width="1.6"/>
+        <g fill="#00E5D4">
           <ellipse cx="20" cy="52" rx="3" ry="6"/>
           <ellipse cx="14" cy="65" rx="3" ry="6" transform="rotate(-25 14 65)"/>
           <ellipse cx="26" cy="65" rx="3" ry="6" transform="rotate(25 26 65)"/>
@@ -897,8 +897,8 @@
     <svg class="key-svg" viewBox="0 0 200 200">
       <defs>
         <radialGradient id="keyGrad" cx="50%" cy="50%" r="50%">
-          <stop offset="0%" stop-color="#FFE9B5"/>
-          <stop offset="100%" stop-color="#8a6f44"/>
+          <stop offset="0%" stop-color="#7AF5EC"/>
+          <stop offset="100%" stop-color="#007D75"/>
         </radialGradient>
       </defs>
       <!-- Octagonal lock with star inside -->

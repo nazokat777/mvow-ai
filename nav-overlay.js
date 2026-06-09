@@ -8,9 +8,10 @@
   // AND make every screen scroll-friendly on mobile (universal fix).
   function injectLogoStyles() {
     const css = `
-      /* === Universal: gold orbs → MNSM logo === */
+      /* === Logo'larni teal'ga aylantirish — hue-rotate(160deg) oltindan teal'ga */
       .mentor-orb, .avatar, .orb-core, .header-orb, .portal-core,
-      .notif-orb.mentor, .core-well-logo {
+      .notif-orb.mentor, .core-well-logo, .timer-logo, .invite .orb,
+      .gen-orb, .day-progress .orb {
         background: transparent !important;
         background-image: url('assets/mnsm-logo.png') !important;
         background-size: contain !important;
@@ -19,10 +20,22 @@
         box-shadow: none !important;
         border: none !important;
         animation: none !important;
-        filter: drop-shadow(0 0 12px rgba(232,199,126,0.55));
+        filter: hue-rotate(160deg) saturate(1.4) drop-shadow(0 0 12px rgba(0,229,212,0.55));
       }
       .mentor-orb *, .avatar *, .orb-core *, .header-orb *, .portal-core * {
         opacity: 0 !important;
+      }
+      /* MNSM logo barcha img va background fonida — hue-rotate orqali teal */
+      img[src*="mnsm-logo"],
+      [class*="mnsm-img"] img,
+      .brand-block img,
+      .seq-nav-pos img,
+      .logo-wrap img,
+      [style*="mnsm-logo"] {
+        filter: hue-rotate(160deg) saturate(1.4) !important;
+      }
+      .seq-nav-pos img {
+        filter: hue-rotate(160deg) saturate(1.4) drop-shadow(0 0 4px rgba(0,229,212,.5)) !important;
       }
 
       /* === Universal mobile scroll — every screen flows like a normal page === */
@@ -194,11 +207,11 @@
       pointer-events: auto;
       width: 40px; height: 40px;
       border-radius: 50%;
-      border: 1px solid rgba(232,199,126,0.55);
+      border: 1px solid rgba(0,229,212,0.55);
       background: rgba(8,8,12,0.78);
       backdrop-filter: blur(8px);
       -webkit-backdrop-filter: blur(8px);
-      color: #E8C77E;
+      color: #00E5D4;
       font-size: 20px;
       font-weight: 600;
       font-family: serif;
@@ -212,7 +225,7 @@
       -webkit-tap-highlight-color: transparent;
       transition: transform .12s, background .15s;
     }
-    .seq-nav .arrow:active { transform: scale(0.92); background: rgba(232,199,126,0.18); }
+    .seq-nav .arrow:active { transform: scale(0.92); background: rgba(0,229,212,0.18); }
     .seq-nav .arrow.disabled { opacity: 0.18; pointer-events: none; }
     .seq-nav-pos {
       position: fixed;
@@ -220,12 +233,12 @@
       transform: translateX(-50%);
       pointer-events: auto;
       padding: 5px 12px;
-      border: 1px solid rgba(232,199,126,0.45);
+      border: 1px solid rgba(0,229,212,0.45);
       border-radius: 999px;
       background: rgba(8,8,12,0.78);
       backdrop-filter: blur(8px);
       -webkit-backdrop-filter: blur(8px);
-      color: #E8C77E;
+      color: #00E5D4;
       font-family: 'JetBrains Mono', monospace;
       font-size: 9px;
       letter-spacing: 2px;
@@ -233,7 +246,7 @@
       z-index: 99999;
       box-shadow: 0 2px 8px rgba(0,0,0,0.5);
     }
-    .seq-nav-pos b { color: #FFE9B5; font-weight: 600; }
+    .seq-nav-pos b { color: #7AF5EC; font-weight: 600; }
     @media (max-width: 480px) {
       .seq-nav .arrow { width: 36px; height: 36px; font-size: 18px; }
       .seq-nav-pos { font-size: 8.5px; padding: 4px 10px; }
@@ -246,7 +259,7 @@
   pos.className = 'seq-nav-pos';
   pos.href = 'menu.html';
   pos.innerHTML =
-    '<img src="assets/mnsm-logo.png" style="height:14px;width:auto;vertical-align:middle;margin-right:5px;filter:drop-shadow(0 0 4px rgba(232,199,126,.5))" alt="MNSM" />' +
+    '<img src="assets/mnsm-logo.png" style="height:14px;width:auto;vertical-align:middle;margin-right:5px;filter:drop-shadow(0 0 4px rgba(0,229,212,.5))" alt="MNSM" />' +
     '<b>' + (idx + 1) + '</b> / ' + SEQ.length +
     '&nbsp;&nbsp;☰';
   pos.title = 'Barcha ekranlar';
@@ -258,7 +271,7 @@
     'position:fixed; bottom:14px; left:10px; width:24px; height:24px; ' +
     'background:url(assets/mnsm-logo.png) center/contain no-repeat; ' +
     'opacity:.35; pointer-events:none; z-index:99996; ' +
-    'filter:drop-shadow(0 0 6px rgba(232,199,126,.4));';
+    'filter:drop-shadow(0 0 6px rgba(0,229,212,.4));';
   document.body.appendChild(watermark);
 
   // Side arrows
