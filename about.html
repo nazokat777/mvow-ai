@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>{brand} — Bu ilov haqida</title>
+<link rel="manifest" href="manifest.webmanifest">
+<meta name="theme-color" content="#04060B">
+<link rel="apple-touch-icon" href="assets/mnsm-logo.png">
+<link rel="icon" type="image/png" href="assets/mnsm-logo.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  :root { --void:#04060B; --void-soft:#0C0F16; --text:#F5F2EC; --text-mid:#8A8D94; --text-dim:#6E7178; --accent:#00E5D4; --accent-soft:#00B5A8; }
+  body { background: var(--void); font-family:'Inter',sans-serif; color: var(--text); min-height: 100vh; display:flex; justify-content:center; align-items:flex-start; padding: 24px; -webkit-font-smoothing: antialiased; }
+  .phone { width: 380px; min-height: 800px; background: var(--void); border-radius: 40px; position: relative; box-shadow: 0 0 0 8px #1a1d24, 0 30px 80px rgba(0,0,0,.7); overflow: hidden; }
+  .container { padding: 60px 28px 80px; }
+
+  .top { text-align:center; margin-bottom: 36px; }
+  .logo { width: 60px; height: 60px; margin: 0 auto 12px; background: url('assets/mnsm-logo.png') center/contain no-repeat; filter: hue-rotate(160deg) saturate(1.4) drop-shadow(0 0 12px rgba(0,229,212,.4)); }
+  .name { font-family:'Cormorant Garamond',serif; font-weight:600; font-size: 26px; letter-spacing: 4px; color: var(--text); }
+  .ver { font-size: 11px; letter-spacing: 3px; color: var(--text-dim); text-transform: uppercase; margin-top: 4px; }
+
+  .quote {
+    font-family: 'Cormorant Garamond', serif;
+    font-style: italic;
+    font-size: 18px;
+    line-height: 1.6;
+    color: var(--text);
+    text-align: center;
+    margin-bottom: 28px;
+    padding: 0 6px;
+  }
+  .quote .em { color: var(--accent); font-style: normal; }
+
+  .section { margin-bottom: 24px; }
+  .section .lbl { font-size: 10px; letter-spacing: 4px; color: var(--accent); text-transform: uppercase; margin-bottom: 10px; }
+  .section p { font-size: 14px; color: var(--text-mid); line-height: 1.65; margin-bottom: 8px; }
+  .section .feat {
+    display: flex; gap: 10px; align-items: baseline;
+    padding: 6px 0;
+    font-size: 13px; color: var(--text-mid); line-height: 1.5;
+  }
+  .section .feat .dot { color: var(--accent); }
+
+  .links {
+    display: flex; flex-direction: column; gap: 10px;
+    margin-top: 28px;
+    padding-top: 24px;
+    border-top: 1px solid rgba(255,255,255,.04);
+  }
+  .link {
+    display: grid;
+    grid-template-columns: 1fr auto;
+    align-items: center;
+    padding: 14px 4px;
+    text-decoration: none;
+    color: var(--text);
+    border-bottom: 1px solid rgba(255,255,255,.04);
+    font-size: 14px;
+  }
+  .link:active, .link:hover { color: var(--accent); }
+  .link .arr { color: var(--text-dim); font-size: 16px; }
+
+  .footer { margin-top: 32px; text-align: center; font-size: 11px; color: var(--text-dim); letter-spacing: 2px; text-transform: uppercase; line-height: 1.7; }
+  .footer .em { color: var(--text-mid); }
+
+  @media (max-width: 480px) { body { padding: 0; } .phone { width: 100vw; min-height: 100vh; border-radius: 0; box-shadow: none; } }
+</style>
+</head>
+<body>
+
+<div class="phone">
+  <div class="container">
+
+    <div class="top">
+      <div class="logo"></div>
+      <div class="name" data-brand="name">brend</div>
+      <div class="ver" id="ver">v 9.2</div>
+    </div>
+
+    <p class="quote">
+      <span class="em">Intizom</span> — sen va niyating o'rtasida turadigan <span class="em">do'st</span>.
+    </p>
+
+    <div class="section">
+      <div class="lbl">Nima bu?</div>
+      <p>Bu ilov senga kunlik rejani tuzish, fokus paytida chalg'imaslik va har kuni bitta qadam tashlashda yordam beradi. Murabbiy — sening intizom do'sting.</p>
+    </div>
+
+    <div class="section">
+      <div class="lbl">Imkoniyatlar</div>
+      <div class="feat"><span class="dot">·</span> Rejani yozma yoki ovozli kiritish</div>
+      <div class="feat"><span class="dot">·</span> Bugungi kun tartibi — tahrirlanadi</div>
+      <div class="feat"><span class="dot">·</span> Haqiqiy fokus taymeri</div>
+      <div class="feat"><span class="dot">·</span> Streak — kunlar ketma-ketligi</div>
+      <div class="feat"><span class="dot">·</span> Uyg'onish — 3 ta misol bilan</div>
+      <div class="feat"><span class="dot">·</span> Haftalik natijalar va kalendar</div>
+    </div>
+
+    <div class="section">
+      <div class="lbl">Maxfiylik</div>
+      <p>Hech narsa serverga jo'natilmaydi. Hech qanday AI'ga, hech qanday kuzatuvchiga. Barcha ma'lumoting — telefoningda. Sen istasang — bir tugma bilan tozalaysan.</p>
+    </div>
+
+    <div class="links">
+      <a class="link" href="settings.html">Sozlamalar <span class="arr">›</span></a>
+      <a class="link" href="privacy.html">Maxfiylik siyosati <span class="arr">›</span></a>
+      <a class="link" href="menu.html">Barcha ekranlar <span class="arr">›</span></a>
+    </div>
+
+    <div class="footer">
+      Yaratuvchi · <span class="em" data-brand="name">brend</span><br>
+      © 2026 · Hammaning niyati bilan
+    </div>
+
+  </div>
+</div>
+
+<script src="data.js" defer></script>
+<script src="nav-overlay.js" defer></script>
+
+</body>
+</html>

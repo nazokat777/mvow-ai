@@ -156,7 +156,72 @@
     });
   });
 
-  $('cta').addEventListener('click', () => {
+  // ── Profilga qarab boshlovchi reja yaratish ──
+  function buildStarterPlan(p) {
+    const job = (p.job || '').toLowerCase();
+    let labels;
+    if (/talab|o'q|study|student/.test(job)) {
+      labels = [
+        { time: '08:00', name: "O'qish",   dur: '1 soat' },
+        { time: '14:00', name: 'Mashq',    dur: '45 daq' },
+        { time: '19:00', name: 'Kitob',    dur: '45 daq' }
+      ];
+    } else if (/dastur|develop|kod|engineer|design/.test(job)) {
+      labels = [
+        { time: '09:00', name: 'Loyiha',   dur: '1 soat 30 daq' },
+        { time: '14:00', name: 'Sayr',     dur: '30 daq' },
+        { time: '19:00', name: 'Mutolaa',  dur: '45 daq' }
+      ];
+    } else if (/sport|trener|fitnes|jismoniy/.test(job)) {
+      labels = [
+        { time: '07:00', name: 'Mashq',         dur: '1 soat' },
+        { time: '14:00', name: 'Yo\'l-yo\'riq', dur: '1 soat' },
+        { time: '19:00', name: 'Kitob',         dur: '45 daq' }
+      ];
+    } else {
+      labels = [
+        { time: '09:00', name: 'Asosiy ish', dur: '1 soat 30 daq' },
+        { time: '14:00', name: 'Mashq',      dur: '45 daq' },
+        { time: '19:00', name: 'Mutolaa',    dur: '30 daq' }
+      ];
+    }
+    return labels;
+  }
+
+  // ── Profil tasdiq toast'i ──
+  function showConfirm(profile, onDone) {
+    const ages = profile.age ? profile.age + ' yosh' : '';
+    const job = profile.job || '';
+    const aim = profile.aim || '';
+    const layer = document.createElement('div');
+    layer.id = 'confirmLayer';
+    layer.style.cssText = 'position:fixed;inset:0;z-index:9999;display:flex;align-items:center;justify-content:center;background:rgba(4,6,11,.85);backdrop-filter:blur(8px);opacity:0;transition:opacity .35s;padding:24px;';
+    layer.innerHTML = `
+      <div style="max-width:340px;background:#0C0F16;border:1px solid rgba(0,229,212,.18);border-radius:14px;padding:28px 22px 22px;text-align:center;transform:translateY(12px);transition:transform .35s;">
+        <div style="font-family:'Cormorant Garamond',serif;font-style:italic;font-size:22px;color:#00E5D4;margin-bottom:14px;">Ko'rdim seni.</div>
+        <div style="font-family:'Cormorant Garamond',serif;font-size:16px;color:#F5F2EC;line-height:1.6;margin-bottom:18px;">
+          ${ages ? '<div>' + escapeText(ages) + '</div>' : ''}
+          ${job ? '<div style="opacity:.85;">' + escapeText(job) + '</div>' : ''}
+          ${aim ? '<div style="margin-top:10px;font-style:italic;opacity:.8;font-size:14px;">"' + escapeText(aim) + '"</div>' : ''}
+        </div>
+        <div style="font-size:11px;letter-spacing:3px;color:#8A8D94;text-transform:uppercase;margin-bottom:18px;">Birinchi reja tayyor</div>
+        <button id="confirmGo" type="button" style="background:linear-gradient(180deg,#00E5D4,#00B5A8);color:#04060B;border:none;border-radius:6px;padding:14px 30px;font-family:'Inter',sans-serif;font-size:13px;font-weight:600;letter-spacing:2px;text-transform:uppercase;cursor:pointer;">Davom</button>
+      </div>
+    `;
+    document.body.appendChild(layer);
+    requestAnimationFrame(() => {
+      layer.style.opacity = '1';
+      layer.querySelector('div > div').style.transform = 'translateY(0)';
+    });
+    document.getElementById('confirmGo').addEventListener('click', () => {
+      if (window.MVOW_DATA) MVOW_DATA.fxTap();
+      onDone();
+    });
+  }
+  function escapeText(s) { return String(s).replace(/[<>"&]/g, c => ({'<':'&lt;','>':'&gt;','"':'&quot;','&':'&amp;'}[c])); }
+
+  $('cta').addEventListener('click', (e) => {
+    e.preventDefault();
     const selected = document.querySelector('#genderChips .chip.on');
     const profile = {
       age:    $('age').value.trim(),
@@ -165,6 +230,15 @@
       aim:    $('aim').value.trim()
     };
     localStorage.setItem(PROFILE_KEY, JSON.stringify(profile));
+
+    // Birinchi rejani avtomatik tuz (agar bo'sh bo'lsa)
+    if (window.MVOW_DATA && !MVOW_DATA.getTodayPlan().length) {
+      const starter = buildStarterPlan(profile);
+      MVOW_DATA.setTodayPlan(starter);
+    }
+
+    // Tasdiq toast
+    showConfirm(profile, () => { window.location.href = 'permissions.html'; });
   });
 </script>
 
