@@ -68,11 +68,11 @@
     <div class="list">
       <div class="perm">
         <div class="name">Ekran vaqti</div>
-        <div class="toggle" data-perm role="switch" tabindex="0" aria-label="Ekran vaqti ruxsati" aria-checked="false"></div>
+        <div class="toggle" data-perm="screenTime" role="switch" tabindex="0" aria-label="Ekran vaqti ruxsati" aria-checked="false"></div>
       </div>
       <div class="perm">
         <div class="name">Bildirishnomalar</div>
-        <div class="toggle" data-perm role="switch" tabindex="0" aria-label="Bildirishnomalar ruxsati" aria-checked="false"></div>
+        <div class="toggle" data-perm="notification" role="switch" tabindex="0" aria-label="Bildirishnomalar ruxsati" aria-checked="false"></div>
       </div>
     </div>
   </div>
@@ -88,12 +88,48 @@
   const cta = document.getElementById('cta');
   const counter = document.getElementById('grantedN');
   const tgls = document.querySelectorAll('[data-perm]');
-  tgls.forEach(t => t.addEventListener('click', () => {
-    t.classList.toggle('on');
+
+  function refreshCount() {
     const n = document.querySelectorAll('[data-perm].on').length;
     counter.textContent = n;
     cta.classList.toggle('disabled', n === 0);
-  }));
+  }
+
+  // Saqlangan holatdan tiklash
+  const SK = 'mvow.perm';
+  let saved = {};
+  try { saved = JSON.parse(localStorage.getItem(SK) || '{}'); } catch {}
+
+  tgls.forEach(t => {
+    const key = t.dataset.perm;
+    if (saved[key]) {
+      t.classList.add('on');
+      t.setAttribute('aria-checked', 'true');
+    }
+    const flip = async () => {
+      if (window.MVOW_DATA) MVOW_DATA.fxTap();
+      // "Bildirishnomalar" — haqiqiy brauzer ruxsatini so'rash
+      if (key === 'notification' && !t.classList.contains('on')) {
+        if ('Notification' in window) {
+          try {
+            const res = await Notification.requestPermission();
+            if (res !== 'granted') return; // rad bo'lsa, toggle yoqilmaydi
+          } catch {}
+        }
+      }
+      const on = !t.classList.contains('on');
+      t.classList.toggle('on', on);
+      t.setAttribute('aria-checked', on ? 'true' : 'false');
+      saved[key] = on;
+      localStorage.setItem(SK, JSON.stringify(saved));
+      refreshCount();
+    };
+    t.addEventListener('click', flip);
+    t.addEventListener('keydown', e => {
+      if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); flip(); }
+    });
+  });
+  refreshCount();
 </script>
 
 </body>

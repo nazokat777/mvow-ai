@@ -125,6 +125,49 @@
   }
   DATA.profile = loadProfile();
 
+  // ──────────────────────────────────────────────────────────────
+  // HAPTIC + AUDIO — sodda feedback (Android'da vibratsiya, hammasida bip)
+  // ──────────────────────────────────────────────────────────────
+  DATA.vibrate = function (pattern) {
+    try {
+      if (navigator.vibrate) navigator.vibrate(pattern || 30);
+    } catch {}
+  };
+
+  // Web Audio API orqali sodda bip (fayl yuklamaymiz)
+  let _audioCtx = null;
+  function getAudioCtx() {
+    if (_audioCtx) return _audioCtx;
+    const AC = window.AudioContext || window.webkitAudioContext;
+    if (!AC) return null;
+    _audioCtx = new AC();
+    return _audioCtx;
+  }
+  DATA.beep = function (opts) {
+    const ctx = getAudioCtx();
+    if (!ctx) return;
+    const o = Object.assign({ freq: 880, dur: 0.12, type: 'sine', vol: 0.18 }, opts || {});
+    try {
+      const osc = ctx.createOscillator();
+      const gain = ctx.createGain();
+      osc.type = o.type;
+      osc.frequency.value = o.freq;
+      gain.gain.value = o.vol;
+      osc.connect(gain);
+      gain.connect(ctx.destination);
+      const t = ctx.currentTime;
+      gain.gain.setValueAtTime(o.vol, t);
+      gain.gain.exponentialRampToValueAtTime(0.001, t + o.dur);
+      osc.start(t);
+      osc.stop(t + o.dur);
+    } catch {}
+  };
+  // Standart preset'lar
+  DATA.fxSuccess = () => { DATA.vibrate(20); DATA.beep({ freq: 1320, dur: 0.10 }); };
+  DATA.fxError   = () => { DATA.vibrate([60, 50, 60]); DATA.beep({ freq: 220, dur: 0.18, type: 'square', vol: 0.12 }); };
+  DATA.fxFinish  = () => { DATA.vibrate([40, 60, 40, 60, 80]); DATA.beep({ freq: 880, dur: 0.12 }); setTimeout(() => DATA.beep({ freq: 1320, dur: 0.18 }), 120); };
+  DATA.fxTap     = () => { DATA.vibrate(8); };
+
   // Yoshga qarab murabbiy ohangi (juda oddiy individual yondashuv)
   DATA.toneByAge = () => {
     const a = parseInt(DATA.profile.age, 10);

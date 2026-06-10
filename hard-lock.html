@@ -178,8 +178,8 @@
     if (remaining === 0) {
       clearInterval(interval);
       localStorage.removeItem(ST_KEY);
-      // Sessiya bahosi sahifasiga o'tish
-      setTimeout(() => { location.href = 'session-reflection.html'; }, 800);
+      if (window.MVOW_DATA) MVOW_DATA.fxFinish();
+      setTimeout(() => { location.href = 'session-reflection.html'; }, 1000);
     }
   }, 1000);
 

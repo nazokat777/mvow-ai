@@ -131,6 +131,9 @@
     }
     document.getElementById('doneN').textContent = done;
 
+    // Sessiya tugaganda nozik feedback (tasdiq)
+    if (window.MVOW_DATA) MVOW_DATA.fxSuccess();
+
     // Bugungi reja umumiy hajmi
     document.getElementById('totalN').textContent = plan.length || (window.MVOW_DATA ? MVOW_DATA.sessions.length : 5);
 

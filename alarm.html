@@ -261,8 +261,9 @@
       dots[correct - 1].classList.add('on');
       hint.textContent = "to'g'ri";
       hint.className = 'hint good';
+      if (window.MVOW_DATA) MVOW_DATA.fxSuccess();
       if (correct >= 3) {
-        setTimeout(finish, 400);
+        setTimeout(() => { if (window.MVOW_DATA) MVOW_DATA.fxFinish(); finish(); }, 400);
       } else {
         setTimeout(next, 600);
       }
@@ -271,6 +272,7 @@
       ans.classList.add('wrong');
       hint.textContent = "noto'g'ri · yangisi";
       hint.className = 'hint bad';
+      if (window.MVOW_DATA) MVOW_DATA.fxError();
       setTimeout(() => {
         phone.classList.remove('wrong');
         next();
