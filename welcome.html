@@ -298,7 +298,7 @@
     const hasName = !!nameInp.value.trim();
     vowBlock.classList.toggle('show', hasName);
     if (hasName) userNameSpan.textContent = nameInp.value.trim();
-    btn.classList.toggle('disabled', !hasName || !recorded);
+    btn.classList.toggle('disabled', !hasName);
   }
   nameInp.addEventListener('input', check);
   bioInp.addEventListener('input', check);

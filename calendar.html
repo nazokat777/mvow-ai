@@ -180,8 +180,10 @@
 <div class="phone">
   <div class="container">
 
-    <div class="h">
+    <div class="h" style="display:flex;align-items:center;justify-content:center;gap:18px;">
+      <button id="prevW" type="button" aria-label="Oldingi hafta" style="background:transparent;border:none;color:var(--text-mid);font-size:22px;width:44px;height:44px;cursor:pointer;border-radius:50%;">‹</button>
       <div class="month" id="monthLbl">Iyun 2026</div>
+      <button id="nextW" type="button" aria-label="Keyingi hafta" style="background:transparent;border:none;color:var(--text-mid);font-size:22px;width:44px;height:44px;cursor:pointer;border-radius:50%;">›</button>
     </div>
 
     <div class="week-row" id="weekRow"></div>
@@ -202,18 +204,21 @@
   // Joriy haftaning Dushanbasidan boshlanadigan 7 kun
   const monShort = ['yan','fev','mar','apr','may','iyn','iyl','avg','sen','okt','noy','dek'];
   const monFull  = ['Yanvar','Fevral','Mart','Aprel','May','Iyun','Iyul','Avgust','Sentyabr','Oktyabr','Noyabr','Dekabr'];
-  const _now = new Date();
-  const _dow = _now.getDay(); // 0=Yakshanba
-  const _monday = new Date(_now);
-  _monday.setDate(_now.getDate() - ((_dow + 6) % 7));
-  const DAYS = (() => {
+  let weekOffset = 0; // 0 = bu hafta, -1 = oldingi, +1 = keyingi
+  let DAYS = [];
+  let TODAY_IDX = -1;
+  function buildWeek() {
+    const now = new Date();
+    const dow = now.getDay();
+    const monday = new Date(now);
+    monday.setDate(now.getDate() - ((dow + 6) % 7) + weekOffset * 7);
     const labels = ['DU','SE','CH','PA','JU','SH','YA'];
     const full   = ['Dushanba','Seshanba','Chorshanba','Payshanba','Juma','Shanba','Yakshanba'];
-    const out = [];
+    DAYS = [];
     for (let i = 0; i < 7; i++) {
-      const d = new Date(_monday);
-      d.setDate(_monday.getDate() + i);
-      out.push({
+      const d = new Date(monday);
+      d.setDate(monday.getDate() + i);
+      DAYS.push({
         key: 'd' + d.toISOString().slice(0,10),
         d: labels[i],
         n: d.getDate(),
@@ -221,11 +226,13 @@
         mon: d.getMonth()
       });
     }
-    return out;
-  })();
-  const TODAY_IDX = (_dow + 6) % 7; // Du = 0
-  // Sarlavha: oy + yil
-  document.getElementById('monthLbl').textContent = monFull[_now.getMonth()] + ' ' + _now.getFullYear();
+    TODAY_IDX = (weekOffset === 0) ? (dow + 6) % 7 : -1;
+    // Sarlavha
+    const midDay = DAYS[3];
+    document.getElementById('monthLbl').textContent = monFull[midDay.mon] + ' ' + new Date(_now.getFullYear(), midDay.mon, midDay.n).getFullYear();
+  }
+  const _now = new Date();
+  buildWeek();
 
   const STORAGE_KEY = 'mvow.weekPlan';
 
@@ -234,10 +241,10 @@
       const saved = JSON.parse(localStorage.getItem(STORAGE_KEY) || 'null');
       if (saved && typeof saved === 'object') return saved;
     } catch {}
-    // Default: today (Yakshanba) ga data.js dagi sessions
+    // Default: bugungi kunga data.js dagi sessions
     const init = {};
     DAYS.forEach(d => init[d.key] = []);
-    if (window.MVOW_DATA && MVOW_DATA.sessions) {
+    if (window.MVOW_DATA && MVOW_DATA.sessions && TODAY_IDX >= 0) {
       init[DAYS[TODAY_IDX].key] = MVOW_DATA.sessions.map(s => ({ time: s.time, name: s.name, dur: s.dur }));
     }
     return init;
@@ -247,7 +254,21 @@
   }
 
   let weekData = loadAll();
-  let selectedKey = DAYS[TODAY_IDX].key;
+  let selectedKey = TODAY_IDX >= 0 ? DAYS[TODAY_IDX].key : DAYS[0].key;
+
+  // Prev/Next hafta tugmalari
+  document.getElementById('prevW').addEventListener('click', () => {
+    weekOffset--;
+    buildWeek();
+    selectedKey = DAYS[0].key;
+    renderWeek(); renderDay();
+  });
+  document.getElementById('nextW').addEventListener('click', () => {
+    weekOffset++;
+    buildWeek();
+    selectedKey = DAYS[0].key;
+    renderWeek(); renderDay();
+  });
 
   // ── Render week chips ──
   const weekRow = document.getElementById('weekRow');
@@ -284,7 +305,9 @@
   }
 
   function renderDay() {
-    const day = DAYS.find(d => d.key === selectedKey);
+    const day = DAYS.find(d => d.key === selectedKey) || DAYS[0];
+    selectedKey = day.key;
+    if (!weekData[selectedKey]) weekData[selectedKey] = [];
     dayLabel.innerHTML = `${day.full} · <span class="em">${day.n}-${monShort[day.mon]}</span>`;
 
     const list = weekData[selectedKey] || [];
