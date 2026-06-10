@@ -174,22 +174,18 @@
 <script src="nav-overlay.js" defer></script>
 
 <script>
-  const STORAGE_KEY = 'mvow.todayPlan';
-
-  // ── Storage ──
+  // ── Storage — calendar bilan birga (weekPlan[todayKey]) ──
   function loadTasks() {
-    try {
-      const saved = JSON.parse(localStorage.getItem(STORAGE_KEY) || 'null');
-      if (Array.isArray(saved) && saved.length) return saved;
-    } catch {}
-    // Fallback: data.js'dan
-    if (window.MVOW_DATA && MVOW_DATA.sessions) {
+    if (window.MVOW_DATA) {
+      const t = MVOW_DATA.getTodayPlan();
+      if (t.length) return t;
+      // Birinchi marta — namuna
       return MVOW_DATA.sessions.map(s => ({ time: s.time, name: s.name, dur: s.dur }));
     }
     return [];
   }
   function saveTasks() {
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(tasks));
+    if (window.MVOW_DATA) MVOW_DATA.setTodayPlan(tasks);
   }
 
   let tasks = loadTasks();

@@ -91,6 +91,8 @@
     DATA.today.weekday   = dayShort[d.getDay()];
     DATA.today.monthYear = monFull[d.getMonth()] + ' ' + d.getFullYear();
     DATA.today.label     = DATA.today.date + ' · ' + DATA.today.weekday;
+    DATA.today.iso       = d.toISOString().slice(0, 10);   // 2026-06-10
+    DATA.today.key       = 'd' + DATA.today.iso;            // d2026-06-10 — weekPlan kaliti
     // ISO hafta soni
     const t = new Date(d.valueOf());
     t.setHours(0,0,0,0);
@@ -105,6 +107,45 @@
   DATA.currentSession = () => SESSIONS.find(s => s.status === 'current');
   DATA.permLabel      = () => `${DATA.permissions.granted} / ${DATA.permissions.required} RUXSAT BERILDI`;
   DATA.weekProgressLabel = () => `${DATA.week.progress.done} / ${DATA.week.progress.target} BAJARILDI`;
+
+  // ──────────────────────────────────────────────────────────────
+  // PLAN STORAGE — today-plan va calendar bitta manbadan
+  // ──────────────────────────────────────────────────────────────
+  DATA.getWeekPlan = function () {
+    try {
+      const w = JSON.parse(localStorage.getItem('mvow.weekPlan') || '{}');
+      return (w && typeof w === 'object') ? w : {};
+    } catch { return {}; }
+  };
+  DATA.setWeekPlan = function (w) {
+    localStorage.setItem('mvow.weekPlan', JSON.stringify(w));
+  };
+  DATA.getTodayPlan = function () {
+    const w = DATA.getWeekPlan();
+    return Array.isArray(w[DATA.today.key]) ? w[DATA.today.key] : [];
+  };
+  DATA.setTodayPlan = function (arr) {
+    const w = DATA.getWeekPlan();
+    w[DATA.today.key] = arr;
+    DATA.setWeekPlan(w);
+  };
+
+  // Eski mvow.todayPlan'ni weekPlan[todayKey]'ga ko'chirish (bir martalik)
+  (function migrateTodayPlan() {
+    const old = localStorage.getItem('mvow.todayPlan');
+    if (!old) return;
+    try {
+      const arr = JSON.parse(old);
+      if (Array.isArray(arr) && arr.length) {
+        const w = DATA.getWeekPlan();
+        if (!w[DATA.today.key] || !w[DATA.today.key].length) {
+          w[DATA.today.key] = arr;
+          DATA.setWeekPlan(w);
+        }
+      }
+    } catch {}
+    localStorage.removeItem('mvow.todayPlan');
+  })();
 
   // ──────────────────────────────────────────────────────────────
   // PROFIL — localStorage'dan foydalanuvchi haqida ma'lumot

@@ -170,11 +170,11 @@
     const streak = streakRaw != null ? parseInt(streakRaw, 10) : 12;
     document.getElementById('streakN').textContent = streak;
 
-    // Bugungi reja — saqlangan bo'lsa o'sha, yo'q bo'lsa data.js'dan namuna
+    // Bugungi reja — calendar/today-plan bilan bitta manba
     let plan = [];
-    try { plan = JSON.parse(localStorage.getItem('mvow.todayPlan') || '[]'); } catch {}
-    if (!Array.isArray(plan) || !plan.length) {
-      if (window.MVOW_DATA && MVOW_DATA.sessions) {
+    if (window.MVOW_DATA) {
+      plan = MVOW_DATA.getTodayPlan();
+      if (!plan.length && MVOW_DATA.sessions) {
         plan = MVOW_DATA.sessions.map(s => ({ time: s.time, name: s.name, dur: s.dur }));
       }
     }

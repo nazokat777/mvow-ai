@@ -143,12 +143,19 @@
       cta.textContent = 'Yakuniy bayram';
       cta.href = 'celebrate.html';
 
-      // Streak ham oshadi
-      const lastStreakDate = localStorage.getItem('mvow.lastStreakDate');
-      const today = new Date().toISOString().slice(0,10);
-      if (lastStreakDate !== today) {
+      // Streak — uzilish tekshiruvi
+      const today = new Date().toISOString().slice(0, 10);
+      const lastDate = localStorage.getItem('mvow.lastStreakDate');
+      if (lastDate !== today) {
         const cur = parseInt(localStorage.getItem('mvow.streak') || '0', 10);
-        localStorage.setItem('mvow.streak', String(cur + 1));
+        let newStreak = 1;
+        if (lastDate) {
+          const diffDays = Math.floor((new Date(today) - new Date(lastDate)) / 86400000);
+          if (diffDays === 1) newStreak = cur + 1;       // ketma-ket
+          else if (diffDays === 0) newStreak = cur;      // bugun ikkinchi sessiya
+          else newStreak = 1;                            // uzilish — qayta boshlash
+        }
+        localStorage.setItem('mvow.streak', String(newStreak));
         localStorage.setItem('mvow.lastStreakDate', today);
       }
     }

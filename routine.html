@@ -235,7 +235,7 @@
     const raw = t.value.trim();
     localStorage.setItem('mvow.plansRaw', raw);
     const sessions = parsePlansToSessions(raw);
-    if (sessions.length) localStorage.setItem('mvow.todayPlan', JSON.stringify(sessions));
+    if (sessions.length && window.MVOW_DATA) MVOW_DATA.setTodayPlan(sessions);
   });
 
   // ── Ovozli kiritish (Web Speech API) ──
