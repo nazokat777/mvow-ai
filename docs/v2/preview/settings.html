@@ -132,14 +132,25 @@
       <div class="sub"><span class="em" id="streakN">0</span> kun yo'l</div>
     </div>
 
-    <div class="section-lbl">Mentor</div>
+    <div class="section-lbl" data-i18n="settings.sec_lang">Til</div>
 
     <div class="row">
-      <div class="lbl">Mentor ohangi</div>
+      <div class="lbl" data-i18n="settings.language">Til</div>
+      <select id="langSel">
+        <option value="uz">O'zbekcha</option>
+        <option value="ru">Русский</option>
+        <option value="en">English</option>
+      </select>
+    </div>
+
+    <div class="section-lbl" data-i18n="settings.sec_mentor">Mentor</div>
+
+    <div class="row">
+      <div class="lbl" data-i18n="settings.tone">Mentor ohangi</div>
       <select data-pref="tone">
-        <option value="warm">Iliq</option>
-        <option value="mid" selected>O'rta</option>
-        <option value="strict">Qattiq</option>
+        <option value="warm" data-i18n="settings.tone_warm">Iliq</option>
+        <option value="mid" selected data-i18n="settings.tone_mid">O'rta</option>
+        <option value="strict" data-i18n="settings.tone_strict">Qattiq</option>
       </select>
     </div>
 
@@ -198,10 +209,22 @@
   </div>
 </div>
 
+<script src="i18n.js" defer></script>
 <script src="data.js" defer></script>
 <script src="nav-overlay.js" defer></script>
 <script>
   document.addEventListener('DOMContentLoaded', () => {
+    // Til tanlash
+    const langSel = document.getElementById('langSel');
+    if (langSel && window.I18N) {
+      langSel.value = I18N.lang;
+      langSel.addEventListener('change', () => {
+        I18N.set(langSel.value);
+        // Sahifani qayta yuklab — barcha dinamik matnlar yangilansin
+        setTimeout(() => location.reload(), 200);
+      });
+    }
+
     // Ism
     const userName = (localStorage.getItem('mvow.userName') || 'Aziz').trim();
     document.getElementById('userName').textContent = userName;

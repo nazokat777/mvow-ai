@@ -230,15 +230,15 @@
   <div class="container">
     <div class="logo"></div>
     <h1 class="name" id="brandName" data-brand="name">brend</h1>
-    <p class="tag" data-brand="tagline">sening intizom do'sting</p>
+    <p class="tag" data-i18n="brand.tagline">sening intizom do'sting</p>
 
     <div class="fields">
       <div class="field">
-        <input id="nameInput" type="text" placeholder="ismingni yoz" autocomplete="given-name" maxlength="24" required minlength="2" aria-required="true" aria-describedby="nameErr">
+        <input id="nameInput" type="text" placeholder="ismingni yoz" data-i18n-placeholder="welcome.name_ph" autocomplete="given-name" maxlength="24" required minlength="2" aria-required="true" aria-describedby="nameErr">
         <div id="nameErr" class="err" role="alert" style="display:none;font-size:11px;color:#FF8E97;margin-top:6px;letter-spacing:1px;">Ismingni kirit (kamida 2 harf)</div>
       </div>
       <div class="field">
-        <textarea id="bioInput" placeholder="o'zing haqingda bir-ikki jumla (ixtiyoriy)" maxlength="160" rows="2"></textarea>
+        <textarea id="bioInput" placeholder="o'zing haqingda bir-ikki jumla (ixtiyoriy)" data-i18n-placeholder="welcome.bio_ph" maxlength="160" rows="2"></textarea>
       </div>
     </div>
 
@@ -257,7 +257,7 @@
         </svg>
       </div>
 
-      <p class="status" id="status">Bos · ushlab tur · ayt</p>
+      <p class="status" id="status" data-i18n="welcome.vow_record">Bos · ushlab tur · ayt</p>
     </div>
   </div>
 
@@ -266,6 +266,7 @@
   </div>
 </div>
 
+<script src="i18n.js" defer></script>
 <script src="data.js" defer></script>
 <script src="nav-overlay.js" defer></script>
 <script>
