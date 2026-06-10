@@ -95,10 +95,14 @@
       <p class="sub" data-i18n="goal.sub">Senga to'g'ri yondashish uchun</p>
     </div>
 
-    <div class="row">
-      <label for="age" data-i18n="goal.age_lbl">Yosh</label>
-      <input id="age" type="number" inputmode="numeric" min="10" max="99" placeholder="28" aria-describedby="ageErr">
-      <div id="ageErr" class="err" role="alert" style="display:none;font-size:10px;color:#FF8E97;margin-top:4px;" data-i18n="goal.age_err">10-99 oraliqida bo'lsin</div>
+    <div class="row full">
+      <label data-i18n="goal.age_lbl">Yosh</label>
+      <div class="chips" id="ageChips" role="radiogroup" aria-label="Yosh">
+        <div class="chip" data-v="16-25" role="radio" tabindex="0" aria-checked="false">16–25</div>
+        <div class="chip" data-v="26-35" role="radio" tabindex="0" aria-checked="false">26–35</div>
+        <div class="chip" data-v="36-50" role="radio" tabindex="0" aria-checked="false">36–50</div>
+        <div class="chip" data-v="50+" role="radio" tabindex="0" aria-checked="false">50+</div>
+      </div>
     </div>
 
     <div class="row full">
@@ -110,9 +114,16 @@
       </div>
     </div>
 
-    <div class="row">
-      <label for="job" data-i18n="goal.job_lbl">Ish</label>
-      <input id="job" type="text" placeholder="masalan, talaba" data-i18n-placeholder="goal.job_ph" maxlength="40">
+    <div class="row full">
+      <label data-i18n="goal.job_lbl">Ish</label>
+      <div class="chips" id="jobChips" role="radiogroup" aria-label="Ish">
+        <div class="chip" data-v="student" role="radio" tabindex="0" aria-checked="false">Talaba</div>
+        <div class="chip" data-v="dev" role="radio" tabindex="0" aria-checked="false">Dasturchi</div>
+        <div class="chip" data-v="office" role="radio" tabindex="0" aria-checked="false">Ofis</div>
+        <div class="chip" data-v="trade" role="radio" tabindex="0" aria-checked="false">Tijorat</div>
+        <div class="chip" data-v="creative" role="radio" tabindex="0" aria-checked="false">Ijodkor</div>
+        <div class="chip" data-v="other" role="radio" tabindex="0" aria-checked="false">Boshqa</div>
+      </div>
     </div>
 
     <div class="row full">
@@ -133,39 +144,37 @@
 <script>
   const $ = id => document.getElementById(id);
 
-  // Yosh validatsiyasi
-  const ageInp = document.getElementById('age');
-  const ageErr = document.getElementById('ageErr');
-  ageInp.addEventListener('input', () => {
-    const v = parseInt(ageInp.value, 10);
-    const valid = !ageInp.value || (v >= 10 && v <= 99);
-    ageErr.style.display = valid ? 'none' : 'block';
-  });
-
-  // Saqlangan profil ma'lumotlari
+  // Saqlangan profil
   const PROFILE_KEY = 'mvow.profile';
   const saved = JSON.parse(localStorage.getItem(PROFILE_KEY) || '{}');
-  if (saved.age) $('age').value = saved.age;
-  if (saved.job) $('job').value = saved.job;
   if (saved.aim) $('aim').value = saved.aim;
 
-  // Jins chiplari
-  const chips = document.querySelectorAll('#genderChips .chip');
-  function selectChip(c) {
-    chips.forEach(x => {
-      x.classList.remove('on');
-      x.setAttribute('aria-checked', 'false');
+  // Universal chip group — tanlangan qiymatni qaytaradi
+  function setupChipGroup(groupId, savedValue) {
+    const chips = document.querySelectorAll('#' + groupId + ' .chip');
+    function select(c) {
+      chips.forEach(x => {
+        x.classList.remove('on');
+        x.setAttribute('aria-checked', 'false');
+      });
+      c.classList.add('on');
+      c.setAttribute('aria-checked', 'true');
+    }
+    chips.forEach(c => {
+      if (savedValue === c.dataset.v) select(c);
+      c.addEventListener('click', () => select(c));
+      c.addEventListener('keydown', e => {
+        if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); select(c); }
+      });
     });
-    c.classList.add('on');
-    c.setAttribute('aria-checked', 'true');
+    return () => {
+      const on = document.querySelector('#' + groupId + ' .chip.on');
+      return on ? on.dataset.v : '';
+    };
   }
-  chips.forEach(c => {
-    if (saved.gender === c.dataset.v) selectChip(c);
-    c.addEventListener('click', () => selectChip(c));
-    c.addEventListener('keydown', e => {
-      if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); selectChip(c); }
-    });
-  });
+  const getAge    = setupChipGroup('ageChips', saved.age);
+  const getGender = setupChipGroup('genderChips', saved.gender);
+  const getJob    = setupChipGroup('jobChips', saved.job);
 
   // ── Profilga qarab boshlovchi reja yaratish ──
   function buildStarterPlan(p) {
@@ -233,11 +242,10 @@
 
   $('cta').addEventListener('click', (e) => {
     e.preventDefault();
-    const selected = document.querySelector('#genderChips .chip.on');
     const profile = {
-      age:    $('age').value.trim(),
-      gender: selected ? selected.dataset.v : '',
-      job:    $('job').value.trim(),
+      age:    getAge(),
+      gender: getGender(),
+      job:    getJob(),
       aim:    $('aim').value.trim()
     };
     localStorage.setItem(PROFILE_KEY, JSON.stringify(profile));
@@ -248,8 +256,8 @@
       MVOW_DATA.setTodayPlan(starter);
     }
 
-    // Tasdiq toast
-    showConfirm(profile, () => { window.location.href = 'permissions.html'; });
+    // Va'da sahifasiga
+    showConfirm(profile, () => { window.location.href = 'vada.html'; });
   });
 </script>
 

@@ -242,23 +242,6 @@
       </div>
     </div>
 
-    <!-- Va'da bloki — ism kiritilgandagina ko'rinadi -->
-    <div class="vow-block" id="vowBlock">
-      <p class="vow">
-        Men <span class="em" id="userName">Aziz</span>,<br>
-        <span class="em">intizomli</span> bo'laman.<br>
-        Rejaga sodiq qolaman.
-      </p>
-
-      <div class="mic" id="micBtn" role="button" aria-label="Yozish">
-        <svg viewBox="0 0 24 24" fill="none">
-          <path d="M12 14a3 3 0 0 0 3-3V5a3 3 0 0 0-6 0v6a3 3 0 0 0 3 3z M19 11a7 7 0 0 1-14 0 M12 18v3"
-                stroke="#04060B" stroke-width="2" stroke-linecap="round"/>
-        </svg>
-      </div>
-
-      <p class="status" id="status" data-i18n="welcome.vow_record">Bos · ushlab tur · ayt</p>
-    </div>
   </div>
 
   <div class="bottom-bar">
@@ -289,38 +272,15 @@
   const nameInp = document.getElementById('nameInput');
   const bioInp = document.getElementById('bioInput');
   const btn = document.getElementById('startBtn');
-  const vowBlock = document.getElementById('vowBlock');
-  const userNameSpan = document.getElementById('userName');
-  const mic = document.getElementById('micBtn');
-  const status = document.getElementById('status');
-
-  let recorded = false;
-
   const nameErr = document.getElementById('nameErr');
+
   function check() {
     const v = nameInp.value.trim();
     const valid = v.length >= 2;
-    vowBlock.classList.toggle('show', valid);
-    if (valid) userNameSpan.textContent = v;
     btn.classList.toggle('disabled', !valid);
-    // Xato matni — faqat foydalanuvchi yozishni boshlasa va noto'g'ri bo'lsa
     nameErr.style.display = (v.length > 0 && !valid) ? 'block' : 'none';
   }
   nameInp.addEventListener('input', check);
-  bioInp.addEventListener('input', check);
-
-  let recording = false;
-  mic.addEventListener('click', () => {
-    recording = !recording;
-    mic.classList.toggle('recording', recording);
-    if (!recording) {
-      recorded = true;
-      status.textContent = "Va'da berildi";
-    } else {
-      status.textContent = 'Tinglayapman…';
-    }
-    check();
-  });
 
   btn.addEventListener('click', e => {
     if (btn.classList.contains('disabled')) { e.preventDefault(); return; }
