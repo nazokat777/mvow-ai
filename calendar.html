@@ -98,7 +98,7 @@
   .task .x {
     color: var(--text-dim);
     font-size: 18px; line-height: 1;
-    width: 26px; height: 26px;
+    width: 44px; height: 44px;
     display: flex; align-items: center; justify-content: center;
     cursor: pointer;
     transition: color .15s;
@@ -304,7 +304,7 @@
         <span class="time">${escapeHtml(t.time || '—')}</span>
         <span class="name">${escapeHtml(t.name || 'ish')}</span>
         <span class="dur">${escapeHtml(t.dur || '')}</span>
-        <span class="x" title="O'chir">×</span>
+        <span class="x" role="button" tabindex="0" aria-label="Ishni o'chirish" title="O'chir">×</span>
       `;
       row.querySelectorAll('.time, .name, .dur').forEach(el =>
         el.addEventListener('click', () => enterEdit(row, idx))

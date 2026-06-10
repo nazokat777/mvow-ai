@@ -146,17 +146,17 @@
 
     <div class="row">
       <div class="lbl">Auto-davom</div>
-      <div class="toggle" data-toggle="autoNext"></div>
+      <div class="toggle" data-toggle="autoNext" role="switch" tabindex="0" aria-label="Auto-davom" aria-checked="false"></div>
     </div>
 
     <div class="row">
       <div class="lbl">Ovozli eslatma</div>
-      <div class="toggle" data-toggle="voiceRemind"></div>
+      <div class="toggle" data-toggle="voiceRemind" role="switch" tabindex="0" aria-label="Ovozli eslatma" aria-checked="false"></div>
     </div>
 
     <div class="row">
       <div class="lbl">Diqqat sinovi</div>
-      <div class="toggle" data-toggle="negotiation"></div>
+      <div class="toggle" data-toggle="negotiation" role="switch" tabindex="0" aria-label="Diqqat sinovi" aria-checked="false"></div>
     </div>
 
     <div class="footer">v <span class="em" data-brand="name">brend</span> 8.1</div>
@@ -207,11 +207,17 @@
     // Toggle'lar
     document.querySelectorAll('[data-toggle]').forEach(el => {
       const key = el.dataset.toggle;
-      if (merged[key]) el.classList.add('on');
-      el.addEventListener('click', () => {
-        el.classList.toggle('on');
-        merged[key] = el.classList.contains('on');
+      if (merged[key]) { el.classList.add('on'); el.setAttribute('aria-checked','true'); }
+      const flip = () => {
+        const on = !el.classList.contains('on');
+        el.classList.toggle('on', on);
+        el.setAttribute('aria-checked', on ? 'true' : 'false');
+        merged[key] = on;
         save();
+      };
+      el.addEventListener('click', flip);
+      el.addEventListener('keydown', e => {
+        if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); flip(); }
       });
     });
   });

@@ -102,10 +102,10 @@
 
     <div class="row full">
       <label>Jins</label>
-      <div class="chips" id="genderChips">
-        <div class="chip" data-v="m">Erkak</div>
-        <div class="chip" data-v="f">Ayol</div>
-        <div class="chip" data-v="x">Aytmayman</div>
+      <div class="chips" id="genderChips" role="radiogroup" aria-label="Jins">
+        <div class="chip" data-v="m" role="radio" tabindex="0" aria-checked="false">Erkak</div>
+        <div class="chip" data-v="f" role="radio" tabindex="0" aria-checked="false">Ayol</div>
+        <div class="chip" data-v="x" role="radio" tabindex="0" aria-checked="false">Aytmayman</div>
       </div>
     </div>
 
@@ -140,11 +140,19 @@
 
   // Jins chiplari
   const chips = document.querySelectorAll('#genderChips .chip');
+  function selectChip(c) {
+    chips.forEach(x => {
+      x.classList.remove('on');
+      x.setAttribute('aria-checked', 'false');
+    });
+    c.classList.add('on');
+    c.setAttribute('aria-checked', 'true');
+  }
   chips.forEach(c => {
-    if (saved.gender === c.dataset.v) c.classList.add('on');
-    c.addEventListener('click', () => {
-      chips.forEach(x => x.classList.remove('on'));
-      c.classList.add('on');
+    if (saved.gender === c.dataset.v) selectChip(c);
+    c.addEventListener('click', () => selectChip(c));
+    c.addEventListener('keydown', e => {
+      if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); selectChip(c); }
     });
   });
 
