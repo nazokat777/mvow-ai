@@ -296,38 +296,7 @@
       transition: width 0.5s cubic-bezier(.16,.84,.32,1);
     }
 
-    /* === Side arrows (kichikroq, ramka chetida) === */
-    .seq-side-nav {
-      position: fixed;
-      top: 50%;
-      left: 0; right: 0;
-      transform: translateY(-50%);
-      display: flex;
-      justify-content: space-between;
-      padding: 0 4px;
-      pointer-events: none;
-      z-index: 99998;
-    }
-    .seq-arrow {
-      pointer-events: auto;
-      width: 44px; height: 44px;
-      border-radius: 50%;
-      border: 1px solid rgba(0,229,212,0.45);
-      background: rgba(8,8,12,0.75);
-      backdrop-filter: blur(8px);
-      -webkit-backdrop-filter: blur(8px);
-      color: #7AF5EC;
-      font-size: 22px;
-      font-weight: 500;
-      display: flex; align-items: center; justify-content: center;
-      cursor: pointer;
-      text-decoration: none;
-      user-select: none;
-      -webkit-tap-highlight-color: transparent;
-      transition: transform .12s, background .15s, opacity .15s;
-    }
-    .seq-arrow:active { transform: scale(0.93); background: rgba(0,229,212,0.18); }
-    .seq-arrow.disabled { opacity: 0.18; pointer-events: none; }
+    /* Side arrows o'chirildi — foydalanuvchi sahifa ichidagi tugmalar bilan davom etadi */
 
     /* === Phone ichida scrollbar yashirish === */
     .phone, .phone *, body, html { scrollbar-width: none; -ms-overflow-style: none; }
@@ -391,14 +360,7 @@
   `;
   document.body.appendChild(top);
 
-  // ── Side arrows (yon strelka) — keng ekranlarda qulayroq ──
-  const side = document.createElement('div');
-  side.className = 'seq-side-nav';
-  side.innerHTML = `
-    <a class="seq-arrow ${prev ? '' : 'disabled'}" href="${prev || '#'}" aria-label="Oldingi">‹</a>
-    <a class="seq-arrow ${next ? '' : 'disabled'}" href="${next || '#'}" aria-label="Keyingi">›</a>
-  `;
-  document.body.appendChild(side);
+  // Yon strelka tugmalar olib tashlandi — foydalanuvchi sahifa ichidagi CTA bilan davom etadi
 
   // ──────────────────────────────────────────────────────────────
   // GLOBUS — til tanlash (taymer sahifalardan tashqari hammada)
