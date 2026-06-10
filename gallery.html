@@ -23,16 +23,7 @@
   .section { margin-bottom: 56px; }
   .section .lbl { font-size: 11px; letter-spacing: 4px; color: var(--text-dim); text-transform: uppercase; padding: 0 4px 16px; }
   .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 16px; }
-  .card {
-    background: var(--void-soft);
-    border-radius: 12px;
-    overflow: hidden;
-    text-decoration: none;
-    color: var(--text);
-    transition: transform .15s, box-shadow .15s;
-    display: flex;
-    flex-direction: column;
-  }
+  .card { background: var(--void-soft); border-radius: 12px; overflow: hidden; text-decoration: none; color: var(--text); transition: transform .15s, box-shadow .15s; display: flex; flex-direction: column; }
   .card:hover { transform: translateY(-2px); box-shadow: 0 8px 24px rgba(0,229,212,.12); }
   .thumb { height: 400px; background: #000; overflow: hidden; position: relative; }
   .thumb iframe { border: 0; width: 380px; height: 800px; transform: scale(0.5); transform-origin: top left; pointer-events: none; }
@@ -66,16 +57,16 @@
   </div>
 
   <div class="section">
-    <div class="lbl">Sozlama · aloqa</div>
+    <div class="lbl">Sozlama</div>
     <div class="grid">
       <a class="card" href="settings.html"><div class="thumb"><iframe src="settings.html" loading="lazy"></iframe></div><div class="lbl-row"><span class="num">4</span><span class="name">Sozlamalar</span></div></a>
-      <a class="card" href="chat.html"><div class="thumb"><iframe src="chat.html" loading="lazy"></iframe></div><div class="lbl-row"><span class="num">5</span><span class="name">Suhbat</span></div></a>
     </div>
   </div>
 
   <div class="section">
-    <div class="lbl">Reja</div>
+    <div class="lbl">Kun</div>
     <div class="grid">
+      <a class="card" href="alarm.html"><div class="thumb"><iframe src="alarm.html" loading="lazy"></iframe></div><div class="lbl-row"><span class="num">5</span><span class="name">Uyg'on</span></div></a>
       <a class="card" href="home.html"><div class="thumb"><iframe src="home.html" loading="lazy"></iframe></div><div class="lbl-row"><span class="num">6</span><span class="name">Bosh sahifa</span></div></a>
       <a class="card" href="routine.html"><div class="thumb"><iframe src="routine.html" loading="lazy"></iframe></div><div class="lbl-row"><span class="num">7</span><span class="name">Rejalaringni ayt</span></div></a>
       <a class="card" href="today-plan.html"><div class="thumb"><iframe src="today-plan.html" loading="lazy"></iframe></div><div class="lbl-row"><span class="num">8</span><span class="name">Bugungi reja</span></div></a>

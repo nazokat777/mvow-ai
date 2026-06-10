@@ -167,22 +167,21 @@
     'permissions.html',       // 3. Ruxsatlar
     // Sozlama · aloqa (4-5)
     'settings.html',          // 4. Sozlamalar
-    'chat.html',              // 5. Suhbat
-    // Kun (6-10)
-    'alarm.html',             // 6. Uyg'on (budilnik + 3 misol)
-    'home.html',              // 7. Bosh sahifa
-    'routine.html',           // 8. Rejalaringni ayt
-    'today-plan.html',        // 9. Tuzilgan kun tartibi
-    'calendar.html',          // 10. Haftalik kalendar
-    // Bajarish (11-14)
-    'day-flow.html',          // 11. Taymer
-    'hard-lock.html',         // 12. Qulflash
-    'negotiation.html',       // 13. Diqqat sinovi
-    'session-reflection.html',// 14. Sessiya bahosi
-    // Natija (15-17)
-    'notifications.html',     // 15. Xabarlar
-    'weekly-review.html',     // 16. Natijalar
-    'celebrate.html'          // 17. Bayram
+    // Kun (5-9)
+    'alarm.html',             // 5. Uyg'on
+    'home.html',              // 6. Bosh sahifa
+    'routine.html',           // 7. Rejalaringni ayt
+    'today-plan.html',        // 8. Tuzilgan kun tartibi
+    'calendar.html',          // 9. Haftalik kalendar
+    // Bajarish (10-13)
+    'day-flow.html',          // 10. Taymer
+    'hard-lock.html',         // 11. Qulflash
+    'negotiation.html',       // 12. Diqqat sinovi
+    'session-reflection.html',// 13. Sessiya bahosi
+    // Natija (14-16)
+    'notifications.html',     // 14. Xabarlar
+    'weekly-review.html',     // 15. Natijalar
+    'celebrate.html'          // 16. Bayram
   ];
 
   const file = (location.pathname.split('/').pop() || 'welcome.html').toLowerCase();
