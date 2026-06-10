@@ -3,7 +3,7 @@
  * after first load. Caches all preview HTML files + the logo.
  */
 
-const CACHE_NAME = 'mvow-v6.3.0';
+const CACHE_NAME = 'mvow-v7.0.0';
 const ASSETS = [
   './',
   // Asosiy infratuzilma
@@ -15,13 +15,13 @@ const ASSETS = [
   './gallery.html',
   './assets/mnsm-logo.png',
   // 16 ta MVP ekran (SEQ tartibida)
-  './welcome.html',           // 1
-  './voice-commitment.html',  // 2
-  './goal.html',              // 3
-  './permissions.html',       // 4
-  './settings.html',          // 5
-  './chat.html',              // 6
-  './home.html',              // 7
+  './welcome.html',           // 1 (ism + bio + va'da)
+  './goal.html',              // 2 (profil)
+  './permissions.html',       // 3
+  './settings.html',          // 4
+  './chat.html',              // 5
+  './home.html',              // 6
+  './routine.html',           // 7 (rejalaringni ayt)
   './today-plan.html',        // 8
   './calendar.html',          // 9
   './day-flow.html',          // 10

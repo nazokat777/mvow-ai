@@ -13,7 +13,7 @@
 <link rel="icon" type="image/png" href="assets/mnsm-logo.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500&family=Inter:wght@300;400;500&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
 <style>
   * { box-sizing: border-box; margin: 0; padding: 0; }
   :root {
@@ -40,16 +40,17 @@
     display: flex; flex-direction: column;
   }
 
-  /* Halo behind logo — yumshoq teal radial */
+  /* Halo behind logo */
   .halo {
     position: absolute;
-    top: 60px; left: 50%;
+    top: 40px; left: 50%;
     transform: translateX(-50%);
     width: 280px; height: 280px;
     background: radial-gradient(circle, rgba(0,229,212,.18), transparent 60%);
     border-radius: 50%;
     opacity: 0;
     animation: halo-in 1.4s ease 0.3s forwards, halo-pulse 5s ease-in-out 2s infinite;
+    pointer-events: none;
   }
   @keyframes halo-in { to { opacity: 1; } }
   @keyframes halo-pulse {
@@ -61,32 +62,31 @@
     flex: 1;
     display: flex; flex-direction: column;
     align-items: center;
-    padding: 80px 32px 100px;
-    gap: 28px;
+    padding: 60px 32px 100px;
+    gap: 20px;
     position: relative;
     z-index: 2;
+    overflow-y: auto;
   }
 
   .logo {
-    width: 96px; height: 96px;
+    width: 84px; height: 84px;
     background: url(assets/mnsm-logo.png) center/contain no-repeat;
     filter: hue-rotate(160deg) saturate(1.4) drop-shadow(0 0 20px rgba(0,229,212,.4));
     opacity: 0;
     transform: scale(0.7);
     animation: logo-in 1.4s cubic-bezier(.16,.84,.32,1) 0.2s forwards;
   }
-  @keyframes logo-in {
-    to { opacity: 1; transform: scale(1); }
-  }
+  @keyframes logo-in { to { opacity: 1; transform: scale(1); } }
 
   .name {
     font-family: 'Cormorant Garamond', serif;
     font-weight: 500;
-    font-size: 30px;
+    font-size: 28px;
     color: var(--text);
     letter-spacing: 4px;
     text-align: center;
-    margin-top: -8px;
+    margin-top: -4px;
     display: flex;
     gap: 2px;
     justify-content: center;
@@ -98,29 +98,26 @@
     filter: blur(4px);
     animation: char-in 0.6s cubic-bezier(.16,.84,.32,1) forwards;
   }
-  @keyframes char-in {
-    to { opacity: 1; transform: translateY(0); filter: blur(0); }
-  }
+  @keyframes char-in { to { opacity: 1; transform: translateY(0); filter: blur(0); } }
 
   .tag {
     font-size: 12px;
     color: var(--text-mid);
     text-align: center;
-    margin-top: -16px;
+    margin-top: -12px;
     opacity: 0;
     transform: translateY(6px);
-    animation: fade-up 0.8s ease 1.8s forwards;
+    animation: fade-up 0.8s ease 1.6s forwards;
   }
   @keyframes fade-up { to { opacity: 1; transform: translateY(0); } }
 
   .fields {
     width: 100%;
     display: flex; flex-direction: column;
-    gap: 16px;
-    margin-top: 8px;
+    gap: 14px;
     opacity: 0;
     transform: translateY(12px);
-    animation: fade-up 0.9s ease 2.4s forwards;
+    animation: fade-up 0.9s ease 2.0s forwards;
   }
   .field input,
   .field textarea {
@@ -129,7 +126,7 @@
     border: none;
     border-bottom: 1px solid rgba(255,255,255,.1);
     color: var(--text);
-    padding: 14px 0;
+    padding: 12px 0;
     font-family: 'Cormorant Garamond', serif;
     font-style: italic;
     font-size: 16px;
@@ -144,11 +141,61 @@
   .field input::placeholder,
   .field textarea::placeholder { color: var(--text-dim); font-style: italic; }
 
+  /* Va'da bloki — ism kiritilganda paydo bo'ladi */
+  .vow-block {
+    width: 100%;
+    display: none;
+    flex-direction: column;
+    align-items: center;
+    gap: 18px;
+    margin-top: 8px;
+    padding-top: 24px;
+    border-top: 1px solid rgba(255,255,255,.04);
+    animation: fade-up 0.6s ease forwards;
+  }
+  .vow-block.show { display: flex; }
+
+  .vow {
+    font-family: 'Cormorant Garamond', serif;
+    font-style: italic;
+    font-size: 17px;
+    color: var(--text);
+    line-height: 1.5;
+    text-align: center;
+    padding: 0 8px;
+  }
+  .vow .em { color: var(--accent); font-style: normal; font-weight: 600; }
+
+  .mic {
+    width: 80px; height: 80px;
+    border-radius: 50%;
+    background: linear-gradient(180deg, var(--accent), var(--accent-soft));
+    display:flex; align-items:center; justify-content:center;
+    cursor:pointer;
+    transition: transform .2s;
+    box-shadow: 0 0 28px rgba(0,229,212,.3);
+  }
+  .mic:active { transform: scale(.95); }
+  .mic svg { width: 28px; height: 28px; }
+  .mic.recording { animation: pulse 1.5s ease-in-out infinite; }
+  @keyframes pulse {
+    0%,100% { box-shadow: 0 0 28px rgba(0,229,212,.3); }
+    50%     { box-shadow: 0 0 48px rgba(0,229,212,.6); }
+  }
+
+  .status {
+    font-size: 10px;
+    letter-spacing: 3px;
+    color: var(--accent);
+    text-transform: uppercase;
+    min-height: 12px;
+  }
+
   .bottom-bar {
-    padding: 20px 32px env(safe-area-inset-bottom, 20px);
+    padding: 16px 32px env(safe-area-inset-bottom, 16px);
     background: linear-gradient(180deg, transparent, var(--void) 30%);
     opacity: 0;
-    animation: fade-up 0.9s ease 3.0s forwards;
+    animation: fade-up 0.9s ease 2.6s forwards;
   }
   .cta {
     display: block;
@@ -190,20 +237,38 @@
         <input id="nameInput" type="text" placeholder="ismingni yoz" autocomplete="given-name" maxlength="24">
       </div>
       <div class="field">
-        <textarea id="bioInput" placeholder="o'zing haqingda bir-ikki jumla" maxlength="160" rows="3"></textarea>
+        <textarea id="bioInput" placeholder="o'zing haqingda bir-ikki jumla" maxlength="160" rows="2"></textarea>
       </div>
+    </div>
+
+    <!-- Va'da bloki — ism kiritilgandagina ko'rinadi -->
+    <div class="vow-block" id="vowBlock">
+      <p class="vow">
+        Men <span class="em" id="userName">Aziz</span>,<br>
+        <span class="em">intizomli</span> bo'laman.<br>
+        Rejaga sodiq qolaman.
+      </p>
+
+      <div class="mic" id="micBtn" role="button" aria-label="Yozish">
+        <svg viewBox="0 0 24 24" fill="none">
+          <path d="M12 14a3 3 0 0 0 3-3V5a3 3 0 0 0-6 0v6a3 3 0 0 0 3 3z M19 11a7 7 0 0 1-14 0 M12 18v3"
+                stroke="#04060B" stroke-width="2" stroke-linecap="round"/>
+        </svg>
+      </div>
+
+      <p class="status" id="status">Bos · ushlab tur · ayt</p>
     </div>
   </div>
 
   <div class="bottom-bar">
-    <a class="cta disabled" id="startBtn" href="voice-commitment.html">Boshlaymiz</a>
+    <a class="cta disabled" id="startBtn" href="goal.html">Davom</a>
   </div>
 </div>
 
 <script src="data.js" defer></script>
 <script src="nav-overlay.js" defer></script>
 <script>
-  // Brand nomini harfma-harf chiqarish (data-brand keyin to'ldiradi)
+  // Brand harflari ketma-ket
   function animateName() {
     const el = document.getElementById('brandName');
     if (!el) return;
@@ -212,23 +277,44 @@
     [...txt].forEach((ch, i) => {
       const span = document.createElement('span');
       span.className = 'ch';
-      span.textContent = ch === ' ' ? ' ' : ch;
+      span.textContent = ch === ' ' ? ' ' : ch;
       span.style.animationDelay = (1.0 + i * 0.08) + 's';
       el.appendChild(span);
     });
   }
-  // data.js DOMContentLoaded ichida brand'ni yangilashidan keyin animatsiya boshlanadi
   setTimeout(animateName, 100);
 
   const nameInp = document.getElementById('nameInput');
   const bioInp = document.getElementById('bioInput');
   const btn = document.getElementById('startBtn');
+  const vowBlock = document.getElementById('vowBlock');
+  const userNameSpan = document.getElementById('userName');
+  const mic = document.getElementById('micBtn');
+  const status = document.getElementById('status');
+
+  let recorded = false;
 
   function check() {
-    btn.classList.toggle('disabled', !nameInp.value.trim());
+    const hasName = !!nameInp.value.trim();
+    vowBlock.classList.toggle('show', hasName);
+    if (hasName) userNameSpan.textContent = nameInp.value.trim();
+    btn.classList.toggle('disabled', !hasName || !recorded);
   }
   nameInp.addEventListener('input', check);
   bioInp.addEventListener('input', check);
+
+  let recording = false;
+  mic.addEventListener('click', () => {
+    recording = !recording;
+    mic.classList.toggle('recording', recording);
+    if (!recording) {
+      recorded = true;
+      status.textContent = "Va'da berildi";
+    } else {
+      status.textContent = 'Tinglayapman…';
+    }
+    check();
+  });
 
   btn.addEventListener('click', e => {
     if (btn.classList.contains('disabled')) { e.preventDefault(); return; }
@@ -238,8 +324,9 @@
 
   const savedName = localStorage.getItem('mvow.userName');
   const savedBio = localStorage.getItem('mvow.userBio');
-  if (savedName) { nameInp.value = savedName; check(); }
+  if (savedName) { nameInp.value = savedName; }
   if (savedBio) { bioInp.value = savedBio; }
+  check();
 </script>
 
 </body>

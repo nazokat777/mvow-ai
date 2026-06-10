@@ -161,25 +161,27 @@
   // MVP scope (2026-05-24, qayta) — 14 ta zarur ekran.
   // today-plan.html qo'shildi: AI tuzgan kun tartibi ro'yxati — boshlashdan oldin.
   const SEQ = [
-    // Onboarding + reja + sozlamalar (1-6)
-    'welcome.html',           // 1. Tanishuv — ism
-    'voice-commitment.html',  // 2. Mentor bilan tanishuv (va'da)
-    'goal.html',              // 3. Maqsadingni so'rash (reja aytish)
-    'permissions.html',       // 4. Ruxsatlar (rejani amalga oshirish uchun)
-    'settings.html',          // 5. Sozlamalar — mentor ohangi, sessiya sozlamalari
-    'chat.html',              // 6. Mentor bilan suhbat — istalgan paytda gaplashish
-    'home.html',              // 7. Bosh sahifa — kundalik dashboard
-    'today-plan.html',        // 8. Bugungi tayyor kun tartibi ro'yxati
+    // Onboarding (1-3): welcome ism+bio+va'da birga, keyin profil, ruxsat
+    'welcome.html',           // 1. Tanishuv (ism + bio + va'da)
+    'goal.html',              // 2. Profil (yosh/jins/ish/niyat)
+    'permissions.html',       // 3. Ruxsatlar
+    // Sozlamalar va aloqa (4-5)
+    'settings.html',          // 4. Sozlamalar
+    'chat.html',              // 5. Mentor bilan suhbat
+    // Reja (6-9)
+    'home.html',              // 6. Bosh sahifa
+    'routine.html',           // 7. Rejalaringni ayt
+    'today-plan.html',        // 8. Tuzilgan kun tartibi
     'calendar.html',          // 9. Haftalik kalendar
     // Bajarish (10-13)
-    'day-flow.html',          // 10. Taymer + nazorat
-    'hard-lock.html',         // 11. Ekran qulflash
-    'negotiation.html',       // 12. Diqqat buzishga urinish
+    'day-flow.html',          // 10. Taymer
+    'hard-lock.html',         // 11. Qulflash
+    'negotiation.html',       // 12. Diqqat sinovi
     'session-reflection.html',// 13. Sessiya bahosi
-    // Bildirishnomalar va natijalar (14-16)
-    'notifications.html',     // 14. Mentor xabarlari · yutuqlar
+    // Natija (14-16)
+    'notifications.html',     // 14. Xabarlar
     'weekly-review.html',     // 15. Natijalar
-    'celebrate.html'          // 16. Haftalik bayram
+    'celebrate.html'          // 16. Bayram
   ];
 
   const file = (location.pathname.split('/').pop() || 'welcome.html').toLowerCase();

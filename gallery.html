@@ -34,29 +34,11 @@
     flex-direction: column;
   }
   .card:hover { transform: translateY(-2px); box-shadow: 0 8px 24px rgba(0,229,212,.12); }
-  .thumb {
-    height: 400px;
-    background: #000;
-    overflow: hidden;
-    position: relative;
-  }
-  .thumb iframe {
-    border: 0;
-    width: 380px;
-    height: 800px;
-    transform: scale(0.5);
-    transform-origin: top left;
-    pointer-events: none;
-  }
-  .card .lbl-row {
-    padding: 14px 14px 16px;
-    display: flex;
-    align-items: baseline;
-    gap: 10px;
-  }
+  .thumb { height: 400px; background: #000; overflow: hidden; position: relative; }
+  .thumb iframe { border: 0; width: 380px; height: 800px; transform: scale(0.5); transform-origin: top left; pointer-events: none; }
+  .card .lbl-row { padding: 14px 14px 16px; display: flex; align-items: baseline; gap: 10px; }
   .card .num { font-size: 12px; color: var(--accent); }
   .card .name { font-size: 14px; font-weight: 500; }
-
   @media (max-width: 480px) {
     .grid { grid-template-columns: 1fr 1fr; gap: 12px; }
     .thumb { height: 260px; }
@@ -78,18 +60,24 @@
     <div class="lbl">Tanishuv</div>
     <div class="grid">
       <a class="card" href="welcome.html"><div class="thumb"><iframe src="welcome.html" loading="lazy"></iframe></div><div class="lbl-row"><span class="num">1</span><span class="name">Tanishuv</span></div></a>
-      <a class="card" href="voice-commitment.html"><div class="thumb"><iframe src="voice-commitment.html" loading="lazy"></iframe></div><div class="lbl-row"><span class="num">2</span><span class="name">Va'da</span></div></a>
-      <a class="card" href="goal.html"><div class="thumb"><iframe src="goal.html" loading="lazy"></iframe></div><div class="lbl-row"><span class="num">3</span><span class="name">Niyat</span></div></a>
-      <a class="card" href="permissions.html"><div class="thumb"><iframe src="permissions.html" loading="lazy"></iframe></div><div class="lbl-row"><span class="num">4</span><span class="name">Ruxsatlar</span></div></a>
+      <a class="card" href="goal.html"><div class="thumb"><iframe src="goal.html" loading="lazy"></iframe></div><div class="lbl-row"><span class="num">2</span><span class="name">Profil</span></div></a>
+      <a class="card" href="permissions.html"><div class="thumb"><iframe src="permissions.html" loading="lazy"></iframe></div><div class="lbl-row"><span class="num">3</span><span class="name">Ruxsatlar</span></div></a>
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="lbl">Sozlama · aloqa</div>
+    <div class="grid">
+      <a class="card" href="settings.html"><div class="thumb"><iframe src="settings.html" loading="lazy"></iframe></div><div class="lbl-row"><span class="num">4</span><span class="name">Sozlamalar</span></div></a>
+      <a class="card" href="chat.html"><div class="thumb"><iframe src="chat.html" loading="lazy"></iframe></div><div class="lbl-row"><span class="num">5</span><span class="name">Suhbat</span></div></a>
     </div>
   </div>
 
   <div class="section">
     <div class="lbl">Reja</div>
     <div class="grid">
-      <a class="card" href="settings.html"><div class="thumb"><iframe src="settings.html" loading="lazy"></iframe></div><div class="lbl-row"><span class="num">5</span><span class="name">Sozlamalar</span></div></a>
-      <a class="card" href="chat.html"><div class="thumb"><iframe src="chat.html" loading="lazy"></iframe></div><div class="lbl-row"><span class="num">6</span><span class="name">Suhbat</span></div></a>
-      <a class="card" href="home.html"><div class="thumb"><iframe src="home.html" loading="lazy"></iframe></div><div class="lbl-row"><span class="num">7</span><span class="name">Bosh sahifa</span></div></a>
+      <a class="card" href="home.html"><div class="thumb"><iframe src="home.html" loading="lazy"></iframe></div><div class="lbl-row"><span class="num">6</span><span class="name">Bosh sahifa</span></div></a>
+      <a class="card" href="routine.html"><div class="thumb"><iframe src="routine.html" loading="lazy"></iframe></div><div class="lbl-row"><span class="num">7</span><span class="name">Rejalaringni ayt</span></div></a>
       <a class="card" href="today-plan.html"><div class="thumb"><iframe src="today-plan.html" loading="lazy"></iframe></div><div class="lbl-row"><span class="num">8</span><span class="name">Bugungi reja</span></div></a>
       <a class="card" href="calendar.html"><div class="thumb"><iframe src="calendar.html" loading="lazy"></iframe></div><div class="lbl-row"><span class="num">9</span><span class="name">Kalendar</span></div></a>
     </div>
