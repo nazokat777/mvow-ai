@@ -88,6 +88,22 @@
         confirm_meta: 'Birinchi reja tayyor',
         cta: 'Davom'
       },
+      vada: {
+        label: "Sening so'zing",
+        title_a: "Va'da",
+        title_em: "— bu kelishuv",
+        why_lbl: 'Nima uchun?',
+        why_text: "Va'da — bu <strong>o'zingga bergan so'zing.</strong> Sen aytasan — men eslayman. Qiyin paytda men eslataman: <strong>\"Sen so'z bergansan.\"</strong><br>Bu majburlash emas — bu <strong>tayanch.</strong>",
+        vow_em: 'intizomli',
+        vow_text_a: "bo'laman.",
+        vow_text_b: 'Rejaga sodiq qolaman.',
+        record: 'Bos · ushlab tur · ayt',
+        recording: 'Tinglayapman…',
+        done: "Va'da berildi",
+        hint: "Yoki shu so'zlarni o'qishingni o'zing eshit",
+        cta: 'Davom',
+        skip: "Hozircha o'tkazib yubor"
+      },
       permissions: {
         title: 'Ruxsatlar',
         screen_time: 'Ekran vaqti',
@@ -333,6 +349,22 @@
         confirm_meta: 'Первый план готов',
         cta: 'Продолжить'
       },
+      vada: {
+        label: 'Твоё слово',
+        title_a: 'Обещание',
+        title_em: '— это договор',
+        why_lbl: 'Зачем?',
+        why_text: 'Обещание — это <strong>слово, которое ты даёшь себе.</strong> Ты говоришь — я помню. В трудную минуту я напомню: <strong>"Ты дал слово."</strong><br>Это не принуждение — это <strong>опора.</strong>',
+        vow_em: 'дисциплинированным',
+        vow_text_a: 'буду.',
+        vow_text_b: 'Останусь верен плану.',
+        record: 'Нажми · удерживай · скажи',
+        recording: 'Слушаю…',
+        done: 'Обещание дано',
+        hint: 'Или просто прочти эти слова вслух',
+        cta: 'Продолжить',
+        skip: 'Пока пропустить'
+      },
       permissions: {
         title: 'Разрешения',
         screen_time: 'Время экрана',
@@ -577,6 +609,22 @@
         confirm_head: 'I see you.',
         confirm_meta: 'First plan ready',
         cta: 'Continue'
+      },
+      vada: {
+        label: 'Your word',
+        title_a: 'The Vow',
+        title_em: '— is an agreement',
+        why_lbl: 'Why?',
+        why_text: 'A vow is <strong>the word you give yourself.</strong> You say it — I remember. In hard moments I remind you: <strong>"You gave your word."</strong><br>This isn\'t coercion — it\'s <strong>a support.</strong>',
+        vow_em: 'disciplined',
+        vow_text_a: 'I will be.',
+        vow_text_b: 'I will stay true to the plan.',
+        record: 'Press · hold · speak',
+        recording: 'Listening…',
+        done: 'Vow taken',
+        hint: 'Or simply read these words aloud',
+        cta: 'Continue',
+        skip: 'Skip for now'
       },
       permissions: {
         title: 'Permissions',

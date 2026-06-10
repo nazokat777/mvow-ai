@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>{brand} — Va'da</title>
+<link rel="manifest" href="manifest.webmanifest">
+<meta name="theme-color" content="#04060B">
+<link rel="apple-touch-icon" href="assets/mnsm-logo.png">
+<link rel="icon" type="image/png" href="assets/mnsm-logo.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  :root {
+    --void:#04060B; --void-soft:#0C0F16;
+    --text:#F5F2EC; --text-mid:#B8BBC2; --text-dim:#9CA0A8;
+    --accent:#00E5D4; --accent-soft:#00B5A8;
+  }
+  body { background: var(--void); font-family:'Inter',sans-serif; color: var(--text); min-height: 100vh; display:flex; justify-content:center; align-items:flex-start; padding: 24px; -webkit-font-smoothing: antialiased; }
+  .phone { width: 380px; min-height: 800px; background: var(--void); border-radius: 40px; overflow: hidden; position: relative; box-shadow: 0 0 0 8px #1a1d24, 0 30px 80px rgba(0,0,0,.7); display:flex; flex-direction: column; }
+  .container { flex:1; padding: 80px 32px 100px; display:flex; flex-direction: column; gap: 26px; overflow-y: auto; }
+
+  .top-lbl { text-align: center; font-size: 10px; letter-spacing: 4px; color: var(--text-dim); text-transform: uppercase; }
+  .title { font-family:'Cormorant Garamond', serif; font-weight: 500; font-size: 30px; text-align: center; line-height: 1.3; }
+  .title .em { color: var(--accent); font-style: italic; }
+
+  /* Why card */
+  .why {
+    background: var(--void-soft);
+    border: 1px solid rgba(0,229,212,.15);
+    border-radius: 12px;
+    padding: 20px 18px;
+  }
+  .why .lbl { font-size: 10px; letter-spacing: 4px; color: var(--accent); text-transform: uppercase; margin-bottom: 12px; text-align: center; }
+  .why .body {
+    font-family: 'Cormorant Garamond', serif;
+    font-style: italic;
+    font-size: 15px;
+    color: var(--text);
+    line-height: 1.7;
+    text-align: center;
+  }
+  .why .body strong { color: var(--accent); font-weight: 500; }
+
+  /* Vow text */
+  .vow {
+    font-family: 'Cormorant Garamond', serif;
+    font-style: italic;
+    font-size: 19px;
+    color: var(--text);
+    line-height: 1.6;
+    text-align: center;
+    padding: 18px 8px;
+    border-top: 1px solid rgba(0,229,212,.1);
+    border-bottom: 1px solid rgba(0,229,212,.1);
+  }
+  .vow .em { color: var(--accent); font-style: normal; font-weight: 500; }
+
+  /* Mic */
+  .mic-wrap { display:flex; flex-direction: column; align-items: center; gap: 12px; }
+  .mic {
+    width: 84px; height: 84px;
+    border-radius: 50%;
+    background: linear-gradient(180deg, var(--accent), var(--accent-soft));
+    display:flex; align-items:center; justify-content:center;
+    cursor:pointer;
+    transition: transform .2s;
+    box-shadow: 0 0 30px rgba(0,229,212,.3);
+  }
+  .mic:active { transform: scale(.95); }
+  .mic svg { width: 30px; height: 30px; }
+  .mic.recording { animation: pulse 1.5s ease-in-out infinite; }
+  @keyframes pulse {
+    0%,100% { box-shadow: 0 0 30px rgba(0,229,212,.3); }
+    50%     { box-shadow: 0 0 54px rgba(0,229,212,.6); }
+  }
+  .status { font-size: 11px; letter-spacing: 3px; color: var(--accent); text-transform: uppercase; min-height: 14px; }
+  .status.done { color: var(--accent); }
+  .hint { font-size: 12px; color: var(--text-mid); text-align: center; }
+
+  .bottom-bar { padding: 18px 32px env(safe-area-inset-bottom, 18px); background: linear-gradient(180deg, transparent, var(--void) 30%); }
+  .cta { display:block; width:100%; padding:16px; background: linear-gradient(180deg, var(--accent), var(--accent-soft)); color: var(--void); font-size:13px; font-weight:600; letter-spacing:2px; text-transform: uppercase; border:none; border-radius:6px; text-align:center; text-decoration:none; }
+  .cta.disabled { opacity:.3; pointer-events:none; }
+  .skip { display:block; text-align: center; margin-top: 12px; font-size: 11px; letter-spacing: 2px; color: var(--text-mid); text-transform: uppercase; text-decoration: none; }
+
+  @media (max-width: 480px) { body { padding: 0; } .phone { width: 100vw; min-height: 100vh; border-radius: 0; box-shadow: none; } }
+</style>
+</head>
+<body>
+
+<div class="phone">
+  <div class="container">
+
+    <div class="top-lbl" data-i18n="vada.label">Sening so'zing</div>
+
+    <h1 class="title">
+      <span data-i18n="vada.title_a">Va'da</span> <span class="em" data-i18n="vada.title_em">— bu kelishuv</span>
+    </h1>
+
+    <div class="why">
+      <div class="lbl" data-i18n="vada.why_lbl">Nima uchun?</div>
+      <div class="body" data-i18n-html="vada.why_text">
+        Va'da — bu <strong>o'zingga bergan so'zing.</strong> Sen aytasan — men eslayman.
+        Qiyin paytda men eslataman: <strong>"Sen so'z bergansan."</strong><br>
+        Bu majburlash emas — bu <strong>tayanch.</strong>
+      </div>
+    </div>
+
+    <p class="vow" id="vowText">
+      Men <span class="em" id="userNameSpan">do'stim</span>,<br>
+      <span class="em" data-i18n="vada.vow_em">intizomli</span> <span data-i18n="vada.vow_text_a">bo'laman.</span><br>
+      <span data-i18n="vada.vow_text_b">Rejaga sodiq qolaman.</span>
+    </p>
+
+    <div class="mic-wrap">
+      <div class="mic" id="micBtn" role="button" tabindex="0" aria-label="Yozish">
+        <svg viewBox="0 0 24 24" fill="none">
+          <path d="M12 14a3 3 0 0 0 3-3V5a3 3 0 0 0-6 0v6a3 3 0 0 0 3 3z M19 11a7 7 0 0 1-14 0 M12 18v3"
+                stroke="#04060B" stroke-width="2" stroke-linecap="round"/>
+        </svg>
+      </div>
+      <p class="status" id="status" data-i18n="vada.record">Bos · ushlab tur · ayt</p>
+      <p class="hint" data-i18n="vada.hint">Yoki shu so'zlarni o'qishingni o'zing eshit</p>
+    </div>
+
+  </div>
+
+  <div class="bottom-bar">
+    <a class="cta" id="cta" href="permissions.html" data-i18n="vada.cta">Davom</a>
+    <a class="skip" href="permissions.html" data-i18n="vada.skip">Hozircha o'tkazib yubor</a>
+  </div>
+</div>
+
+<script src="i18n.js" defer></script>
+<script src="data.js" defer></script>
+<script src="nav-overlay.js" defer></script>
+<script>
+  document.addEventListener('DOMContentLoaded', () => {
+    const name = (localStorage.getItem('mvow.userName') || '').trim();
+    if (name) document.getElementById('userNameSpan').textContent = name;
+
+    let recording = false;
+    let recorded = false;
+    const mic = document.getElementById('micBtn');
+    const status = document.getElementById('status');
+    function toggle() {
+      recording = !recording;
+      mic.classList.toggle('recording', recording);
+      if (window.MVOW_DATA) MVOW_DATA.fxTap();
+      if (recording) {
+        status.textContent = window.I18N ? I18N.t('vada.recording', 'Tinglayapman…') : 'Tinglayapman…';
+      } else {
+        recorded = true;
+        status.textContent = window.I18N ? I18N.t('vada.done', "Va'da berildi") : "Va'da berildi";
+        status.classList.add('done');
+        localStorage.setItem('mvow.vowGiven', '1');
+        localStorage.setItem('mvow.vowAt', new Date().toISOString());
+      }
+    }
+    mic.addEventListener('click', toggle);
+    mic.addEventListener('keydown', e => {
+      if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); toggle(); }
+    });
+  });
+</script>
+
+</body>
+</html>

@@ -187,26 +187,27 @@
   // today-plan.html qo'shildi: AI tuzgan kun tartibi ro'yxati — boshlashdan oldin.
   const SEQ = [
     // Onboarding (1-3)
-    'welcome.html',           // 1. Tanishuv (ism + bio + va'da)
-    'goal.html',              // 2. Profil
-    'permissions.html',       // 3. Ruxsatlar
-    // Sozlama · aloqa (4-5)
-    'settings.html',          // 4. Sozlamalar
-    // Kun (5-9)
-    'alarm.html',             // 5. Uyg'on
-    'home.html',              // 6. Bosh sahifa
-    'routine.html',           // 7. Rejalaringni ayt
-    'today-plan.html',        // 8. Tuzilgan kun tartibi
-    'calendar.html',          // 9. Haftalik kalendar
-    // Bajarish (10-13)
-    'day-flow.html',          // 10. Taymer
-    'hard-lock.html',         // 11. Qulflash
-    'negotiation.html',       // 12. Diqqat sinovi
-    'session-reflection.html',// 13. Sessiya bahosi
-    // Natija (14-16)
-    'notifications.html',     // 14. Xabarlar
-    'weekly-review.html',     // 15. Natijalar
-    'celebrate.html'          // 16. Bayram
+    'intro.html',             // 1. Tanishuv (Murabbiy)
+    'welcome.html',           // 2. Ism
+    'goal.html',              // 3. Anketa
+    'vada.html',              // 4. Va'da
+    'permissions.html',       // 5. Ruxsatlar
+    'settings.html',          // 6. Sozlamalar
+    // Kun (7-11)
+    'alarm.html',             // 7. Uyg'on
+    'home.html',              // 8. Bosh sahifa
+    'routine.html',           // 9. Reja
+    'today-plan.html',        // 10. Bugungi reja
+    'calendar.html',          // 11. Kalendar
+    // Bajarish (12-15)
+    'day-flow.html',          // 12. Taymer
+    'hard-lock.html',         // 13. Qulflash
+    'negotiation.html',       // 14. Diqqat sinovi
+    'session-reflection.html',// 15. Sessiya bahosi
+    // Natija (16-18)
+    'notifications.html',     // 16. Xabarlar
+    'weekly-review.html',     // 17. Natijalar
+    'celebrate.html'          // 18. Bayram
   ];
 
   const file = (location.pathname.split('/').pop() || 'welcome.html').toLowerCase();
@@ -216,13 +217,13 @@
   const prev = idx > 0 ? SEQ[idx - 1] : null;
   const next = idx < SEQ.length - 1 ? SEQ[idx + 1] : null;
 
-  // 4 ta bo'lim — qaysi ekran qaysi bo'limga tegishli
+  // 5 ta bo'lim — qaysi ekran qaysi bo'limga tegishli
   const SECTIONS = [
-    { name: 'Tanishuv',  range: [0, 3] },   // 1-3
-    { name: 'Sozlama',   range: [3, 4] },   // 4
-    { name: 'Kun',       range: [4, 9] },   // 5-9
-    { name: 'Bajarish',  range: [9, 13] },  // 10-13
-    { name: 'Natija',    range: [13, 16] }  // 14-16
+    { name: 'Tanishuv',  range: [0, 4] },   // 1-4 (intro, welcome, goal, vada)
+    { name: 'Sozlama',   range: [4, 6] },   // 5-6 (permissions, settings)
+    { name: 'Kun',       range: [6, 11] },  // 7-11 (alarm, home, routine, today-plan, calendar)
+    { name: 'Bajarish',  range: [11, 15] }, // 12-15
+    { name: 'Natija',    range: [15, 18] }  // 16-18
   ];
   const currentSection = SECTIONS.find(s => idx >= s.range[0] && idx < s.range[1]) || SECTIONS[0];
   const sectionIdx = idx - currentSection.range[0] + 1;
