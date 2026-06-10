@@ -3,7 +3,7 @@
  * after first load. Caches all preview HTML files + the logo.
  */
 
-const CACHE_NAME = 'mvow-v12.0.0';
+const CACHE_NAME = 'mvow-v12.1.0';
 const ASSETS = [
   './',
   // Asosiy infratuzilma
@@ -15,6 +15,7 @@ const ASSETS = [
   './menu.html',
   './gallery.html',
   './about.html',
+  './royhat.html',
   './assets/mnsm-logo.png',
   // 17 ekran SEQ tartibida
   './intro.html',             // 1

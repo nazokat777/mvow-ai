@@ -88,21 +88,26 @@
         confirm_meta: 'Birinchi reja tayyor',
         cta: 'Davom'
       },
+      auth: {
+        title: "Ro'yhatdan o'tish",
+        sub: "Yo'lingni saqlash uchun",
+        google: 'Google bilan davom',
+        or: 'yoki',
+        email_lbl: 'Email',
+        email_err: "To'g'ri email kirit",
+        cta: "Ro'yhatdan o'tish",
+        skip: "Hozircha o'tkazib yubor",
+        terms: "Ro'yhatdan o'tish bilan sen Foydalanish shartlariga rozi bo'lasan.",
+        terms_link: 'Foydalanish shartlari'
+      },
       vada: {
-        label: "Sening so'zing",
-        title_a: "Va'da",
-        title_em: "— bu kelishuv",
-        why_lbl: 'Nima uchun?',
-        why_text: "Va'da — bu <strong>o'zingga bergan so'zing.</strong> Sen aytasan — men eslayman. Qiyin paytda men eslataman: <strong>\"Sen so'z bergansan.\"</strong><br>Bu majburlash emas — bu <strong>tayanch.</strong>",
-        vow_em: 'intizomli',
-        vow_text_a: "bo'laman.",
-        vow_text_b: 'Rejaga sodiq qolaman.',
-        record: 'Bos · ushlab tur · ayt',
+        title: "Va'da ber",
+        line1: "intizomli bo'lishga",
+        line2: "rejamga sodiq bo'lishga",
+        record: 'Ovozda ayt',
         recording: 'Tinglayapman…',
         done: "Va'da berildi",
-        hint: "Yoki shu so'zlarni o'qishingni o'zing eshit",
-        cta: 'Davom',
-        skip: "Hozircha o'tkazib yubor"
+        cta: 'Davom'
       },
       permissions: {
         title: 'Ruxsatlar',
@@ -349,21 +354,26 @@
         confirm_meta: 'Первый план готов',
         cta: 'Продолжить'
       },
+      auth: {
+        title: 'Регистрация',
+        sub: 'Чтобы сохранить свой путь',
+        google: 'Продолжить с Google',
+        or: 'или',
+        email_lbl: 'Email',
+        email_err: 'Введите правильный email',
+        cta: 'Зарегистрироваться',
+        skip: 'Пока пропустить',
+        terms: 'Регистрируясь, ты соглашаешься с Условиями использования.',
+        terms_link: 'Условиями использования'
+      },
       vada: {
-        label: 'Твоё слово',
-        title_a: 'Обещание',
-        title_em: '— это договор',
-        why_lbl: 'Зачем?',
-        why_text: 'Обещание — это <strong>слово, которое ты даёшь себе.</strong> Ты говоришь — я помню. В трудную минуту я напомню: <strong>"Ты дал слово."</strong><br>Это не принуждение — это <strong>опора.</strong>',
-        vow_em: 'дисциплинированным',
-        vow_text_a: 'буду.',
-        vow_text_b: 'Останусь верен плану.',
-        record: 'Нажми · удерживай · скажи',
+        title: 'Дай обещание',
+        line1: 'быть дисциплинированным',
+        line2: 'остаться верным плану',
+        record: 'Скажи вслух',
         recording: 'Слушаю…',
         done: 'Обещание дано',
-        hint: 'Или просто прочти эти слова вслух',
-        cta: 'Продолжить',
-        skip: 'Пока пропустить'
+        cta: 'Продолжить'
       },
       permissions: {
         title: 'Разрешения',
@@ -610,21 +620,26 @@
         confirm_meta: 'First plan ready',
         cta: 'Continue'
       },
+      auth: {
+        title: 'Sign up',
+        sub: 'To save your path',
+        google: 'Continue with Google',
+        or: 'or',
+        email_lbl: 'Email',
+        email_err: 'Enter a valid email',
+        cta: 'Sign up',
+        skip: 'Skip for now',
+        terms: 'By signing up, you agree to the Terms of Use.',
+        terms_link: 'Terms of Use'
+      },
       vada: {
-        label: 'Your word',
-        title_a: 'The Vow',
-        title_em: '— is an agreement',
-        why_lbl: 'Why?',
-        why_text: 'A vow is <strong>the word you give yourself.</strong> You say it — I remember. In hard moments I remind you: <strong>"You gave your word."</strong><br>This isn\'t coercion — it\'s <strong>a support.</strong>',
-        vow_em: 'disciplined',
-        vow_text_a: 'I will be.',
-        vow_text_b: 'I will stay true to the plan.',
-        record: 'Press · hold · speak',
+        title: 'Take the vow',
+        line1: 'to be disciplined',
+        line2: 'to stay true to my plan',
+        record: 'Say it aloud',
         recording: 'Listening…',
         done: 'Vow taken',
-        hint: 'Or simply read these words aloud',
-        cta: 'Continue',
-        skip: 'Skip for now'
+        cta: 'Continue'
       },
       permissions: {
         title: 'Permissions',

@@ -128,7 +128,7 @@
   <div class="container">
 
     <div class="me">
-      <div class="name" id="userName">Aziz</div>
+      <div class="name" id="userName">—</div>
       <div class="sub"><span class="em" id="streakN">0</span> kun yo'l</div>
     </div>
 
@@ -226,8 +226,8 @@
     }
 
     // Ism
-    const userName = (localStorage.getItem('mvow.userName') || 'Aziz').trim();
-    document.getElementById('userName').textContent = userName;
+    const userName = (localStorage.getItem('mvow.userName') || '').trim();
+    document.getElementById('userName').textContent = userName || '—';
     // Streak
     const streak = parseInt(localStorage.getItem('mvow.streak') || '0', 10);
     document.getElementById('streakN').textContent = streak;

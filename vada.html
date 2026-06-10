@@ -22,41 +22,25 @@
   .phone { width: 380px; min-height: 800px; background: var(--void); border-radius: 40px; overflow: hidden; position: relative; box-shadow: 0 0 0 8px #1a1d24, 0 30px 80px rgba(0,0,0,.7); display:flex; flex-direction: column; }
   .container { flex:1; padding: 80px 32px 100px; display:flex; flex-direction: column; gap: 26px; overflow-y: auto; }
 
-  .top-lbl { text-align: center; font-size: 10px; letter-spacing: 4px; color: var(--text-dim); text-transform: uppercase; }
-  .title { font-family:'Cormorant Garamond', serif; font-weight: 500; font-size: 30px; text-align: center; line-height: 1.3; }
-  .title .em { color: var(--accent); font-style: italic; }
-
-  /* Why card */
-  .why {
-    background: var(--void-soft);
-    border: 1px solid rgba(0,229,212,.15);
-    border-radius: 12px;
-    padding: 20px 18px;
-  }
-  .why .lbl { font-size: 10px; letter-spacing: 4px; color: var(--accent); text-transform: uppercase; margin-bottom: 12px; text-align: center; }
-  .why .body {
+  .title {
     font-family: 'Cormorant Garamond', serif;
     font-style: italic;
-    font-size: 15px;
+    font-weight: 500;
+    font-size: 42px;
+    text-align: center;
+    line-height: 1.2;
+    margin-bottom: 16px;
+  }
+
+  /* Vow lines */
+  .vow {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 22px;
     color: var(--text);
     line-height: 1.7;
     text-align: center;
+    padding: 28px 8px;
   }
-  .why .body strong { color: var(--accent); font-weight: 500; }
-
-  /* Vow text */
-  .vow {
-    font-family: 'Cormorant Garamond', serif;
-    font-style: italic;
-    font-size: 19px;
-    color: var(--text);
-    line-height: 1.6;
-    text-align: center;
-    padding: 18px 8px;
-    border-top: 1px solid rgba(0,229,212,.1);
-    border-bottom: 1px solid rgba(0,229,212,.1);
-  }
-  .vow .em { color: var(--accent); font-style: normal; font-weight: 500; }
 
   /* Mic */
   .mic-wrap { display:flex; flex-direction: column; align-items: center; gap: 12px; }
@@ -93,25 +77,11 @@
 <div class="phone">
   <div class="container">
 
-    <div class="top-lbl" data-i18n="vada.label">Sening so'zing</div>
-
-    <h1 class="title">
-      <span data-i18n="vada.title_a">Va'da</span> <span class="em" data-i18n="vada.title_em">— bu kelishuv</span>
-    </h1>
-
-    <div class="why">
-      <div class="lbl" data-i18n="vada.why_lbl">Nima uchun?</div>
-      <div class="body" data-i18n-html="vada.why_text">
-        Va'da — bu <strong>o'zingga bergan so'zing.</strong> Sen aytasan — men eslayman.
-        Qiyin paytda men eslataman: <strong>"Sen so'z bergansan."</strong><br>
-        Bu majburlash emas — bu <strong>tayanch.</strong>
-      </div>
-    </div>
+    <h1 class="title" data-i18n="vada.title">Va'da ber</h1>
 
     <p class="vow" id="vowText">
-      Men <span class="em" id="userNameSpan">do'stim</span>,<br>
-      <span class="em" data-i18n="vada.vow_em">intizomli</span> <span data-i18n="vada.vow_text_a">bo'laman.</span><br>
-      <span data-i18n="vada.vow_text_b">Rejaga sodiq qolaman.</span>
+      <span data-i18n="vada.line1">intizomli bo'lishga</span><br>
+      <span data-i18n="vada.line2">rejamga sodiq bo'lishga</span>
     </p>
 
     <div class="mic-wrap">
@@ -121,15 +91,13 @@
                 stroke="#04060B" stroke-width="2" stroke-linecap="round"/>
         </svg>
       </div>
-      <p class="status" id="status" data-i18n="vada.record">Bos · ushlab tur · ayt</p>
-      <p class="hint" data-i18n="vada.hint">Yoki shu so'zlarni o'qishingni o'zing eshit</p>
+      <p class="status" id="status" data-i18n="vada.record">Ovozda ayt</p>
     </div>
 
   </div>
 
   <div class="bottom-bar">
     <a class="cta" id="cta" href="permissions.html" data-i18n="vada.cta">Davom</a>
-    <a class="skip" href="permissions.html" data-i18n="vada.skip">Hozircha o'tkazib yubor</a>
   </div>
 </div>
 

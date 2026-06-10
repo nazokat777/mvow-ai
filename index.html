@@ -139,13 +139,13 @@
 </div>
 
 <div class="cta-row">
-  <a class="cta" id="goBtn" href="intro.html">Boshlaymiz</a>
+  <a class="cta" id="goBtn" href="royhat.html">Boshlaymiz</a>
 </div>
 
 <script src="i18n.js" defer></script>
 <script>
   // Qaytuvchi foydalanuvchi — to'g'ridan-to'g'ri uy
-  const hasUser = !!localStorage.getItem('mvow.userName');
+  const hasUser = !!localStorage.getItem('mvow.userName') || !!localStorage.getItem('mvow.email');
   const isMobile = window.matchMedia('(max-width: 720px)').matches
                 || /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
   if (!isMobile) {
