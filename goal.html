@@ -13,7 +13,7 @@
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
 <style>
   * { box-sizing: border-box; margin: 0; padding: 0; }
-  :root { --void:#04060B; --void-soft:#0C0F16; --text:#F5F2EC; --text-mid:#8A8D94; --text-dim:#6E7178; --accent:#00E5D4; --accent-soft:#00B5A8; }
+  :root { --void:#04060B; --void-soft:#0C0F16; --text:#F5F2EC; --text-mid:#B8BBC2; --text-dim:#9CA0A8; --accent:#00E5D4; --accent-soft:#00B5A8; }
   body { background: var(--void); font-family:'Inter',sans-serif; color: var(--text); min-height: 100vh; display:flex; justify-content:center; align-items:flex-start; padding: 24px; -webkit-font-smoothing: antialiased; }
   .phone { width: 380px; min-height: 800px; background: var(--void); border-radius: 40px; overflow: hidden; position: relative; box-shadow: 0 0 0 8px #1a1d24, 0 30px 80px rgba(0,0,0,.7); display:flex; flex-direction: column; }
   .container { flex:1; padding: 70px 32px 120px; display:flex; flex-direction:column; gap: 28px; }
@@ -42,14 +42,14 @@
     border: none;
     color: var(--text);
     padding: 6px 0;
-    font-family: 'Cormorant Garamond', serif;
-    font-style: italic;
+    font-family: 'Inter', sans-serif;
+    font-style: normal;
     font-size: 16px;
     outline: none;
     resize: none;
     line-height: 1.4;
   }
-  .row input::placeholder, .row textarea::placeholder { color: var(--text-dim); font-style: italic; }
+  .row input::placeholder, .row textarea::placeholder { color: var(--text-dim); }
   .row.full {
     grid-template-columns: 1fr;
     gap: 6px;
@@ -97,7 +97,8 @@
 
     <div class="row">
       <label for="age">Yosh</label>
-      <input id="age" type="number" inputmode="numeric" min="10" max="99" placeholder="masalan, 28">
+      <input id="age" type="number" inputmode="numeric" min="10" max="99" placeholder="28" aria-describedby="ageErr">
+      <div id="ageErr" class="err" role="alert" style="display:none;font-size:10px;color:#FF8E97;margin-top:4px;">10-99 oraliqida bo'lsin</div>
     </div>
 
     <div class="row full">
@@ -130,6 +131,15 @@
 <script src="nav-overlay.js" defer></script>
 <script>
   const $ = id => document.getElementById(id);
+
+  // Yosh validatsiyasi
+  const ageInp = document.getElementById('age');
+  const ageErr = document.getElementById('ageErr');
+  ageInp.addEventListener('input', () => {
+    const v = parseInt(ageInp.value, 10);
+    const valid = !ageInp.value || (v >= 10 && v <= 99);
+    ageErr.style.display = valid ? 'none' : 'block';
+  });
 
   // Saqlangan profil ma'lumotlari
   const PROFILE_KEY = 'mvow.profile';
