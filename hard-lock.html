@@ -23,45 +23,60 @@
     transition: background .3s;
   }
   .phone[data-alert="1"] { background: #1c0a0e; }
-  .container { flex:1; display:flex; flex-direction: column; align-items:center; justify-content:center; padding: 80px 32px 120px; gap: 24px; }
+  .container { flex:1; display:flex; flex-direction: column; align-items:center; justify-content:center; padding: 60px 32px 100px; gap: 22px; }
+
   .task { text-align: center; }
   .task .name { font-family:'Cormorant Garamond',serif; font-size: 22px; font-weight: 500; }
   .task .time { font-size: 11px; letter-spacing: 3px; color: var(--text-mid); text-transform: uppercase; margin-top: 8px; }
+
   .ring-wrap { position: relative; width: 240px; height: 240px; }
   .ring-svg { width: 100%; height: 100%; transform: rotate(-90deg); }
   .ring-track { fill: none; stroke: rgba(255,255,255,.06); stroke-width: 3; }
-  .ring-prog { fill: none; stroke: var(--accent); stroke-width: 3; stroke-linecap: round; transition: stroke .3s; }
+  .ring-prog {
+    fill: none;
+    stroke: var(--accent);
+    stroke-width: 3;
+    stroke-linecap: round;
+    transition: stroke .3s, stroke-dashoffset 1s linear;
+  }
   .phone[data-alert="1"] .ring-prog { stroke: var(--alert); }
   .ring-center { position: absolute; inset: 0; display: flex; flex-direction: column; align-items:center; justify-content:center; gap: 6px; }
-  .digits { font-size: 44px; font-weight: 300; color: var(--accent); letter-spacing: 1px; transition: color .3s; }
+  .digits { font-size: 44px; font-weight: 300; color: var(--accent); letter-spacing: 1px; transition: color .3s; font-feature-settings: "tnum"; }
   .phone[data-alert="1"] .digits { color: var(--alert); }
   .sub { font-size: 9px; letter-spacing: 3px; color: var(--text-dim); text-transform: uppercase; }
+
   .blocked { font-size: 11px; color: var(--text-mid); letter-spacing: 1px; text-align: center; }
-  .blocked .app { color: var(--text-dim); margin: 0 8px; cursor: pointer; text-decoration: line-through; }
-  .blocked .app:hover { color: var(--alert); }
+  .blocked .app { color: var(--text-dim); margin: 0 6px; cursor: pointer; text-decoration: line-through; }
+  .blocked .app:active, .blocked .app:hover { color: var(--alert); }
+
   .alert {
     display: none;
-    padding: 16px 18px;
+    width: 100%;
+    padding: 14px 16px;
     border: 1.5px solid var(--alert);
     border-radius: 10px;
     background: rgba(255,71,87,.08);
     text-align: center;
   }
   .phone[data-alert="1"] .alert { display: block; }
-  .alert .msg { font-size: 13px; color: var(--text); margin-bottom: 12px; }
+  .alert .msg { font-size: 13px; color: var(--text); margin-bottom: 12px; line-height: 1.4; }
   .alert .msg .em { color: var(--alert); font-weight: 600; }
   .alert .actions { display: flex; gap: 8px; }
-  .alert button {
+  .alert button, .alert a {
     flex: 1; padding: 10px;
     border: none; border-radius: 6px;
     font-family: 'Inter', sans-serif; font-size: 11px; font-weight: 600;
     letter-spacing: 1px; text-transform: uppercase;
     cursor: pointer;
+    text-decoration: none;
+    display: flex; align-items: center; justify-content: center;
   }
   .alert .stay { background: var(--accent); color: var(--void); }
   .alert .ask  { background: transparent; color: var(--alert); border: 1px solid var(--alert); }
-  .bottom-bar { padding: 24px 32px env(safe-area-inset-bottom, 24px); }
+
+  .bottom-bar { padding: 18px 32px env(safe-area-inset-bottom, 18px); }
   .cta { display:block; width:100%; padding:14px; background: transparent; color: var(--text-mid); font-size:12px; letter-spacing:2px; text-transform: uppercase; border:1px solid rgba(255,255,255,.1); border-radius:6px; text-align:center; text-decoration:none; }
+
   @media (max-width: 480px) { body { padding: 0; } .phone { width: 100vw; min-height: 100vh; border-radius: 0; box-shadow: none; } }
 </style>
 </head>
@@ -72,17 +87,18 @@
 
     <div class="task">
       <div class="name" id="tname">Arab grammatikasi</div>
-      <div class="time">qulflangan</div>
+      <div class="time" id="tsub">qulflangan</div>
     </div>
 
     <div class="ring-wrap">
       <svg class="ring-svg" viewBox="0 0 240 240">
         <circle class="ring-track" cx="120" cy="120" r="116"/>
-        <circle class="ring-prog" cx="120" cy="120" r="116"/>
+        <circle id="ring" class="ring-prog" cx="120" cy="120" r="116"
+                stroke-dasharray="729" stroke-dashoffset="0"/>
       </svg>
       <div class="ring-center">
-        <div class="digits">34:56</div>
-        <div class="sub">qoldi</div>
+        <div class="digits" id="digits">25:00</div>
+        <div class="sub" id="sub">qoldi</div>
       </div>
     </div>
 
@@ -96,7 +112,7 @@
       <div class="msg"><span class="em" id="alertApp">Instagram</span> ochmoqchimisan?</div>
       <div class="actions">
         <button class="stay" id="stayBtn">Fokusda qol</button>
-        <a class="ask" href="negotiation.html" style="text-decoration:none; display:flex; align-items:center; justify-content:center;">Ruxsat so'ra</a>
+        <a class="ask" href="negotiation.html">Ruxsat so'ra</a>
       </div>
     </div>
 
@@ -110,19 +126,71 @@
 <script src="data.js" defer></script>
 <script src="nav-overlay.js" defer></script>
 <script>
-  document.addEventListener('DOMContentLoaded', () => {
-    if (window.MVOW_DATA) {
-      const cur = MVOW_DATA.currentSession() || MVOW_DATA.sessions[0];
-      if (cur) document.getElementById('tname').textContent = cur.name;
+  // ── Joriy sessiya ma'lumotlari ──
+  const current = (window.MVOW_DATA && MVOW_DATA.currentSession()) || (MVOW_DATA && MVOW_DATA.sessions && MVOW_DATA.sessions[0]) || { name:'Arab grammatikasi', mins: 25 };
+
+  document.getElementById('tname').textContent = current.name;
+
+  // ── Haqiqiy taymer: 25:00 → 0:00 ──
+  const TOTAL_SEC = (current.mins || 25) * 60;
+  const RING_CIRC = 729;
+  let remaining = TOTAL_SEC;
+
+  // localStorage'dan davom ettirish (sahifa qayta yuklansa)
+  const ST_KEY = 'mvow.timer';
+  function loadState() {
+    try {
+      const s = JSON.parse(localStorage.getItem(ST_KEY) || 'null');
+      if (s && s.endsAt) {
+        const now = Date.now();
+        const left = Math.max(0, Math.floor((s.endsAt - now) / 1000));
+        if (left > 0 && left <= TOTAL_SEC) return left;
+      }
+    } catch {}
+    return TOTAL_SEC;
+  }
+  function saveState() {
+    localStorage.setItem(ST_KEY, JSON.stringify({ endsAt: Date.now() + remaining * 1000 }));
+  }
+
+  remaining = loadState();
+  if (remaining === TOTAL_SEC) saveState();
+
+  const digits = document.getElementById('digits');
+  const ring = document.getElementById('ring');
+
+  function fmt(s) {
+    const m = Math.floor(s / 60);
+    const sec = s % 60;
+    return String(m).padStart(2, '0') + ':' + String(sec).padStart(2, '0');
+  }
+
+  function paint() {
+    digits.textContent = fmt(remaining);
+    const offset = RING_CIRC * (1 - remaining / TOTAL_SEC);
+    ring.style.strokeDashoffset = offset;
+  }
+  paint();
+
+  const interval = setInterval(() => {
+    remaining = Math.max(0, remaining - 1);
+    paint();
+    if (remaining === 0) {
+      clearInterval(interval);
+      localStorage.removeItem(ST_KEY);
+      // Sessiya bahosi sahifasiga o'tish
+      setTimeout(() => { location.href = 'session-reflection.html'; }, 800);
     }
-    const phone = document.getElementById('phone');
-    const alertApp = document.getElementById('alertApp');
-    document.querySelectorAll('.app').forEach(a => a.addEventListener('click', () => {
-      alertApp.textContent = a.dataset.app;
-      phone.dataset.alert = '1';
-    }));
-    document.getElementById('stayBtn').addEventListener('click', () => phone.dataset.alert = '0');
-  });
+  }, 1000);
+
+  // ── Diqqat sinovi flow ──
+  const phone = document.getElementById('phone');
+  const alertApp = document.getElementById('alertApp');
+  document.querySelectorAll('.app').forEach(a => a.addEventListener('click', () => {
+    alertApp.textContent = a.dataset.app;
+    phone.dataset.alert = '1';
+  }));
+  document.getElementById('stayBtn').addEventListener('click', () => phone.dataset.alert = '0');
 </script>
 
 </body>
