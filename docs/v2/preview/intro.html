@@ -183,6 +183,33 @@
   }
   .pact .body strong { color: var(--accent); font-weight: 500; }
 
+  /* Til tanlash — yuqori o'ng burchakda */
+  .lang-pick {
+    position: absolute;
+    top: 18px; right: 18px;
+    z-index: 10;
+    background: rgba(0,229,212,.06);
+    border: 1px solid rgba(0,229,212,.25);
+    border-radius: 999px;
+    padding: 6px 12px;
+    color: var(--accent);
+    font-family: 'Inter', sans-serif;
+    font-size: 11px;
+    font-weight: 500;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    cursor: pointer;
+    outline: none;
+    appearance: none;
+    -webkit-appearance: none;
+    background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 12' fill='%2300E5D4'><polygon points='3,5 9,5 6,9'/></svg>");
+    background-repeat: no-repeat;
+    background-position: right 6px center;
+    background-size: 10px;
+    padding-right: 22px;
+  }
+  .lang-pick option { background: #04060B; color: #F5F2EC; }
+
   .bottom-bar {
     padding: 18px 30px env(safe-area-inset-bottom, 18px);
     background: linear-gradient(180deg, transparent, var(--void) 30%);
@@ -215,6 +242,12 @@
 
 <div class="phone">
   <div class="halo"></div>
+
+  <select class="lang-pick" id="langPickIntro" aria-label="Language">
+    <option value="uz">UZ</option>
+    <option value="ru">RU</option>
+    <option value="en">EN</option>
+  </select>
 
   <div class="container">
 
@@ -278,6 +311,18 @@
 <script>
   document.getElementById('startBtn').addEventListener('click', () => {
     localStorage.setItem('mvow.introSeen', '1');
+  });
+
+  // Til tanlash
+  document.addEventListener('DOMContentLoaded', () => {
+    const sel = document.getElementById('langPickIntro');
+    if (sel && window.I18N) {
+      sel.value = I18N.lang;
+      sel.addEventListener('change', () => {
+        I18N.set(sel.value);
+        setTimeout(() => location.reload(), 100);
+      });
+    }
   });
 </script>
 
