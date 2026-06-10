@@ -36,11 +36,13 @@
       by:      ''
     },
 
+    // today — joriy sanadan jonli to'ldiriladi (pastda)
     today: {
-      date:    '10-MAY',
-      weekday: 'DUSHANBA',
-      week:    19,
-      label:   '10-MAY · DUSHANBA'
+      date:    '',
+      weekday: '',
+      week:    0,
+      monthYear: '',
+      label:   ''
     },
 
     sessions: SESSIONS,
@@ -53,12 +55,13 @@
       currentIdx: SESSIONS.findIndex(s => s.status === 'current')
     },
 
+    // Demo ssenariy — 12-kun tajribali foydalanuvchi
     week: {
       progress: { done: 4, target: 5 },
-      focusHours: 38,
-      sessionCount: 38,
-      change: '+12%',
-      days: [5.5, 7.2, 6.0, 5.0, 8.0, 4.0, 2.0]
+      focusHours: 24,
+      sessionCount: 30,
+      change: '+18%',
+      days: [4.5, 5.0, 4.0, 3.5, 5.0, 2.0, 0]   // Du..Yak — bugungidan keyingilari 0
     },
 
     streak: 12,
@@ -75,6 +78,26 @@
       { name: 'Mutolaa',            days:  8 }
     ]
   };
+
+  // ──────────────────────────────────────────────────────────────
+  // SANA — joriy sanani markaziy joydan tarqatish
+  // ──────────────────────────────────────────────────────────────
+  (function fillToday() {
+    const monShort = ['YAN','FEV','MAR','APR','MAY','JUN','IYU','AVG','SEN','OKT','NOY','DEK'];
+    const monFull  = ['Yanvar','Fevral','Mart','Aprel','May','Iyun','Iyul','Avgust','Sentyabr','Oktyabr','Noyabr','Dekabr'];
+    const dayShort = ['YAKSHANBA','DUSHANBA','SESHANBA','CHORSHANBA','PAYSHANBA','JUMA','SHANBA'];
+    const d = new Date();
+    DATA.today.date      = String(d.getDate()).padStart(2, '0') + '-' + monShort[d.getMonth()];
+    DATA.today.weekday   = dayShort[d.getDay()];
+    DATA.today.monthYear = monFull[d.getMonth()] + ' ' + d.getFullYear();
+    DATA.today.label     = DATA.today.date + ' · ' + DATA.today.weekday;
+    // ISO hafta soni
+    const t = new Date(d.valueOf());
+    t.setHours(0,0,0,0);
+    t.setDate(t.getDate() + 3 - ((t.getDay() + 6) % 7));
+    const w = new Date(t.getFullYear(), 0, 4);
+    DATA.today.week = 1 + Math.round(((t - w) / 86400000 - 3 + ((w.getDay() + 6) % 7)) / 7);
+  })();
 
   // Derived helpers — tez murojaat uchun
   DATA.firstSession   = () => SESSIONS[0];

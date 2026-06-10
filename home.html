@@ -18,7 +18,7 @@
   * { box-sizing: border-box; margin: 0; padding: 0; }
   :root {
     --void:#04060B; --void-soft:#0C0F16;
-    --text:#F5F2EC; --text-mid:#8A8D94; --text-dim:#4A4D54;
+    --text:#F5F2EC; --text-mid:#8A8D94; --text-dim:#6E7178;
     --accent:#00E5D4; --accent-soft:#00B5A8;
   }
   body { background: var(--void); font-family:'Inter',sans-serif; color: var(--text); min-height: 100vh; display:flex; justify-content:center; align-items:flex-start; padding: 24px; -webkit-font-smoothing: antialiased; }
@@ -165,14 +165,19 @@
       bioEl.classList.add('show');
     }
 
-    // Streak
-    const streak = parseInt(localStorage.getItem('mvow.streak') || '0', 10);
+    // Streak — saqlangan bo'lsa o'sha, yo'q bo'lsa namuna sifatida 12
+    const streakRaw = localStorage.getItem('mvow.streak');
+    const streak = streakRaw != null ? parseInt(streakRaw, 10) : 12;
     document.getElementById('streakN').textContent = streak;
 
-    // Bugungi reja
+    // Bugungi reja — saqlangan bo'lsa o'sha, yo'q bo'lsa data.js'dan namuna
     let plan = [];
     try { plan = JSON.parse(localStorage.getItem('mvow.todayPlan') || '[]'); } catch {}
-    if (!Array.isArray(plan)) plan = [];
+    if (!Array.isArray(plan) || !plan.length) {
+      if (window.MVOW_DATA && MVOW_DATA.sessions) {
+        plan = MVOW_DATA.sessions.map(s => ({ time: s.time, name: s.name, dur: s.dur }));
+      }
+    }
 
     // Saralash
     function tKey(t) {

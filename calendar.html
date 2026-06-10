@@ -15,7 +15,7 @@
   * { box-sizing: border-box; margin: 0; padding: 0; }
   :root {
     --void:#04060B; --void-soft:#0C0F16;
-    --text:#F5F2EC; --text-mid:#8A8D94; --text-dim:#4A4D54;
+    --text:#F5F2EC; --text-mid:#8A8D94; --text-dim:#6E7178;
     --accent:#00E5D4; --accent-soft:#00B5A8;
     --alert:#FF4757;
   }
@@ -181,7 +181,7 @@
   <div class="container">
 
     <div class="h">
-      <div class="month">May 2026</div>
+      <div class="month" id="monthLbl">Iyun 2026</div>
     </div>
 
     <div class="week-row" id="weekRow"></div>
@@ -199,17 +199,33 @@
 <script src="nav-overlay.js" defer></script>
 
 <script>
-  // Hafta strukturasi (Du dan Yakshanba'gacha)
-  const DAYS = [
-    { key: 'mon', d: 'DU', n: 4, full: 'Dushanba'    },
-    { key: 'tue', d: 'SE', n: 5, full: 'Seshanba'    },
-    { key: 'wed', d: 'CH', n: 6, full: 'Chorshanba'  },
-    { key: 'thu', d: 'PA', n: 7, full: 'Payshanba'   },
-    { key: 'fri', d: 'JU', n: 8, full: 'Juma'        },
-    { key: 'sat', d: 'SH', n: 9, full: 'Shanba'      },
-    { key: 'sun', d: 'YA', n: 10, full: 'Yakshanba'  }
-  ];
-  const TODAY_IDX = 6; // Yakshanba — namuna uchun
+  // Joriy haftaning Dushanbasidan boshlanadigan 7 kun
+  const monShort = ['yan','fev','mar','apr','may','iyn','iyl','avg','sen','okt','noy','dek'];
+  const monFull  = ['Yanvar','Fevral','Mart','Aprel','May','Iyun','Iyul','Avgust','Sentyabr','Oktyabr','Noyabr','Dekabr'];
+  const _now = new Date();
+  const _dow = _now.getDay(); // 0=Yakshanba
+  const _monday = new Date(_now);
+  _monday.setDate(_now.getDate() - ((_dow + 6) % 7));
+  const DAYS = (() => {
+    const labels = ['DU','SE','CH','PA','JU','SH','YA'];
+    const full   = ['Dushanba','Seshanba','Chorshanba','Payshanba','Juma','Shanba','Yakshanba'];
+    const out = [];
+    for (let i = 0; i < 7; i++) {
+      const d = new Date(_monday);
+      d.setDate(_monday.getDate() + i);
+      out.push({
+        key: 'd' + d.toISOString().slice(0,10),
+        d: labels[i],
+        n: d.getDate(),
+        full: full[i],
+        mon: d.getMonth()
+      });
+    }
+    return out;
+  })();
+  const TODAY_IDX = (_dow + 6) % 7; // Du = 0
+  // Sarlavha: oy + yil
+  document.getElementById('monthLbl').textContent = monFull[_now.getMonth()] + ' ' + _now.getFullYear();
 
   const STORAGE_KEY = 'mvow.weekPlan';
 
@@ -269,7 +285,7 @@
 
   function renderDay() {
     const day = DAYS.find(d => d.key === selectedKey);
-    dayLabel.innerHTML = `${day.full} · <span class="em">${day.n}-may</span>`;
+    dayLabel.innerHTML = `${day.full} · <span class="em">${day.n}-${monShort[day.mon]}</span>`;
 
     const list = weekData[selectedKey] || [];
     list.sort((a, b) => timeKey(a.time) - timeKey(b.time));
