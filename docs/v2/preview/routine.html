@@ -3,666 +3,256 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-<title>M·VoW — Reja Quramiz</title>
+<title>{brand} — Rejalashtir</title>
 <link rel="manifest" href="manifest.webmanifest">
 <meta name="theme-color" content="#04060B">
-<meta name="apple-mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<meta name="apple-mobile-web-app-title" content="M·VoW">
 <link rel="apple-touch-icon" href="assets/mnsm-logo.png">
 <link rel="icon" type="image/png" href="assets/mnsm-logo.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;600;700&family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,500&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
 <style>
   * { box-sizing: border-box; margin: 0; padding: 0; }
-  :root {
-    --void:#04060B; --void-2:#0A0E16;
-    --text-primary:#F5F2EC; --text-body:#B8BBC2;
-    --text-muted:#6B6E76; --text-ghost:#3A3D44;
-    --gold:#E8C77E; --gold-2:#C7A36B; --gold-deep:#8a6f44;
-    --gold-flash:#FFE9B5; --honey:#D4A574; --cream:#F0E5D2;
-    --emerald:#4A8A5C; --emerald-bright:#6BAF7C;
-    --crimson:#B8334A; --rose:#C28B8B; --sky:#7CA8C9;
-  }
-  body {
-    background:#14171d; font-family:'Inter',sans-serif;
-    color:var(--text-primary); min-height:100vh;
-    display:flex; justify-content:center; align-items:flex-start;
-    padding:24px;
-  }
-  .phone {
-    width:380px; min-height:800px;
-    background:var(--void); border-radius:40px;
-    overflow:hidden; position:relative;
-    box-shadow:0 0 0 8px #2a2e36, 0 30px 80px rgba(0,0,0,.85), 0 0 100px rgba(232,199,126,.10);
-    transition:background 1s ease;
-  }
-  .phone[data-state="generating"] {
-    background:#0E0D1A;
-    box-shadow:0 0 0 8px #2a2e36, 0 30px 80px rgba(0,0,0,.85), 0 0 100px rgba(124,168,201,.20);
-  }
-  .phone[data-state="plan"] {
-    background:#0E1610;
-    box-shadow:0 0 0 8px #2a2e36, 0 30px 80px rgba(0,0,0,.85), 0 0 100px rgba(74,138,92,.25);
-  }
-  .backdrop {
-    position:absolute; inset:0;
-    background:
-      radial-gradient(ellipse 90% 30% at 50% 18%, rgba(232,199,126,.10), transparent 65%),
-      linear-gradient(180deg, var(--void) 0%, var(--void-2) 50%, var(--void) 100%);
-    transition:background 1s;
-  }
-  .phone[data-state="generating"] .backdrop {
-    background:
-      radial-gradient(ellipse 90% 30% at 50% 18%, rgba(124,168,201,.16), transparent 65%),
-      linear-gradient(180deg, var(--void) 0%, #0E0D1A 50%, var(--void) 100%);
-  }
-  .phone[data-state="plan"] .backdrop {
-    background:
-      radial-gradient(ellipse 90% 30% at 50% 18%, rgba(74,138,92,.14), transparent 65%),
-      linear-gradient(180deg, var(--void) 0%, #0E1610 50%, var(--void) 100%);
-  }
+  :root { --void:#04060B; --void-soft:#0C0F16; --text:#F5F2EC; --text-mid:#8A8D94; --text-dim:#6E7178; --accent:#00E5D4; --accent-soft:#00B5A8; --alert:#FF4757; }
+  body { background: var(--void); font-family:'Inter',sans-serif; color: var(--text); min-height: 100vh; display:flex; justify-content:center; align-items:flex-start; padding: 24px; -webkit-font-smoothing: antialiased; }
+  .phone { width: 380px; min-height: 800px; background: var(--void); border-radius: 40px; overflow: hidden; position: relative; box-shadow: 0 0 0 8px #1a1d24, 0 30px 80px rgba(0,0,0,.7); display:flex; flex-direction: column; }
+  .container { flex:1; padding: 70px 32px 120px; display:flex; flex-direction:column; gap: 24px; }
 
-  .gilt-frame{position:absolute;inset:14px;border:1px solid rgba(232,199,126,.18);border-radius:26px;pointer-events:none;z-index:4}
-  .letterbox{position:absolute;left:0;right:0;height:14px;background:var(--void);z-index:7;pointer-events:none}
-  .letterbox.top{top:0}.letterbox.bottom{bottom:0}
+  .h { text-align: center; }
+  .h .title { font-family:'Cormorant Garamond',serif; font-weight: 500; font-size: 28px; line-height: 1.3; }
+  .h .sub {
+    font-family:'Cormorant Garamond',serif; font-style: italic;
+    font-size: 15px; color: var(--text-mid);
+    margin-top: 12px;
+    line-height: 1.5;
+  }
+  .h .sub .em { color: var(--accent); font-style: normal; }
 
-  .container{position:relative;padding:60px 24px 130px;z-index:2}
+  .input-block {
+    position: relative;
+  }
+  .input-block textarea {
+    width: 100%;
+    min-height: 180px;
+    background: var(--void-soft);
+    border: 1px solid rgba(255,255,255,.06);
+    border-radius: 8px;
+    color: var(--text);
+    padding: 16px 56px 16px 16px;
+    font-family: 'Cormorant Garamond', serif;
+    font-style: italic;
+    font-size: 16px;
+    line-height: 1.6;
+    outline: none;
+    resize: none;
+    transition: border-color .2s;
+  }
+  .input-block textarea:focus { border-color: var(--accent); }
+  .input-block textarea::placeholder { color: var(--text-dim); font-style: italic; }
 
-  /* Header */
-  .header-row {
-    display:flex; justify-content:space-between; align-items:center;
-    margin-bottom:18px;
-  }
-  .step-pill {
-    display:inline-flex; align-items:center; gap:8px;
-    padding:5px 12px; border-radius:999px;
-    border:1px solid var(--gold);
-    background:rgba(232,199,126,.08);
-    font-family:'JetBrains Mono',monospace; font-size:9px;
-    letter-spacing:3px; color:var(--gold);
-  }
-  .step-pill .dots { display:flex; gap:3px; }
-  .step-pill .d {
-    width:5px; height:5px; border-radius:50%; background:var(--gold-deep);
-  }
-  .step-pill .d.active { background:var(--gold); box-shadow:0 0 6px var(--gold); }
-  .phone[data-state="generating"] .step-pill { border-color:var(--sky); color:var(--sky); background:rgba(124,168,201,.10); }
-  .phone[data-state="plan"] .step-pill { border-color:var(--emerald); color:var(--emerald-bright); background:rgba(74,138,92,.10); }
-
-  .back-btn {
-    padding:5px 12px; border:1px solid var(--gold-deep);
-    border-radius:999px; background:rgba(232,199,126,.04);
-    color:var(--gold); text-decoration:none;
-    font-family:'JetBrains Mono',monospace; font-size:9px; letter-spacing:2px;
-  }
-
-  /* === Mentor question section === */
-  .mentor-q {
-    display:flex; align-items:flex-start; gap:12px;
-    margin-bottom:14px;
-  }
-  .mentor-q .orb {
-    width:30px; height:30px; flex-shrink:0; margin-top:2px;
-    background:url(assets/mnsm-logo.png) center/contain no-repeat;
-    filter:drop-shadow(0 0 8px rgba(232,199,126,.55));
-    animation:breathe 3s ease-in-out infinite;
-  }
-  @keyframes breathe{0%,100%{transform:scale(.92)}50%{transform:scale(1.08)}}
-  .mentor-q .text {
-    flex:1;
-    font-family:'Cormorant Garamond',serif; font-style:italic;
-    font-weight:600; font-size:21px; color:var(--text-primary);
-    line-height:1.3; letter-spacing:.3px;
-  }
-  .mentor-q .text .em { color:var(--gold); font-style:normal; }
-
-  .prompt {
-    font-family:'JetBrains Mono',monospace; font-size:8.5px;
-    letter-spacing:4px; color:var(--gold-deep); margin-bottom:10px; margin-left:42px;
-  }
-
-  /* Answer chips */
-  .answers { display:flex; flex-direction:column; gap:8px; margin-bottom:18px; }
-  .answer-chip {
-    display:flex; align-items:center; gap:10px;
-    padding:11px 14px;
-    background:rgba(232,199,126,.04);
-    border:1px solid var(--gold-deep);
-    border-radius:8px;
-    cursor:pointer; transition:all .15s;
-  }
-  .answer-chip:active { transform:scale(.99); }
-  .answer-chip.selected {
-    border-color:var(--gold);
-    background:rgba(232,199,126,.14);
-    box-shadow:0 0 12px rgba(232,199,126,.25);
-  }
-  .answer-chip .ic { font-size:18px; width:22px; text-align:center; color:var(--gold); }
-  .answer-chip .body { flex:1; }
-  .answer-chip .name {
-    font-family:'Cormorant Garamond',serif; font-style:italic; font-weight:600;
-    font-size:14px; color:var(--text-primary); line-height:1.2;
-  }
-  .answer-chip .sub {
-    margin-top:2px;
-    font-family:'JetBrains Mono',monospace; font-size:8px;
-    letter-spacing:1.5px; color:var(--gold-deep);
-  }
-
-  /* Voice input */
-  .voice-row {
-    display:flex; align-items:center; gap:10px;
-    padding:11px 14px;
-    background:rgba(232,199,126,.04);
-    border:1px dashed var(--gold-deep);
-    border-radius:8px; margin-bottom:18px;
-  }
-  .voice-row .mic-btn {
-    width:32px; height:32px; border-radius:50%;
-    background:linear-gradient(180deg, var(--gold-flash), var(--gold), var(--gold-2));
-    color:var(--void);
+  /* Ovoz tugmasi — textarea ichida o'ng yuqorida */
+  .mic {
+    position: absolute;
+    top: 12px; right: 12px;
+    width: 36px; height: 36px;
+    border-radius: 50%;
+    background: linear-gradient(180deg, var(--accent), var(--accent-soft));
+    border: none;
     display:flex; align-items:center; justify-content:center;
-    box-shadow:0 0 10px rgba(232,199,126,.4); flex-shrink:0;
+    cursor:pointer;
+    transition: transform .15s, box-shadow .25s;
+    box-shadow: 0 0 12px rgba(0,229,212,.3);
   }
-  .voice-row .mic-btn svg { width:14px; height:14px; fill:currentColor; }
-  .voice-row .lbl {
-    flex:1;
-    font-family:'Cormorant Garamond',serif; font-style:italic;
-    font-size:13px; color:var(--text-muted);
+  .mic:active { transform: scale(.92); }
+  .mic svg { width: 16px; height: 16px; fill: var(--void); }
+  .mic.recording {
+    animation: pulse 1.4s ease-in-out infinite;
+    background: var(--alert);
+    box-shadow: 0 0 16px rgba(255,71,87,.5);
   }
-  .voice-row .lbl .em { color:var(--gold); }
-
-  /* === Generating state === */
-  .generating {
-    display:none; flex-direction:column; align-items:center;
-    padding:40px 0; gap:20px;
-  }
-  .phone[data-state="generating"] .generating { display:flex; }
-  .gen-orb {
-    width:90px; height:90px;
-    background:url(assets/mnsm-logo.png) center/contain no-repeat;
-    filter:drop-shadow(0 0 24px rgba(124,168,201,.7));
-    animation:gen-spin 8s linear infinite, gen-pulse 2s ease-in-out infinite;
-  }
-  @keyframes gen-spin{to{transform:rotate(360deg)}}
-  @keyframes gen-pulse{0%,100%{filter:drop-shadow(0 0 24px rgba(124,168,201,.7))}50%{filter:drop-shadow(0 0 40px rgba(124,168,201,1))}}
-  .gen-text {
-    text-align:center;
-    font-family:'Cormorant Garamond',serif; font-style:italic;
-    font-size:17px; color:var(--text-primary); line-height:1.5;
-    max-width:280px;
-  }
-  .gen-text .em { color:var(--sky); font-weight:600; font-style:normal; }
-  .gen-dots {
-    display:flex; gap:6px;
-  }
-  .gen-dots span {
-    width:8px; height:8px; border-radius:50%; background:var(--sky);
-    animation:gen-bounce 1.4s ease-in-out infinite;
-  }
-  .gen-dots span:nth-child(2){animation-delay:.15s}
-  .gen-dots span:nth-child(3){animation-delay:.30s}
-  @keyframes gen-bounce{0%,100%{opacity:.3;transform:translateY(0)}40%{opacity:1;transform:translateY(-6px)}}
-
-  /* === Plan state === */
-  .plan-block { display:none; }
-  .phone[data-state="plan"] .plan-block { display:block; }
-  .plan-block .pre {
-    font-family:'JetBrains Mono',monospace; font-size:8.5px;
-    letter-spacing:4px; color:var(--emerald-bright); margin-bottom:6px;
-  }
-  .plan-block .pre .em { color:var(--gold-flash); font-weight:600; }
-  .plan-block .title {
-    font-family:'Cormorant Garamond',serif; font-style:italic; font-weight:600;
-    font-size:20px; color:var(--text-primary); line-height:1.3;
-    margin-bottom:14px;
-  }
-  .plan-block .title .em { color:var(--emerald-bright); }
-  .plan-task {
-    display:grid; grid-template-columns:54px 1fr;
-    gap:10px; padding:10px 12px;
-    margin-bottom:6px;
-    background:rgba(74,138,92,.05);
-    border:1px solid rgba(74,138,92,.30);
-    border-radius:8px;
-  }
-  .plan-task.severity-max { border-color:rgba(184,51,74,.30); background:rgba(184,51,74,.05); }
-  .plan-task.rest { border-color:rgba(124,168,201,.30); background:rgba(124,168,201,.05); }
-  .plan-task .time {
-    text-align:center;
-    font-family:'JetBrains Mono',monospace; font-size:11px;
-    letter-spacing:1px; color:var(--gold); line-height:1.3;
-  }
-  .plan-task.severity-max .time { color:var(--crimson); }
-  .plan-task.rest .time { color:var(--sky); }
-  .plan-task .name {
-    font-family:'Cormorant Garamond',serif; font-weight:600;
-    font-size:14px; color:var(--text-primary); line-height:1.2;
-  }
-  .plan-task .meta {
-    margin-top:3px;
-    font-family:'JetBrains Mono',monospace; font-size:7.5px;
-    letter-spacing:1.5px; color:var(--gold-deep);
-  }
-  .plan-task .meta .dur { color:var(--gold); }
-  .plan-task.severity-max .meta .dur { color:var(--crimson); }
-  .plan-task.rest .meta .dur { color:var(--sky); }
-
-  /* Timer slider mini */
-  .timer-edit {
-    margin-top:6px;
-    display:flex; align-items:center; gap:8px;
-  }
-  .timer-edit .slider {
-    flex:1; height:3px; background:rgba(232,199,126,.18);
-    border-radius:2px; position:relative; cursor:pointer;
-  }
-  .timer-edit .slider .fill {
-    position:absolute; left:0; top:0; height:100%;
-    background:var(--gold); border-radius:2px;
-    box-shadow:0 0 6px rgba(232,199,126,.4);
-  }
-  .timer-edit .slider .knob {
-    position:absolute; top:50%; transform:translate(-50%,-50%);
-    width:11px; height:11px; border-radius:50%;
-    background:var(--gold-flash);
-    box-shadow:0 0 8px var(--gold);
-  }
-  .timer-edit .val {
-    font-family:'JetBrains Mono',monospace; font-size:9px;
-    letter-spacing:1px; color:var(--gold); width:36px; text-align:right;
+  .mic.disabled { opacity: .35; pointer-events: none; }
+  @keyframes pulse {
+    0%, 100% { box-shadow: 0 0 16px rgba(255,71,87,.5); }
+    50%      { box-shadow: 0 0 26px rgba(255,71,87,.9); }
   }
 
-  /* Plan summary */
-  .plan-summary {
-    margin-top:14px; padding:12px 14px;
-    background:rgba(232,199,126,.05);
-    border:1px solid rgba(232,199,126,.30);
-    border-radius:8px;
+  .voice-status {
+    font-size: 11px;
+    letter-spacing: 2px;
+    color: var(--accent);
+    text-transform: uppercase;
+    text-align: center;
+    min-height: 14px;
+    opacity: 0;
+    transition: opacity .2s;
   }
-  .plan-summary .lbl {
-    font-family:'JetBrains Mono',monospace; font-size:8.5px;
-    letter-spacing:3px; color:var(--gold-deep); margin-bottom:6px;
-  }
-  .plan-summary .row {
-    display:flex; justify-content:space-between;
-    font-family:'Cormorant Garamond',serif; font-style:italic;
-    font-size:13px; color:var(--text-body); margin:3px 0;
-  }
-  .plan-summary .row .v { color:var(--gold); font-weight:600; font-style:normal; }
+  .voice-status.show { opacity: 1; }
+  .voice-status.bad { color: var(--alert); }
 
-  /* Mentor's note in plan state */
-  .plan-note {
-    margin-top:14px; padding:11px 14px;
-    border-left:2px solid var(--emerald);
-    background:rgba(74,138,92,.06);
-    border-radius:0 4px 4px 0;
-    font-family:'Cormorant Garamond',serif; font-style:italic;
-    font-size:13px; color:var(--text-body); line-height:1.5;
-  }
-  .plan-note .em { color:var(--emerald-bright); font-weight:600; font-style:normal; }
+  .bottom-bar { padding: 24px 32px env(safe-area-inset-bottom, 24px); background: linear-gradient(180deg, transparent, var(--void) 30%); }
+  .cta { display:block; width:100%; padding:16px; background: linear-gradient(180deg, var(--accent), var(--accent-soft)); color: var(--void); font-size:13px; font-weight:600; letter-spacing:2px; text-transform: uppercase; border:none; border-radius:6px; text-align:center; text-decoration:none; }
+  .cta.disabled { opacity:.3; pointer-events:none; }
 
-  /* Bottom */
-  .bottom-bar {
-    position:fixed; bottom:0; left:0; right:0;
-    padding:14px 24px env(safe-area-inset-bottom, 14px);
-    background:linear-gradient(180deg, transparent, rgba(4,6,11,.95) 30%);
-    z-index:50;
-  }
-  .next-btn {
-    width:100%; padding:14px;
-    background:linear-gradient(180deg, var(--cream), var(--gold), var(--gold-deep));
-    color:var(--void); font-size:12px; font-weight:700;
-    letter-spacing:5px; border:none; border-radius:4px;
-    cursor:pointer; text-transform:uppercase;
-    box-shadow:0 0 22px rgba(232,199,126,.40), inset 0 1px 0 rgba(255,255,255,.5);
-    transition:all .25s;
-  }
-  .phone[data-state="plan"] .next-btn {
-    background:linear-gradient(180deg, #DDF1E0, var(--emerald), #1F3D2A);
-    color:var(--text-primary);
-    box-shadow:0 0 22px rgba(74,138,92,.4);
-  }
-  .next-btn:disabled { opacity:.4; }
-
-  /* State tabs */
-  .state-tabs {
-    display:flex; justify-content:center; gap:6px;
-    margin-top:18px; flex-wrap:wrap;
-  }
-  .state-tab {
-    padding:7px 14px; border-radius:2px;
-    font-family:'JetBrains Mono',monospace; font-size:10px;
-    letter-spacing:2px; color:rgba(255,255,255,.4);
-    cursor:pointer; border:1px solid rgba(255,255,255,.08);
-  }
-  .state-tab.active { color:var(--gold); border-color:var(--gold); background:rgba(232,199,126,.08); }
-
-  .footer-info{margin-top:22px;text-align:center;color:rgba(255,255,255,.45);font-size:13px;line-height:1.6;font-family:'Cormorant Garamond',serif;font-style:italic}
-
-  @media (max-width:480px){
-    body{padding:0}
-    .phone{width:100vw;min-height:100vh;border-radius:0;box-shadow:none}
-    .bottom-bar{max-width:100vw}
-    .footer-info,.state-tabs{display:none}
-  }
+  @media (max-width: 480px) { body { padding: 0; } .phone { width: 100vw; min-height: 100vh; border-radius: 0; box-shadow: none; } }
 </style>
 </head>
 <body>
 
-<div style="display:flex;flex-direction:column;align-items:center;">
-
-<div class="phone" id="phone" data-state="q1">
-  <div class="backdrop"></div>
-  <div class="gilt-frame"></div>
-  <div class="letterbox top"></div>
-  <div class="letterbox bottom"></div>
-
+<div class="phone">
   <div class="container">
 
-    <!-- Header -->
-    <div class="header-row">
-      <a class="back-btn" href="home.html">← BEKOR</a>
-      <div class="step-pill" id="stepPill">
-        <span id="stepLabel">1 / 3 · SAVOL</span>
-        <div class="dots" id="dots">
-          <div class="d active"></div>
-          <div class="d"></div>
-          <div class="d"></div>
-        </div>
-      </div>
+    <div class="h">
+      <h1 class="title">Rejalaringni ayt</h1>
+      <p class="sub">Yoz yoki <span class="em">ovozda</span> ayt — shunga ko'ra kun tartibini tuzaman.</p>
     </div>
 
-    <!-- Question + answers -->
-    <div id="questionPanel">
-      <div class="mentor-q">
-        <div class="orb"></div>
-        <div class="text" id="qText">
-          Bugun nimaga <span class="em">erishmoqchisan</span>?
-        </div>
-      </div>
-      <div class="prompt" id="qPrompt">— bittadan ortig'ini tanlash mumkin —</div>
-
-      <div class="answers" id="answers">
-        <div class="answer-chip" data-multi="1" data-key="work">
-          <div class="ic">◆</div>
-          <div class="body"><div class="name">Ish · loyiha tugatish</div><div class="sub">CHUQUR FOKUS · POMODORO</div></div>
-        </div>
-        <div class="answer-chip" data-multi="1" data-key="study">
-          <div class="ic">▦</div>
-          <div class="body"><div class="name">O'qish · imtihonga tayyorlanish</div><div class="sub">KITOB · TIL · KURS</div></div>
-        </div>
-        <div class="answer-chip" data-multi="1" data-key="sport">
-          <div class="ic">⊙</div>
-          <div class="body"><div class="name">Sport · tananing kuchi</div><div class="sub">YUGURISH · KUCH MASHQI</div></div>
-        </div>
-        <div class="answer-chip" data-multi="1" data-key="family">
-          <div class="ic">∞</div>
-          <div class="body"><div class="name">Yaqinlar · birga vaqt</div><div class="sub">OILA · DO'ST · MUNOSABAT</div></div>
-        </div>
-        <div class="answer-chip" data-multi="1" data-key="inner">
-          <div class="ic">☾</div>
-          <div class="body"><div class="name">Ichki yo'l · sukut</div><div class="sub">MEDITATSIYA · DUO · KITOB</div></div>
-        </div>
-        <div class="answer-chip" data-multi="1" data-key="creative">
-          <div class="ic">✦</div>
-          <div class="body"><div class="name">Ijod · mahorat</div><div class="sub">MUSIQA · RASM · YANGI</div></div>
-        </div>
-      </div>
-
-      <div class="voice-row">
-        <div class="mic-btn">
-          <svg viewBox="0 0 24 24"><path d="M12 14a3 3 0 0 0 3-3V5a3 3 0 0 0-6 0v6a3 3 0 0 0 3 3z M19 11a7 7 0 0 1-14 0 M12 18v3"/></svg>
-        </div>
-        <div class="lbl">yoki <span class="em">ovozda</span> ayt</div>
-      </div>
+    <div class="input-block">
+      <textarea id="plans" placeholder="masalan: ertalab mashq, til o'rganish, kunduzi loyiha, kechqurun kitob..." maxlength="800"></textarea>
+      <button class="mic" id="micBtn" type="button" aria-label="Ovozda ayt" title="Ovozda ayt">
+        <svg viewBox="0 0 24 24">
+          <path d="M12 14a3 3 0 0 0 3-3V5a3 3 0 0 0-6 0v6a3 3 0 0 0 3 3zM19 11a7 7 0 0 1-14 0M12 18v3"
+                fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+        </svg>
+      </button>
     </div>
 
-    <!-- Generating animation -->
-    <div class="generating">
-      <div class="gen-orb"></div>
-      <div class="gen-text" id="genText">
-        <span class="em">Reja tug'ilmoqda</span>...
-      </div>
-      <div class="gen-dots"><span></span><span></span><span></span></div>
-    </div>
-
-    <!-- Generated plan -->
-    <div class="plan-block">
-      <div class="pre"><span class="em">REJA TAYYOR</span> · 5 ISH · 5S 45D</div>
-      <div class="title">Mana sening <span class="em">bugun</span>.</div>
-
-      <!-- Tasks generated dynamically based on user's input -->
-      <div class="plan-task">
-        <div class="time">07:00<br><span style="font-size:7.5px;color:var(--gold-deep)">45 daq</span></div>
-        <div class="body">
-          <div class="name">Yugurish · 5 km</div>
-          <div class="meta">⊙ TANANI UYG'OTISH · <span class="dur">45 DAQ</span></div>
-          <div class="timer-edit">
-            <div class="slider"><div class="fill" style="width:45%"></div><div class="knob" style="left:45%"></div></div>
-            <div class="val">45D</div>
-          </div>
-        </div>
-      </div>
-
-      <div class="plan-task severity-max">
-        <div class="time">09:00<br><span style="font-size:7.5px;color:var(--gold-deep)">2 soat</span></div>
-        <div class="body">
-          <div class="name">Imtihonga tayyorlanish</div>
-          <div class="meta">▦ POMODORO · 4 SIKL · <span class="dur">2S</span></div>
-          <div class="timer-edit">
-            <div class="slider"><div class="fill" style="width:80%"></div><div class="knob" style="left:80%"></div></div>
-            <div class="val">2S</div>
-          </div>
-        </div>
-      </div>
-
-      <div class="plan-task rest">
-        <div class="time">11:00<br><span style="font-size:7.5px;color:var(--gold-deep)">15 daq</span></div>
-        <div class="body">
-          <div class="name">Dam · sayr</div>
-          <div class="meta">∼ HAVODA YURISH · <span class="dur">15 DAQ</span></div>
-          <div class="timer-edit">
-            <div class="slider"><div class="fill" style="width:30%"></div><div class="knob" style="left:30%"></div></div>
-            <div class="val">15D</div>
-          </div>
-        </div>
-      </div>
-
-      <div class="plan-task">
-        <div class="time">14:00<br><span style="font-size:7.5px;color:var(--gold-deep)">1 soat</span></div>
-        <div class="body">
-          <div class="name">Loyiha · kod yozish</div>
-          <div class="meta">◆ CHUQUR ISH · <span class="dur">60 DAQ</span></div>
-          <div class="timer-edit">
-            <div class="slider"><div class="fill" style="width:60%"></div><div class="knob" style="left:60%"></div></div>
-            <div class="val">60D</div>
-          </div>
-        </div>
-      </div>
-
-      <div class="plan-task">
-        <div class="time">19:00<br><span style="font-size:7.5px;color:var(--gold-deep)">45 daq</span></div>
-        <div class="body">
-          <div class="name">Oilaga vaqt · birga ovqat</div>
-          <div class="meta">∞ TELEFONSIZ · <span class="dur">45 DAQ</span></div>
-          <div class="timer-edit">
-            <div class="slider"><div class="fill" style="width:45%"></div><div class="knob" style="left:45%"></div></div>
-            <div class="val">45D</div>
-          </div>
-        </div>
-      </div>
-
-      <div class="plan-summary">
-        <div class="row"><span>Fokus</span><span class="v">3s 45d</span></div>
-        <div class="row"><span>Tana</span><span class="v">45d</span></div>
-        <div class="row"><span>Dam</span><span class="v">15d</span></div>
-        <div class="row"><span>Yaqinlar</span><span class="v">45d</span></div>
-      </div>
-
-      <div class="plan-note">
-        Energiyang <span class="em">o'rta</span> — chuqur ishni tongga qo'ydim. 11:00 — dam, 14:00 — yana fokus.
-      </div>
-    </div>
+    <p class="voice-status" id="status"></p>
 
   </div>
 
   <div class="bottom-bar">
-    <button class="next-btn" id="nextBtn">DAVOM ETAMIZ</button>
+    <a class="cta disabled" id="cta" href="today-plan.html">Kun tartibini tuz</a>
   </div>
 </div>
 
-<!-- Preview tabs -->
-<div class="state-tabs">
-  <div class="state-tab active" data-state="q1">1 · MAQSAD</div>
-  <div class="state-tab" data-state="q2">2 · ENERGIYA</div>
-  <div class="state-tab" data-state="q3">3 · VAQT</div>
-  <div class="state-tab" data-state="generating">QURMOQDA</div>
-  <div class="state-tab" data-state="plan">REJA TAYYOR</div>
-</div>
-
-<div class="footer-info">
-  Reja quramiz — savol-javob → kun tartibi taymerlar bilan
-</div>
-
-</div>
-
+<script src="data.js" defer></script>
+<script src="nav-overlay.js" defer></script>
 <script>
-  const states = {
-    q1: {
-      step:'1 / 3 · NIMA', dots:[true,false,false],
-      qText:'Bugun <span class="em">nima</span> qilmoqchisan?',
-      qPrompt:'— 2-3 ta tanla —',
-      multi:true,
-      answers:[
-        {key:'work',   ic:'◆', name:'Ish · loyiha',     sub:''},
-        {key:'study',  ic:'▦', name:'O\'qish · imtihon', sub:''},
-        {key:'sport',  ic:'⊙', name:'Sport · tana',     sub:''},
-        {key:'family', ic:'∞', name:'Yaqinlar',         sub:''}
-      ],
-      showVoice:true, btn:'KEYINGI'
-    },
-    q2: {
-      step:'2 / 3 · ENERGIYA', dots:[true,true,false],
-      qText:'Hozir <span class="em">qancha kuchli</span>san?',
-      qPrompt:'',
-      multi:false,
-      answers:[
-        {key:'high',   ic:'⚡', name:'Kuchli',     sub:''},
-        {key:'medium', ic:'🌥', name:'O\'rta',     sub:''},
-        {key:'tired',  ic:'🌙', name:'Charchadim', sub:''}
-      ],
-      showVoice:false, btn:'KEYINGI'
-    },
-    q3: {
-      step:'3 / 3 · VAQT', dots:[true,true,true],
-      qText:'<span class="em">Qancha</span> vaqting bor?',
-      qPrompt:'',
-      multi:false,
-      answers:[
-        {key:'short',  ic:'⊙', name:'3-4 soat',  sub:''},
-        {key:'normal', ic:'∼', name:'6-8 soat',  sub:''},
-        {key:'open',   ic:'∞', name:'10+ soat',  sub:''}
-      ],
-      showVoice:false, btn:'REJA TUZ'
-    },
-    generating: {
-      step:'QURMOQDA', dots:[true,true,true], btn:''
-    },
-    plan: {
-      step:'TAYYOR', dots:[true,true,true], btn:'KUNNI BOSHLAYMAN'
-    }
-  };
+  const t = document.getElementById('plans');
+  const btn = document.getElementById('cta');
+  const mic = document.getElementById('micBtn');
+  const status = document.getElementById('status');
 
-  const phone = document.getElementById('phone');
-  const stepLabel = document.getElementById('stepLabel');
-  const dots = document.getElementById('dots');
-  const qText = document.getElementById('qText');
-  const qPrompt = document.getElementById('qPrompt');
-  const answersEl = document.getElementById('answers');
-  const voiceRow = document.querySelector('.voice-row');
-  const nextBtn = document.getElementById('nextBtn');
+  // Saqlangan matn
+  const saved = localStorage.getItem('mvow.plansRaw');
+  if (saved) t.value = saved;
+  check();
 
-  function applyState(name) {
-    const s = states[name];
-    phone.dataset.state = name;
-    stepLabel.textContent = s.step;
-    if (s.dots) {
-      dots.innerHTML = s.dots.map(a => `<div class="d ${a?'active':''}"></div>`).join('');
-    }
-    if (s.qText) {
-      qText.innerHTML = s.qText;
-      qPrompt.textContent = s.qPrompt;
-      answersEl.innerHTML = s.answers.map(a =>
-        `<div class="answer-chip" data-multi="${s.multi?1:0}" data-key="${a.key}">
-          <div class="ic">${a.ic}</div>
-          <div class="body"><div class="name">${a.name}</div><div class="sub">${a.sub}</div></div>
-        </div>`
-      ).join('');
-      voiceRow.style.display = s.showVoice ? 'flex' : 'none';
-      attachChipHandlers();
-    }
-    if (s.btn) nextBtn.textContent = s.btn;
-    nextBtn.style.display = s.btn ? 'block' : 'none';
+  function check() {
+    btn.classList.toggle('disabled', !t.value.trim());
   }
-  function attachChipHandlers() {
-    document.querySelectorAll('.answer-chip').forEach(c => {
-      c.addEventListener('click', () => {
-        if (c.dataset.multi === '1') {
-          c.classList.toggle('selected');
-        } else {
-          document.querySelectorAll('.answer-chip').forEach(x => x.classList.remove('selected'));
-          c.classList.add('selected');
+  t.addEventListener('input', check);
+
+  // ── Matnni sessiyalarga parse qilish ──
+  function parsePlansToSessions(raw) {
+    const lines = raw.split(/[\n,;•\-–—]+/).map(s => s.trim()).filter(Boolean);
+    const out = [];
+    let hour = 6; // default boshlanish 06:00
+    for (const line of lines) {
+      let time = '', name = line, mins = 60, dur = '1 soat';
+      const m = line.match(/^(\d{1,2}):(\d{2})\s+(.+?)(?:\s+\((\d+)\s*(daq|soat|s|d)?\))?$/i);
+      if (m) {
+        time = `${m[1].padStart(2,'0')}:${m[2]}`;
+        name = m[3].trim();
+        if (m[4]) {
+          const n = parseInt(m[4], 10);
+          const unit = (m[5] || '').toLowerCase();
+          if (unit.startsWith('s')) { mins = n * 60; dur = n + ' soat'; }
+          else                       { mins = n;     dur = n + ' daq';  }
         }
-      });
+      } else {
+        time = `${String(hour).padStart(2,'0')}:00`;
+        hour++;
+      }
+      out.push({ time, name, dur });
+    }
+    return out;
+  }
+
+  btn.addEventListener('click', () => {
+    const raw = t.value.trim();
+    localStorage.setItem('mvow.plansRaw', raw);
+    const sessions = parsePlansToSessions(raw);
+    if (sessions.length) localStorage.setItem('mvow.todayPlan', JSON.stringify(sessions));
+  });
+
+  // ── Ovozli kiritish (Web Speech API) ──
+  const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
+  let recog = null;
+  let recording = false;
+
+  function showStatus(text, bad) {
+    status.textContent = text;
+    status.className = 'voice-status show' + (bad ? ' bad' : '');
+    if (!text) status.classList.remove('show');
+  }
+
+  if (!SR) {
+    // Brauzer qo'llamasa — mikrofonni o'chirib qo'yamiz, status tushuntirish
+    mic.classList.add('disabled');
+    mic.title = "Bu brauzer ovozli kiritishni qo'llamaydi — yozib qo'y";
+    showStatus("brauzer ovozli kiritishni qo'llamaydi", true);
+    setTimeout(() => showStatus(''), 4000);
+  } else {
+    recog = new SR();
+    recog.lang = 'uz-UZ';   // O'zbek tili (mavjud bo'lsa)
+    recog.continuous = true;
+    recog.interimResults = true;
+
+    let finalSoFar = '';
+
+    recog.onstart = () => {
+      recording = true;
+      mic.classList.add('recording');
+      finalSoFar = t.value ? t.value + ' ' : '';
+      showStatus('Tinglayapman...');
+    };
+    recog.onresult = (ev) => {
+      let interim = '';
+      let final = '';
+      for (let i = ev.resultIndex; i < ev.results.length; i++) {
+        const r = ev.results[i];
+        if (r.isFinal) final += r[0].transcript + ' ';
+        else interim += r[0].transcript;
+      }
+      if (final) finalSoFar += final;
+      t.value = (finalSoFar + interim).trim();
+      check();
+    };
+    recog.onerror = (ev) => {
+      recording = false;
+      mic.classList.remove('recording');
+      if (ev.error === 'no-speech') {
+        showStatus('hech narsa eshitilmadi', true);
+      } else if (ev.error === 'not-allowed' || ev.error === 'service-not-allowed') {
+        showStatus('mikrofonga ruxsat kerak', true);
+      } else if (ev.error === 'language-not-supported') {
+        // O'zbek tili yo'q bo'lsa, ruschaga o'tamiz va qayta urinamiz
+        try { recog.lang = 'ru-RU'; recog.start(); showStatus('o\'zbek tili yo\'q · rus tilida...'); return; } catch {}
+        showStatus('til qo\'llanmaydi', true);
+      } else {
+        showStatus("xato: " + ev.error, true);
+      }
+      setTimeout(() => showStatus(''), 3500);
+    };
+    recog.onend = () => {
+      if (recording) {
+        recording = false;
+        mic.classList.remove('recording');
+        showStatus('yozildi');
+        setTimeout(() => showStatus(''), 1500);
+      }
+    };
+
+    mic.addEventListener('click', () => {
+      if (recording) {
+        recog.stop();
+      } else {
+        try { recog.start(); } catch (e) { showStatus("ulanish xatosi", true); }
+      }
     });
   }
-  attachChipHandlers();
-
-  document.querySelectorAll('.state-tab').forEach(tab => {
-    tab.addEventListener('click', () => {
-      document.querySelectorAll('.state-tab').forEach(t => t.classList.remove('active'));
-      tab.classList.add('active');
-      applyState(tab.dataset.state);
-    });
-  });
-
-  nextBtn.addEventListener('click', () => {
-    const order = ['q1','q2','q3','generating','plan'];
-    const cur = phone.dataset.state || 'q1';
-    const idx = order.indexOf(cur);
-    const next = order[idx+1] || 'plan';
-    document.querySelectorAll('.state-tab').forEach(t =>
-      t.classList.toggle('active', t.dataset.state === next));
-    applyState(next);
-    if (next === 'generating') {
-      // Auto-advance to plan after 3 seconds
-      setTimeout(() => {
-        document.querySelectorAll('.state-tab').forEach(t =>
-          t.classList.toggle('active', t.dataset.state === 'plan'));
-        applyState('plan');
-      }, 3000);
-    }
-  });
-
-  // Slider drag in plan
-  document.addEventListener('click', e => {
-    const slider = e.target.closest('.slider');
-    if (!slider) return;
-    const rect = slider.getBoundingClientRect();
-    const pct = Math.max(0, Math.min(100, (e.clientX - rect.left) / rect.width * 100));
-    slider.querySelector('.fill').style.width = pct + '%';
-    slider.querySelector('.knob').style.left = pct + '%';
-    const val = slider.parentElement.querySelector('.val');
-    if (val) {
-      const mins = Math.round(pct * 1.5);
-      val.textContent = mins >= 60 ? Math.floor(mins/60) + 'S' : mins + 'D';
-    }
-  });
 </script>
 
-<script src="nav-overlay.js" defer></script>
 </body>
 </html>

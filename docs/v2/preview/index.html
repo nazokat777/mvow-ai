@@ -3,24 +3,97 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-<title>M·VoW</title>
+<title>brend</title>
 <link rel="manifest" href="manifest.webmanifest">
 <meta name="theme-color" content="#04060B">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<meta name="apple-mobile-web-app-title" content="M·VoW">
+<meta name="apple-mobile-web-app-title" content="brend">
 <link rel="apple-touch-icon" href="assets/mnsm-logo.png">
 <link rel="icon" type="image/png" href="assets/mnsm-logo.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600&display=swap" rel="stylesheet">
 <style>
-  body { margin: 0; background: #04060B; }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  :root {
+    --void:#04060B;
+    --text:#F5F2EC;
+    --accent:#00E5D4;
+  }
+  html, body {
+    background: var(--void);
+    color: var(--text);
+    min-height: 100vh;
+    overflow: hidden;
+    -webkit-font-smoothing: antialiased;
+    font-family: 'Cormorant Garamond', serif;
+  }
+  .stage {
+    position: fixed; inset: 0;
+    display: flex; flex-direction: column;
+    align-items: center; justify-content: center;
+    gap: 18px;
+  }
+  .halo {
+    position: absolute;
+    width: 320px; height: 320px;
+    background: radial-gradient(circle, rgba(0,229,212,.22), transparent 60%);
+    border-radius: 50%;
+    opacity: 0;
+    animation: halo-in 1.0s ease 0.1s forwards;
+    pointer-events: none;
+  }
+  @keyframes halo-in { to { opacity: 1; } }
+  .logo {
+    width: 88px; height: 88px;
+    background: url('assets/mnsm-logo.png') center/contain no-repeat;
+    filter: hue-rotate(160deg) saturate(1.4) drop-shadow(0 0 18px rgba(0,229,212,.45));
+    opacity: 0;
+    transform: scale(0.7);
+    animation: logo-in 1.0s cubic-bezier(.16,.84,.32,1) 0.1s forwards;
+  }
+  @keyframes logo-in { to { opacity: 1; transform: scale(1); } }
+  .name {
+    font-weight: 500;
+    font-size: 28px;
+    letter-spacing: 4px;
+    color: var(--text);
+    opacity: 0;
+    animation: fade-up 0.7s ease 0.7s forwards;
+  }
+  @keyframes fade-up {
+    from { opacity: 0; transform: translateY(6px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+  .tag {
+    font-style: italic;
+    font-size: 13px;
+    color: rgba(245,242,236,.55);
+    opacity: 0;
+    animation: fade-up 0.7s ease 1.0s forwards;
+  }
 </style>
+</head>
+<body>
+
+<div class="stage">
+  <div class="halo"></div>
+  <div class="logo"></div>
+  <div class="name">brend</div>
+  <div class="tag">sening intizom do'sting</div>
+</div>
+
 <script>
-  // On phone: jump straight into the app at Welcome.
-  // On desktop wide screen: show the gallery overview.
+  // Returning vs new user
+  const hasUser = !!localStorage.getItem('mvow.userName');
   const isMobile = window.matchMedia('(max-width: 720px)').matches
                 || /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
-  location.replace(isMobile ? 'welcome.html' : 'gallery.html');
+  const target = !isMobile
+    ? 'gallery.html'
+    : (hasUser ? 'home.html' : 'welcome.html');
+  setTimeout(() => { location.replace(target); }, 1600);
 </script>
-</head>
-<body></body>
+
+</body>
 </html>

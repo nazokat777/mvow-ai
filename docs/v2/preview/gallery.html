@@ -3,664 +3,97 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-<title>M·VoW — Sening intizom do'sting</title>
-
-<!-- PWA — install on iPhone/Android home screen -->
+<title>{brand} — Gallereya</title>
+<meta name="description" content="Intizom do'sti — AI murabbiy.">
 <link rel="manifest" href="manifest.webmanifest">
 <meta name="theme-color" content="#04060B">
-<meta name="description" content="Discipline AI — psixolog, neyrobiolog, harakatga chorlovchi do'st. MNSM.">
-
-<!-- Apple iOS standalone-app support -->
-<meta name="apple-mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<meta name="apple-mobile-web-app-title" content="M·VoW">
 <link rel="apple-touch-icon" href="assets/mnsm-logo.png">
 <link rel="icon" type="image/png" href="assets/mnsm-logo.png">
-
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;600;700&family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,500&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500&family=Inter:wght@300;400;500&display=swap" rel="stylesheet">
 <style>
   * { box-sizing: border-box; margin: 0; padding: 0; }
-
-  :root {
-    --void:        #04060B;
-    --void-2:      #0A0E16;
-    --shadow:      #11151D;
-
-    --text-primary: #F5F2EC;
-    --text-body:    #B8BBC2;
-    --text-muted:   #6B6E76;
-    --text-ghost:   #3A3D44;
-
-    --gold:        #E8C77E;
-    --gold-2:      #C7A36B;
-    --gold-deep:   #8a6f44;
-    --gold-flash:  #FFE9B5;
-    --honey:       #D4A574;
-    --cream:       #F0E5D2;
-
-    --emerald:     #4A8A5C;
-    --crimson:     #B8334A;
-  }
-
-  html, body {
-    background:
-      radial-gradient(ellipse 100% 30% at 50% 10%, rgba(232,199,126,0.08), transparent 70%),
-      radial-gradient(ellipse 80% 20% at 50% 100%, rgba(212,165,116,0.06), transparent 70%),
-      var(--void);
-    font-family: 'Inter', sans-serif;
-    color: var(--text-primary);
-    min-height: 100vh;
-    padding: 0;
-    overflow-x: hidden;
-  }
-
-  /* Subtle pattern wash on whole page */
-  body::before {
-    content: '';
-    position: fixed; inset: 0;
-    opacity: 0.03;
-    background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='120' height='120' viewBox='0 0 120 120'><g fill='none' stroke='%23E8C77E' stroke-width='0.5'><polygon points='60,10 74,42 110,42 80,62 92,98 60,80 28,98 40,62 10,42 46,42'/></g></svg>");
-    background-size: 160px 160px;
-    pointer-events: none;
-    z-index: 0;
-  }
-
-  .container {
-    max-width: 1280px;
-    margin: 0 auto;
-    padding: 60px 32px 80px;
-    position: relative;
-    z-index: 1;
-  }
-
-  /* === Hero header === */
-  .hero {
-    text-align: center;
-    margin-bottom: 60px;
-    position: relative;
-  }
-  .hero .pre {
-    font-family: 'JetBrains Mono', monospace;
-    font-size: 11px;
-    letter-spacing: 8px;
-    color: var(--gold-deep);
-    margin-bottom: 14px;
-  }
-  .hero .title {
-    font-family: 'Cinzel', serif;
-    font-weight: 700;
-    font-size: 48px;
-    letter-spacing: 12px;
-    color: var(--gold);
-    text-shadow: 0 0 32px rgba(232,199,126,0.40);
-    line-height: 1;
-    margin-bottom: 12px;
-  }
-  .hero .sub {
-    font-family: 'Cormorant Garamond', serif;
-    font-style: italic;
-    font-size: 18px;
-    color: var(--honey);
-    letter-spacing: 1px;
-    margin-bottom: 20px;
-  }
-  .hero .ornament {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    gap: 14px;
-    margin-bottom: 8px;
-  }
-  .hero .ornament .line {
-    width: 60px; height: 1px;
-    background: linear-gradient(90deg, transparent, var(--gold), transparent);
-  }
-  .hero .ornament .star { color: var(--gold); font-size: 11px; }
-
-  .hero .stats {
-    display: inline-flex;
-    align-items: center;
-    gap: 18px;
-    padding: 8px 20px;
-    border: 1px solid var(--gold-deep);
-    border-radius: 999px;
-    background: rgba(232,199,126,0.04);
-    font-family: 'JetBrains Mono', monospace;
-    font-size: 10px;
-    letter-spacing: 3px;
-    color: var(--gold-deep);
-  }
-  .hero .stats .em { color: var(--gold); font-weight: 600; }
-
-  /* === Section title === */
-  .section {
-    margin-bottom: 56px;
-  }
-  .section-head {
-    display: flex;
-    align-items: baseline;
-    gap: 16px;
-    margin-bottom: 24px;
-  }
-  .section-head .num {
-    font-family: 'Cinzel', serif;
-    font-weight: 600;
-    font-size: 22px;
-    color: var(--gold);
-    letter-spacing: 3px;
-    line-height: 1;
-  }
-  .section-head .title {
-    font-family: 'Cormorant Garamond', serif;
-    font-style: italic;
-    font-weight: 600;
-    font-size: 24px;
-    color: var(--text-primary);
-    letter-spacing: 1px;
-  }
-  .section-head .desc {
-    flex: 1;
-    text-align: right;
-    font-family: 'JetBrains Mono', monospace;
-    font-size: 9px;
-    letter-spacing: 2.5px;
-    color: var(--gold-deep);
-  }
-  .section-head::after {
-    content: '';
-    flex: 0 0 auto;
-    width: 60px; height: 1px;
-    background: var(--gold-deep);
-    margin-left: 8px;
-  }
-
-  /* === Cards grid === */
-  .grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
-    gap: 18px;
-  }
-
-  .card {
-    position: relative;
-    cursor: pointer;
-    text-decoration: none;
-    color: inherit;
-    transition: transform 0.25s ease;
-  }
-  .card:hover {
-    transform: translateY(-4px);
-  }
-
-  /* Phone-shaped preview frame */
-  .phone-thumb {
-    position: relative;
-    width: 100%;
-    aspect-ratio: 380 / 800;
-    background: var(--void);
-    border-radius: 18px;
-    overflow: hidden;
-    box-shadow:
-      0 0 0 4px #2a2e36,
-      0 12px 30px rgba(0,0,0,0.7),
-      0 0 30px rgba(232,199,126,0.05);
-    transition: box-shadow 0.25s ease;
-  }
-  .card:hover .phone-thumb {
-    box-shadow:
-      0 0 0 4px #3a3a3e,
-      0 16px 40px rgba(0,0,0,0.8),
-      0 0 50px rgba(232,199,126,0.20);
-  }
-
-  /* iframe inside scaled */
-  .phone-thumb iframe {
-    position: absolute;
-    top: 0; left: 0;
-    width: 380px;
-    height: 800px;
-    border: 0;
-    transform-origin: top left;
-    pointer-events: none;
-  }
-
-  /* Compute scale via CSS — depends on card width.
-     We use ~200px card → 200/380 = 0.526, but with auto-fill 180-220 range.
-     Safer: use container query approach via scale on hover, fixed inside */
-  .phone-thumb {
-    /* Use container approach - iframe will be 380px width, scaled down */
-  }
-
-  /* Card label */
-  .card-label {
-    margin-top: 10px;
-    text-align: center;
-  }
-  .card-label .name {
-    font-family: 'Cinzel', serif;
-    font-weight: 600;
-    font-size: 12px;
-    letter-spacing: 3px;
-    color: var(--gold);
-    text-transform: uppercase;
-    line-height: 1.2;
-  }
-  .card-label .desc {
-    margin-top: 3px;
-    font-family: 'Cormorant Garamond', serif;
-    font-style: italic;
-    font-size: 11.5px;
-    color: var(--text-muted);
-    line-height: 1.3;
-  }
-
-  /* Open arrow on hover */
-  .card-arrow {
-    position: absolute;
-    top: 8px; right: 8px;
-    width: 24px; height: 24px;
-    border-radius: 50%;
-    background: rgba(0,0,0,0.6);
-    backdrop-filter: blur(4px);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    color: var(--gold);
-    font-size: 11px;
-    font-family: 'JetBrains Mono', monospace;
-    opacity: 0;
-    transition: opacity 0.2s;
-    z-index: 2;
-  }
-  .card:hover .card-arrow { opacity: 1; }
-
-  /* === Footer === */
-  .footer {
-    margin-top: 80px;
-    text-align: center;
-    padding-top: 40px;
-    border-top: 1px solid rgba(138,111,68,0.20);
-    font-family: 'Cormorant Garamond', serif;
-    font-style: italic;
-    font-size: 14px;
-    color: var(--text-muted);
-    line-height: 1.7;
-  }
-  .footer .em { color: var(--gold); font-weight: 600; }
-  .footer .signature {
-    margin-top: 8px;
-    font-family: 'JetBrains Mono', monospace;
-    font-size: 9px;
-    letter-spacing: 4px;
-    color: var(--gold-deep);
-    text-transform: uppercase;
-  }
-
-  /* Responsive */
-  @media (max-width: 720px) {
-    .container { padding: 40px 16px 60px; }
-    .hero .title { font-size: 32px; letter-spacing: 8px; }
-    .hero .sub { font-size: 14px; }
-    .grid { grid-template-columns: repeat(2, 1fr); gap: 14px; }
-    .section-head { flex-wrap: wrap; }
-    .section-head .desc { width: 100%; text-align: left; }
+  :root { --void:#04060B; --void-soft:#0C0F16; --text:#F5F2EC; --text-mid:#8A8D94; --text-dim:#6E7178; --accent:#00E5D4; }
+  body { background: var(--void); font-family:'Inter',sans-serif; color: var(--text); min-height: 100vh; padding: 40px 24px 40px; -webkit-font-smoothing: antialiased; }
+  .wrap { max-width: 1100px; margin: 0 auto; }
+  .h { text-align:center; margin-bottom: 48px; }
+  .h .title { font-family:'Cormorant Garamond',serif; font-size: 36px; font-weight: 500; }
+  .h .sub { font-size: 11px; letter-spacing: 4px; color: var(--text-mid); text-transform: uppercase; margin-top: 8px; }
+  .section { margin-bottom: 56px; }
+  .section .lbl { font-size: 11px; letter-spacing: 4px; color: var(--text-dim); text-transform: uppercase; padding: 0 4px 16px; }
+  .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 16px; }
+  .card { background: var(--void-soft); border-radius: 12px; overflow: hidden; text-decoration: none; color: var(--text); transition: transform .15s, box-shadow .15s; display: flex; flex-direction: column; }
+  .card:hover { transform: translateY(-2px); box-shadow: 0 8px 24px rgba(0,229,212,.12); }
+  .thumb { height: 400px; background: #000; overflow: hidden; position: relative; }
+  .thumb iframe { border: 0; width: 380px; height: 800px; transform: scale(0.5); transform-origin: top left; pointer-events: none; }
+  .card .lbl-row { padding: 14px 14px 16px; display: flex; align-items: baseline; gap: 10px; }
+  .card .num { font-size: 12px; color: var(--accent); }
+  .card .name { font-size: 14px; font-weight: 500; }
+  @media (max-width: 480px) {
+    .grid { grid-template-columns: 1fr 1fr; gap: 12px; }
+    .thumb { height: 260px; }
+    .thumb iframe { transform: scale(0.32); }
+    .card .name { font-size: 12px; }
   }
 </style>
 </head>
 <body>
 
-<div class="container">
+<div class="wrap">
 
-  <!-- Hero -->
-  <div class="hero">
-    <div class="pre">M · N · S · M · M · N · S · M</div>
-    <div class="ornament">
-      <div class="line"></div>
-      <div class="star">✦</div>
-      <div class="line"></div>
-    </div>
-    <h1 class="title">M · VoW</h1>
-    <div class="sub">sening intizom do'sting</div>
-    <div class="stats">
-      <span><span class="em">22</span> EKRAN</span>
-      <span class="em" style="color: var(--gold-deep);">·</span>
-      <span><span class="em">v 2 · 0</span> PREVIEW</span>
-      <span class="em" style="color: var(--gold-deep);">·</span>
-      <span><span class="em">2026</span></span>
-    </div>
+  <div class="h">
+    <div class="title" data-brand="name">brend</div>
+    <div class="sub">16 ekran · preview</div>
   </div>
 
-  <!-- Section 1: Onboarding -->
   <div class="section">
-    <div class="section-head">
-      <span class="num">I</span>
-      <span class="title">Tanishuv</span>
-      <span class="desc">birinchi kun · 6 qadam</span>
-    </div>
+    <div class="lbl">Tanishuv</div>
     <div class="grid">
-      <a class="card" href="welcome.html">
-        <div class="phone-thumb"><iframe src="welcome.html" loading="lazy"></iframe></div>
-        <div class="card-arrow">↗</div>
-        <div class="card-label">
-          <div class="name">Welcome</div>
-          <div class="desc">birinchi kirish</div>
-        </div>
-      </a>
-      <a class="card" href="goal.html">
-        <div class="phone-thumb"><iframe src="goal.html" loading="lazy"></iframe></div>
-        <div class="card-arrow">↗</div>
-        <div class="card-label">
-          <div class="name">Niyat</div>
-          <div class="desc">5 yillik vizon</div>
-        </div>
-      </a>
-      <a class="card" href="voice-commitment.html">
-        <div class="phone-thumb"><iframe src="voice-commitment.html" loading="lazy"></iframe></div>
-        <div class="card-arrow">↗</div>
-        <div class="card-label">
-          <div class="name">Va'da</div>
-          <div class="desc">ovoz ahdi</div>
-        </div>
-      </a>
-      <a class="card" href="permissions.html">
-        <div class="phone-thumb"><iframe src="permissions.html" loading="lazy"></iframe></div>
-        <div class="card-arrow">↗</div>
-        <div class="card-label">
-          <div class="name">Ruxsatlar</div>
-          <div class="desc">yordam uchun</div>
-        </div>
-      </a>
-      <a class="card" href="done.html">
-        <div class="phone-thumb"><iframe src="done.html" loading="lazy"></iframe></div>
-        <div class="card-arrow">↗</div>
-        <div class="card-label">
-          <div class="name">Tayyormiz</div>
-          <div class="desc">yo'lga chiqish</div>
-        </div>
-      </a>
+      <a class="card" href="welcome.html"><div class="thumb"><iframe src="welcome.html" loading="lazy"></iframe></div><div class="lbl-row"><span class="num">1</span><span class="name">Tanishuv</span></div></a>
+      <a class="card" href="goal.html"><div class="thumb"><iframe src="goal.html" loading="lazy"></iframe></div><div class="lbl-row"><span class="num">2</span><span class="name">Profil</span></div></a>
+      <a class="card" href="permissions.html"><div class="thumb"><iframe src="permissions.html" loading="lazy"></iframe></div><div class="lbl-row"><span class="num">3</span><span class="name">Ruxsatlar</span></div></a>
     </div>
   </div>
 
-  <!-- Section 2: Daily -->
   <div class="section">
-    <div class="section-head">
-      <span class="num">II</span>
-      <span class="title">Kunlik</span>
-      <span class="desc">har kuni ochiladigan</span>
-    </div>
+    <div class="lbl">Sozlama</div>
     <div class="grid">
-      <a class="card" href="home.html">
-        <div class="phone-thumb"><iframe src="home.html" loading="lazy"></iframe></div>
-        <div class="card-arrow">↗</div>
-        <div class="card-label">
-          <div class="name">Bosh sahifa</div>
-          <div class="desc">kunlik dashboard</div>
-        </div>
-      </a>
-      <a class="card" href="daily-brief.html">
-        <div class="phone-thumb"><iframe src="daily-brief.html" loading="lazy"></iframe></div>
-        <div class="card-arrow">↗</div>
-        <div class="card-label">
-          <div class="name">Kunning Niyati</div>
-          <div class="desc">tongi savol</div>
-        </div>
-      </a>
-      <a class="card" href="calendar.html">
-        <div class="phone-thumb"><iframe src="calendar.html" loading="lazy"></iframe></div>
-        <div class="card-arrow">↗</div>
-        <div class="card-label">
-          <div class="name">Kalendar</div>
-          <div class="desc">hafta · oy</div>
-        </div>
-      </a>
-      <a class="card" href="profile.html">
-        <div class="phone-thumb"><iframe src="profile.html" loading="lazy"></iframe></div>
-        <div class="card-arrow">↗</div>
-        <div class="card-label">
-          <div class="name">Sen</div>
-          <div class="desc">o'sish daraxti</div>
-        </div>
-      </a>
-      <a class="card" href="notifications.html">
-        <div class="phone-thumb"><iframe src="notifications.html" loading="lazy"></iframe></div>
-        <div class="card-arrow">↗</div>
-        <div class="card-label">
-          <div class="name">Xabarlar</div>
-          <div class="desc">murabbiy ovozi</div>
-        </div>
-      </a>
-      <a class="card" href="settings.html">
-        <div class="phone-thumb"><iframe src="settings.html" loading="lazy"></iframe></div>
-        <div class="card-arrow">↗</div>
-        <div class="card-label">
-          <div class="name">Sozlamalar</div>
-          <div class="desc">ohang · aralashish</div>
-        </div>
-      </a>
+      <a class="card" href="settings.html"><div class="thumb"><iframe src="settings.html" loading="lazy"></iframe></div><div class="lbl-row"><span class="num">4</span><span class="name">Sozlamalar</span></div></a>
     </div>
   </div>
 
-  <!-- Section 3: Sessiya -->
   <div class="section">
-    <div class="section-head">
-      <span class="num">III</span>
-      <span class="title">Sessiya</span>
-      <span class="desc">fokus lahzasi</span>
-    </div>
+    <div class="lbl">Kun</div>
     <div class="grid">
-      <a class="card" href="add-session.html">
-        <div class="phone-thumb"><iframe src="add-session.html" loading="lazy"></iframe></div>
-        <div class="card-arrow">↗</div>
-        <div class="card-label">
-          <div class="name">Yangi Sessiya</div>
-          <div class="desc">birga quramiz</div>
-        </div>
-      </a>
-      <a class="card" href="session-start.html">
-        <div class="phone-thumb"><iframe src="session-start.html" loading="lazy"></iframe></div>
-        <div class="card-arrow">↗</div>
-        <div class="card-label">
-          <div class="name">Vaqt Keldi</div>
-          <div class="desc">lock-screen chaqiruv</div>
-        </div>
-      </a>
-      <a class="card" href="hard-lock.html">
-        <div class="phone-thumb"><iframe src="hard-lock.html" loading="lazy"></iframe></div>
-        <div class="card-arrow">↗</div>
-        <div class="card-label">
-          <div class="name">Hard Lock</div>
-          <div class="desc">fokus qulflashi</div>
-        </div>
-      </a>
-      <a class="card" href="online-class.html">
-        <div class="phone-thumb"><iframe src="online-class.html" loading="lazy"></iframe></div>
-        <div class="card-arrow">↗</div>
-        <div class="card-label">
-          <div class="name">Online Dars</div>
-          <div class="desc">9 dars rejimi</div>
-        </div>
-      </a>
-      <a class="card" href="urgent-time.html">
-        <div class="phone-thumb"><iframe src="urgent-time.html" loading="lazy"></iframe></div>
-        <div class="card-arrow">↗</div>
-        <div class="card-label">
-          <div class="name">Shoshilinch</div>
-          <div class="desc">vaqt so'rash</div>
-        </div>
-      </a>
+      <a class="card" href="alarm.html"><div class="thumb"><iframe src="alarm.html" loading="lazy"></iframe></div><div class="lbl-row"><span class="num">5</span><span class="name">Uyg'on</span></div></a>
+      <a class="card" href="home.html"><div class="thumb"><iframe src="home.html" loading="lazy"></iframe></div><div class="lbl-row"><span class="num">6</span><span class="name">Bosh sahifa</span></div></a>
+      <a class="card" href="routine.html"><div class="thumb"><iframe src="routine.html" loading="lazy"></iframe></div><div class="lbl-row"><span class="num">7</span><span class="name">Rejalaringni ayt</span></div></a>
+      <a class="card" href="today-plan.html"><div class="thumb"><iframe src="today-plan.html" loading="lazy"></iframe></div><div class="lbl-row"><span class="num">8</span><span class="name">Bugungi reja</span></div></a>
+      <a class="card" href="calendar.html"><div class="thumb"><iframe src="calendar.html" loading="lazy"></iframe></div><div class="lbl-row"><span class="num">9</span><span class="name">Kalendar</span></div></a>
     </div>
   </div>
 
-  <!-- Section 4: Mentor -->
   <div class="section">
-    <div class="section-head">
-      <span class="num">IV</span>
-      <span class="title">Murabbiy</span>
-      <span class="desc">ongli savollar · bayram · do'stlik</span>
-    </div>
+    <div class="lbl">Bajarish</div>
     <div class="grid">
-      <a class="card" href="negotiation.html">
-        <div class="phone-thumb"><iframe src="negotiation.html" loading="lazy"></iframe></div>
-        <div class="card-arrow">↗</div>
-        <div class="card-label">
-          <div class="name">Murabbiy</div>
-          <div class="desc">negotiation · hukm</div>
-        </div>
-      </a>
-      <a class="card" href="chat.html">
-        <div class="phone-thumb"><iframe src="chat.html" loading="lazy"></iframe></div>
-        <div class="card-arrow">↗</div>
-        <div class="card-label">
-          <div class="name">Suhbat</div>
-          <div class="desc">istalgan paytda</div>
-        </div>
-      </a>
-      <a class="card" href="session-reflection.html">
-        <div class="phone-thumb"><iframe src="session-reflection.html" loading="lazy"></iframe></div>
-        <div class="card-arrow">↗</div>
-        <div class="card-label">
-          <div class="name">Baho</div>
-          <div class="desc">sessiyadan keyin</div>
-        </div>
-      </a>
-      <a class="card" href="stuck.html">
-        <div class="phone-thumb"><iframe src="stuck.html" loading="lazy"></iframe></div>
-        <div class="card-arrow">↗</div>
-        <div class="card-label">
-          <div class="name">Turg'unlik</div>
-          <div class="desc">tumandan chiqish</div>
-        </div>
-      </a>
-      <a class="card" href="weekly-review.html">
-        <div class="phone-thumb"><iframe src="weekly-review.html" loading="lazy"></iframe></div>
-        <div class="card-arrow">↗</div>
-        <div class="card-label">
-          <div class="name">Hafta Bayrami</div>
-          <div class="desc">7-kun nishonlash</div>
-        </div>
-      </a>
-      <a class="card" href="rest-mode.html">
-        <div class="phone-thumb"><iframe src="rest-mode.html" loading="lazy"></iframe></div>
-        <div class="card-arrow">↗</div>
-        <div class="card-label">
-          <div class="name">Dam Rejimi</div>
-          <div class="desc">kuyish profilaktikasi</div>
-        </div>
-      </a>
+      <a class="card" href="day-flow.html"><div class="thumb"><iframe src="day-flow.html" loading="lazy"></iframe></div><div class="lbl-row"><span class="num">10</span><span class="name">Bugungi yo'l</span></div></a>
+      <a class="card" href="hard-lock.html"><div class="thumb"><iframe src="hard-lock.html" loading="lazy"></iframe></div><div class="lbl-row"><span class="num">11</span><span class="name">Qulflangan</span></div></a>
+      <a class="card" href="negotiation.html"><div class="thumb"><iframe src="negotiation.html" loading="lazy"></iframe></div><div class="lbl-row"><span class="num">12</span><span class="name">Diqqat sinovi</span></div></a>
+      <a class="card" href="session-reflection.html"><div class="thumb"><iframe src="session-reflection.html" loading="lazy"></iframe></div><div class="lbl-row"><span class="num">13</span><span class="name">Bajardim</span></div></a>
     </div>
   </div>
 
-  <!-- Footer -->
-  <div class="footer">
-    <p>Mentor — qattiq nazoratchi emas. <span class="em">Sening intizom do'sting</span> — psixolog, neyrobiolog, harakatga chorlovchi do'st.</p>
-    <p>Savol bilan miyani harakatga undaydi. Dam kerak bo'lganda yumshashadi. Bayram kelganda nishonlaydi.</p>
-    <div class="signature">M · N · S · M · M · N · S · M · 2 0 2 6</div>
+  <div class="section">
+    <div class="lbl">Natija</div>
+    <div class="grid">
+      <a class="card" href="notifications.html"><div class="thumb"><iframe src="notifications.html" loading="lazy"></iframe></div><div class="lbl-row"><span class="num">14</span><span class="name">Xabarlar</span></div></a>
+      <a class="card" href="weekly-review.html"><div class="thumb"><iframe src="weekly-review.html" loading="lazy"></iframe></div><div class="lbl-row"><span class="num">15</span><span class="name">Natijalar</span></div></a>
+      <a class="card" href="celebrate.html"><div class="thumb"><iframe src="celebrate.html" loading="lazy"></iframe></div><div class="lbl-row"><span class="num">16</span><span class="name">Bayram</span></div></a>
+    </div>
   </div>
 
 </div>
-
-<script>
-  // Scale iframes proportionally to their containers
-  function scaleIframes() {
-    document.querySelectorAll('.phone-thumb').forEach(thumb => {
-      const iframe = thumb.querySelector('iframe');
-      if (!iframe) return;
-      const w = thumb.offsetWidth;
-      const scale = w / 380;
-      iframe.style.transform = `scale(${scale})`;
-      iframe.style.width = '380px';
-      iframe.style.height = '800px';
-    });
-  }
-  scaleIframes();
-  window.addEventListener('resize', scaleIframes);
-
-  // === PWA — register service worker for offline support ===
-  if ('serviceWorker' in navigator) {
-    window.addEventListener('load', () => {
-      navigator.serviceWorker.register('service-worker.js')
-        .then(reg => console.log('[PWA] M·VoW ready offline.'))
-        .catch(err => console.warn('[PWA] SW registration failed:', err));
-    });
-  }
-
-  // === Show "install" banner if not yet installed ===
-  let deferredPrompt = null;
-  window.addEventListener('beforeinstallprompt', e => {
-    e.preventDefault();
-    deferredPrompt = e;
-    showInstallBanner();
-  });
-
-  function showInstallBanner() {
-    if (window.matchMedia('(display-mode: standalone)').matches) return;
-    if (sessionStorage.getItem('install-dismissed')) return;
-
-    const banner = document.createElement('div');
-    banner.style.cssText = `
-      position: fixed; bottom: 16px; left: 50%; transform: translateX(-50%);
-      background: linear-gradient(180deg, #FFE9B5, #E8C77E, #8a6f44);
-      color: #04060B; padding: 12px 20px; border-radius: 999px;
-      font-family: 'Inter', sans-serif; font-size: 13px; font-weight: 600;
-      box-shadow: 0 8px 24px rgba(0,0,0,0.5), 0 0 30px rgba(232,199,126,0.4);
-      z-index: 1000; display: flex; gap: 12px; align-items: center;
-      cursor: pointer; max-width: 90%;
-    `;
-    banner.innerHTML = `
-      <span>📲 Bosh ekranga qo'shish</span>
-      <span style="opacity:0.6; font-size:11px;">×</span>
-    `;
-    banner.onclick = async (e) => {
-      if (e.target.textContent === '×') {
-        sessionStorage.setItem('install-dismissed', '1');
-        banner.remove();
-        return;
-      }
-      if (deferredPrompt) {
-        deferredPrompt.prompt();
-        await deferredPrompt.userChoice;
-        deferredPrompt = null;
-        banner.remove();
-      }
-    };
-    document.body.appendChild(banner);
-  }
-
-  // === iOS install hint (Safari doesn't support beforeinstallprompt) ===
-  const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
-  const isStandalone = window.navigator.standalone === true;
-  if (isIOS && !isStandalone && !sessionStorage.getItem('ios-hint-dismissed')) {
-    setTimeout(() => {
-      const hint = document.createElement('div');
-      hint.style.cssText = `
-        position: fixed; bottom: 16px; left: 16px; right: 16px;
-        background: rgba(20,16,10,0.95); backdrop-filter: blur(12px);
-        border: 1px solid rgba(232,199,126,0.4); border-radius: 12px;
-        padding: 14px 16px; color: #F5F2EC;
-        font-family: 'Inter', sans-serif; font-size: 12.5px; line-height: 1.5;
-        box-shadow: 0 12px 32px rgba(0,0,0,0.7);
-        z-index: 1000;
-      `;
-      hint.innerHTML = `
-        <div style="font-family:'Cormorant Garamond',serif; font-style:italic; font-size:14px; color:#E8C77E; margin-bottom:6px;">
-          M·VoW'ni iPhone'ga o'rnatish:
-        </div>
-        <div>1. Pastdagi <span style="color:#E8C77E;">⎋ Share</span> tugmasini bos<br>
-        2. <b>«Add to Home Screen»</b>ni tanla<br>
-        3. App home ekranda — to'liq ekranda ochiladi</div>
-        <div style="text-align:right; margin-top:8px;">
-          <button onclick="this.parentElement.parentElement.remove(); sessionStorage.setItem('ios-hint-dismissed','1');"
-                  style="background:none; border:1px solid #8a6f44; color:#E8C77E; padding:5px 12px; border-radius:999px; font-family:'JetBrains Mono',monospace; font-size:10px; letter-spacing:1.5px; cursor:pointer;">
-            TUSHUNDIM
-          </button>
-        </div>
-      `;
-      document.body.appendChild(hint);
-    }, 2500);
-  }
-</script>
 
 </body>
 </html>

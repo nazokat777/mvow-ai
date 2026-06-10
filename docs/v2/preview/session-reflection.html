@@ -2,974 +2,158 @@
 <html lang="uz">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>M-VoW AI — Sessiya Bahosi</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>{brand} — Bajardim</title>
 <link rel="manifest" href="manifest.webmanifest">
 <meta name="theme-color" content="#04060B">
-<meta name="apple-mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<meta name="apple-mobile-web-app-title" content="M·VoW">
 <link rel="apple-touch-icon" href="assets/mnsm-logo.png">
 <link rel="icon" type="image/png" href="assets/mnsm-logo.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,500&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
 <style>
   * { box-sizing: border-box; margin: 0; padding: 0; }
-
-  :root {
-    --void:        #06080F;
-    --void-2:      #0E1119;
-    --shadow:      #11151D;
-
-    --text-primary: #F5F2EC;
-    --text-body:    #B8BBC2;
-    --text-muted:   #6B6E76;
-    --text-ghost:   #3A3D44;
-
-    --gold:        #E8C77E;
-    --gold-2:      #C7A36B;
-    --gold-deep:   #8a6f44;
-    --gold-flash:  #FFE9B5;
-    --honey:       #D4A574;
-    --cream:       #F0E5D2;
-
-    --emerald:     #4A8A5C;
-    --emerald-bright: #6BAF7C;
-    --emerald-deep:#1F3D2A;
-    --rose:        #C28B8B;
-  }
-
-  body {
-    background: #14171d;
-    font-family: 'Inter', sans-serif;
-    color: var(--text-primary);
-    min-height: 100vh;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    padding: 24px;
-  }
-
-  .phone {
-    width: 380px;
-    height: 800px;
-    background: var(--void);
-    border-radius: 40px;
-    overflow: hidden;
-    position: relative;
-    box-shadow:
-      0 0 0 8px #2a2e36,
-      0 30px 80px rgba(0,0,0,0.85),
-      0 0 100px rgba(74,138,92,0.10);
-  }
-
-  /* Soft sunset/dusk after-work glow */
-  .backdrop {
-    position: absolute; inset: 0;
-    background:
-      radial-gradient(ellipse 90% 50% at 50% 30%, rgba(74,138,92,0.14), transparent 65%),
-      radial-gradient(ellipse 100% 60% at 50% 100%, rgba(212,165,116,0.10), transparent 70%),
-      linear-gradient(180deg, var(--void) 0%, #0E1416 50%, var(--void) 100%);
-    transition: background 1s ease;
-  }
-  .phone[data-state="confirmed"] .backdrop {
-    background:
-      radial-gradient(ellipse 90% 50% at 50% 30%, rgba(232,199,126,0.18), transparent 65%),
-      radial-gradient(ellipse 100% 60% at 50% 100%, rgba(74,138,92,0.10), transparent 70%),
-      linear-gradient(180deg, var(--void) 0%, #1A1410 50%, var(--void) 100%);
-  }
-
-  .gilt-frame {
-    position: absolute; inset: 14px;
-    border: 1px solid rgba(74,138,92,0.22);
-    border-radius: 26px;
-    pointer-events: none;
-    z-index: 4;
-  }
-  .phone[data-state="confirmed"] .gilt-frame { border-color: rgba(232,199,126,0.22); }
-
-  .pattern-wash {
-    position: absolute; inset: 0;
-    opacity: 0.025;
-    background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='100' height='100' viewBox='0 0 100 100'><g fill='none' stroke='%234A8A5C' stroke-width='0.5'><polygon points='50,5 62,38 95,38 70,58 80,90 50,72 20,90 30,58 5,38 38,38'/></g></svg>");
-    background-size: 130px 130px;
-    pointer-events: none;
-    z-index: 1;
-  }
-
-  /* Falling autumn-like leaves (post-session calm) */
-  .leaves {
-    position: absolute; inset: 0;
-    pointer-events: none;
-    z-index: 2;
-    overflow: hidden;
-  }
-  .leaves span {
-    position: absolute;
-    width: 8px; height: 4px;
-    border-radius: 50% 0 50% 0;
-    background: var(--honey);
-    opacity: 0;
-    transform-origin: center;
-    animation: leaf-fall 14s linear infinite;
-  }
-  .leaves span:nth-child(2n) { background: var(--gold); }
-  .leaves span:nth-child(3n) { background: var(--rose); width: 6px; height: 3px; }
-  @keyframes leaf-fall {
-    0%   { transform: translateY(-30px) rotate(0deg); opacity: 0; }
-    10%  { opacity: 0.55; }
-    100% { transform: translateY(110vh) rotate(540deg) translateX(-25px); opacity: 0; }
-  }
-
-  /* Confetti — only on TUGADI state */
-  .confetti {
-    position: absolute; inset: 0;
-    pointer-events: none;
-    z-index: 3;
-    overflow: hidden;
-    opacity: 0;
-    transition: opacity 0.6s;
-  }
-  .phone[data-state="done"] .confetti { opacity: 1; }
-  .confetti span {
-    position: absolute;
-    width: 6px; height: 3px;
-    border-radius: 1px;
-    transform-origin: center;
-    animation: confetti-fall 6s linear infinite;
-    opacity: 0;
-  }
-  .confetti span:nth-child(4n)   { background: var(--gold); }
-  .confetti span:nth-child(4n+1) { background: var(--emerald-bright); }
-  .confetti span:nth-child(4n+2) { background: var(--cream); }
-  .confetti span:nth-child(4n+3) { background: var(--honey); }
-  @keyframes confetti-fall {
-    0%   { transform: translateY(-30px) rotate(0deg); opacity: 0; }
-    10%  { opacity: 0.85; }
-    100% { transform: translateY(110vh) rotate(540deg); opacity: 0; }
-  }
-
-  .letterbox {
-    position: absolute;
-    left: 0; right: 0;
-    height: 14px;
-    background: var(--void);
-    z-index: 7;
-    pointer-events: none;
-  }
-  .letterbox.top { top: 0; }
-  .letterbox.bottom { bottom: 0; }
-
-  /* === Header === */
-  .header-row {
-    position: absolute;
-    top: 26px; left: 24px; right: 24px;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    z-index: 5;
-  }
-  .stamp {
-    display: inline-flex;
-    align-items: center;
-    gap: 8px;
-    padding: 5px 12px;
-    border: 1px solid var(--emerald);
-    border-radius: 999px;
-    background: rgba(74,138,92,0.10);
-    font-family: 'JetBrains Mono', monospace;
-    font-size: 9px;
-    letter-spacing: 4px;
-    color: var(--emerald-bright);
-  }
-  .phone[data-state="confirmed"] .stamp {
-    border-color: var(--gold);
-    background: rgba(232,199,126,0.10);
-    color: var(--gold);
-  }
-  .stamp .check {
-    color: var(--emerald-bright);
-    font-size: 10px;
-  }
-  .phone[data-state="confirmed"] .stamp .check { color: var(--gold); }
-
-  .step-pill {
-    display: inline-flex;
-    align-items: center;
-    gap: 6px;
-    padding: 4px 10px;
-    background: rgba(232,199,126,0.04);
-    border: 1px solid var(--gold-deep);
-    border-radius: 999px;
-    font-family: 'JetBrains Mono', monospace;
-    font-size: 8.5px;
-    letter-spacing: 2px;
-    color: var(--gold-deep);
-  }
-  .step-pill .dots { display: flex; gap: 3px; }
-  .step-pill .stp {
-    width: 4px; height: 4px;
+  :root { --void:#04060B; --text:#F5F2EC; --text-mid:#8A8D94; --text-dim:#6E7178; --accent:#00E5D4; --accent-soft:#00B5A8; }
+  body { background: var(--void); font-family:'Inter',sans-serif; color: var(--text); min-height: 100vh; display:flex; justify-content:center; align-items:flex-start; padding: 24px; -webkit-font-smoothing: antialiased; }
+  .phone { width: 380px; min-height: 800px; background: var(--void); border-radius: 40px; overflow: hidden; position: relative; box-shadow: 0 0 0 8px #1a1d24, 0 30px 80px rgba(0,0,0,.7); display:flex; flex-direction: column; }
+  .container { flex:1; display:flex; flex-direction: column; align-items:center; justify-content:center; padding: 60px 32px 120px; gap: 28px; }
+  .check {
+    width: 84px; height: 84px;
     border-radius: 50%;
-    background: var(--gold-deep);
+    border: 2px solid var(--accent);
+    display:flex; align-items:center; justify-content:center;
+    animation: pop 0.6s cubic-bezier(.16,.84,.32,1);
   }
-  .step-pill .stp.active {
-    background: var(--gold);
-    box-shadow: 0 0 6px var(--gold);
+  .check svg { width: 38px; height: 38px; stroke: var(--accent); }
+  @keyframes pop {
+    0%   { transform: scale(0); opacity: 0; }
+    60%  { transform: scale(1.12); opacity: 1; }
+    100% { transform: scale(1); opacity: 1; }
   }
-
-  /* === Brand === */
-  .brand-seal {
-    position: absolute;
-    top: 70px; left: 0; right: 0;
+  .big { font-family:'Cormorant Garamond',serif; font-style: italic; font-weight:500; font-size: 38px; text-align:center; line-height: 1.2; }
+  .big .em { color: var(--accent); font-style: normal; }
+  .what { text-align: center; }
+  .what .name { font-family:'Cormorant Garamond',serif; font-size: 20px; }
+  .what .time { font-size: 11px; letter-spacing: 3px; color: var(--text-mid); text-transform: uppercase; margin-top: 6px; }
+  .progress {
     text-align: center;
-    z-index: 5;
+    padding: 16px 0;
+    border-top: 1px solid rgba(255,255,255,.04);
+    border-bottom: 1px solid rgba(255,255,255,.04);
+    width: 100%;
+    max-width: 240px;
   }
-  .brand-seal .ornament {
-    display: flex; justify-content: center; align-items: center;
-    gap: 10px; margin-bottom: 4px;
-  }
-  .brand-seal .ornament .line {
-    width: 38px; height: 1px;
-    background: linear-gradient(90deg, transparent, var(--honey), transparent);
-  }
-  .brand-seal .ornament .star { color: var(--honey); font-size: 8px; }
-  .brand-seal .seal-text {
+  .progress .v {
     font-family: 'Cormorant Garamond', serif;
-    font-style: italic;
-    font-size: 13px;
-    color: var(--honey);
-    letter-spacing: 2px;
-  }
-
-  /* === Achievement card (always visible) === */
-  .achieve-card {
-    position: absolute;
-    top: 110px; left: 24px; right: 24px;
-    padding: 14px 18px;
-    background:
-      radial-gradient(ellipse at 80% 50%, rgba(74,138,92,0.14), transparent 70%),
-      rgba(74,138,92,0.04);
-    border: 1px solid rgba(74,138,92,0.30);
-    border-radius: 4px;
-    z-index: 4;
-    overflow: hidden;
-    transition: all 0.6s;
-  }
-  .phone[data-state="confirmed"] .achieve-card {
-    background:
-      radial-gradient(ellipse at 80% 50%, rgba(232,199,126,0.14), transparent 70%),
-      rgba(232,199,126,0.04);
-    border-color: rgba(232,199,126,0.30);
-  }
-  .achieve-card::after {
-    content: '✓';
-    position: absolute;
-    top: -12px; right: -2px;
-    font-size: 88px;
-    color: rgba(74,138,92,0.10);
-    pointer-events: none;
-    font-weight: 700;
-  }
-  .phone[data-state="confirmed"] .achieve-card::after {
-    content: '✦';
-    color: rgba(232,199,126,0.10);
-  }
-  .achieve-card .lbl {
-    font-family: 'JetBrains Mono', monospace;
-    font-size: 9px;
-    letter-spacing: 4px;
-    color: var(--emerald);
-    margin-bottom: 4px;
-  }
-  .phone[data-state="confirmed"] .achieve-card .lbl { color: var(--gold-deep); }
-
-  .achieve-card .title {
-    font-family: 'Cormorant Garamond', serif;
-    font-size: 22px;
-    font-weight: 600;
-    color: var(--text-primary);
-    line-height: 1.2;
-    margin-bottom: 6px;
-  }
-  .achieve-card .meta {
-    display: flex; gap: 12px;
-    font-family: 'JetBrains Mono', monospace;
-    font-size: 9px;
-    letter-spacing: 1.5px;
-    color: var(--gold-deep);
-  }
-  .achieve-card .meta .ic { color: var(--emerald-bright); }
-  .phone[data-state="confirmed"] .achieve-card .meta .ic { color: var(--gold); }
-  .achieve-card .blocked-row {
-    margin-top: 8px;
-    display: flex; gap: 6px; flex-wrap: wrap;
-  }
-  .achieve-card .blocked-pill {
-    display: inline-flex; align-items: center; gap: 4px;
-    padding: 3px 8px;
-    border: 1px solid rgba(74,138,92,0.30);
-    border-radius: 999px;
-    background: rgba(74,138,92,0.06);
-    font-family: 'JetBrains Mono', monospace;
-    font-size: 7.5px;
-    letter-spacing: 1px;
-    color: var(--emerald-bright);
-  }
-
-  /* === Mentor question === */
-  .question-block {
-    position: absolute;
-    top: 250px; left: 24px; right: 24px;
-    z-index: 4;
-    display: none;
-  }
-  .phone[data-state="q1"] .question-block,
-  .phone[data-state="q2"] .question-block { display: block; }
-
-  .question-orb-row {
-    display: flex; align-items: flex-start; gap: 12px;
-    margin-bottom: 14px;
-  }
-  .mentor-orb {
-    width: 28px; height: 28px;
-    border-radius: 50%;
-    background: radial-gradient(circle at 35% 35%, var(--gold-flash), var(--gold) 60%, var(--gold-deep));
-    box-shadow: 0 0 14px rgba(232,199,126,0.5);
-    flex-shrink: 0;
-    margin-top: 2px;
-    animation: orb-breathe 3s ease-in-out infinite;
-  }
-  @keyframes orb-breathe {
-    0%, 100% { transform: scale(0.92); }
-    50%      { transform: scale(1.08); }
-  }
-  .question-text {
-    font-family: 'Cormorant Garamond', serif;
-    font-style: italic;
-    font-weight: 600;
-    font-size: 22px;
-    line-height: 1.3;
-    color: var(--text-primary);
-    text-shadow: 0 0 18px rgba(232,199,126,0.25);
-    letter-spacing: 0.3px;
-  }
-  .question-text .em { color: var(--gold); }
-  .question-text .word {
-    display: inline-block;
-    opacity: 0;
-    transform: translateY(8px);
-    filter: blur(6px);
-    animation: word-in 0.7s cubic-bezier(0.16, 0.84, 0.32, 1) forwards;
-  }
-  @keyframes word-in {
-    to { opacity: 1; transform: translateY(0); filter: blur(0); }
-  }
-
-  .question-prompt {
-    font-family: 'JetBrains Mono', monospace;
-    font-size: 8.5px;
-    letter-spacing: 4px;
-    color: var(--gold-deep);
-    margin: 4px 0 14px 40px;
-    opacity: 0;
-    animation: fade-in 0.6s 1.2s ease forwards;
-  }
-  @keyframes fade-in { from { opacity: 0; } to { opacity: 1; } }
-
-  .answers {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 8px;
-    opacity: 0;
-    animation: fade-up 0.8s 1.4s ease forwards;
-  }
-  @keyframes fade-up {
-    from { opacity: 0; transform: translateY(8px); }
-    to   { opacity: 1; transform: translateY(0); }
-  }
-  .answer-chip {
-    padding: 11px 12px;
-    background: rgba(232,199,126,0.04);
-    border: 1px solid var(--gold-deep);
-    border-radius: 4px;
-    cursor: pointer;
-    transition: all 0.2s;
-    display: flex; align-items: center; gap: 9px;
-  }
-  .answer-chip:hover { border-color: var(--gold); background: rgba(232,199,126,0.10); }
-  .answer-chip.selected {
-    border-color: var(--gold);
-    background: rgba(232,199,126,0.12);
-    box-shadow: 0 0 12px rgba(232,199,126,0.25);
-  }
-  .answer-chip .ic { font-size: 16px; color: var(--gold); }
-  .answer-chip .label {
-    font-family: 'Cormorant Garamond', serif;
-    font-style: italic;
-    font-size: 13px;
-    color: var(--text-primary);
-    line-height: 1.3;
-  }
-  .answer-chip.selected .label { color: var(--gold); font-weight: 600; }
-
-  /* === Done state celebration === */
-  .done-block {
-    position: absolute;
-    top: 280px; left: 0; right: 0;
-    text-align: center;
-    z-index: 4;
-    padding: 0 28px;
-    display: none;
-  }
-  .phone[data-state="done"] .done-block { display: block; }
-  .done-block .big {
-    font-family: 'Cormorant Garamond', serif;
-    font-style: italic;
-    font-weight: 700;
-    font-size: 44px;
-    line-height: 1;
-    color: var(--emerald-bright);
-    text-shadow: 0 0 28px rgba(74,138,92,0.5);
-    margin-bottom: 14px;
-    letter-spacing: 1px;
-  }
-  .done-block .big .em { color: var(--gold); }
-  .done-block .sub {
-    font-family: 'Cormorant Garamond', serif;
-    font-style: italic;
-    font-size: 16px;
-    line-height: 1.5;
-    color: var(--text-body);
-    letter-spacing: 0.3px;
-  }
-  .done-block .sub .em { color: var(--gold); font-weight: 600; }
-
-  /* === Identity card (confirmed state) === */
-  .identity-card {
-    position: absolute;
-    top: 270px; left: 24px; right: 24px;
-    padding: 16px 18px;
-    background:
-      radial-gradient(ellipse at 70% 50%, rgba(232,199,126,0.18), transparent 65%),
-      rgba(232,199,126,0.05);
-    border: 1px solid rgba(232,199,126,0.34);
-    border-radius: 4px;
-    z-index: 4;
-    text-align: center;
-    display: none;
-  }
-  .phone[data-state="confirmed"] .identity-card { display: block; animation: fade-up 0.8s 0.2s ease backwards; }
-  .identity-card .lbl {
-    font-family: 'JetBrains Mono', monospace;
-    font-size: 9px;
-    letter-spacing: 5px;
-    color: var(--gold-deep);
-    margin-bottom: 8px;
-  }
-  .identity-card .text {
-    font-family: 'Cormorant Garamond', serif;
-    font-style: italic;
-    font-size: 19px;
-    color: var(--text-primary);
-    line-height: 1.4;
-    font-weight: 600;
-    text-shadow: 0 0 18px rgba(232,199,126,0.30);
-    margin-bottom: 12px;
-  }
-  .identity-card .text .em { color: var(--gold); }
-
-  .identity-card .signature {
-    font-family: 'Cormorant Garamond', serif;
-    font-style: italic;
-    font-size: 12px;
-    color: var(--gold-deep);
-  }
-
-  /* === Stats updated === */
-  .stats-updated {
-    position: absolute;
-    top: 462px; left: 24px; right: 24px;
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 6px;
-    z-index: 4;
-    display: none;
-  }
-  .phone[data-state="confirmed"] .stats-updated { display: grid; animation: fade-up 0.8s 0.5s ease backwards; }
-  .stat-mini {
-    padding: 10px 8px;
-    background: rgba(74,138,92,0.05);
-    border: 1px solid rgba(74,138,92,0.30);
-    border-radius: 3px;
-    text-align: center;
-  }
-  .stat-mini .change {
-    font-family: 'JetBrains Mono', monospace;
-    font-size: 9px;
-    color: var(--emerald-bright);
-    margin-bottom: 2px;
-  }
-  .stat-mini .v {
-    font-family: 'JetBrains Mono', monospace;
-    font-size: 16px;
+    font-size: 24px;
+    color: var(--accent);
     font-weight: 500;
-    color: var(--gold);
-    line-height: 1;
   }
-  .stat-mini .l {
-    font-family: 'JetBrains Mono', monospace;
-    font-size: 7.5px;
-    letter-spacing: 1.5px;
-    color: var(--gold-deep);
+  .progress .lbl {
+    font-size: 10px;
+    letter-spacing: 3px;
+    color: var(--text-mid);
+    text-transform: uppercase;
     margin-top: 4px;
   }
-
-  /* === Mentor closing note (confirmed) === */
-  .mentor-closing {
-    position: absolute;
-    top: 562px; left: 24px; right: 24px;
-    padding: 12px 14px;
-    border-left: 2px solid var(--gold);
-    background: rgba(232,199,126,0.05);
-    border-radius: 0 3px 3px 0;
-    z-index: 4;
-    display: none;
-  }
-  .phone[data-state="confirmed"] .mentor-closing { display: block; animation: fade-up 0.8s 0.7s ease backwards; }
-  .mentor-closing .text {
-    font-family: 'Cormorant Garamond', serif;
-    font-style: italic;
-    font-size: 13px;
-    color: var(--text-body);
-    line-height: 1.5;
-    letter-spacing: 0.3px;
-  }
-  .mentor-closing .text .em { color: var(--gold); font-weight: 600; }
-
-  /* === Bottom action === */
-  .bottom-bar {
-    position: absolute;
-    bottom: 24px; left: 24px; right: 24px;
-    z-index: 5;
-  }
-  .primary-btn {
-    width: 100%;
-    background: linear-gradient(180deg, #DDF1E0 0%, var(--emerald) 60%, var(--emerald-deep) 100%);
-    color: var(--text-primary);
-    padding: 14px;
-    font-size: 12px;
-    font-weight: 700;
-    letter-spacing: 5px;
-    border: none;
-    border-radius: 4px;
-    cursor: pointer;
-    text-transform: uppercase;
-    font-family: 'Inter', sans-serif;
-    box-shadow:
-      0 0 22px rgba(74,138,92,0.40),
-      inset 0 1px 0 rgba(255,255,255,0.3);
-    transition: all 0.2s;
-    position: relative;
-    overflow: hidden;
-  }
-  .phone[data-state="confirmed"] .primary-btn {
-    background: linear-gradient(180deg, var(--cream) 0%, var(--gold) 50%, var(--gold-deep) 100%);
-    color: var(--void);
-    box-shadow: 0 0 22px rgba(232,199,126,0.40), inset 0 1px 0 rgba(255,255,255,0.5);
-  }
-  .primary-btn::before {
-    content: '';
-    position: absolute; inset: 0;
-    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
-    transform: translateX(-100%);
-    animation: shimmer 3s ease-in-out infinite;
-  }
-  @keyframes shimmer {
-    0% { transform: translateX(-100%); }
-    50% { transform: translateX(100%); }
-    100% { transform: translateX(100%); }
-  }
-  .primary-btn:hover { transform: scale(1.02); letter-spacing: 6px; }
-
-  .secondary-row {
-    display: flex; gap: 6px; margin-top: 8px;
-    visibility: hidden;
-  }
-  .phone[data-state="confirmed"] .secondary-row { visibility: visible; }
-  .secondary-btn {
-    flex: 1;
-    background: none;
-    border: 1px solid var(--gold-deep);
-    color: var(--gold-deep);
-    padding: 8px;
-    font-size: 9px;
-    letter-spacing: 2px;
-    border-radius: 2px;
-    cursor: pointer;
-    font-family: 'Inter', sans-serif;
-    text-transform: uppercase;
-    transition: all 0.2s;
-  }
-  .secondary-btn:hover { color: var(--gold); border-color: var(--gold); }
-
-  .vignette {
-    position: absolute; inset: 0;
-    pointer-events: none;
-    background: radial-gradient(ellipse 110% 80% at 50% 50%, transparent 60%, rgba(0,0,0,0.4));
-    z-index: 6;
-  }
-
-  /* Tabs (preview) */
-  .state-tabs {
-    display: flex;
-    justify-content: center;
-    gap: 6px;
-    margin-top: 18px;
-    flex-wrap: wrap;
-  }
-  .state-tab {
-    padding: 7px 14px;
-    border-radius: 2px;
-    font-family: 'JetBrains Mono', monospace;
-    font-size: 10px;
-    letter-spacing: 2px;
-    color: rgba(255,255,255,0.4);
-    cursor: pointer;
-    border: 1px solid rgba(255,255,255,0.08);
-    user-select: none;
-    transition: all 0.2s;
-  }
-  .state-tab:hover { color: var(--emerald-bright); border-color: var(--emerald); }
-  .state-tab.active {
-    color: var(--emerald-bright);
-    border-color: var(--emerald);
-    background: rgba(74,138,92,0.10);
-  }
-
-  .footer-info {
-    margin-top: 22px;
-    text-align: center;
-    color: rgba(255,255,255,0.45);
-    font-size: 13px;
-    line-height: 1.6;
-    font-family: 'Cormorant Garamond', serif;
-    font-style: italic;
-  }
-
-  @media (max-width: 480px) {
-    body { padding: 0; }
-    .phone {
-      width: 100vw;
-      height: 100vh;
-      border-radius: 0;
-      box-shadow: none;
-    }
-    .footer-info, .state-tabs { display: none; }
-  }
+  .bottom-bar { padding: 24px 32px env(safe-area-inset-bottom, 24px); background: linear-gradient(180deg, transparent, var(--void) 30%); }
+  .cta { display:block; width:100%; padding:16px; background: linear-gradient(180deg, var(--accent), var(--accent-soft)); color: var(--void); font-size:13px; font-weight:600; letter-spacing:2px; text-transform: uppercase; border:none; border-radius:6px; text-align:center; text-decoration:none; }
+  @media (max-width: 480px) { body { padding: 0; } .phone { width: 100vw; min-height: 100vh; border-radius: 0; box-shadow: none; } }
 </style>
 </head>
 <body>
 
-<div style="display:flex; flex-direction:column; align-items:center;">
+<div class="phone">
+  <div class="container">
 
-  <div class="phone" id="phone" data-state="done">
-    <div class="backdrop"></div>
-    <div class="pattern-wash"></div>
-    <div class="leaves" id="leaves"></div>
-    <div class="confetti" id="confetti"></div>
-    <div class="gilt-frame"></div>
-    <div class="letterbox top"></div>
-    <div class="letterbox bottom"></div>
-
-    <!-- Header -->
-    <div class="header-row">
-      <div class="stamp">
-        <span class="check">✓</span>
-        <span id="stampText">SESSIYA TUGADI</span>
-      </div>
-      <div class="step-pill">
-        <span id="stepNum">1/3</span>
-        <div class="dots" id="stepDots">
-          <div class="stp active"></div>
-          <div class="stp"></div>
-          <div class="stp"></div>
-        </div>
-      </div>
+    <div class="check">
+      <svg viewBox="0 0 24 24" fill="none" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+        <polyline points="5 12 10 17 19 8"/>
+      </svg>
     </div>
 
-    <!-- Brand seal -->
-    <div class="brand-seal">
-      <div class="ornament">
-        <div class="line"></div>
-        <div class="star">✦</div>
-        <div class="line"></div>
-      </div>
-      <div class="seal-text" id="seal">murabbiy bilan baho beramiz</div>
+    <h1 class="big" id="big">Bajarding,<br><span class="em" id="userName">do'stim</span>.</h1>
+
+    <div class="what">
+      <div class="name" id="taskName">Til o'rganish</div>
+      <div class="time" id="taskTime">1 soat fokus</div>
     </div>
 
-    <!-- Achievement card -->
-    <div class="achieve-card">
-      <div class="lbl" id="achLbl">BAJARILDI · MUQADDAS</div>
-      <div class="title">Chuqur kod · API</div>
-      <div class="meta">
-        <span><span class="ic">✓</span> 45 DAQ FOKUS</span>
-        <span><span class="ic">∼</span> 14:30 — 15:15</span>
-      </div>
-      <div class="blocked-row">
-        <span class="blocked-pill">✓ INSTAGRAM</span>
-        <span class="blocked-pill">✓ TIKTOK</span>
-        <span class="blocked-pill">✓ YOUTUBE</span>
-        <span class="blocked-pill">+ 2</span>
-      </div>
+    <div class="progress">
+      <div class="v"><span id="doneN">1</span> / <span id="totalN">5</span></div>
+      <div class="lbl">bugun bajarildi</div>
     </div>
 
-    <!-- Done state — celebration text -->
-    <div class="done-block">
-      <div class="big">
-        <span class="em">Bajarding.</span>
-      </div>
-      <div class="sub">
-        Yana 45 daqiqa <span class="em">o'zingdan ozgina kuchliroq</span> bo'lding. Endi birga baho beramiz — miyangda nima qoldi?
-      </div>
-    </div>
-
-    <!-- Question 1 — knowledge consolidation -->
-    <div class="question-block" id="qBlock1">
-      <div class="question-orb-row">
-        <div class="mentor-orb"></div>
-        <div class="question-text" id="q1Text">
-          <span class="word" style="animation-delay:0.2s">Nima</span>
-          <span class="word" style="animation-delay:0.4s"><span class="em">yangi</span></span>
-          <span class="word" style="animation-delay:0.6s">narsani</span>
-          <span class="word" style="animation-delay:0.8s">ko'rding</span>
-          <span class="word" style="animation-delay:1.0s">bu</span>
-          <span class="word" style="animation-delay:1.2s">sessiyada?</span>
-        </div>
-      </div>
-      <div class="question-prompt" id="q1Prompt">— miyaning yangi izi nimaga qoldi —</div>
-      <div class="answers" id="q1Answers">
-        <div class="answer-chip"><div class="ic">◇</div><div class="label">Yangi tushuncha</div></div>
-        <div class="answer-chip"><div class="ic">∽</div><div class="label">Eski narsa — yangicha</div></div>
-        <div class="answer-chip"><div class="ic">⚡</div><div class="label">O'z chegaramni bildim</div></div>
-        <div class="answer-chip"><div class="ic">✦</div><div class="label">Boshqa — aytay</div></div>
-      </div>
-    </div>
-
-    <!-- Identity card (confirmed) -->
-    <div class="identity-card">
-      <div class="lbl">SEN — KIM BO'LDING BU LAHZADA</div>
-      <div class="text">
-        Sen — <span class="em">o'z so'zida turgan odam</span>.<br>
-        Reja qilding, bajarding. Bu — <span class="em">yangi sen</span>.
-      </div>
-      <div class="signature">— birgaman, ertaga ham</div>
-    </div>
-
-    <!-- Stats updated (confirmed) -->
-    <div class="stats-updated">
-      <div class="stat-mini">
-        <div class="change">+1</div>
-        <div class="v">13</div>
-        <div class="l">KUN<br>STREAK</div>
-      </div>
-      <div class="stat-mini">
-        <div class="change">+0.75</div>
-        <div class="v">4.25</div>
-        <div class="l">SOAT<br>BUGUN</div>
-      </div>
-      <div class="stat-mini">
-        <div class="change">+1</div>
-        <div class="v">39</div>
-        <div class="l">SESSIYA<br>HAFT</div>
-      </div>
-    </div>
-
-    <!-- Mentor closing note -->
-    <div class="mentor-closing">
-      <div class="text">
-        Diqqat qil — har bajarilgan sessiya <span class="em">miyangda yangi yo'l</span> ochadi. Ertaga uy yo'l osonroq bo'ladi. Bu — neyroplastiklik, sening foydangga.
-      </div>
-    </div>
-
-    <!-- Bottom -->
-    <div class="bottom-bar">
-      <button class="primary-btn" id="primaryBtn">Davom etamiz</button>
-      <div class="secondary-row">
-        <button class="secondary-btn">Yangi sessiya</button>
-        <button class="secondary-btn">Dam olaman</button>
-      </div>
-    </div>
-
-    <div class="vignette"></div>
   </div>
 
-  <!-- State tabs -->
-  <div class="state-tabs">
-    <div class="state-tab active" data-state="done">TUGADI</div>
-    <div class="state-tab" data-state="q1">SAVOL · 1</div>
-    <div class="state-tab" data-state="q2">SAVOL · 2</div>
-    <div class="state-tab" data-state="confirmed">TASDIQLANDI</div>
-  </div>
-
-  <div class="footer-info">
-    Sessiya bahosi — bajarilgan ishni ongli mustahkamlash
+  <div class="bottom-bar">
+    <a class="cta" id="cta" href="home.html">Davom</a>
   </div>
 </div>
 
+<script src="data.js" defer></script>
+<script src="nav-overlay.js" defer></script>
 <script>
-  const states = {
-    done: {
-      step: 1,
-      seal: 'murabbiy bilan baho beramiz',
-      stamp: 'SESSIYA TUGADI',
-      achLbl: 'BAJARILDI · MUQADDAS',
-      btn: 'Davom etamiz',
-      qWords: null,
-      qPrompt: '',
-      answers: null
-    },
-    q1: {
-      step: 2,
-      seal: 'birinchi savol — bilim',
-      stamp: 'BAHO · SAVOL 1/2',
-      achLbl: 'BAJARILDI · MUQADDAS',
-      btn: 'Keyingi savol',
-      qWords: ['Nima', '<span class="em">yangi</span>', 'narsani', 'ko\'rding', 'bu', 'sessiyada?'],
-      qPrompt: '— miyaning yangi izi nimaga qoldi —',
-      answers: [
-        { ic: '◇', label: 'Yangi tushuncha' },
-        { ic: '∽', label: 'Eski narsa — yangicha' },
-        { ic: '⚡', label: 'O\'z chegaramni bildim' },
-        { ic: '✦', label: 'Boshqa — aytay' }
-      ]
-    },
-    q2: {
-      step: 3,
-      seal: 'ikkinchi savol — kuch',
-      stamp: 'BAHO · SAVOL 2/2',
-      achLbl: 'BAJARILDI · MUQADDAS',
-      btn: 'Tasdiqlash',
-      qWords: ['Bu', 'kuching', '<span class="em">qaysi qismidan</span>', 'keldi?'],
-      qPrompt: '— ongli kuch qaytarib chaqirilishi mumkin —',
-      answers: [
-        { ic: '◉', label: 'Ertalabki niyat' },
-        { ic: '↻', label: 'Ko\'p kunlik odat' },
-        { ic: '☾', label: 'Yaxshi uyqu' },
-        { ic: '☼', label: 'Erta turgan tongim' }
-      ]
-    },
-    confirmed: {
-      step: 3,
-      seal: 'tasdiqlandi · birga davom',
-      stamp: 'TASDIQLANDI',
-      achLbl: 'BAJARILDI VA MUSTAHKAMLANDI',
-      btn: 'Bosh sahifa'
+  document.addEventListener('DOMContentLoaded', () => {
+    // Ism
+    const name = (localStorage.getItem('mvow.userName') || '').trim();
+    if (name) document.getElementById('userName').textContent = name;
+
+    // Joriy task
+    let cur = null;
+    let plan = [];
+    try { plan = JSON.parse(localStorage.getItem('mvow.todayPlan') || '[]'); } catch {}
+    if (Array.isArray(plan) && plan.length) {
+      cur = plan[0];
+    } else if (window.MVOW_DATA) {
+      cur = MVOW_DATA.currentSession() || MVOW_DATA.sessions[0];
     }
-  };
-
-  const phone     = document.getElementById('phone');
-  const seal      = document.getElementById('seal');
-  const stampText = document.getElementById('stampText');
-  const achLbl    = document.getElementById('achLbl');
-  const stepNum   = document.getElementById('stepNum');
-  const stepDots  = document.getElementById('stepDots');
-  const primaryBtn= document.getElementById('primaryBtn');
-  const q1Text    = document.getElementById('q1Text');
-  const q1Prompt  = document.getElementById('q1Prompt');
-  const q1Answers = document.getElementById('q1Answers');
-
-  function applyState(name) {
-    const s = states[name];
-    phone.dataset.state = name;
-    seal.textContent = s.seal;
-    stampText.textContent = s.stamp;
-    achLbl.textContent = s.achLbl;
-    primaryBtn.textContent = s.btn;
-
-    stepNum.textContent = s.step + '/3';
-    stepDots.innerHTML = [1,2,3].map(i =>
-      `<div class="stp ${i <= s.step ? 'active' : ''}"></div>`
-    ).join('');
-
-    // Question rebuild (if applicable)
-    if (s.qWords) {
-      q1Text.innerHTML = s.qWords.map((w, i) =>
-        `<span class="word" style="animation-delay:${0.2 + i*0.18}s">${w}</span>`
-      ).join(' ');
-      q1Prompt.style.animation = 'none';
-      void q1Prompt.offsetWidth;
-      q1Prompt.style.animation = `fade-in 0.6s ${0.2 + s.qWords.length*0.18 + 0.2}s ease forwards`;
-      q1Prompt.textContent = s.qPrompt;
-
-      q1Answers.style.animation = 'none';
-      void q1Answers.offsetWidth;
-      q1Answers.style.animation = `fade-up 0.8s ${0.2 + s.qWords.length*0.18 + 0.4}s ease forwards`;
-      q1Answers.innerHTML = s.answers.map(a =>
-        `<div class="answer-chip">
-          <div class="ic">${a.ic}</div>
-          <div class="label">${a.label}</div>
-        </div>`
-      ).join('');
-
-      document.querySelectorAll('.answer-chip').forEach(chip => {
-        chip.addEventListener('click', () => {
-          document.querySelectorAll('.answer-chip').forEach(c => c.classList.remove('selected'));
-          chip.classList.add('selected');
-        });
-      });
+    if (cur) {
+      document.getElementById('taskName').textContent = cur.name;
+      document.getElementById('taskTime').textContent = (cur.dur || '') + ' fokus';
     }
-  }
 
-  applyState('done');
+    // Hisoblagich (sahifa ochilganda 1 ga oshadi, lekin bir kunda bir marta)
+    const todayKey = 'mvow.done.' + new Date().toISOString().slice(0,10);
+    let done = parseInt(localStorage.getItem(todayKey) || '0', 10);
+    // sahifa qayta yuklansa, ikkilab oshmasin — sessiya unique key kerak
+    const sessionKey = todayKey + '.last';
+    const lastSessionId = localStorage.getItem(sessionKey);
+    const thisSessionId = Date.now() - (Date.now() % 30000); // 30 sek ichida bir xil
+    if (lastSessionId !== String(thisSessionId)) {
+      done++;
+      localStorage.setItem(todayKey, String(done));
+      localStorage.setItem(sessionKey, String(thisSessionId));
 
-  document.querySelectorAll('.state-tab').forEach(tab => {
-    tab.addEventListener('click', () => {
-      document.querySelectorAll('.state-tab').forEach(t => t.classList.remove('active'));
-      tab.classList.add('active');
-      applyState(tab.dataset.state);
-    });
+      // Umumiy bajarilgan sessiyalar
+      const tot = parseInt(localStorage.getItem('mvow.totalDone') || '0', 10) + 1;
+      localStorage.setItem('mvow.totalDone', String(tot));
+    }
+    document.getElementById('doneN').textContent = done;
+
+    // Sessiya tugaganda nozik feedback (tasdiq)
+    if (window.MVOW_DATA) MVOW_DATA.fxSuccess();
+
+    // Bugungi reja umumiy hajmi
+    document.getElementById('totalN').textContent = plan.length || (window.MVOW_DATA ? MVOW_DATA.sessions.length : 5);
+
+    // Hammasi bajarilgan bo'lsa, CTA'ni bayramga yo'naltirish
+    if (plan.length && done >= plan.length) {
+      const cta = document.getElementById('cta');
+      cta.textContent = 'Yakuniy bayram';
+      cta.href = 'celebrate.html';
+
+      // Streak ham oshadi
+      const lastStreakDate = localStorage.getItem('mvow.lastStreakDate');
+      const today = new Date().toISOString().slice(0,10);
+      if (lastStreakDate !== today) {
+        const cur = parseInt(localStorage.getItem('mvow.streak') || '0', 10);
+        localStorage.setItem('mvow.streak', String(cur + 1));
+        localStorage.setItem('mvow.lastStreakDate', today);
+      }
+    }
   });
-
-  primaryBtn.addEventListener('click', () => {
-    const order = ['done', 'q1', 'q2', 'confirmed'];
-    const cur = phone.dataset.state || 'done';
-    const idx = order.indexOf(cur);
-    const next = order[(idx + 1) % order.length];
-    document.querySelectorAll('.state-tab').forEach(t =>
-      t.classList.toggle('active', t.dataset.state === next)
-    );
-    applyState(next);
-  });
-
-  // Spawn leaves
-  function spawnLeaves() {
-    const leaves = document.getElementById('leaves');
-    for (let i = 0; i < 14; i++) {
-      const p = document.createElement('span');
-      p.style.left = Math.random() * 100 + '%';
-      p.style.animationDuration = (10 + Math.random() * 8) + 's';
-      p.style.animationDelay = (Math.random() * 12) + 's';
-      leaves.appendChild(p);
-    }
-  }
-  spawnLeaves();
-
-  // Spawn confetti (only visible on done state)
-  function spawnConfetti() {
-    const c = document.getElementById('confetti');
-    for (let i = 0; i < 24; i++) {
-      const p = document.createElement('span');
-      p.style.left = Math.random() * 100 + '%';
-      p.style.animationDuration = (5 + Math.random() * 4) + 's';
-      p.style.animationDelay = (Math.random() * 6) + 's';
-      p.style.transform = `rotate(${Math.random() * 360}deg)`;
-      c.appendChild(p);
-    }
-  }
-  spawnConfetti();
 </script>
 
-<script src="nav-overlay.js" defer></script>
 </body>
 </html>

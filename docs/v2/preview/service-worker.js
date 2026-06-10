@@ -3,43 +3,34 @@
  * after first load. Caches all preview HTML files + the logo.
  */
 
-const CACHE_NAME = 'mvow-v2.5.2';
+const CACHE_NAME = 'mvow-v8.8.0';
 const ASSETS = [
   './',
-  './gallery.html',
-  './welcome.html',
-  './goal.html',
-  './voice-commitment.html',
-  './permissions.html',
-  './done.html',
-  './home.html',
-  './daily-brief.html',
-  './calendar.html',
-  './profile.html',
-  './notifications.html',
-  './settings.html',
-  './add-session.html',
-  './session-start.html',
-  './hard-lock.html',
-  './online-class.html',
-  './urgent-time.html',
-  './negotiation.html',
-  './chat.html',
-  './session-reflection.html',
-  './stuck.html',
-  './weekly-review.html',
-  './rest-mode.html',
-  './celebrate.html',
-  './day-flow.html',
-  './tomorrow-plan.html',
-  './morning-confirm.html',
-  './pomodoro.html',
-  './routine.html',
-  './assets/mnsm-logo.png',
-  './manifest.webmanifest',
+  // Asosiy infratuzilma
+  './index.html',
+  './data.js',
   './nav-overlay.js',
+  './manifest.webmanifest',
   './menu.html',
-  './index.html'
+  './gallery.html',
+  './assets/mnsm-logo.png',
+  // 16 ta MVP ekran (SEQ tartibida)
+  './welcome.html',           // 1
+  './goal.html',              // 2
+  './permissions.html',       // 3
+  './settings.html',          // 4
+  './alarm.html',             // 5
+  './home.html',              // 6
+  './routine.html',           // 7
+  './today-plan.html',        // 8
+  './calendar.html',          // 9
+  './day-flow.html',          // 10
+  './hard-lock.html',         // 11
+  './negotiation.html',       // 12
+  './session-reflection.html',// 13
+  './notifications.html',     // 14
+  './weekly-review.html',     // 15
+  './celebrate.html'          // 16
 ];
 
 // Install — pre-cache all app assets

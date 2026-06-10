@@ -31,11 +31,11 @@
       "url": "./home.html"
     },
     {
-      "name": "Murabbiy bilan suhbat",
-      "url": "./chat.html"
+      "name": "Bugungi reja",
+      "url": "./today-plan.html"
     },
     {
-      "name": "Hafta bayrami",
+      "name": "Natijalar",
       "url": "./weekly-review.html"
     }
   ]

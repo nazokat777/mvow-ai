@@ -8,9 +8,10 @@
   // AND make every screen scroll-friendly on mobile (universal fix).
   function injectLogoStyles() {
     const css = `
-      /* === Universal: gold orbs → MNSM logo === */
+      /* === Logo'larni teal'ga aylantirish — hue-rotate(160deg) oltindan teal'ga */
       .mentor-orb, .avatar, .orb-core, .header-orb, .portal-core,
-      .notif-orb.mentor, .core-well-logo {
+      .notif-orb.mentor, .core-well-logo, .timer-logo, .invite .orb,
+      .gen-orb, .day-progress .orb {
         background: transparent !important;
         background-image: url('assets/mnsm-logo.png') !important;
         background-size: contain !important;
@@ -19,10 +20,47 @@
         box-shadow: none !important;
         border: none !important;
         animation: none !important;
-        filter: drop-shadow(0 0 12px rgba(232,199,126,0.55));
+        filter: hue-rotate(160deg) saturate(1.4) drop-shadow(0 0 12px rgba(0,229,212,0.55));
       }
       .mentor-orb *, .avatar *, .orb-core *, .header-orb *, .portal-core * {
         opacity: 0 !important;
+      }
+      /* MNSM logo barcha img va background fonida — hue-rotate orqali teal */
+      img[src*="mnsm-logo"],
+      [class*="mnsm-img"] img,
+      .brand-block img,
+      .seq-nav-pos img,
+      .logo-wrap img,
+      [style*="mnsm-logo"] {
+        filter: hue-rotate(160deg) saturate(1.4) !important;
+      }
+      .seq-nav-pos img {
+        filter: hue-rotate(160deg) saturate(1.4) drop-shadow(0 0 4px rgba(0,229,212,.5)) !important;
+      }
+
+      /* === Universal mikro-animatsiyalar === */
+      /* Sahifa kirishi — fade-in */
+      @keyframes mvow-fade-in {
+        from { opacity: 0; transform: translateY(8px); }
+        to   { opacity: 1; transform: translateY(0); }
+      }
+      .phone {
+        animation: mvow-fade-in 0.4s ease-out;
+      }
+      /* CTA tap feedback */
+      .cta, .ghost, .chip, .add-btn, button {
+        transition: transform 0.12s ease, opacity 0.12s ease, background-color 0.15s ease, color 0.15s ease, border-color 0.15s ease;
+      }
+      .cta:active, .ghost:active, .add-btn:active {
+        transform: scale(0.97);
+      }
+      /* Reduced motion — animatsiyalarni o'chir */
+      @media (prefers-reduced-motion: reduce) {
+        *, *::before, *::after {
+          animation-duration: 0.01ms !important;
+          animation-iteration-count: 1 !important;
+          transition-duration: 0.01ms !important;
+        }
       }
 
       /* === Universal mobile scroll — every screen flows like a normal page === */
@@ -145,54 +183,30 @@
     replaceUserName();
   }
 
-  // Narrativ ketma-ketlik — foydalanuvchi safari:
-  //
-  //  [1-5]   KIRISH-TANISHUV + MAQSAD — kim sen, niyating, ruxsatlar
-  //  [6-10]  KUN TARTIBINI TUZISH-TASDIQLASH — AI reja → kechqurun → tongda
-  //  [11]    KUN BOSHLANISHI — vaqt keldi
-  //  [12-14] DARSLAR + TAYMERLAR — onlayn dars, kunlik oqim, pomodoro
-  //  [15-20] CHEKLOVLAR + MENTOR YORDAMI — bloklash, mentor inkor, suhbat, dam
-  //  [21-28] NATIJALAR — sessiya bahosi, dashboard, profil, hafta tahlil, bayram
+  // MVP scope (2026-05-24, qayta) — 14 ta zarur ekran.
+  // today-plan.html qo'shildi: AI tuzgan kun tartibi ro'yxati — boshlashdan oldin.
   const SEQ = [
-    // 1-5 — Kirish-tanishuv + Maqsad
-    'welcome.html',          // 1. "Salom, sen kim?" (ism)
-    'voice-commitment.html', // 2. "Tanishaylik" — mentor o'zini taqdim, sen ovozda javob
-    'goal.html',             // 3. "Niyating?" — yo'nalish tanlash
-    'permissions.html',      // 4. "Ruxsatlar"
-    'done.html',             // 5. "Tayyormiz"
-
-    // 6-10 — Kun tartibini tuzish-tasdiqlash
-    'routine.html',          // 6. "AI bilan rejani quramiz"
-    'tomorrow-plan.html',    // 7. "Kechqurun: ertangi rejani chizamiz"
-    'add-session.html',      // 8. "Qo'lda yangi sessiya qo'shish"
-    'daily-brief.html',      // 9. "Tongda: 3 sokratik savol"
-    'morning-confirm.html',  // 10. "Tonggi tasdiq"
-
-    // 11 — Kun boshlanishi
-    'session-start.html',    // 11. "Murabbiy chaqirmoqda — vaqt keldi"
-
-    // 12-14 — Darslar + Taymerlar
-    'online-class.html',     // 12. "Onlayn dars paytida"
-    'day-flow.html',         // 13. "Kunlik oqim — taymer ishlamoqda"
-    'pomodoro.html',         // 14. "25/5 fokus tsikli"
-
-    // 15-20 — Cheklovlar + Mentor yordami
-    'hard-lock.html',        // 15. "Instagram'ga urinding — bloklandi"
-    'negotiation.html',      // 16. "Mentor sabab so'raydi"
-    'stuck.html',            // 17. "Qisilib qolsang"
-    'urgent-time.html',      // 18. "Shoshilinch ish chiqsa"
-    'chat.html',             // 19. "Mentor bilan ochiq suhbat"
-    'rest-mode.html',        // 20. "Dam rejimi"
-
-    // 21-28 — Natijalar (sessiya yakuni → dashboard → uzoq vaqt → hafta)
-    'session-reflection.html', // 21. "Sessiya tugadi — baho"
-    'home.html',             // 22. "Bosh sahifa — 12-kun streak"
-    'profile.html',          // 23. "Sen — daraxt halqalari"
-    'notifications.html',    // 24. "Bildirishnomalar markazi"
-    'calendar.html',         // 25. "Kalendar — bir oylik tarix"
-    'settings.html',         // 26. "Sozlamalar"
-    'weekly-review.html',    // 27. "Haftalik analitik tahlil"
-    'celebrate.html'         // 28. "Haftalik bayram"
+    // Onboarding (1-3)
+    'welcome.html',           // 1. Tanishuv (ism + bio + va'da)
+    'goal.html',              // 2. Profil
+    'permissions.html',       // 3. Ruxsatlar
+    // Sozlama · aloqa (4-5)
+    'settings.html',          // 4. Sozlamalar
+    // Kun (5-9)
+    'alarm.html',             // 5. Uyg'on
+    'home.html',              // 6. Bosh sahifa
+    'routine.html',           // 7. Rejalaringni ayt
+    'today-plan.html',        // 8. Tuzilgan kun tartibi
+    'calendar.html',          // 9. Haftalik kalendar
+    // Bajarish (10-13)
+    'day-flow.html',          // 10. Taymer
+    'hard-lock.html',         // 11. Qulflash
+    'negotiation.html',       // 12. Diqqat sinovi
+    'session-reflection.html',// 13. Sessiya bahosi
+    // Natija (14-16)
+    'notifications.html',     // 14. Xabarlar
+    'weekly-review.html',     // 15. Natijalar
+    'celebrate.html'          // 16. Bayram
   ];
 
   const file = (location.pathname.split('/').pop() || 'welcome.html').toLowerCase();
@@ -219,11 +233,11 @@
       pointer-events: auto;
       width: 40px; height: 40px;
       border-radius: 50%;
-      border: 1px solid rgba(232,199,126,0.55);
+      border: 1px solid rgba(0,229,212,0.55);
       background: rgba(8,8,12,0.78);
       backdrop-filter: blur(8px);
       -webkit-backdrop-filter: blur(8px);
-      color: #E8C77E;
+      color: #00E5D4;
       font-size: 20px;
       font-weight: 600;
       font-family: serif;
@@ -237,7 +251,7 @@
       -webkit-tap-highlight-color: transparent;
       transition: transform .12s, background .15s;
     }
-    .seq-nav .arrow:active { transform: scale(0.92); background: rgba(232,199,126,0.18); }
+    .seq-nav .arrow:active { transform: scale(0.92); background: rgba(0,229,212,0.18); }
     .seq-nav .arrow.disabled { opacity: 0.18; pointer-events: none; }
     .seq-nav-pos {
       position: fixed;
@@ -245,12 +259,12 @@
       transform: translateX(-50%);
       pointer-events: auto;
       padding: 5px 12px;
-      border: 1px solid rgba(232,199,126,0.45);
+      border: 1px solid rgba(0,229,212,0.45);
       border-radius: 999px;
       background: rgba(8,8,12,0.78);
       backdrop-filter: blur(8px);
       -webkit-backdrop-filter: blur(8px);
-      color: #E8C77E;
+      color: #00E5D4;
       font-family: 'JetBrains Mono', monospace;
       font-size: 9px;
       letter-spacing: 2px;
@@ -258,7 +272,7 @@
       z-index: 99999;
       box-shadow: 0 2px 8px rgba(0,0,0,0.5);
     }
-    .seq-nav-pos b { color: #FFE9B5; font-weight: 600; }
+    .seq-nav-pos b { color: #7AF5EC; font-weight: 600; }
     @media (max-width: 480px) {
       .seq-nav .arrow { width: 36px; height: 36px; font-size: 18px; }
       .seq-nav-pos { font-size: 8.5px; padding: 4px 10px; }
@@ -271,7 +285,7 @@
   pos.className = 'seq-nav-pos';
   pos.href = 'menu.html';
   pos.innerHTML =
-    '<img src="assets/mnsm-logo.png" style="height:14px;width:auto;vertical-align:middle;margin-right:5px;filter:drop-shadow(0 0 4px rgba(232,199,126,.5))" alt="MNSM" />' +
+    '<img src="assets/mnsm-logo.png" style="height:14px;width:auto;vertical-align:middle;margin-right:5px;filter:drop-shadow(0 0 4px rgba(0,229,212,.5))" alt="MNSM" />' +
     '<b>' + (idx + 1) + '</b> / ' + SEQ.length +
     '&nbsp;&nbsp;☰';
   pos.title = 'Barcha ekranlar';
@@ -283,7 +297,7 @@
     'position:fixed; bottom:14px; left:10px; width:24px; height:24px; ' +
     'background:url(assets/mnsm-logo.png) center/contain no-repeat; ' +
     'opacity:.35; pointer-events:none; z-index:99996; ' +
-    'filter:drop-shadow(0 0 6px rgba(232,199,126,.4));';
+    'filter:drop-shadow(0 0 6px rgba(0,229,212,.4));';
   document.body.appendChild(watermark);
 
   // Side arrows

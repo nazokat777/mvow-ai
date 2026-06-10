@@ -2,662 +2,275 @@
 <html lang="uz">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>M-VoW AI — Sozlamalar</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>{brand} — Sozlamalar</title>
 <link rel="manifest" href="manifest.webmanifest">
 <meta name="theme-color" content="#04060B">
-<meta name="apple-mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<meta name="apple-mobile-web-app-title" content="M·VoW">
 <link rel="apple-touch-icon" href="assets/mnsm-logo.png">
 <link rel="icon" type="image/png" href="assets/mnsm-logo.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,500&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
 <style>
   * { box-sizing: border-box; margin: 0; padding: 0; }
+  :root { --void:#04060B; --text:#F5F2EC; --text-mid:#8A8D94; --text-dim:#6E7178; --accent:#00E5D4; }
+  body { background: var(--void); font-family:'Inter',sans-serif; color: var(--text); min-height: 100vh; display:flex; justify-content:center; align-items:flex-start; padding: 24px; -webkit-font-smoothing: antialiased; }
+  .phone { width: 380px; min-height: 800px; background: var(--void); border-radius: 40px; overflow: hidden; position: relative; box-shadow: 0 0 0 8px #1a1d24, 0 30px 80px rgba(0,0,0,.7); }
+  .container { padding: 80px 32px 100px; }
 
-  :root {
-    --void:        #04060B;
-    --void-2:      #0A0E16;
-    --shadow:      #11151D;
+  .me { text-align:center; margin-bottom: 48px; }
+  .me .name { font-family:'Cormorant Garamond',serif; font-size: 28px; font-weight: 500; }
+  .me .sub { font-size: 11px; letter-spacing: 3px; color: var(--text-mid); text-transform: uppercase; margin-top: 6px; }
+  .me .sub .em { color: var(--accent); }
 
-    --text-primary: #F5F2EC;
-    --text-body:    #B8BBC2;
-    --text-muted:   #6B6E76;
-    --text-ghost:   #3A3D44;
-
-    --gold:        #E8C77E;
-    --gold-2:      #C7A36B;
-    --gold-deep:   #8a6f44;
-    --gold-flash:  #FFE9B5;
-    --honey:       #D4A574;
-
-    --crimson:     #B8334A;
-    --emerald:     #4A8A5C;
-  }
-
-  body {
-    background: #14171d;
-    font-family: 'Inter', sans-serif;
-    color: var(--text-primary);
-    min-height: 100vh;
-    display: flex;
-    justify-content: center;
+  .row {
+    display: grid;
+    grid-template-columns: 1fr auto;
     align-items: center;
-    padding: 24px;
+    gap: 16px;
+    padding: 16px 0;
+    border-bottom: 1px solid rgba(255,255,255,.04);
   }
-
-  .phone {
-    width: 380px;
-    height: 800px;
-    background: var(--void);
-    border-radius: 40px;
-    overflow: hidden;
-    position: relative;
-    box-shadow:
-      0 0 0 8px #2a2e36,
-      0 30px 80px rgba(0,0,0,0.85),
-      0 0 100px rgba(232,199,126,0.07);
-  }
-
-  .backdrop {
-    position: absolute; inset: 0;
-    background:
-      radial-gradient(ellipse 80% 25% at 50% 12%, rgba(232,199,126,0.06), transparent 65%),
-      linear-gradient(180deg, var(--void) 0%, var(--void-2) 50%, var(--void) 100%);
-  }
-
-  .gilt-frame {
-    position: absolute; inset: 14px;
-    border: 1px solid rgba(232,199,126,0.18);
-    border-radius: 26px;
-    pointer-events: none;
-    z-index: 4;
-  }
-
-  .pattern-wash {
-    position: absolute; inset: 0;
-    opacity: 0.025;
-    background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='100' height='100' viewBox='0 0 100 100'><g fill='none' stroke='%23E8C77E' stroke-width='0.5'><polygon points='50,5 62,38 95,38 70,58 80,90 50,72 20,90 30,58 5,38 38,38'/></g></svg>");
-    background-size: 130px 130px;
-    pointer-events: none;
-    z-index: 1;
-  }
-
-  .letterbox {
-    position: absolute;
-    left: 0; right: 0;
-    height: 14px;
-    background: var(--void);
-    z-index: 7;
-    pointer-events: none;
-  }
-  .letterbox.top { top: 0; }
-  .letterbox.bottom { bottom: 0; }
-
-  /* === Header === */
-  .header-row {
-    position: absolute;
-    top: 26px; left: 24px; right: 24px;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    z-index: 5;
-  }
-  .icon-btn {
-    width: 28px; height: 28px;
-    display: flex; align-items: center; justify-content: center;
-    border: 1px solid var(--gold-deep);
-    border-radius: 50%;
-    cursor: pointer;
-    background: rgba(232,199,126,0.04);
-    color: var(--gold);
-  }
-  .icon-btn svg { width: 12px; height: 12px; fill: none; stroke: currentColor; stroke-width: 1.8; }
-
-  .title-stamp {
-    display: inline-flex;
-    align-items: center;
-    gap: 8px;
-    padding: 5px 12px;
-    border: 1px solid var(--gold);
-    border-radius: 999px;
-    background: rgba(232,199,126,0.06);
-    font-family: 'JetBrains Mono', monospace;
-    font-size: 9px;
-    letter-spacing: 4px;
-    color: var(--gold);
-  }
-
-  /* === Profile mini === */
-  .profile-mini {
-    position: absolute;
-    top: 70px; left: 24px; right: 24px;
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    padding: 10px 14px;
-    background: rgba(232,199,126,0.04);
-    border: 1px solid rgba(138,111,68,0.30);
-    border-radius: 4px;
-    cursor: pointer;
-    z-index: 4;
-  }
-  .profile-mini:hover { background: rgba(232,199,126,0.08); }
-  .profile-mini .orb {
-    width: 36px; height: 36px;
-    border-radius: 50%;
-    background: radial-gradient(circle at 35% 35%, var(--gold-flash), var(--gold) 50%, var(--gold-deep));
-    box-shadow: 0 0 12px rgba(232,199,126,0.45);
-    flex-shrink: 0;
-  }
-  .profile-mini .info { flex: 1; }
-  .profile-mini .name {
-    font-family: 'Cormorant Garamond', serif;
-    font-weight: 600;
-    font-size: 16px;
-    color: var(--text-primary);
-    line-height: 1;
-  }
-  .profile-mini .meta {
-    margin-top: 3px;
-    font-family: 'JetBrains Mono', monospace;
-    font-size: 8px;
-    letter-spacing: 1.5px;
-    color: var(--gold-deep);
-  }
-  .profile-mini .meta .em { color: var(--gold); }
-  .profile-mini .arrow { color: var(--gold-deep); font-size: 14px; }
-
-  /* === Settings list === */
-  .settings-list {
-    position: absolute;
-    top: 138px; bottom: 28px; left: 24px; right: 24px;
-    overflow-y: auto;
-    padding-right: 4px;
-    z-index: 4;
-    scrollbar-width: thin;
-    scrollbar-color: rgba(232,199,126,0.3) transparent;
-  }
-  .settings-list::-webkit-scrollbar { width: 4px; }
-  .settings-list::-webkit-scrollbar-thumb { background: rgba(232,199,126,0.3); border-radius: 2px; }
-
-  .section-title {
-    font-family: 'JetBrains Mono', monospace;
-    font-size: 8.5px;
-    letter-spacing: 4px;
-    color: var(--gold-deep);
-    margin: 18px 4px 8px;
-  }
-  .section-title:first-child { margin-top: 4px; }
-
-  .setting-row {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    padding: 11px 14px;
-    background: rgba(232,199,126,0.025);
-    border: 1px solid rgba(138,111,68,0.22);
-    border-radius: 4px;
-    margin-bottom: 6px;
-    cursor: pointer;
-    transition: all 0.2s;
-  }
-  .setting-row:hover { background: rgba(232,199,126,0.06); border-color: var(--gold-deep); }
-
-  .setting-row .ic {
-    width: 24px; height: 24px;
-    display: flex; align-items: center; justify-content: center;
-    color: var(--gold);
-    font-size: 14px;
-    flex-shrink: 0;
-  }
-  .setting-row .info { flex: 1; min-width: 0; }
-  .setting-row .title {
-    font-family: 'Inter', sans-serif;
+  .row .lbl { font-size: 14px; color: var(--text); }
+  .row .val { font-size: 13px; color: var(--accent); cursor: pointer; }
+  .row select {
+    background: transparent;
+    border: none;
+    color: var(--accent);
     font-size: 13px;
-    font-weight: 500;
-    color: var(--text-primary);
-    line-height: 1.2;
+    text-align: right;
+    cursor: pointer;
+    outline: none;
+    appearance: none;
+    -webkit-appearance: none;
+    padding-right: 14px;
+    background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 12' fill='%2300E5D4'><polygon points='2,4 10,4 6,9'/></svg>");
+    background-repeat: no-repeat;
+    background-position: right center;
+    background-size: 10px;
   }
-  .setting-row .sub {
-    font-family: 'Cormorant Garamond', serif;
-    font-style: italic;
-    font-size: 11.5px;
-    color: var(--text-muted);
-    margin-top: 2px;
-  }
-  .setting-row .value {
-    font-family: 'JetBrains Mono', monospace;
-    font-size: 9.5px;
-    letter-spacing: 1.5px;
-    color: var(--gold);
-  }
-  .setting-row .arrow {
-    color: var(--gold-deep);
-    font-size: 14px;
-    margin-left: 4px;
+  .row input[type="time"] {
+    background: transparent;
+    border: none;
+    color: var(--accent);
+    font-size: 13px;
+    text-align: right;
+    outline: none;
+    font-family: 'Inter', sans-serif;
   }
 
-  /* Toggle */
   .toggle {
-    position: relative;
-    width: 36px; height: 20px;
-    background: rgba(58,61,68,0.6);
-    border-radius: 999px;
+    width: 44px; height: 26px;
+    background: rgba(255,255,255,.08);
+    border-radius: 13px;
     cursor: pointer;
-    transition: background 0.2s;
-    flex-shrink: 0;
+    position: relative;
+    transition: background .2s;
   }
   .toggle::after {
     content: '';
     position: absolute;
-    top: 2px; left: 2px;
-    width: 16px; height: 16px;
+    top: 3px; left: 3px;
+    width: 20px; height: 20px;
     border-radius: 50%;
-    background: var(--text-muted);
-    transition: all 0.2s;
+    background: var(--text);
+    transition: transform .2s;
   }
-  .toggle.on {
-    background: linear-gradient(180deg, var(--gold-flash) 0%, var(--gold) 100%);
-  }
-  .toggle.on::after {
-    left: 18px;
-    background: var(--void);
+  .toggle.on { background: var(--accent); }
+  .toggle.on::after { transform: translateX(18px); background: var(--void); }
+
+  .section-lbl {
+    font-size: 10px;
+    letter-spacing: 4px;
+    color: var(--text-dim);
+    text-transform: uppercase;
+    margin-top: 32px;
+    margin-bottom: 8px;
+    padding: 0 4px;
   }
 
-  /* Mentor tone slider */
-  .mentor-card {
-    padding: 12px 14px;
-    background: rgba(232,199,126,0.04);
-    border: 1px solid rgba(232,199,126,0.25);
-    border-radius: 4px;
-    margin-bottom: 6px;
-  }
-  .mentor-card .head {
-    display: flex; justify-content: space-between; align-items: center;
-    margin-bottom: 12px;
-  }
-  .mentor-card .head .ttl {
-    display: flex; align-items: center; gap: 8px;
+  .danger {
+    display: block;
+    width: 100%;
+    margin-top: 40px;
+    padding: 14px;
+    background: transparent;
+    color: #B8334A;
     font-family: 'Inter', sans-serif;
     font-size: 12px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    border: 1px solid rgba(184,51,74,.3);
+    border-radius: 6px;
+    cursor: pointer;
+    transition: all .15s;
+  }
+  .danger:hover, .danger:active {
+    background: rgba(184,51,74,.08);
+    border-color: #B8334A;
+  }
+  .danger.confirm {
+    background: #B8334A;
+    color: var(--void);
+    border-color: #B8334A;
     font-weight: 600;
-    color: var(--text-primary);
-    letter-spacing: 0.5px;
-  }
-  .mentor-card .head .ttl .ic { color: var(--gold); font-size: 14px; }
-  .mentor-card .head .val {
-    font-family: 'JetBrains Mono', monospace;
-    font-size: 9px;
-    letter-spacing: 1px;
-    color: var(--gold);
-  }
-  .mentor-card .slider {
-    position: relative;
-    height: 4px;
-    background: rgba(138,111,68,0.30);
-    border-radius: 2px;
-    margin: 6px 0 18px;
-  }
-  .mentor-card .slider .fill {
-    position: absolute;
-    left: 0; top: 0;
-    height: 100%;
-    background: linear-gradient(90deg, var(--gold-deep), var(--gold));
-    border-radius: 2px;
-    box-shadow: 0 0 6px rgba(232,199,126,0.4);
-  }
-  .mentor-card .slider .knob {
-    position: absolute;
-    top: 50%;
-    transform: translate(-50%, -50%);
-    width: 14px; height: 14px;
-    border-radius: 50%;
-    background: linear-gradient(180deg, var(--gold-flash), var(--gold));
-    box-shadow: 0 0 8px rgba(232,199,126,0.6);
-    cursor: pointer;
-  }
-  .mentor-card .scale {
-    display: flex; justify-content: space-between;
-    font-family: 'JetBrains Mono', monospace;
-    font-size: 7.5px;
-    letter-spacing: 1px;
-    color: var(--gold-deep);
   }
 
-  .mentor-card .body {
-    margin-top: 8px;
-    padding-top: 10px;
-    border-top: 1px dashed rgba(138,111,68,0.30);
-    font-family: 'Cormorant Garamond', serif;
-    font-style: italic;
-    font-size: 12px;
-    color: var(--text-muted);
-    line-height: 1.4;
-  }
-  .mentor-card .body .em { color: var(--honey); }
+  .footer { margin-top: 32px; text-align: center; font-size: 11px; letter-spacing: 2px; color: var(--text-dim); text-transform: uppercase; }
+  .footer .em { color: var(--text-mid); }
 
-  /* Logout */
-  .logout-row {
-    margin-top: 14px;
-    text-align: center;
-    padding: 10px;
-    border: 1px dashed var(--crimson-deep, #6B1F1F);
-    border-radius: 4px;
-    color: var(--crimson);
-    font-family: 'JetBrains Mono', monospace;
-    font-size: 9px;
-    letter-spacing: 3px;
-    cursor: pointer;
-    transition: all 0.2s;
-  }
-  .logout-row:hover {
-    background: rgba(184,51,74,0.06);
-    color: #D44A60;
-  }
-
-  .vignette {
-    position: absolute; inset: 0;
-    pointer-events: none;
-    background: radial-gradient(ellipse 110% 80% at 50% 50%, transparent 60%, rgba(0,0,0,0.4));
-    z-index: 6;
-  }
-
-  .footer-info {
-    margin-top: 22px;
-    text-align: center;
-    color: rgba(255,255,255,0.45);
-    font-size: 13px;
-    line-height: 1.6;
-    font-family: 'Cormorant Garamond', serif;
-    font-style: italic;
-  }
-
-  @media (max-width: 480px) {
-    body { padding: 0; }
-    .phone {
-      width: 100vw;
-      height: 100vh;
-      border-radius: 0;
-      box-shadow: none;
-    }
-    .footer-info { display: none; }
-  }
+  @media (max-width: 480px) { body { padding: 0; } .phone { width: 100vw; min-height: 100vh; border-radius: 0; box-shadow: none; } }
 </style>
 </head>
 <body>
 
-<div style="display:flex; flex-direction:column; align-items:center;">
+<div class="phone">
+  <div class="container">
 
-  <div class="phone">
-    <div class="backdrop"></div>
-    <div class="pattern-wash"></div>
-    <div class="gilt-frame"></div>
-    <div class="letterbox top"></div>
-    <div class="letterbox bottom"></div>
-
-    <!-- Header -->
-    <div class="header-row">
-      <div class="icon-btn" title="Orqa">
-        <svg viewBox="0 0 12 12"><path d="M8 2 L4 6 L8 10"/></svg>
-      </div>
-      <div class="title-stamp">SOZLAMALAR</div>
-      <div class="icon-btn" title="Yordam">
-        <svg viewBox="0 0 12 12"><circle cx="6" cy="6" r="5"/><path d="M5 4.5 c0,-1 2,-1 2,0 c0,0.7 -1,0.7 -1,1.5 M6 8 v0.1"/></svg>
-      </div>
+    <div class="me">
+      <div class="name" id="userName">Aziz</div>
+      <div class="sub"><span class="em" id="streakN">0</span> kun yo'l</div>
     </div>
 
-    <!-- Profile mini -->
-    <div class="profile-mini">
-      <div class="orb"></div>
-      <div class="info">
-        <div class="name">Aziz</div>
-        <div class="meta">YO'L · <span class="em">71 KUN</span> · SHAXSIY KABINET</div>
-      </div>
-      <div class="arrow">›</div>
+    <div class="section-lbl">Mentor</div>
+
+    <div class="row">
+      <div class="lbl">Mentor ohangi</div>
+      <select data-pref="tone">
+        <option value="warm">Iliq</option>
+        <option value="mid" selected>O'rta</option>
+        <option value="strict">Qattiq</option>
+      </select>
     </div>
 
-    <!-- Settings list -->
-    <div class="settings-list">
-
-      <!-- Section: Mentor relationship — special card -->
-      <div class="section-title">MURABBIY · MEN BILAN</div>
-
-      <div class="mentor-card">
-        <div class="head">
-          <div class="ttl"><span class="ic">◯</span> Ohang</div>
-          <div class="val">O'RTA · DO'STONA</div>
-        </div>
-        <div class="slider">
-          <div class="fill" style="width: 50%"></div>
-          <div class="knob" style="left: 50%"></div>
-        </div>
-        <div class="scale">
-          <span>YUMSHOQ</span><span>O'RTA</span><span>QATTIQ</span>
-        </div>
-
-        <div class="head" style="margin-top: 12px;">
-          <div class="ttl"><span class="ic">∼</span> Aralashish</div>
-          <div class="val">KAMTAR</div>
-        </div>
-        <div class="slider">
-          <div class="fill" style="width: 32%"></div>
-          <div class="knob" style="left: 32%"></div>
-        </div>
-        <div class="scale">
-          <span>SUKUT</span><span>KAMTAR</span><span>FAOL</span>
-        </div>
-
-        <div class="body">
-          Murabbiy hozir <span class="em">do'stona</span> ohangda gapiradi. Kuniga <span class="em">3-4 marta</span> aralashadi: ertalab, sessiyadan oldin, kun oxirida.
-        </div>
-      </div>
-
-      <!-- Section: Sessiya -->
-      <div class="section-title">SESSIYA · SOZLAMALAR</div>
-
-      <div class="setting-row">
-        <div class="ic">⏱</div>
-        <div class="info">
-          <div class="title">Default davomiylik</div>
-          <div class="sub">yangi sessiya uchun</div>
-        </div>
-        <div class="value">45 DAQ</div>
-        <div class="arrow">›</div>
-      </div>
-
-      <div class="setting-row">
-        <div class="ic">⊙</div>
-        <div class="info">
-          <div class="title">Eslatish vaqti</div>
-          <div class="sub">sessiyadan necha daq oldin</div>
-        </div>
-        <div class="value">5 DAQ</div>
-        <div class="arrow">›</div>
-      </div>
-
-      <div class="setting-row">
-        <div class="ic">↻</div>
-        <div class="info">
-          <div class="title">Auto-postpone</div>
-          <div class="sub">javob bermasang — chaqirish davom etadi</div>
-        </div>
-        <div class="toggle on"></div>
-      </div>
-
-      <!-- Section: Bloklash -->
-      <div class="section-title">BLOKLASH · ILOVALAR</div>
-
-      <div class="setting-row">
-        <div class="ic">▦</div>
-        <div class="info">
-          <div class="title">Default bloklangan ilovalar</div>
-          <div class="sub">5 ta · Instagram, TikTok, YouTube + 2</div>
-        </div>
-        <div class="arrow">›</div>
-      </div>
-
-      <div class="setting-row">
-        <div class="ic">↗</div>
-        <div class="info">
-          <div class="title">Online dars whitelistlari</div>
-          <div class="sub">8 ta dars rejimi sozlangan</div>
-        </div>
-        <div class="arrow">›</div>
-      </div>
-
-      <div class="setting-row">
-        <div class="ic">⌖</div>
-        <div class="info">
-          <div class="title">Bypass himoyasi</div>
-          <div class="sub">Settings'ga kirishda mentor kuzatadi</div>
-        </div>
-        <div class="toggle on"></div>
-      </div>
-
-      <!-- Section: Bildirishnomalar -->
-      <div class="section-title">BILDIRISHNOMA</div>
-
-      <div class="setting-row">
-        <div class="ic">☀</div>
-        <div class="info">
-          <div class="title">Tonggi xabar</div>
-          <div class="sub">06:42 atrofida</div>
-        </div>
-        <div class="toggle on"></div>
-      </div>
-
-      <div class="setting-row">
-        <div class="ic">☾</div>
-        <div class="info">
-          <div class="title">Kun oxirgi baho</div>
-          <div class="sub">22:00 atrofida</div>
-        </div>
-        <div class="toggle on"></div>
-      </div>
-
-      <div class="setting-row">
-        <div class="ic">∞</div>
-        <div class="info">
-          <div class="title">Hafta yakuni</div>
-          <div class="sub">yakshanba 21:00</div>
-        </div>
-        <div class="toggle on"></div>
-      </div>
-
-      <!-- Section: Shaxsiy -->
-      <div class="section-title">SHAXSIY · MAXFIYLIK</div>
-
-      <div class="setting-row">
-        <div class="ic">⌘</div>
-        <div class="info">
-          <div class="title">Til</div>
-          <div class="sub">interfeys va ovoz</div>
-        </div>
-        <div class="value">UZ</div>
-        <div class="arrow">›</div>
-      </div>
-
-      <div class="setting-row">
-        <div class="ic">⊛</div>
-        <div class="info">
-          <div class="title">Lokatsiya</div>
-          <div class="sub">namoz vaqtlari uchun</div>
-        </div>
-        <div class="value">TASHKENT</div>
-        <div class="arrow">›</div>
-      </div>
-
-      <div class="setting-row">
-        <div class="ic">⤓</div>
-        <div class="info">
-          <div class="title">Ma'lumot eksport</div>
-          <div class="sub">JSON · barcha tarix</div>
-        </div>
-        <div class="arrow">›</div>
-      </div>
-
-      <div class="setting-row">
-        <div class="ic">⊗</div>
-        <div class="info">
-          <div class="title">Hammasini o'chirish</div>
-          <div class="sub">qaytarib bo'lmaydi</div>
-        </div>
-        <div class="arrow">›</div>
-      </div>
-
-      <!-- Section: Yordam -->
-      <div class="section-title">YORDAM</div>
-
-      <div class="setting-row">
-        <div class="ic">?</div>
-        <div class="info">
-          <div class="title">Tez-tez beriladigan savollar</div>
-        </div>
-        <div class="arrow">›</div>
-      </div>
-
-      <div class="setting-row">
-        <div class="ic">✉</div>
-        <div class="info">
-          <div class="title">Murabbiy bilan bog'lanish</div>
-          <div class="sub">MNSM</div>
-        </div>
-        <div class="arrow">›</div>
-      </div>
-
-      <div class="setting-row">
-        <div class="ic">i</div>
-        <div class="info">
-          <div class="title">Versiya · M·VoW v2.0</div>
-          <div class="sub">build 2026.05.10 · MNSM</div>
-        </div>
-      </div>
-
-      <div class="logout-row">CHIQISH · HISOBNI YOPISH</div>
-
+    <div class="row">
+      <div class="lbl">Aralashish darajasi</div>
+      <select data-pref="meddle">
+        <option value="quiet" selected>Kamtar</option>
+        <option value="mid">O'rta</option>
+        <option value="active">Faol</option>
+      </select>
     </div>
 
-    <div class="vignette"></div>
-  </div>
+    <div class="section-lbl">Sessiya</div>
 
-  <div class="footer-info">
-    Sozlamalar — mentor ohangidan ilovalargacha
+    <div class="row">
+      <div class="lbl">Sessiya davomiyligi</div>
+      <select data-pref="sessionMins">
+        <option value="25">25 daq</option>
+        <option value="45" selected>45 daq</option>
+        <option value="60">60 daq</option>
+        <option value="90">90 daq</option>
+      </select>
+    </div>
+
+    <div class="row">
+      <div class="lbl">Uyg'onish vaqti</div>
+      <input type="time" data-pref="wakeTime" value="06:00">
+    </div>
+
+    <div class="section-lbl">Bildirishnomalar</div>
+
+    <div class="row">
+      <div class="lbl">Auto-davom</div>
+      <div class="toggle" data-toggle="autoNext" role="switch" tabindex="0" aria-label="Auto-davom" aria-checked="false"></div>
+    </div>
+
+    <div class="row">
+      <div class="lbl">Ovozli eslatma</div>
+      <div class="toggle" data-toggle="voiceRemind" role="switch" tabindex="0" aria-label="Ovozli eslatma" aria-checked="false"></div>
+    </div>
+
+    <div class="row">
+      <div class="lbl">Diqqat sinovi</div>
+      <div class="toggle" data-toggle="negotiation" role="switch" tabindex="0" aria-label="Diqqat sinovi" aria-checked="false"></div>
+    </div>
+
+    <button class="danger" id="resetBtn" type="button">Hammasini tozalash</button>
+
+    <div class="footer">v <span class="em" data-brand="name">brend</span></div>
+
   </div>
 </div>
 
+<script src="data.js" defer></script>
+<script src="nav-overlay.js" defer></script>
 <script>
-  // Toggle clicks
-  document.querySelectorAll('.toggle').forEach(t => {
-    t.addEventListener('click', e => {
-      e.stopPropagation();
-      t.classList.toggle('on');
-    });
-  });
+  document.addEventListener('DOMContentLoaded', () => {
+    // Ism
+    const userName = (localStorage.getItem('mvow.userName') || 'Aziz').trim();
+    document.getElementById('userName').textContent = userName;
+    // Streak
+    const streakRaw = localStorage.getItem('mvow.streak');
+    const streak = streakRaw != null ? parseInt(streakRaw, 10) : 12;
+    document.getElementById('streakN').textContent = streak;
 
-  // Slider drag
-  document.querySelectorAll('.slider').forEach(slider => {
-    let dragging = false;
-    const knob = slider.querySelector('.knob');
-    const fill = slider.querySelector('.fill');
-    function setPos(clientX) {
-      const rect = slider.getBoundingClientRect();
-      let pct = ((clientX - rect.left) / rect.width) * 100;
-      pct = Math.max(0, Math.min(100, pct));
-      knob.style.left = pct + '%';
-      fill.style.width = pct + '%';
+    // Tanlovlar — saqlash/yuklash
+    const PREFS_KEY = 'mvow.prefs';
+    const prefs = (() => {
+      try { return JSON.parse(localStorage.getItem(PREFS_KEY) || '{}'); }
+      catch { return {}; }
+    })();
+    const defaults = {
+      tone: 'mid', meddle: 'quiet', sessionMins: '45', wakeTime: '06:00',
+      autoNext: true, voiceRemind: true, negotiation: true
+    };
+    const merged = Object.assign({}, defaults, prefs);
+
+    function save() {
+      localStorage.setItem(PREFS_KEY, JSON.stringify(merged));
+      // wakeTime alohida ham
+      localStorage.setItem('mvow.wakeTime', merged.wakeTime);
     }
-    knob.addEventListener('mousedown', () => dragging = true);
-    document.addEventListener('mouseup', () => dragging = false);
-    document.addEventListener('mousemove', e => {
-      if (dragging) setPos(e.clientX);
+
+    // Select/input pref'lari
+    document.querySelectorAll('[data-pref]').forEach(el => {
+      const key = el.dataset.pref;
+      if (merged[key] != null) el.value = merged[key];
+      el.addEventListener('change', () => {
+        merged[key] = el.value;
+        save();
+      });
     });
-    slider.addEventListener('click', e => setPos(e.clientX));
+
+    // Reset button — confirm then clear
+    const resetBtn = document.getElementById('resetBtn');
+    let confirmTimer = null;
+    resetBtn.addEventListener('click', () => {
+      if (resetBtn.classList.contains('confirm')) {
+        // Hammasini tozalash
+        const keys = Object.keys(localStorage).filter(k => k.startsWith('mvow.'));
+        keys.forEach(k => localStorage.removeItem(k));
+        resetBtn.textContent = 'Tozalandi · qaytamiz';
+        setTimeout(() => { location.replace('welcome.html'); }, 800);
+      } else {
+        resetBtn.classList.add('confirm');
+        resetBtn.textContent = 'Aniqmisan? Bos';
+        confirmTimer = setTimeout(() => {
+          resetBtn.classList.remove('confirm');
+          resetBtn.textContent = 'Hammasini tozalash';
+        }, 3000);
+      }
+    });
+
+    // Toggle'lar
+    document.querySelectorAll('[data-toggle]').forEach(el => {
+      const key = el.dataset.toggle;
+      if (merged[key]) { el.classList.add('on'); el.setAttribute('aria-checked','true'); }
+      const flip = () => {
+        const on = !el.classList.contains('on');
+        el.classList.toggle('on', on);
+        el.setAttribute('aria-checked', on ? 'true' : 'false');
+        merged[key] = on;
+        save();
+      };
+      el.addEventListener('click', flip);
+      el.addEventListener('keydown', e => {
+        if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); flip(); }
+      });
+    });
   });
 </script>
 
-<script src="nav-overlay.js" defer></script>
 </body>
 </html>

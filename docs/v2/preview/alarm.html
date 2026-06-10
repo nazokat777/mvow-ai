@@ -1,0 +1,304 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>{brand} — Uyg'on</title>
+<link rel="manifest" href="manifest.webmanifest">
+<meta name="theme-color" content="#04060B">
+<link rel="apple-touch-icon" href="assets/mnsm-logo.png">
+<link rel="icon" type="image/png" href="assets/mnsm-logo.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  :root {
+    --void:#04060B;
+    --text:#F5F2EC; --text-mid:#8A8D94; --text-dim:#6E7178;
+    --accent:#00E5D4; --accent-soft:#00B5A8;
+    --alert:#FF4757;
+  }
+  body {
+    background: var(--void);
+    font-family:'Inter',sans-serif;
+    color: var(--text);
+    min-height: 100vh;
+    display:flex; justify-content:center; align-items:flex-start;
+    padding: 24px;
+    -webkit-font-smoothing: antialiased;
+  }
+  .phone {
+    width: 380px; min-height: 800px;
+    background: var(--void); border-radius: 40px;
+    overflow: hidden; position: relative;
+    box-shadow: 0 0 0 8px #1a1d24, 0 30px 80px rgba(0,0,0,.7);
+    display:flex; flex-direction: column;
+    animation: ring 1.4s ease-in-out infinite;
+  }
+  @keyframes ring {
+    0%, 100% { box-shadow: 0 0 0 8px #1a1d24, 0 30px 80px rgba(0,0,0,.7), 0 0 60px rgba(0,229,212,0); }
+    50%      { box-shadow: 0 0 0 8px #1a1d24, 0 30px 80px rgba(0,0,0,.7), 0 0 100px rgba(0,229,212,.4); }
+  }
+  .phone.done {
+    animation: none;
+    transition: background 0.4s;
+    background: var(--void);
+  }
+  .phone.wrong { animation: shake 0.4s ease; }
+  @keyframes shake {
+    0%, 100% { transform: translateX(0); }
+    20%      { transform: translateX(-8px); }
+    40%      { transform: translateX(8px); }
+    60%      { transform: translateX(-6px); }
+    80%      { transform: translateX(6px); }
+  }
+
+  .container {
+    flex:1;
+    display:flex; flex-direction: column;
+    align-items:center; justify-content:center;
+    padding: 60px 32px 100px;
+    gap: 28px;
+  }
+
+  .time {
+    font-family: 'Inter', sans-serif;
+    font-weight: 300;
+    font-size: 64px;
+    color: var(--accent);
+    letter-spacing: 2px;
+    line-height: 1;
+  }
+
+  .title {
+    font-family:'Cormorant Garamond',serif;
+    font-style: italic;
+    font-size: 22px;
+    color: var(--text);
+    text-align: center;
+  }
+
+  .progress {
+    display: flex;
+    gap: 10px;
+  }
+  .dot {
+    width: 10px; height: 10px;
+    border-radius: 50%;
+    background: rgba(255,255,255,.1);
+    transition: background 0.3s;
+  }
+  .dot.on { background: var(--accent); }
+
+  .problem {
+    font-family: 'Cormorant Garamond', serif;
+    font-weight: 500;
+    font-size: 56px;
+    color: var(--text);
+    text-align: center;
+    line-height: 1;
+    letter-spacing: 4px;
+  }
+
+  .input-wrap {
+    width: 200px;
+  }
+  .input-wrap input {
+    width: 100%;
+    background: transparent;
+    border: none;
+    border-bottom: 2px solid rgba(255,255,255,.15);
+    color: var(--accent);
+    padding: 10px 0;
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 36px;
+    text-align: center;
+    outline: none;
+    transition: border-color .2s;
+    font-feature-settings: "tnum";
+  }
+  .input-wrap input:focus { border-bottom-color: var(--accent); }
+  .input-wrap input.wrong { border-bottom-color: var(--alert); color: var(--alert); }
+
+  .hint {
+    font-size: 11px;
+    color: var(--text-dim);
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    text-align: center;
+    min-height: 14px;
+  }
+  .hint.bad { color: var(--alert); }
+  .hint.good { color: var(--accent); }
+
+  .done-msg {
+    display: none;
+    flex-direction: column;
+    align-items: center;
+    gap: 18px;
+  }
+  .done-msg.show { display: flex; }
+  .check {
+    width: 80px; height: 80px;
+    border-radius: 50%;
+    border: 2px solid var(--accent);
+    display:flex; align-items:center; justify-content:center;
+  }
+  .check svg { width: 36px; height: 36px; stroke: var(--accent); }
+
+  .bottom-bar {
+    padding: 24px 32px env(safe-area-inset-bottom, 24px);
+    background: linear-gradient(180deg, transparent, var(--void) 30%);
+    display: none;
+  }
+  .bottom-bar.show { display: block; }
+  .cta {
+    display:block; width:100%; padding:16px;
+    background: linear-gradient(180deg, var(--accent), var(--accent-soft));
+    color: var(--void);
+    font-size:13px; font-weight:600;
+    letter-spacing:2px; text-transform: uppercase;
+    border:none; border-radius:6px;
+    text-align:center; text-decoration:none;
+  }
+
+  @media (max-width: 480px) {
+    body { padding: 0; }
+    .phone { width: 100vw; min-height: 100vh; border-radius: 0; box-shadow: none; }
+  }
+</style>
+</head>
+<body>
+
+<div class="phone" id="phone">
+
+  <div class="container" id="quizArea">
+    <div class="time" id="time">04:00</div>
+    <div class="title">Uyg'on. Misolni yech.</div>
+
+    <div class="progress" id="progress">
+      <div class="dot"></div>
+      <div class="dot"></div>
+      <div class="dot"></div>
+    </div>
+
+    <div class="problem" id="problem">2 + 7</div>
+
+    <div class="input-wrap">
+      <input id="ans" type="number" inputmode="numeric" autocomplete="off" autofocus>
+    </div>
+
+    <div class="hint" id="hint">javobni kirit</div>
+  </div>
+
+  <div class="container done-msg" id="doneArea">
+    <div class="check">
+      <svg viewBox="0 0 24 24" fill="none" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+        <polyline points="5 12 10 17 19 8"/>
+      </svg>
+    </div>
+    <div class="title">Uyg'onding. Yaxshi.</div>
+  </div>
+
+  <div class="bottom-bar" id="bottomBar">
+    <a class="cta" href="home.html">Davom</a>
+  </div>
+</div>
+
+<script src="data.js" defer></script>
+<script src="nav-overlay.js" defer></script>
+<script>
+  const phone = document.getElementById('phone');
+  const quiz = document.getElementById('quizArea');
+  const done = document.getElementById('doneArea');
+  const bar  = document.getElementById('bottomBar');
+  const probEl = document.getElementById('problem');
+  const ans = document.getElementById('ans');
+  const hint = document.getElementById('hint');
+  const dots = document.querySelectorAll('.progress .dot');
+  const timeEl = document.getElementById('time');
+
+  // Uyg'onish vaqti — birinchi sessiya yoki saqlangan qiymat
+  function getWakeTime() {
+    try {
+      const plan = JSON.parse(localStorage.getItem('mvow.todayPlan') || '[]');
+      if (Array.isArray(plan) && plan[0] && plan[0].time) return plan[0].time;
+    } catch {}
+    return localStorage.getItem('mvow.wakeTime') || '04:00';
+  }
+  timeEl.textContent = getWakeTime();
+
+  // Tasodifiy misol — qo'shish yoki ayirish, 1-20
+  function rand(a, b) { return Math.floor(Math.random() * (b - a + 1)) + a; }
+  let correct = 0;
+  let current = null;
+
+  function next() {
+    const op = Math.random() < 0.5 ? '+' : '−';
+    let a, b, res;
+    if (op === '+') {
+      a = rand(2, 19);
+      b = rand(2, 19);
+      res = a + b;
+    } else {
+      a = rand(10, 30);
+      b = rand(2, a - 1);
+      res = a - b;
+    }
+    current = { a, b, op, res };
+    probEl.textContent = `${a} ${op} ${b}`;
+    ans.value = '';
+    ans.classList.remove('wrong');
+    setTimeout(() => ans.focus(), 50);
+  }
+
+  function check() {
+    const v = parseInt(ans.value, 10);
+    if (isNaN(v)) return;
+    if (v === current.res) {
+      correct++;
+      dots[correct - 1].classList.add('on');
+      hint.textContent = "to'g'ri";
+      hint.className = 'hint good';
+      if (window.MVOW_DATA) MVOW_DATA.fxSuccess();
+      if (correct >= 3) {
+        setTimeout(() => { if (window.MVOW_DATA) MVOW_DATA.fxFinish(); finish(); }, 400);
+      } else {
+        setTimeout(next, 600);
+      }
+    } else {
+      phone.classList.add('wrong');
+      ans.classList.add('wrong');
+      hint.textContent = "noto'g'ri · yangisi";
+      hint.className = 'hint bad';
+      if (window.MVOW_DATA) MVOW_DATA.fxError();
+      setTimeout(() => {
+        phone.classList.remove('wrong');
+        next();
+      }, 800);
+    }
+  }
+
+  function finish() {
+    phone.classList.add('done');
+    quiz.style.display = 'none';
+    done.classList.add('show');
+    bar.classList.add('show');
+  }
+
+  ans.addEventListener('input', () => {
+    // Auto-check on enter or after digits typed
+    if (current && ans.value && parseInt(ans.value, 10) === current.res) {
+      check();
+    }
+  });
+  ans.addEventListener('keydown', e => {
+    if (e.key === 'Enter') check();
+  });
+
+  next();
+</script>
+
+</body>
+</html>
