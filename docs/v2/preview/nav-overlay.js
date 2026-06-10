@@ -216,95 +216,187 @@
   const prev = idx > 0 ? SEQ[idx - 1] : null;
   const next = idx < SEQ.length - 1 ? SEQ[idx + 1] : null;
 
+  // 4 ta bo'lim — qaysi ekran qaysi bo'limga tegishli
+  const SECTIONS = [
+    { name: 'Tanishuv',  range: [0, 3] },   // 1-3
+    { name: 'Sozlama',   range: [3, 4] },   // 4
+    { name: 'Kun',       range: [4, 9] },   // 5-9
+    { name: 'Bajarish',  range: [9, 13] },  // 10-13
+    { name: 'Natija',    range: [13, 16] }  // 14-16
+  ];
+  const currentSection = SECTIONS.find(s => idx >= s.range[0] && idx < s.range[1]) || SECTIONS[0];
+  const sectionIdx = idx - currentSection.range[0] + 1;
+  const sectionTotal = currentSection.range[1] - currentSection.range[0];
+  const globalPercent = Math.round(((idx + 1) / SEQ.length) * 100);
+
   const style = document.createElement('style');
   style.textContent = `
-    .seq-nav {
+    /* === Top bar: back · progress · close · section === */
+    .seq-top-bar {
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      padding: 8px 8px 0;
+      pointer-events: none;
+      z-index: 99999;
+    }
+    .seq-top-row {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .seq-btn {
+      pointer-events: auto;
+      width: 44px; height: 44px;
+      border-radius: 50%;
+      border: 1px solid rgba(0,229,212,0.55);
+      background: rgba(8,8,12,0.85);
+      backdrop-filter: blur(8px);
+      -webkit-backdrop-filter: blur(8px);
+      color: #7AF5EC;
+      font-size: 22px;
+      font-weight: 500;
+      display: flex; align-items: center; justify-content: center;
+      cursor: pointer;
+      text-decoration: none;
+      user-select: none;
+      -webkit-tap-highlight-color: transparent;
+      transition: transform .12s, background .15s, opacity .15s;
+      flex-shrink: 0;
+    }
+    .seq-btn:active { transform: scale(0.93); background: rgba(0,229,212,0.18); }
+    .seq-btn.disabled { opacity: 0.22; pointer-events: none; }
+
+    .seq-progress-wrap {
+      flex: 1;
+      display: flex; flex-direction: column;
+      gap: 4px;
+      min-width: 0;
+      padding: 0 4px;
+    }
+    .seq-progress-meta {
+      display: flex; justify-content: space-between;
+      align-items: baseline;
+      font-family: 'Inter', sans-serif;
+      font-size: 10px;
+      color: #E0E0E0;
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+    }
+    .seq-progress-meta .pos { color: #7AF5EC; font-weight: 600; }
+    .seq-progress {
+      width: 100%;
+      height: 3px;
+      background: rgba(0,229,212,0.12);
+      border-radius: 2px;
+      overflow: hidden;
+    }
+    .seq-progress-fill {
+      height: 100%;
+      background: linear-gradient(90deg, #00E5D4, #7AF5EC);
+      transition: width 0.5s cubic-bezier(.16,.84,.32,1);
+    }
+
+    /* === Side arrows (kichikroq, ramka chetida) === */
+    .seq-side-nav {
       position: fixed;
       top: 50%;
       left: 0; right: 0;
       transform: translateY(-50%);
       display: flex;
       justify-content: space-between;
-      padding: 0 6px;
+      padding: 0 4px;
       pointer-events: none;
       z-index: 99998;
     }
-    .seq-nav .arrow {
+    .seq-arrow {
       pointer-events: auto;
-      width: 40px; height: 40px;
+      width: 44px; height: 44px;
       border-radius: 50%;
-      border: 1px solid rgba(0,229,212,0.55);
-      background: rgba(8,8,12,0.78);
+      border: 1px solid rgba(0,229,212,0.45);
+      background: rgba(8,8,12,0.75);
       backdrop-filter: blur(8px);
       -webkit-backdrop-filter: blur(8px);
-      color: #00E5D4;
-      font-size: 20px;
-      font-weight: 600;
-      font-family: serif;
-      display: flex;
-      align-items: center;
-      justify-content: center;
+      color: #7AF5EC;
+      font-size: 22px;
+      font-weight: 500;
+      display: flex; align-items: center; justify-content: center;
       cursor: pointer;
-      box-shadow: 0 4px 14px rgba(0,0,0,0.55);
       text-decoration: none;
       user-select: none;
       -webkit-tap-highlight-color: transparent;
-      transition: transform .12s, background .15s;
+      transition: transform .12s, background .15s, opacity .15s;
     }
-    .seq-nav .arrow:active { transform: scale(0.92); background: rgba(0,229,212,0.18); }
-    .seq-nav .arrow.disabled { opacity: 0.18; pointer-events: none; }
-    .seq-nav-pos {
-      position: fixed;
-      top: 8px; left: 50%;
-      transform: translateX(-50%);
-      pointer-events: auto;
-      padding: 5px 12px;
-      border: 1px solid rgba(0,229,212,0.45);
-      border-radius: 999px;
-      background: rgba(8,8,12,0.78);
-      backdrop-filter: blur(8px);
-      -webkit-backdrop-filter: blur(8px);
-      color: #00E5D4;
-      font-family: 'JetBrains Mono', monospace;
-      font-size: 9px;
-      letter-spacing: 2px;
-      text-decoration: none;
-      z-index: 99999;
-      box-shadow: 0 2px 8px rgba(0,0,0,0.5);
+    .seq-arrow:active { transform: scale(0.93); background: rgba(0,229,212,0.18); }
+    .seq-arrow.disabled { opacity: 0.18; pointer-events: none; }
+
+    /* === Phone ichida scrollbar yashirish === */
+    .phone, .phone *, body, html { scrollbar-width: none; -ms-overflow-style: none; }
+    .phone::-webkit-scrollbar, .phone *::-webkit-scrollbar,
+    body::-webkit-scrollbar, html::-webkit-scrollbar { display: none; width: 0; height: 0; }
+
+    /* === Top padding so content doesn't hide behind progress bar === */
+    .phone .container,
+    .phone > div:first-child:not(.halo):not(.backdrop) {
+      padding-top: max(60px, env(safe-area-inset-top, 60px));
     }
-    .seq-nav-pos b { color: #7AF5EC; font-weight: 600; }
+
+    /* === Bottom-bar sticky — CTA hech qachon kesilmasin === */
+    .phone .bottom-bar {
+      position: sticky;
+      bottom: 0;
+      z-index: 10;
+      background: linear-gradient(180deg, transparent, #04060B 30%);
+    }
+    .phone {
+      padding-bottom: env(safe-area-inset-bottom, 0);
+    }
     @media (max-width: 480px) {
-      .seq-nav .arrow { width: 36px; height: 36px; font-size: 18px; }
-      .seq-nav-pos { font-size: 8.5px; padding: 4px 10px; }
+      .phone .bottom-bar { position: sticky; bottom: 0; }
+    }
+
+    /* === Tipografik shkala (universal) === */
+    :root {
+      --fs-h1: 28px;
+      --fs-h2: 22px;
+      --fs-h3: 17px;
+      --fs-body: 15px;
+      --fs-helper: 13px;
+      --fs-meta: 11px;
+      --text-on-dark: #F5F2EC;
+      --text-mid-aa: #B8BBC2;
+      --text-dim-aa: #9CA0A8;
+    }
+
+    @media (max-width: 480px) {
+      .seq-side-nav { padding: 0 2px; }
     }
   `;
   document.head.appendChild(style);
 
-  // Position pill at top — with MNSM logo + position number + menu icon
-  const pos = document.createElement('a');
-  pos.className = 'seq-nav-pos';
-  pos.href = 'menu.html';
-  pos.innerHTML =
-    '<img src="assets/mnsm-logo.png" style="height:14px;width:auto;vertical-align:middle;margin-right:5px;filter:drop-shadow(0 0 4px rgba(0,229,212,.5))" alt="MNSM" />' +
-    '<b>' + (idx + 1) + '</b> / ' + SEQ.length +
-    '&nbsp;&nbsp;☰';
-  pos.title = 'Barcha ekranlar';
-  document.body.appendChild(pos);
+  // ── Top bar: Back + Progress + Close ──
+  const top = document.createElement('div');
+  top.className = 'seq-top-bar';
+  top.innerHTML = `
+    <div class="seq-top-row">
+      <a class="seq-btn ${prev ? '' : 'disabled'}" href="${prev || '#'}" aria-label="Orqaga" title="Orqaga">‹</a>
+      <div class="seq-progress-wrap">
+        <div class="seq-progress-meta">
+          <span class="name">${currentSection.name}</span>
+          <span class="pos">${idx + 1} / ${SEQ.length}</span>
+        </div>
+        <div class="seq-progress"><div class="seq-progress-fill" style="width:${globalPercent}%"></div></div>
+      </div>
+      <a class="seq-btn" href="menu.html" aria-label="Barcha ekranlar" title="Yopish">×</a>
+    </div>
+  `;
+  document.body.appendChild(top);
 
-  // Floating watermark MNSM logo at bottom-left (subtle brand presence on every screen)
-  const watermark = document.createElement('div');
-  watermark.style.cssText =
-    'position:fixed; bottom:14px; left:10px; width:24px; height:24px; ' +
-    'background:url(assets/mnsm-logo.png) center/contain no-repeat; ' +
-    'opacity:.35; pointer-events:none; z-index:99996; ' +
-    'filter:drop-shadow(0 0 6px rgba(0,229,212,.4));';
-  document.body.appendChild(watermark);
-
-  // Side arrows
-  const wrap = document.createElement('div');
-  wrap.className = 'seq-nav';
-  wrap.innerHTML =
-    '<a class="arrow ' + (prev ? '' : 'disabled') + '" href="' + (prev || '#') + '" aria-label="Oldingi">‹</a>' +
-    '<a class="arrow ' + (next ? '' : 'disabled') + '" href="' + (next || '#') + '" aria-label="Keyingi">›</a>';
-  document.body.appendChild(wrap);
+  // ── Side arrows (yon strelka) — keng ekranlarda qulayroq ──
+  const side = document.createElement('div');
+  side.className = 'seq-side-nav';
+  side.innerHTML = `
+    <a class="seq-arrow ${prev ? '' : 'disabled'}" href="${prev || '#'}" aria-label="Oldingi">‹</a>
+    <a class="seq-arrow ${next ? '' : 'disabled'}" href="${next || '#'}" aria-label="Keyingi">›</a>
+  `;
+  document.body.appendChild(side);
 })();

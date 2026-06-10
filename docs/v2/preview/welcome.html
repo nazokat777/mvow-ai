@@ -18,7 +18,7 @@
   * { box-sizing: border-box; margin: 0; padding: 0; }
   :root {
     --void:#04060B; --void-soft:#0C0F16;
-    --text:#F5F2EC; --text-mid:#8A8D94; --text-dim:#6E7178;
+    --text:#F5F2EC; --text-mid:#B8BBC2; --text-dim:#9CA0A8;
     --accent:#00E5D4; --accent-soft:#00B5A8;
   }
   body {
@@ -127,8 +127,8 @@
     border-bottom: 1px solid rgba(255,255,255,.1);
     color: var(--text);
     padding: 12px 0;
-    font-family: 'Cormorant Garamond', serif;
-    font-style: italic;
+    font-family: 'Inter', sans-serif;
+    font-style: normal;
     font-size: 16px;
     text-align: center;
     outline: none;
@@ -139,7 +139,7 @@
   .field input:focus,
   .field textarea:focus { border-bottom-color: var(--accent); }
   .field input::placeholder,
-  .field textarea::placeholder { color: var(--text-dim); font-style: italic; }
+  .field textarea::placeholder { color: var(--text-dim); }
 
   /* Va'da bloki — ism kiritilganda paydo bo'ladi */
   .vow-block {
@@ -234,10 +234,11 @@
 
     <div class="fields">
       <div class="field">
-        <input id="nameInput" type="text" placeholder="ismingni yoz" autocomplete="given-name" maxlength="24">
+        <input id="nameInput" type="text" placeholder="ismingni yoz" autocomplete="given-name" maxlength="24" required minlength="2" aria-required="true" aria-describedby="nameErr">
+        <div id="nameErr" class="err" role="alert" style="display:none;font-size:11px;color:#FF8E97;margin-top:6px;letter-spacing:1px;">Ismingni kirit (kamida 2 harf)</div>
       </div>
       <div class="field">
-        <textarea id="bioInput" placeholder="o'zing haqingda bir-ikki jumla" maxlength="160" rows="2"></textarea>
+        <textarea id="bioInput" placeholder="o'zing haqingda bir-ikki jumla (ixtiyoriy)" maxlength="160" rows="2"></textarea>
       </div>
     </div>
 
@@ -294,11 +295,15 @@
 
   let recorded = false;
 
+  const nameErr = document.getElementById('nameErr');
   function check() {
-    const hasName = !!nameInp.value.trim();
-    vowBlock.classList.toggle('show', hasName);
-    if (hasName) userNameSpan.textContent = nameInp.value.trim();
-    btn.classList.toggle('disabled', !hasName);
+    const v = nameInp.value.trim();
+    const valid = v.length >= 2;
+    vowBlock.classList.toggle('show', valid);
+    if (valid) userNameSpan.textContent = v;
+    btn.classList.toggle('disabled', !valid);
+    // Xato matni — faqat foydalanuvchi yozishni boshlasa va noto'g'ri bo'lsa
+    nameErr.style.display = (v.length > 0 && !valid) ? 'block' : 'none';
   }
   nameInp.addEventListener('input', check);
   bioInp.addEventListener('input', check);
@@ -327,6 +332,21 @@
   if (savedName) { nameInp.value = savedName; }
   if (savedBio) { bioInp.value = savedBio; }
   check();
+
+  // Onboarding ishora — birinchi marta ko'rinadi, 4 sek
+  if (!localStorage.getItem('mvow.navHintSeen')) {
+    setTimeout(() => {
+      const hint = document.createElement('div');
+      hint.style.cssText = 'position:fixed;bottom:90px;left:50%;transform:translateX(-50%);background:rgba(0,229,212,.1);border:1px solid rgba(0,229,212,.35);border-radius:999px;padding:10px 18px;font-family:Inter,sans-serif;font-size:12px;color:#7AF5EC;letter-spacing:1px;z-index:99997;animation:fadeInOut 4s ease forwards;';
+      hint.textContent = "‹ strelka bilan ham harakatlanasan ›";
+      const css = document.createElement('style');
+      css.textContent = '@keyframes fadeInOut { 0% { opacity: 0; } 15%, 85% { opacity: 1; } 100% { opacity: 0; transform: translateX(-50%) translateY(10px); } }';
+      document.head.appendChild(css);
+      document.body.appendChild(hint);
+      localStorage.setItem('mvow.navHintSeen', '1');
+      setTimeout(() => hint.remove(), 4200);
+    }, 2500);
+  }
 </script>
 
 </body>

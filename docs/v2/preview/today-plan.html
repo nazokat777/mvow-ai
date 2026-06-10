@@ -18,7 +18,7 @@
   * { box-sizing: border-box; margin: 0; padding: 0; }
   :root {
     --void:#04060B; --void-soft:#0C0F16;
-    --text:#F5F2EC; --text-mid:#8A8D94; --text-dim:#6E7178;
+    --text:#F5F2EC; --text-mid:#B8BBC2; --text-dim:#9CA0A8;
     --accent:#00E5D4; --accent-soft:#00B5A8;
     --alert:#FF4757;
   }
@@ -322,14 +322,44 @@
     });
   }
 
+  // Yangi ish — draft holatda (count'ga kirmaydi). Saqlangandan keyingina ro'yxatga qo'shiladi.
   function addNew() {
-    tasks.push({ time: '', name: '', dur: '' });
-    const newIdx = tasks.length - 1;
-    render();
-    // Avtomatik edit mode'ga o'tkazish
-    const allRows = list.querySelectorAll('.task');
-    const lastRow = allRows[allRows.length - 1];
-    if (lastRow) enterEditMode(lastRow, parseInt(lastRow.dataset.idx, 10));
+    const draft = { time: '', name: '', dur: '', _draft: true };
+    const list2 = list;
+    const row = document.createElement('div');
+    row.className = 'task edit';
+    row.dataset.draft = '1';
+    row.innerHTML = `
+      <div class="row">
+        <input class="t time" type="text" placeholder="07:00" value="" maxlength="5">
+        <input class="t name" type="text" placeholder="ish nomi" value="" maxlength="48">
+        <input class="t dur"  type="text" placeholder="45 daq" value="" maxlength="20">
+      </div>
+      <div class="actions">
+        <button class="cancel" type="button">Bekor</button>
+        <button class="save" type="button">Saqla</button>
+      </div>
+    `;
+    list2.appendChild(row);
+    const [timeIn, nameIn, durIn] = row.querySelectorAll('input');
+    setTimeout(() => timeIn.focus(), 50);
+
+    row.querySelector('.save').addEventListener('click', () => {
+      tasks.push({
+        time: timeIn.value.trim(),
+        name: nameIn.value.trim() || 'ish',
+        dur:  durIn.value.trim()
+      });
+      saveTasks();
+      render();
+    });
+    row.querySelector('.cancel').addEventListener('click', () => row.remove());
+    row.querySelectorAll('input').forEach(inp => {
+      inp.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter')  { e.preventDefault(); row.querySelector('.save').click(); }
+        if (e.key === 'Escape') { e.preventDefault(); row.remove(); }
+      });
+    });
   }
 
   document.getElementById('addBtn').addEventListener('click', addNew);
