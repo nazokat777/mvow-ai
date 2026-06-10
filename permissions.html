@@ -30,9 +30,7 @@
     padding: 18px 0;
     border-bottom: 1px solid rgba(255,255,255,.04);
   }
-  .perm .info { display: flex; flex-direction: column; gap: 4px; }
   .perm .name { font-size: 16px; color: var(--text); }
-  .perm .why { font-size: 12px; color: var(--text-mid); line-height: 1.4; font-family: 'Cormorant Garamond', serif; font-style: italic; }
   .toggle {
     width: 48px; height: 28px;
     background: rgba(255,255,255,.08);
@@ -63,33 +61,28 @@
 <div class="phone">
   <div class="container">
     <div class="h">
-      <h1 class="title">Ruxsatlar</h1>
+      <h1 class="title" data-i18n="permissions.title">Ruxsatlar</h1>
       <p class="sub"><span class="em" id="grantedN">0</span> / <span data-mvow="permissions.required">2</span></p>
     </div>
 
     <div class="list">
       <div class="perm">
-        <div class="info">
-          <div class="name">Ekran vaqti</div>
-          <div class="why">Fokus paytida chalg'ituvchi ilovalarni qulflash uchun.</div>
-        </div>
+        <div class="name" data-i18n="permissions.screen_time">Ekran vaqti</div>
         <div class="toggle" data-perm="screenTime" role="switch" tabindex="0" aria-label="Ekran vaqti ruxsati" aria-checked="false"></div>
       </div>
       <div class="perm">
-        <div class="info">
-          <div class="name">Bildirishnomalar</div>
-          <div class="why">Sessiya boshlanishi va eslatma uchun. Spam yo'q.</div>
-        </div>
+        <div class="name" data-i18n="permissions.notif">Bildirishnomalar</div>
         <div class="toggle" data-perm="notification" role="switch" tabindex="0" aria-label="Bildirishnomalar ruxsati" aria-checked="false"></div>
       </div>
     </div>
   </div>
 
   <div class="bottom-bar">
-    <a class="cta disabled" id="cta" href="settings.html">Davom</a>
+    <a class="cta disabled" id="cta" href="settings.html" data-i18n="permissions.cta">Davom</a>
   </div>
 </div>
 
+<script src="i18n.js" defer></script>
 <script src="data.js" defer></script>
 <script src="nav-overlay.js" defer></script>
 <script>

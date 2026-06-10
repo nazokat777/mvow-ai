@@ -112,37 +112,38 @@
 
     <div class="streak">
       <div class="n" id="streakN">0</div>
-      <div class="lbl">kun yo'l</div>
+      <div class="lbl" data-i18n="home.streak_lbl">kun yo'l</div>
     </div>
 
     <div class="next">
-      <div class="lbl">Keyingi</div>
+      <div class="lbl" data-i18n="home.next">Keyingi</div>
       <div class="row" id="nextRow">
-        <span class="none">birinchi qadamingni qo'y</span>
+        <span class="none" data-i18n="home.no_plan">birinchi qadamingni qo'y</span>
       </div>
     </div>
 
     <div class="stats">
       <div class="stat">
         <div class="v"><span class="em" id="focusH">0</span> <span style="font-size:13px;color:var(--text-mid)">soat</span></div>
-        <div class="l">fokus</div>
+        <div class="l" data-i18n="home.focus_lbl">fokus</div>
       </div>
       <div class="stat">
         <div class="v"><span class="em" id="sessN">0</span> <span style="font-size:13px;color:var(--text-mid)">ish</span></div>
-        <div class="l">bugun</div>
+        <div class="l" data-i18n="home.sessions_lbl">bugun</div>
       </div>
     </div>
 
     <p class="bio" id="bioLine"></p>
 
     <div class="actions">
-      <a class="cta" id="primaryCta" href="routine.html">Rejani tuz</a>
-      <a class="ghost" href="today-plan.html">Bugungi reja</a>
+      <a class="cta" id="primaryCta" href="routine.html" data-i18n="home.cta_plan">Rejani tuz</a>
+      <a class="ghost" href="today-plan.html" data-i18n="home.view_plan">Bugungi reja</a>
     </div>
 
   </div>
 </div>
 
+<script src="i18n.js" defer></script>
 <script src="data.js" defer></script>
 <script src="nav-overlay.js" defer></script>
 <script>

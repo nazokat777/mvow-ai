@@ -39,8 +39,8 @@
     border-radius: 8px;
     color: var(--text);
     padding: 16px 56px 16px 16px;
-    font-family: 'Cormorant Garamond', serif;
-    font-style: italic;
+    font-family: 'Inter', sans-serif;
+    font-style: normal;
     font-size: 16px;
     line-height: 1.6;
     outline: none;
@@ -48,7 +48,7 @@
     transition: border-color .2s;
   }
   .input-block textarea:focus { border-color: var(--accent); }
-  .input-block textarea::placeholder { color: var(--text-dim); font-style: italic; }
+  .input-block textarea::placeholder { color: var(--text-dim); }
 
   /* Ovoz tugmasi — textarea ichida o'ng yuqorida */
   .mic {
@@ -86,40 +86,6 @@
     opacity: 0;
     transition: opacity .2s;
   }
-
-  .suggest { margin-top: 12px; transition: opacity .25s; }
-  .suggest.hide { opacity: 0; pointer-events: none; max-height: 0; overflow: hidden; margin: 0; }
-  .suggest .lbl {
-    font-size: 11px;
-    letter-spacing: 2px;
-    color: var(--text-dim);
-    text-transform: uppercase;
-    margin-bottom: 10px;
-    text-align: center;
-  }
-  .suggest .chips {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 8px;
-    justify-content: center;
-  }
-  .sug {
-    background: var(--void-soft);
-    border: 1px solid rgba(0,229,212,.18);
-    border-radius: 999px;
-    padding: 10px 14px;
-    color: var(--text);
-    font-family: 'Inter', sans-serif;
-    font-size: 12px;
-    cursor: pointer;
-    transition: all .15s;
-    min-height: 44px;
-  }
-  .sug:hover, .sug:active {
-    background: rgba(0,229,212,.08);
-    border-color: var(--accent);
-    color: var(--accent);
-  }
   .voice-status.show { opacity: 1; }
   .voice-status.bad { color: var(--alert); }
 
@@ -136,7 +102,7 @@
   <div class="container">
 
     <div class="h">
-      <h1 class="title">Rejalaringni ayt</h1>
+      <h1 class="title" data-i18n="routine.title">Rejalaringni ayt</h1>
       <p class="sub">Yoz yoki <span class="em">ovozda</span> ayt — shunga ko'ra kun tartibini tuzaman.</p>
     </div>
 
@@ -152,25 +118,14 @@
 
     <p class="voice-status" id="status"></p>
 
-    <div class="suggest" id="suggest">
-      <div class="lbl">Yoki tezda boshla:</div>
-      <div class="chips">
-        <button class="sug" data-add="07:00 O'qish (1 soat)" type="button">📚 O'qish</button>
-        <button class="sug" data-add="08:00 Mashq (45 daq)" type="button">🏃 Mashq</button>
-        <button class="sug" data-add="10:00 Loyiha (1 soat 30 daq)" type="button">💻 Loyiha</button>
-        <button class="sug" data-add="14:00 Kitob (45 daq)" type="button">📖 Kitob</button>
-        <button class="sug" data-add="16:00 Yozish (30 daq)" type="button">✍️ Yozish</button>
-        <button class="sug" data-add="18:00 Sayr (30 daq)" type="button">🚶 Sayr</button>
-      </div>
-    </div>
-
   </div>
 
   <div class="bottom-bar">
-    <a class="cta disabled" id="cta" href="today-plan.html">Kun tartibini tuz</a>
+    <a class="cta disabled" id="cta" href="today-plan.html" data-i18n="routine.cta">Kun tartibini tuz</a>
   </div>
 </div>
 
+<script src="i18n.js" defer></script>
 <script src="data.js" defer></script>
 <script src="nav-overlay.js" defer></script>
 <script>
@@ -178,7 +133,6 @@
   const btn = document.getElementById('cta');
   const mic = document.getElementById('micBtn');
   const status = document.getElementById('status');
-  const suggest = document.getElementById('suggest');
 
   // Saqlangan matn
   const saved = localStorage.getItem('mvow.plansRaw');
@@ -186,23 +140,8 @@
   check();
 
   function check() {
-    const v = t.value.trim();
-    btn.classList.toggle('disabled', !v);
-    // Matn yozilgan bo'lsa, suggest yashir
-    suggest.classList.toggle('hide', !!v);
+    btn.classList.toggle('disabled', !t.value.trim());
   }
-
-  // Quick suggest chiplari — bos → matnga qo'shadi
-  document.querySelectorAll('.sug').forEach(s => {
-    s.addEventListener('click', () => {
-      const add = s.dataset.add;
-      const cur = t.value.trim();
-      t.value = cur ? cur + '\n' + add : add;
-      if (window.MVOW_DATA) MVOW_DATA.fxTap();
-      check();
-      t.focus();
-    });
-  });
   t.addEventListener('input', check);
 
   // ── Matnni sessiyalarga parse qilish ──
@@ -235,7 +174,7 @@
     const raw = t.value.trim();
     localStorage.setItem('mvow.plansRaw', raw);
     const sessions = parsePlansToSessions(raw);
-    if (sessions.length && window.MVOW_DATA) MVOW_DATA.setTodayPlan(sessions);
+    if (sessions.length) localStorage.setItem('mvow.todayPlan', JSON.stringify(sessions));
   });
 
   // ── Ovozli kiritish (Web Speech API) ──

@@ -91,42 +91,43 @@
   <div class="container">
 
     <div class="h">
-      <h1 class="title">Tanishaylik</h1>
-      <p class="sub">Senga to'g'ri yondashish uchun</p>
+      <h1 class="title" data-i18n="goal.title">Tanishaylik</h1>
+      <p class="sub" data-i18n="goal.sub">Senga to'g'ri yondashish uchun</p>
     </div>
 
     <div class="row">
-      <label for="age">Yosh</label>
+      <label for="age" data-i18n="goal.age_lbl">Yosh</label>
       <input id="age" type="number" inputmode="numeric" min="10" max="99" placeholder="28" aria-describedby="ageErr">
-      <div id="ageErr" class="err" role="alert" style="display:none;font-size:10px;color:#FF8E97;margin-top:4px;">10-99 oraliqida bo'lsin</div>
+      <div id="ageErr" class="err" role="alert" style="display:none;font-size:10px;color:#FF8E97;margin-top:4px;" data-i18n="goal.age_err">10-99 oraliqida bo'lsin</div>
     </div>
 
     <div class="row full">
-      <label>Jins</label>
+      <label data-i18n="goal.gender_lbl">Jins</label>
       <div class="chips" id="genderChips" role="radiogroup" aria-label="Jins">
-        <div class="chip" data-v="m" role="radio" tabindex="0" aria-checked="false">Erkak</div>
-        <div class="chip" data-v="f" role="radio" tabindex="0" aria-checked="false">Ayol</div>
-        <div class="chip" data-v="x" role="radio" tabindex="0" aria-checked="false">Aytmayman</div>
+        <div class="chip" data-v="m" role="radio" tabindex="0" aria-checked="false" data-i18n="goal.gender_m">Erkak</div>
+        <div class="chip" data-v="f" role="radio" tabindex="0" aria-checked="false" data-i18n="goal.gender_f">Ayol</div>
+        <div class="chip" data-v="x" role="radio" tabindex="0" aria-checked="false" data-i18n="goal.gender_x">Aytmayman</div>
       </div>
     </div>
 
     <div class="row">
-      <label for="job">Ish</label>
-      <input id="job" type="text" placeholder="masalan, talaba" maxlength="40">
+      <label for="job" data-i18n="goal.job_lbl">Ish</label>
+      <input id="job" type="text" placeholder="masalan, talaba" data-i18n-placeholder="goal.job_ph" maxlength="40">
     </div>
 
     <div class="row full">
-      <label>Niyat (3 oydan keyin kim?)</label>
-      <textarea id="aim" placeholder="masalan, intizomli, ilm ortidan ergashgan odam" maxlength="120" rows="2"></textarea>
+      <label data-i18n="goal.aim_lbl">Niyat (3 oydan keyin kim?)</label>
+      <textarea id="aim" placeholder="masalan, intizomli, ilm ortidan ergashgan odam" data-i18n-placeholder="goal.aim_ph" maxlength="120" rows="2"></textarea>
     </div>
 
   </div>
 
   <div class="bottom-bar">
-    <a class="cta" id="cta" href="permissions.html">Davom</a>
+    <a class="cta" id="cta" href="permissions.html" data-i18n="goal.cta">Davom</a>
   </div>
 </div>
 
+<script src="i18n.js" defer></script>
 <script src="data.js" defer></script>
 <script src="nav-overlay.js" defer></script>
 <script>
