@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-<title>{brand} — Niyat</title>
+<title>{brand} — Tanish bo'l</title>
 <link rel="manifest" href="manifest.webmanifest">
 <meta name="theme-color" content="#04060B">
 <link rel="apple-touch-icon" href="assets/mnsm-logo.png">
@@ -16,27 +16,72 @@
   :root { --void:#04060B; --void-soft:#0C0F16; --text:#F5F2EC; --text-mid:#8A8D94; --text-dim:#4A4D54; --accent:#00E5D4; --accent-soft:#00B5A8; }
   body { background: var(--void); font-family:'Inter',sans-serif; color: var(--text); min-height: 100vh; display:flex; justify-content:center; align-items:flex-start; padding: 24px; -webkit-font-smoothing: antialiased; }
   .phone { width: 380px; min-height: 800px; background: var(--void); border-radius: 40px; overflow: hidden; position: relative; box-shadow: 0 0 0 8px #1a1d24, 0 30px 80px rgba(0,0,0,.7); display:flex; flex-direction: column; }
-  .container { flex:1; padding: 100px 32px 120px; display:flex; flex-direction:column; gap: 40px; }
-  .q { font-family:'Cormorant Garamond',serif; font-weight:500; font-size: 30px; color: var(--text); text-align:center; line-height: 1.3; }
-  .q .em { color: var(--accent); }
-  .field input {
-    width:100%;
-    background: var(--void-soft);
-    border:none; border-bottom: 1px solid rgba(255,255,255,.1);
-    color: var(--text);
+  .container { flex:1; padding: 70px 32px 120px; display:flex; flex-direction:column; gap: 28px; }
+
+  .h { text-align: center; }
+  .h .title { font-family:'Cormorant Garamond',serif; font-weight: 500; font-size: 24px; line-height: 1.3; }
+  .h .sub { font-size: 11px; letter-spacing: 3px; color: var(--text-mid); text-transform: uppercase; margin-top: 8px; }
+
+  .row {
+    display: grid;
+    grid-template-columns: 90px 1fr;
+    gap: 14px;
+    align-items: center;
     padding: 14px 0;
-    font-family:'Cormorant Garamond', serif; font-style: italic; font-size: 16px;
-    text-align: center;
-    outline:none;
-    transition: border-color .2s;
+    border-bottom: 1px solid rgba(255,255,255,.04);
   }
-  .field input:focus { border-bottom-color: var(--accent); }
-  .field input::placeholder { color: var(--text-dim); font-style: italic; }
-  .chips { display:flex; flex-direction:column; gap: 8px; margin-top: auto; }
-  .chip { padding: 12px; background: transparent; border: 1px solid rgba(255,255,255,.08); border-radius: 6px; color: var(--text-mid); font-size: 13px; letter-spacing: 1px; text-align:center; cursor:pointer; transition: all .15s; }
-  .chip.on { border-color: var(--accent); color: var(--accent); background: rgba(0,229,212,.04); }
+  .row label {
+    font-size: 11px;
+    letter-spacing: 2px;
+    color: var(--text-dim);
+    text-transform: uppercase;
+  }
+  .row input, .row textarea {
+    width: 100%;
+    background: transparent;
+    border: none;
+    color: var(--text);
+    padding: 6px 0;
+    font-family: 'Cormorant Garamond', serif;
+    font-style: italic;
+    font-size: 16px;
+    outline: none;
+    resize: none;
+    line-height: 1.4;
+  }
+  .row input::placeholder, .row textarea::placeholder { color: var(--text-dim); font-style: italic; }
+  .row.full {
+    grid-template-columns: 1fr;
+    gap: 6px;
+  }
+
+  /* Jins chiplari */
+  .chips {
+    display: flex;
+    gap: 8px;
+  }
+  .chip {
+    flex: 1;
+    padding: 10px;
+    text-align: center;
+    border: 1px solid rgba(255,255,255,.08);
+    border-radius: 8px;
+    color: var(--text-mid);
+    font-size: 13px;
+    cursor: pointer;
+    background: transparent;
+    transition: all .15s;
+  }
+  .chip.on {
+    border-color: var(--accent);
+    color: var(--accent);
+    background: rgba(0,229,212,.04);
+  }
+
   .bottom-bar { padding: 24px 32px env(safe-area-inset-bottom, 24px); background: linear-gradient(180deg, transparent, var(--void) 30%); }
   .cta { display:block; width:100%; padding:16px; background: linear-gradient(180deg, var(--accent), var(--accent-soft)); color: var(--void); font-size:13px; font-weight:600; letter-spacing:2px; text-transform: uppercase; border:none; border-radius:6px; text-align:center; text-decoration:none; }
+  .cta.disabled { opacity:.3; pointer-events:none; }
+
   @media (max-width: 480px) { body { padding: 0; } .phone { width: 100vw; min-height: 100vh; border-radius: 0; box-shadow: none; } }
 </style>
 </head>
@@ -44,28 +89,75 @@
 
 <div class="phone">
   <div class="container">
-    <h1 class="q">3 oydan keyin sen <span class="em">kim</span>?</h1>
 
-    <div class="field">
-      <input id="goal" type="text" value="Intizomli odam" maxlength="80">
+    <div class="h">
+      <h1 class="title">Tanishaylik</h1>
+      <p class="sub">Senga to'g'ri yondashish uchun</p>
     </div>
 
-    <div class="chips" id="chips">
-      <div class="chip" data-v="ilm">Ilm</div>
-      <div class="chip" data-v="sog">Sog'lik</div>
-      <div class="chip" data-v="mun">Munosabat</div>
+    <div class="row">
+      <label for="age">Yosh</label>
+      <input id="age" type="number" inputmode="numeric" min="10" max="99" placeholder="masalan, 28">
     </div>
+
+    <div class="row full">
+      <label>Jins</label>
+      <div class="chips" id="genderChips">
+        <div class="chip" data-v="m">Erkak</div>
+        <div class="chip" data-v="f">Ayol</div>
+        <div class="chip" data-v="x">Aytmayman</div>
+      </div>
+    </div>
+
+    <div class="row">
+      <label for="job">Ish</label>
+      <input id="job" type="text" placeholder="masalan, talaba" maxlength="40">
+    </div>
+
+    <div class="row full">
+      <label>Niyat (3 oydan keyin kim?)</label>
+      <textarea id="aim" placeholder="masalan, intizomli, ilm ortidan ergashgan odam" maxlength="120" rows="2"></textarea>
+    </div>
+
   </div>
 
   <div class="bottom-bar">
-    <a class="cta" href="permissions.html">Davom</a>
+    <a class="cta" id="cta" href="permissions.html">Davom</a>
   </div>
 </div>
 
 <script src="data.js" defer></script>
 <script src="nav-overlay.js" defer></script>
 <script>
-  document.querySelectorAll('.chip').forEach(c => c.addEventListener('click', () => c.classList.toggle('on')));
+  const $ = id => document.getElementById(id);
+
+  // Saqlangan profil ma'lumotlari
+  const PROFILE_KEY = 'mvow.profile';
+  const saved = JSON.parse(localStorage.getItem(PROFILE_KEY) || '{}');
+  if (saved.age) $('age').value = saved.age;
+  if (saved.job) $('job').value = saved.job;
+  if (saved.aim) $('aim').value = saved.aim;
+
+  // Jins chiplari
+  const chips = document.querySelectorAll('#genderChips .chip');
+  chips.forEach(c => {
+    if (saved.gender === c.dataset.v) c.classList.add('on');
+    c.addEventListener('click', () => {
+      chips.forEach(x => x.classList.remove('on'));
+      c.classList.add('on');
+    });
+  });
+
+  $('cta').addEventListener('click', () => {
+    const selected = document.querySelector('#genderChips .chip.on');
+    const profile = {
+      age:    $('age').value.trim(),
+      gender: selected ? selected.dataset.v : '',
+      job:    $('job').value.trim(),
+      aim:    $('aim').value.trim()
+    };
+    localStorage.setItem(PROFILE_KEY, JSON.stringify(profile));
+  });
 </script>
 
 </body>

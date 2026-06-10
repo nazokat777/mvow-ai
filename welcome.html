@@ -39,18 +39,46 @@
     overflow: hidden;
     display: flex; flex-direction: column;
   }
+
+  /* Halo behind logo — yumshoq teal radial */
+  .halo {
+    position: absolute;
+    top: 60px; left: 50%;
+    transform: translateX(-50%);
+    width: 280px; height: 280px;
+    background: radial-gradient(circle, rgba(0,229,212,.18), transparent 60%);
+    border-radius: 50%;
+    opacity: 0;
+    animation: halo-in 1.4s ease 0.3s forwards, halo-pulse 5s ease-in-out 2s infinite;
+  }
+  @keyframes halo-in { to { opacity: 1; } }
+  @keyframes halo-pulse {
+    0%, 100% { transform: translateX(-50%) scale(1); opacity: .8; }
+    50%      { transform: translateX(-50%) scale(1.1); opacity: 1; }
+  }
+
   .container {
     flex: 1;
     display: flex; flex-direction: column;
     align-items: center;
     padding: 80px 32px 100px;
     gap: 28px;
+    position: relative;
+    z-index: 2;
   }
+
   .logo {
     width: 96px; height: 96px;
     background: url(assets/mnsm-logo.png) center/contain no-repeat;
     filter: hue-rotate(160deg) saturate(1.4) drop-shadow(0 0 20px rgba(0,229,212,.4));
+    opacity: 0;
+    transform: scale(0.7);
+    animation: logo-in 1.4s cubic-bezier(.16,.84,.32,1) 0.2s forwards;
   }
+  @keyframes logo-in {
+    to { opacity: 1; transform: scale(1); }
+  }
+
   .name {
     font-family: 'Cormorant Garamond', serif;
     font-weight: 500;
@@ -59,18 +87,40 @@
     letter-spacing: 4px;
     text-align: center;
     margin-top: -8px;
+    display: flex;
+    gap: 2px;
+    justify-content: center;
   }
+  .name .ch {
+    display: inline-block;
+    opacity: 0;
+    transform: translateY(6px);
+    filter: blur(4px);
+    animation: char-in 0.6s cubic-bezier(.16,.84,.32,1) forwards;
+  }
+  @keyframes char-in {
+    to { opacity: 1; transform: translateY(0); filter: blur(0); }
+  }
+
   .tag {
     font-size: 12px;
     color: var(--text-mid);
     text-align: center;
     margin-top: -16px;
+    opacity: 0;
+    transform: translateY(6px);
+    animation: fade-up 0.8s ease 1.8s forwards;
   }
+  @keyframes fade-up { to { opacity: 1; transform: translateY(0); } }
+
   .fields {
     width: 100%;
     display: flex; flex-direction: column;
     gap: 16px;
     margin-top: 8px;
+    opacity: 0;
+    transform: translateY(12px);
+    animation: fade-up 0.9s ease 2.4s forwards;
   }
   .field input,
   .field textarea {
@@ -93,9 +143,12 @@
   .field textarea:focus { border-bottom-color: var(--accent); }
   .field input::placeholder,
   .field textarea::placeholder { color: var(--text-dim); font-style: italic; }
+
   .bottom-bar {
     padding: 20px 32px env(safe-area-inset-bottom, 20px);
     background: linear-gradient(180deg, transparent, var(--void) 30%);
+    opacity: 0;
+    animation: fade-up 0.9s ease 3.0s forwards;
   }
   .cta {
     display: block;
@@ -112,6 +165,7 @@
     cursor: pointer;
     text-align: center;
     text-decoration: none;
+    transition: opacity .2s;
   }
   .cta.disabled { opacity: .3; pointer-events: none; }
 
@@ -124,9 +178,11 @@
 <body>
 
 <div class="phone">
+  <div class="halo"></div>
+
   <div class="container">
     <div class="logo"></div>
-    <h1 class="name" data-brand="name">brend</h1>
+    <h1 class="name" id="brandName" data-brand="name">brend</h1>
     <p class="tag" data-brand="tagline">sening intizom do'sting</p>
 
     <div class="fields">
@@ -147,6 +203,23 @@
 <script src="data.js" defer></script>
 <script src="nav-overlay.js" defer></script>
 <script>
+  // Brand nomini harfma-harf chiqarish (data-brand keyin to'ldiradi)
+  function animateName() {
+    const el = document.getElementById('brandName');
+    if (!el) return;
+    const txt = el.textContent;
+    el.innerHTML = '';
+    [...txt].forEach((ch, i) => {
+      const span = document.createElement('span');
+      span.className = 'ch';
+      span.textContent = ch === ' ' ? ' ' : ch;
+      span.style.animationDelay = (1.0 + i * 0.08) + 's';
+      el.appendChild(span);
+    });
+  }
+  // data.js DOMContentLoaded ichida brand'ni yangilashidan keyin animatsiya boshlanadi
+  setTimeout(animateName, 100);
+
   const nameInp = document.getElementById('nameInput');
   const bioInp = document.getElementById('bioInput');
   const btn = document.getElementById('startBtn');
@@ -163,7 +236,6 @@
     if (bioInp.value.trim()) localStorage.setItem('mvow.userBio', bioInp.value.trim());
   });
 
-  // Saqlangan ma'lumotni qaytarish
   const savedName = localStorage.getItem('mvow.userName');
   const savedBio = localStorage.getItem('mvow.userBio');
   if (savedName) { nameInp.value = savedName; check(); }
