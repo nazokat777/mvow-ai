@@ -16,18 +16,46 @@
   :root { --void:#04060B; --text:#F5F2EC; --text-mid:#8A8D94; --text-dim:#4A4D54; --accent:#00E5D4; --accent-soft:#00B5A8; }
   body { background: var(--void); font-family:'Inter',sans-serif; color: var(--text); min-height: 100vh; display:flex; justify-content:center; align-items:flex-start; padding: 24px; -webkit-font-smoothing: antialiased; }
   .phone { width: 380px; min-height: 800px; background: var(--void); border-radius: 40px; overflow: hidden; position: relative; box-shadow: 0 0 0 8px #1a1d24, 0 30px 80px rgba(0,0,0,.7); display:flex; flex-direction: column; }
-  .container { flex:1; display:flex; flex-direction: column; align-items:center; justify-content:center; padding: 80px 32px 120px; gap: 32px; }
+  .container { flex:1; display:flex; flex-direction: column; align-items:center; justify-content:center; padding: 60px 32px 120px; gap: 28px; }
   .check {
-    width: 80px; height: 80px;
+    width: 84px; height: 84px;
     border-radius: 50%;
     border: 2px solid var(--accent);
     display:flex; align-items:center; justify-content:center;
+    animation: pop 0.6s cubic-bezier(.16,.84,.32,1);
   }
-  .check svg { width: 36px; height: 36px; stroke: var(--accent); }
-  .big { font-family:'Cormorant Garamond',serif; font-style: italic; font-weight:500; font-size: 38px; text-align:center; }
+  .check svg { width: 38px; height: 38px; stroke: var(--accent); }
+  @keyframes pop {
+    0%   { transform: scale(0); opacity: 0; }
+    60%  { transform: scale(1.12); opacity: 1; }
+    100% { transform: scale(1); opacity: 1; }
+  }
+  .big { font-family:'Cormorant Garamond',serif; font-style: italic; font-weight:500; font-size: 38px; text-align:center; line-height: 1.2; }
+  .big .em { color: var(--accent); font-style: normal; }
   .what { text-align: center; }
   .what .name { font-family:'Cormorant Garamond',serif; font-size: 20px; }
   .what .time { font-size: 11px; letter-spacing: 3px; color: var(--text-mid); text-transform: uppercase; margin-top: 6px; }
+  .progress {
+    text-align: center;
+    padding: 16px 0;
+    border-top: 1px solid rgba(255,255,255,.04);
+    border-bottom: 1px solid rgba(255,255,255,.04);
+    width: 100%;
+    max-width: 240px;
+  }
+  .progress .v {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 24px;
+    color: var(--accent);
+    font-weight: 500;
+  }
+  .progress .lbl {
+    font-size: 10px;
+    letter-spacing: 3px;
+    color: var(--text-mid);
+    text-transform: uppercase;
+    margin-top: 4px;
+  }
   .bottom-bar { padding: 24px 32px env(safe-area-inset-bottom, 24px); background: linear-gradient(180deg, transparent, var(--void) 30%); }
   .cta { display:block; width:100%; padding:16px; background: linear-gradient(180deg, var(--accent), var(--accent-soft)); color: var(--void); font-size:13px; font-weight:600; letter-spacing:2px; text-transform: uppercase; border:none; border-radius:6px; text-align:center; text-decoration:none; }
   @media (max-width: 480px) { body { padding: 0; } .phone { width: 100vw; min-height: 100vh; border-radius: 0; box-shadow: none; } }
@@ -37,22 +65,29 @@
 
 <div class="phone">
   <div class="container">
+
     <div class="check">
       <svg viewBox="0 0 24 24" fill="none" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
         <polyline points="5 12 10 17 19 8"/>
       </svg>
     </div>
 
-    <h1 class="big">Bajarding.</h1>
+    <h1 class="big" id="big">Bajarding,<br><span class="em" id="userName">do'stim</span>.</h1>
 
     <div class="what">
       <div class="name" id="taskName">Arab grammatikasi</div>
       <div class="time" id="taskTime">1 soat fokus</div>
     </div>
+
+    <div class="progress">
+      <div class="v"><span id="doneN">1</span> / <span id="totalN">5</span></div>
+      <div class="lbl">bugun bajarildi</div>
+    </div>
+
   </div>
 
   <div class="bottom-bar">
-    <a class="cta" href="notifications.html">Davom</a>
+    <a class="cta" id="cta" href="home.html">Davom</a>
   </div>
 </div>
 
@@ -60,11 +95,58 @@
 <script src="nav-overlay.js" defer></script>
 <script>
   document.addEventListener('DOMContentLoaded', () => {
-    if (window.MVOW_DATA) {
-      const cur = MVOW_DATA.currentSession() || MVOW_DATA.sessions[0];
-      if (cur) {
-        document.getElementById('taskName').textContent = cur.name;
-        document.getElementById('taskTime').textContent = cur.dur + ' fokus';
+    // Ism
+    const name = (localStorage.getItem('mvow.userName') || '').trim();
+    if (name) document.getElementById('userName').textContent = name;
+
+    // Joriy task
+    let cur = null;
+    let plan = [];
+    try { plan = JSON.parse(localStorage.getItem('mvow.todayPlan') || '[]'); } catch {}
+    if (Array.isArray(plan) && plan.length) {
+      cur = plan[0];
+    } else if (window.MVOW_DATA) {
+      cur = MVOW_DATA.currentSession() || MVOW_DATA.sessions[0];
+    }
+    if (cur) {
+      document.getElementById('taskName').textContent = cur.name;
+      document.getElementById('taskTime').textContent = (cur.dur || '') + ' fokus';
+    }
+
+    // Hisoblagich (sahifa ochilganda 1 ga oshadi, lekin bir kunda bir marta)
+    const todayKey = 'mvow.done.' + new Date().toISOString().slice(0,10);
+    let done = parseInt(localStorage.getItem(todayKey) || '0', 10);
+    // sahifa qayta yuklansa, ikkilab oshmasin — sessiya unique key kerak
+    const sessionKey = todayKey + '.last';
+    const lastSessionId = localStorage.getItem(sessionKey);
+    const thisSessionId = Date.now() - (Date.now() % 30000); // 30 sek ichida bir xil
+    if (lastSessionId !== String(thisSessionId)) {
+      done++;
+      localStorage.setItem(todayKey, String(done));
+      localStorage.setItem(sessionKey, String(thisSessionId));
+
+      // Umumiy bajarilgan sessiyalar
+      const tot = parseInt(localStorage.getItem('mvow.totalDone') || '0', 10) + 1;
+      localStorage.setItem('mvow.totalDone', String(tot));
+    }
+    document.getElementById('doneN').textContent = done;
+
+    // Bugungi reja umumiy hajmi
+    document.getElementById('totalN').textContent = plan.length || (window.MVOW_DATA ? MVOW_DATA.sessions.length : 5);
+
+    // Hammasi bajarilgan bo'lsa, CTA'ni bayramga yo'naltirish
+    if (plan.length && done >= plan.length) {
+      const cta = document.getElementById('cta');
+      cta.textContent = 'Yakuniy bayram';
+      cta.href = 'celebrate.html';
+
+      // Streak ham oshadi
+      const lastStreakDate = localStorage.getItem('mvow.lastStreakDate');
+      const today = new Date().toISOString().slice(0,10);
+      if (lastStreakDate !== today) {
+        const cur = parseInt(localStorage.getItem('mvow.streak') || '0', 10);
+        localStorage.setItem('mvow.streak', String(cur + 1));
+        localStorage.setItem('mvow.lastStreakDate', today);
       }
     }
   });

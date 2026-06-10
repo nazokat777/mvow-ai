@@ -142,7 +142,39 @@
     btn.classList.toggle('disabled', !t.value.trim());
   }
   t.addEventListener('input', check);
-  btn.addEventListener('click', () => localStorage.setItem('mvow.plansRaw', t.value.trim()));
+
+  // ── Matnni sessiyalarga parse qilish ──
+  function parsePlansToSessions(raw) {
+    const lines = raw.split(/[\n,;•\-–—]+/).map(s => s.trim()).filter(Boolean);
+    const out = [];
+    let hour = 6; // default boshlanish 06:00
+    for (const line of lines) {
+      let time = '', name = line, mins = 60, dur = '1 soat';
+      const m = line.match(/^(\d{1,2}):(\d{2})\s+(.+?)(?:\s+\((\d+)\s*(daq|soat|s|d)?\))?$/i);
+      if (m) {
+        time = `${m[1].padStart(2,'0')}:${m[2]}`;
+        name = m[3].trim();
+        if (m[4]) {
+          const n = parseInt(m[4], 10);
+          const unit = (m[5] || '').toLowerCase();
+          if (unit.startsWith('s')) { mins = n * 60; dur = n + ' soat'; }
+          else                       { mins = n;     dur = n + ' daq';  }
+        }
+      } else {
+        time = `${String(hour).padStart(2,'0')}:00`;
+        hour++;
+      }
+      out.push({ time, name, dur });
+    }
+    return out;
+  }
+
+  btn.addEventListener('click', () => {
+    const raw = t.value.trim();
+    localStorage.setItem('mvow.plansRaw', raw);
+    const sessions = parsePlansToSessions(raw);
+    if (sessions.length) localStorage.setItem('mvow.todayPlan', JSON.stringify(sessions));
+  });
 
   // ── Ovozli kiritish (Web Speech API) ──
   const SR = window.SpeechRecognition || window.webkitSpeechRecognition;

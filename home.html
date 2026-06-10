@@ -6,6 +6,9 @@
 <title>{brand} — Bosh sahifa</title>
 <link rel="manifest" href="manifest.webmanifest">
 <meta name="theme-color" content="#04060B">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="brend">
 <link rel="apple-touch-icon" href="assets/mnsm-logo.png">
 <link rel="icon" type="image/png" href="assets/mnsm-logo.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -18,130 +21,79 @@
     --text:#F5F2EC; --text-mid:#8A8D94; --text-dim:#4A4D54;
     --accent:#00E5D4; --accent-soft:#00B5A8;
   }
-  body {
-    background: var(--void);
-    font-family: 'Inter', sans-serif;
-    color: var(--text);
-    min-height: 100vh;
-    display: flex;
-    justify-content: center;
-    align-items: flex-start;
-    padding: 24px;
-    -webkit-font-smoothing: antialiased;
-  }
-  .phone {
-    width: 380px;
-    min-height: 800px;
-    background: var(--void);
-    border-radius: 40px;
-    overflow: hidden;
-    position: relative;
-    box-shadow: 0 0 0 8px #1a1d24, 0 30px 80px rgba(0,0,0,.7);
-    display: flex;
-    flex-direction: column;
-  }
-  .container { flex: 1; padding: 56px 32px 100px; }
+  body { background: var(--void); font-family:'Inter',sans-serif; color: var(--text); min-height: 100vh; display:flex; justify-content:center; align-items:flex-start; padding: 24px; -webkit-font-smoothing: antialiased; }
+  .phone { width: 380px; min-height: 800px; background: var(--void); border-radius: 40px; position: relative; box-shadow: 0 0 0 8px #1a1d24, 0 30px 80px rgba(0,0,0,.7); overflow: hidden; }
+  .container { padding: 60px 28px 100px; display: flex; flex-direction: column; gap: 28px; }
 
-  .stamp {
-    font-size: 10px;
-    letter-spacing: 4px;
-    color: var(--text-dim);
-    text-transform: uppercase;
-    margin-bottom: 32px;
-  }
-  .greeting {
+  .stamp { text-align: center; font-size: 10px; letter-spacing: 4px; color: var(--text-dim); text-transform: uppercase; }
+
+  .greet {
     font-family: 'Cormorant Garamond', serif;
     font-style: italic;
-    font-size: 30px;
     font-weight: 500;
-    margin-bottom: 48px;
-  }
-  .greeting .em { color: var(--accent); font-style: normal; }
-
-  /* Bitta katta raqam — streak */
-  .hero {
+    font-size: 28px;
     text-align: center;
-    margin-bottom: 56px;
+    line-height: 1.3;
+    color: var(--text);
   }
-  .hero .big {
+  .greet .em { color: var(--accent); font-style: normal; font-weight: 600; }
+
+  .streak {
+    text-align: center;
+    padding: 16px 0;
+    border-top: 1px solid rgba(255,255,255,.04);
+    border-bottom: 1px solid rgba(255,255,255,.04);
+  }
+  .streak .n {
     font-family: 'Cormorant Garamond', serif;
     font-weight: 500;
-    font-size: 88px;
+    font-size: 48px;
     color: var(--accent);
     line-height: 1;
   }
-  .hero .label {
-    font-size: 11px;
-    letter-spacing: 4px;
-    color: var(--text-mid);
-    text-transform: uppercase;
-    margin-top: 8px;
-  }
+  .streak .lbl { font-size: 10px; letter-spacing: 4px; color: var(--text-mid); text-transform: uppercase; margin-top: 4px; }
 
-  /* Keyingi ish — bitta qator */
   .next {
     text-align: center;
-    margin-bottom: 48px;
   }
-  .next .at {
-    font-size: 12px;
-    color: var(--text-mid);
-    letter-spacing: 2px;
-    text-transform: uppercase;
-    margin-bottom: 6px;
+  .next .lbl { font-size: 10px; letter-spacing: 4px; color: var(--text-dim); text-transform: uppercase; margin-bottom: 8px; }
+  .next .row {
+    display: flex; align-items: baseline; justify-content: center; gap: 12px;
   }
-  .next .at .em { color: var(--accent); }
-  .next .what {
-    font-family: 'Cormorant Garamond', serif;
-    font-size: 22px;
-    font-weight: 500;
-    color: var(--text);
-  }
+  .next .time { font-size: 18px; color: var(--accent); font-weight: 500; font-feature-settings: "tnum"; }
+  .next .name { font-family: 'Cormorant Garamond', serif; font-size: 18px; font-style: italic; color: var(--text); }
+  .next .none { font-size: 13px; color: var(--text-mid); font-style: italic; font-family: 'Cormorant Garamond', serif; }
 
-  /* Pastdagi 2 ta statistika — minimal */
   .stats {
     display: grid;
     grid-template-columns: 1fr 1fr;
-    gap: 24px;
-    padding-top: 24px;
-    border-top: 1px solid rgba(255,255,255,.04);
+    gap: 16px;
+    padding: 16px 0;
+    border-bottom: 1px solid rgba(255,255,255,.04);
   }
-  .stat {
-    text-align: center;
-  }
+  .stat { text-align: center; }
   .stat .v {
     font-family: 'Cormorant Garamond', serif;
-    font-size: 28px;
-    font-weight: 500;
-    color: var(--accent);
+    font-weight: 500; font-size: 24px;
+    color: var(--text);
   }
-  .stat .l {
-    font-size: 10px;
-    letter-spacing: 2px;
-    color: var(--text-mid);
-    text-transform: uppercase;
-    margin-top: 4px;
-  }
+  .stat .v .em { color: var(--accent); }
+  .stat .l { font-size: 9px; letter-spacing: 2px; color: var(--text-mid); text-transform: uppercase; margin-top: 4px; }
 
-  .bottom-bar {
-    padding: 16px 32px env(safe-area-inset-bottom, 16px);
-    background: linear-gradient(180deg, transparent, var(--void) 30%);
-  }
-  .cta {
-    display: block;
-    width: 100%;
-    padding: 16px;
-    background: linear-gradient(180deg, var(--accent), var(--accent-soft));
-    color: var(--void);
-    font-size: 13px;
-    font-weight: 600;
-    letter-spacing: 2px;
-    text-transform: uppercase;
-    border: none;
-    border-radius: 6px;
+  .bio {
     text-align: center;
-    text-decoration: none;
+    font-family: 'Cormorant Garamond', serif;
+    font-style: italic;
+    font-size: 13px;
+    color: var(--text-mid);
+    padding: 0 8px;
+    display: none;
   }
+  .bio.show { display: block; }
+
+  .actions { display: flex; flex-direction: column; gap: 10px; margin-top: 8px; }
+  .cta { display: block; width: 100%; padding: 16px; background: linear-gradient(180deg, var(--accent), var(--accent-soft)); color: var(--void); font-size: 13px; font-weight: 600; letter-spacing: 2px; text-transform: uppercase; border: none; border-radius: 6px; text-align: center; text-decoration: none; }
+  .ghost { display: block; width: 100%; padding: 12px; background: transparent; color: var(--text-mid); font-size: 11px; letter-spacing: 2px; text-transform: uppercase; border: 1px solid rgba(255,255,255,.08); border-radius: 6px; text-align: center; text-decoration: none; }
 
   @media (max-width: 480px) {
     body { padding: 0; }
@@ -154,37 +106,40 @@
 <div class="phone">
   <div class="container">
 
-    <div class="stamp">
-      <span data-mvow="today.date">10-MAY</span> · <span data-mvow="today.weekday">DUSHANBA</span>
-    </div>
+    <div class="stamp" id="dateStamp">10-JUN · CHORSHANBA</div>
 
-    <h1 class="greeting">Salom, <span class="em" id="userName">Aziz</span>.</h1>
+    <h1 class="greet">Salom, <span class="em" id="userName">do'stim</span>.</h1>
 
-    <div class="hero">
-      <div class="big" data-mvow="streak">12</div>
-      <div class="label">kun streak</div>
+    <div class="streak">
+      <div class="n" id="streakN">0</div>
+      <div class="lbl">kun yo'l</div>
     </div>
 
     <div class="next">
-      <div class="at"><span class="em" id="nextTime">06:20</span> · keyingi</div>
-      <div class="what" id="nextName">Arab grammatikasi</div>
+      <div class="lbl">Keyingi</div>
+      <div class="row" id="nextRow">
+        <span class="none">hozircha reja yo'q</span>
+      </div>
     </div>
 
     <div class="stats">
       <div class="stat">
-        <div class="v" data-mvow="totals.focusLabel">7 soat 15 daq</div>
-        <div class="l">Bugun fokus</div>
+        <div class="v"><span class="em" id="focusH">0</span> <span style="font-size:13px;color:var(--text-mid)">soat</span></div>
+        <div class="l">fokus</div>
       </div>
       <div class="stat">
-        <div class="v" data-mvow="totals.sessions">5</div>
-        <div class="l">Sessiya</div>
+        <div class="v"><span class="em" id="sessN">0</span> <span style="font-size:13px;color:var(--text-mid)">ish</span></div>
+        <div class="l">bugun</div>
       </div>
     </div>
 
-  </div>
+    <p class="bio" id="bioLine"></p>
 
-  <div class="bottom-bar">
-    <a class="cta" href="today-plan.html">Bugungi reja</a>
+    <div class="actions">
+      <a class="cta" id="primaryCta" href="routine.html">Rejani tuz</a>
+      <a class="ghost" href="today-plan.html">Bugungi reja</a>
+    </div>
+
   </div>
 </div>
 
@@ -192,15 +147,74 @@
 <script src="nav-overlay.js" defer></script>
 <script>
   document.addEventListener('DOMContentLoaded', () => {
-    const userName = (localStorage.getItem('mvow.userName') || 'Aziz').trim();
-    document.getElementById('userName').textContent = userName;
+    // Sana
+    const dayNames = ['YAKSHANBA','DUSHANBA','SESHANBA','CHORSHANBA','PAYSHANBA','JUMA','SHANBA'];
+    const monNames = ['YAN','FEV','MAR','APR','MAY','JUN','IYU','AVG','SEN','OKT','NOY','DEK'];
+    const d = new Date();
+    document.getElementById('dateStamp').textContent =
+      `${String(d.getDate()).padStart(2,'0')}-${monNames[d.getMonth()]} · ${dayNames[d.getDay()]}`;
 
-    if (window.MVOW_DATA) {
-      const up = MVOW_DATA.sessions.find(s => s.status === 'upcoming') || MVOW_DATA.sessions[0];
-      if (up) {
-        document.getElementById('nextTime').textContent = up.time;
-        document.getElementById('nextName').textContent = up.name;
+    // Foydalanuvchi
+    const userName = (localStorage.getItem('mvow.userName') || '').trim();
+    if (userName) document.getElementById('userName').textContent = userName;
+
+    const bio = (localStorage.getItem('mvow.userBio') || '').trim();
+    if (bio) {
+      const bioEl = document.getElementById('bioLine');
+      bioEl.textContent = '"' + bio + '"';
+      bioEl.classList.add('show');
+    }
+
+    // Streak
+    const streak = parseInt(localStorage.getItem('mvow.streak') || '0', 10);
+    document.getElementById('streakN').textContent = streak;
+
+    // Bugungi reja
+    let plan = [];
+    try { plan = JSON.parse(localStorage.getItem('mvow.todayPlan') || '[]'); } catch {}
+    if (!Array.isArray(plan)) plan = [];
+
+    // Saralash
+    function tKey(t) {
+      const m = /^(\d{1,2}):?(\d{2})?$/.exec((t || '').trim());
+      if (!m) return 99999;
+      return (+m[1]) * 60 + (+(m[2] || 0));
+    }
+    plan.sort((a,b) => tKey(a.time) - tKey(b.time));
+
+    // Keyingi sessiya (joriy vaqtdan keyingi birinchi yoki birinchisi)
+    const nowMin = d.getHours() * 60 + d.getMinutes();
+    const next = plan.find(p => tKey(p.time) >= nowMin) || plan[0];
+    if (next) {
+      document.getElementById('nextRow').innerHTML =
+        `<span class="time">${next.time || '—'}</span><span class="name">${next.name || 'ish'}</span>`;
+    }
+
+    // Stats — fokus soati va ishlar soni
+    function durMins(s) {
+      if (!s) return 0;
+      const x = s.toLowerCase();
+      let m = 0;
+      const h = x.match(/(\d+(?:\.\d+)?)\s*s/);
+      const min = x.match(/(\d+)\s*d/);
+      if (h) m += Math.round(parseFloat(h[1]) * 60);
+      if (min) m += parseInt(min[1], 10);
+      if (!h && !min) {
+        const n = parseInt(x, 10);
+        if (!isNaN(n)) m = n;
       }
+      return m;
+    }
+    const totalMin = plan.reduce((s,p) => s + durMins(p.dur), 0);
+    const totalH = Math.round(totalMin / 60 * 10) / 10;
+    document.getElementById('focusH').textContent = totalH || 0;
+    document.getElementById('sessN').textContent = plan.length;
+
+    // CTA — reja bor bo'lsa "Boshlash", yo'q bo'lsa "Rejani tuz"
+    const cta = document.getElementById('primaryCta');
+    if (plan.length) {
+      cta.textContent = 'Boshlayman';
+      cta.href = 'day-flow.html';
     }
   });
 </script>

@@ -86,12 +86,7 @@
     <div class="status">doim shu yerda</div>
   </div>
 
-  <div class="chat" id="chat">
-    <div class="msg user">Charchadim.</div>
-    <div class="msg bot">Tan oldim. Bir savol bersam?</div>
-    <div class="msg user">Bering.</div>
-    <div class="msg bot">Bugun qaysi paytda oxirgi marta o'zingni kuchli his qilding?</div>
-  </div>
+  <div class="chat" id="chat"></div>
 
   <div class="quick">
     <div class="qchip">Charchoq</div>
@@ -111,6 +106,7 @@
   const chat = document.getElementById('chat');
   const inp = document.getElementById('msgInput');
   const send = document.getElementById('sendBtn');
+
   function add(text, who) {
     const d = document.createElement('div');
     d.className = 'msg ' + who;
@@ -118,20 +114,64 @@
     chat.appendChild(d);
     chat.scrollTop = chat.scrollHeight;
   }
-  function reply() {
-    setTimeout(() => add('Eshitdim. Bir lahza o\'ylab ko\'ramiz.', 'bot'), 600);
+
+  // Foydalanuvchi profili (data.js dan)
+  const userName = (localStorage.getItem('mvow.userName') || '').trim();
+  const userJob  = (() => { try { return (JSON.parse(localStorage.getItem('mvow.profile') || '{}').job || '').trim(); } catch { return ''; } })();
+  const userAim  = (() => { try { return (JSON.parse(localStorage.getItem('mvow.profile') || '{}').aim || '').trim(); } catch { return ''; } })();
+
+  // Birinchi xabarlar — shaxsiy
+  function greet() {
+    const intro = userName
+      ? `Salom, ${userName}.`
+      : 'Salom.';
+    add(intro, 'bot');
+    setTimeout(() => {
+      const followUp = userAim
+        ? `Niyatingni eslayman — "${userAim}". Bugun unga bir qadam yaqinmisan?`
+        : "Bugun fikring qaerda?";
+      add(followUp, 'bot');
+    }, 700);
   }
+  greet();
+
+  // Tasodifiy javoblar — kontekstga qarab
+  const REPLIES = [
+    'Eshitdim. Bir lahza o\'ylab ko\'ramiz.',
+    "Bu his tabiiy. Sen bir narsani bajaribsan — buni tan ol.",
+    'Ko\'p odamlar shu joyda taslim bo\'ladi. Sen davom etyapsan.',
+    "Hozir qiyin — bu kuchsizlik emas, balki o'sish.",
+    'Bir misol bilan ayt: qachon bunday his bo\'lgan oxirgi marta?',
+    "Tinch tomonni eslab ko'r. Nimaga shu yo'l boshlangan edi?"
+  ];
+  const REPLY_BY_TOPIC = {
+    'charchoq': "Charchoq — ish belgisi. Lekin uxlamaslik kerak emas. Bugun 7 soat uxla.",
+    "yo'lim qayerda?": userAim
+      ? `Yo'ling shu yerda: "${userAim}". Har kun bitta qadam.`
+      : "Yo'l — har kuni bitta to'g'ri qadam. Boshqa hech narsa.",
+    'niyatim': userAim
+      ? `Niyating — "${userAim}". Buni har tongdayoq eslab tur.`
+      : 'Niyatingni qog\'ozga yoz. Kunda 3 marta ko\'rib tur.'
+  };
+
+  function replyTo(text) {
+    const lc = (text || '').toLowerCase().trim();
+    let reply = REPLY_BY_TOPIC[lc];
+    if (!reply) reply = REPLIES[Math.floor(Math.random() * REPLIES.length)];
+    setTimeout(() => add(reply, 'bot'), 600);
+  }
+
   send.addEventListener('click', () => {
     const v = inp.value.trim();
     if (!v) return;
     add(v, 'user');
     inp.value = '';
-    reply();
+    replyTo(v);
   });
   inp.addEventListener('keydown', e => { if (e.key === 'Enter') send.click(); });
   document.querySelectorAll('.qchip').forEach(c => c.addEventListener('click', () => {
     add(c.textContent, 'user');
-    reply();
+    replyTo(c.textContent);
   }));
 </script>
 
