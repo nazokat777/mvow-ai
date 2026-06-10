@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>{brand} — Tanish bo'l</title>
+<link rel="manifest" href="manifest.webmanifest">
+<meta name="theme-color" content="#04060B">
+<link rel="apple-touch-icon" href="assets/mnsm-logo.png">
+<link rel="icon" type="image/png" href="assets/mnsm-logo.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  :root { --void:#04060B; --void-soft:#0C0F16; --text:#F5F2EC; --text-mid:#8A8D94; --text-dim:#6E7178; --accent:#00E5D4; --accent-soft:#00B5A8; }
+  body { background: var(--void); font-family:'Inter',sans-serif; color: var(--text); min-height: 100vh; display:flex; justify-content:center; align-items:flex-start; padding: 24px; -webkit-font-smoothing: antialiased; }
+  .phone { width: 380px; min-height: 800px; background: var(--void); border-radius: 40px; overflow: hidden; position: relative; box-shadow: 0 0 0 8px #1a1d24, 0 30px 80px rgba(0,0,0,.7); display:flex; flex-direction: column; }
+  .container { flex:1; padding: 70px 32px 120px; display:flex; flex-direction:column; gap: 28px; }
+
+  .h { text-align: center; }
+  .h .title { font-family:'Cormorant Garamond',serif; font-weight: 500; font-size: 24px; line-height: 1.3; }
+  .h .sub { font-size: 11px; letter-spacing: 3px; color: var(--text-mid); text-transform: uppercase; margin-top: 8px; }
+
+  .row {
+    display: grid;
+    grid-template-columns: 90px 1fr;
+    gap: 14px;
+    align-items: center;
+    padding: 14px 0;
+    border-bottom: 1px solid rgba(255,255,255,.04);
+  }
+  .row label {
+    font-size: 11px;
+    letter-spacing: 2px;
+    color: var(--text-dim);
+    text-transform: uppercase;
+  }
+  .row input, .row textarea {
+    width: 100%;
+    background: transparent;
+    border: none;
+    color: var(--text);
+    padding: 6px 0;
+    font-family: 'Cormorant Garamond', serif;
+    font-style: italic;
+    font-size: 16px;
+    outline: none;
+    resize: none;
+    line-height: 1.4;
+  }
+  .row input::placeholder, .row textarea::placeholder { color: var(--text-dim); font-style: italic; }
+  .row.full {
+    grid-template-columns: 1fr;
+    gap: 6px;
+  }
+
+  /* Jins chiplari */
+  .chips {
+    display: flex;
+    gap: 8px;
+  }
+  .chip {
+    flex: 1;
+    padding: 10px;
+    text-align: center;
+    border: 1px solid rgba(255,255,255,.08);
+    border-radius: 8px;
+    color: var(--text-mid);
+    font-size: 13px;
+    cursor: pointer;
+    background: transparent;
+    transition: all .15s;
+  }
+  .chip.on {
+    border-color: var(--accent);
+    color: var(--accent);
+    background: rgba(0,229,212,.04);
+  }
+
+  .bottom-bar { padding: 24px 32px env(safe-area-inset-bottom, 24px); background: linear-gradient(180deg, transparent, var(--void) 30%); }
+  .cta { display:block; width:100%; padding:16px; background: linear-gradient(180deg, var(--accent), var(--accent-soft)); color: var(--void); font-size:13px; font-weight:600; letter-spacing:2px; text-transform: uppercase; border:none; border-radius:6px; text-align:center; text-decoration:none; }
+  .cta.disabled { opacity:.3; pointer-events:none; }
+
+  @media (max-width: 480px) { body { padding: 0; } .phone { width: 100vw; min-height: 100vh; border-radius: 0; box-shadow: none; } }
+</style>
+</head>
+<body>
+
+<div class="phone">
+  <div class="container">
+
+    <div class="h">
+      <h1 class="title">Tanishaylik</h1>
+      <p class="sub">Senga to'g'ri yondashish uchun</p>
+    </div>
+
+    <div class="row">
+      <label for="age">Yosh</label>
+      <input id="age" type="number" inputmode="numeric" min="10" max="99" placeholder="masalan, 28">
+    </div>
+
+    <div class="row full">
+      <label>Jins</label>
+      <div class="chips" id="genderChips" role="radiogroup" aria-label="Jins">
+        <div class="chip" data-v="m" role="radio" tabindex="0" aria-checked="false">Erkak</div>
+        <div class="chip" data-v="f" role="radio" tabindex="0" aria-checked="false">Ayol</div>
+        <div class="chip" data-v="x" role="radio" tabindex="0" aria-checked="false">Aytmayman</div>
+      </div>
+    </div>
+
+    <div class="row">
+      <label for="job">Ish</label>
+      <input id="job" type="text" placeholder="masalan, talaba" maxlength="40">
+    </div>
+
+    <div class="row full">
+      <label>Niyat (3 oydan keyin kim?)</label>
+      <textarea id="aim" placeholder="masalan, intizomli, ilm ortidan ergashgan odam" maxlength="120" rows="2"></textarea>
+    </div>
+
+  </div>
+
+  <div class="bottom-bar">
+    <a class="cta" id="cta" href="permissions.html">Davom</a>
+  </div>
+</div>
+
+<script src="data.js" defer></script>
+<script src="nav-overlay.js" defer></script>
+<script>
+  const $ = id => document.getElementById(id);
+
+  // Saqlangan profil ma'lumotlari
+  const PROFILE_KEY = 'mvow.profile';
+  const saved = JSON.parse(localStorage.getItem(PROFILE_KEY) || '{}');
+  if (saved.age) $('age').value = saved.age;
+  if (saved.job) $('job').value = saved.job;
+  if (saved.aim) $('aim').value = saved.aim;
+
+  // Jins chiplari
+  const chips = document.querySelectorAll('#genderChips .chip');
+  function selectChip(c) {
+    chips.forEach(x => {
+      x.classList.remove('on');
+      x.setAttribute('aria-checked', 'false');
+    });
+    c.classList.add('on');
+    c.setAttribute('aria-checked', 'true');
+  }
+  chips.forEach(c => {
+    if (saved.gender === c.dataset.v) selectChip(c);
+    c.addEventListener('click', () => selectChip(c));
+    c.addEventListener('keydown', e => {
+      if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); selectChip(c); }
+    });
+  });
+
+  // ── Profilga qarab boshlovchi reja yaratish ──
+  function buildStarterPlan(p) {
+    const job = (p.job || '').toLowerCase();
+    let labels;
+    if (/talab|o'q|study|student/.test(job)) {
+      labels = [
+        { time: '08:00', name: "O'qish",   dur: '1 soat' },
+        { time: '14:00', name: 'Mashq',    dur: '45 daq' },
+        { time: '19:00', name: 'Kitob',    dur: '45 daq' }
+      ];
+    } else if (/dastur|develop|kod|engineer|design/.test(job)) {
+      labels = [
+        { time: '09:00', name: 'Loyiha',   dur: '1 soat 30 daq' },
+        { time: '14:00', name: 'Sayr',     dur: '30 daq' },
+        { time: '19:00', name: 'Mutolaa',  dur: '45 daq' }
+      ];
+    } else if (/sport|trener|fitnes|jismoniy/.test(job)) {
+      labels = [
+        { time: '07:00', name: 'Mashq',         dur: '1 soat' },
+        { time: '14:00', name: 'Yo\'l-yo\'riq', dur: '1 soat' },
+        { time: '19:00', name: 'Kitob',         dur: '45 daq' }
+      ];
+    } else {
+      labels = [
+        { time: '09:00', name: 'Asosiy ish', dur: '1 soat 30 daq' },
+        { time: '14:00', name: 'Mashq',      dur: '45 daq' },
+        { time: '19:00', name: 'Mutolaa',    dur: '30 daq' }
+      ];
+    }
+    return labels;
+  }
+
+  // ── Profil tasdiq toast'i ──
+  function showConfirm(profile, onDone) {
+    const ages = profile.age ? profile.age + ' yosh' : '';
+    const job = profile.job || '';
+    const aim = profile.aim || '';
+    const layer = document.createElement('div');
+    layer.id = 'confirmLayer';
+    layer.style.cssText = 'position:fixed;inset:0;z-index:9999;display:flex;align-items:center;justify-content:center;background:rgba(4,6,11,.85);backdrop-filter:blur(8px);opacity:0;transition:opacity .35s;padding:24px;';
+    layer.innerHTML = `
+      <div style="max-width:340px;background:#0C0F16;border:1px solid rgba(0,229,212,.18);border-radius:14px;padding:28px 22px 22px;text-align:center;transform:translateY(12px);transition:transform .35s;">
+        <div style="font-family:'Cormorant Garamond',serif;font-style:italic;font-size:22px;color:#00E5D4;margin-bottom:14px;">Ko'rdim seni.</div>
+        <div style="font-family:'Cormorant Garamond',serif;font-size:16px;color:#F5F2EC;line-height:1.6;margin-bottom:18px;">
+          ${ages ? '<div>' + escapeText(ages) + '</div>' : ''}
+          ${job ? '<div style="opacity:.85;">' + escapeText(job) + '</div>' : ''}
+          ${aim ? '<div style="margin-top:10px;font-style:italic;opacity:.8;font-size:14px;">"' + escapeText(aim) + '"</div>' : ''}
+        </div>
+        <div style="font-size:11px;letter-spacing:3px;color:#8A8D94;text-transform:uppercase;margin-bottom:18px;">Birinchi reja tayyor</div>
+        <button id="confirmGo" type="button" style="background:linear-gradient(180deg,#00E5D4,#00B5A8);color:#04060B;border:none;border-radius:6px;padding:14px 30px;font-family:'Inter',sans-serif;font-size:13px;font-weight:600;letter-spacing:2px;text-transform:uppercase;cursor:pointer;">Davom</button>
+      </div>
+    `;
+    document.body.appendChild(layer);
+    requestAnimationFrame(() => {
+      layer.style.opacity = '1';
+      layer.querySelector('div > div').style.transform = 'translateY(0)';
+    });
+    document.getElementById('confirmGo').addEventListener('click', () => {
+      if (window.MVOW_DATA) MVOW_DATA.fxTap();
+      onDone();
+    });
+  }
+  function escapeText(s) { return String(s).replace(/[<>"&]/g, c => ({'<':'&lt;','>':'&gt;','"':'&quot;','&':'&amp;'}[c])); }
+
+  $('cta').addEventListener('click', (e) => {
+    e.preventDefault();
+    const selected = document.querySelector('#genderChips .chip.on');
+    const profile = {
+      age:    $('age').value.trim(),
+      gender: selected ? selected.dataset.v : '',
+      job:    $('job').value.trim(),
+      aim:    $('aim').value.trim()
+    };
+    localStorage.setItem(PROFILE_KEY, JSON.stringify(profile));
+
+    // Birinchi rejani avtomatik tuz (agar bo'sh bo'lsa)
+    if (window.MVOW_DATA && !MVOW_DATA.getTodayPlan().length) {
+      const starter = buildStarterPlan(profile);
+      MVOW_DATA.setTodayPlan(starter);
+    }
+
+    // Tasdiq toast
+    showConfirm(profile, () => { window.location.href = 'permissions.html'; });
+  });
+</script>
+
+</body>
+</html>

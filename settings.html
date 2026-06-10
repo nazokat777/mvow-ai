@@ -1,0 +1,281 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>{brand} — Sozlamalar</title>
+<link rel="manifest" href="manifest.webmanifest">
+<meta name="theme-color" content="#04060B">
+<link rel="apple-touch-icon" href="assets/mnsm-logo.png">
+<link rel="icon" type="image/png" href="assets/mnsm-logo.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  :root { --void:#04060B; --text:#F5F2EC; --text-mid:#8A8D94; --text-dim:#6E7178; --accent:#00E5D4; }
+  body { background: var(--void); font-family:'Inter',sans-serif; color: var(--text); min-height: 100vh; display:flex; justify-content:center; align-items:flex-start; padding: 24px; -webkit-font-smoothing: antialiased; }
+  .phone { width: 380px; min-height: 800px; background: var(--void); border-radius: 40px; overflow: hidden; position: relative; box-shadow: 0 0 0 8px #1a1d24, 0 30px 80px rgba(0,0,0,.7); }
+  .container { padding: 80px 32px 100px; }
+
+  .me { text-align:center; margin-bottom: 48px; }
+  .me .name { font-family:'Cormorant Garamond',serif; font-size: 28px; font-weight: 500; }
+  .me .sub { font-size: 11px; letter-spacing: 3px; color: var(--text-mid); text-transform: uppercase; margin-top: 6px; }
+  .me .sub .em { color: var(--accent); }
+
+  .row {
+    display: grid;
+    grid-template-columns: 1fr auto;
+    align-items: center;
+    gap: 16px;
+    padding: 16px 0;
+    border-bottom: 1px solid rgba(255,255,255,.04);
+  }
+  .row .lbl { font-size: 14px; color: var(--text); }
+  .row .val { font-size: 13px; color: var(--accent); cursor: pointer; }
+  .row select {
+    background: transparent;
+    border: none;
+    color: var(--accent);
+    font-size: 13px;
+    text-align: right;
+    cursor: pointer;
+    outline: none;
+    appearance: none;
+    -webkit-appearance: none;
+    padding-right: 14px;
+    background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 12' fill='%2300E5D4'><polygon points='2,4 10,4 6,9'/></svg>");
+    background-repeat: no-repeat;
+    background-position: right center;
+    background-size: 10px;
+  }
+  .row input[type="time"] {
+    background: transparent;
+    border: none;
+    color: var(--accent);
+    font-size: 13px;
+    text-align: right;
+    outline: none;
+    font-family: 'Inter', sans-serif;
+  }
+
+  .toggle {
+    width: 44px; height: 26px;
+    background: rgba(255,255,255,.08);
+    border-radius: 13px;
+    cursor: pointer;
+    position: relative;
+    transition: background .2s;
+  }
+  .toggle::after {
+    content: '';
+    position: absolute;
+    top: 3px; left: 3px;
+    width: 20px; height: 20px;
+    border-radius: 50%;
+    background: var(--text);
+    transition: transform .2s;
+  }
+  .toggle.on { background: var(--accent); }
+  .toggle.on::after { transform: translateX(18px); background: var(--void); }
+
+  .section-lbl {
+    font-size: 10px;
+    letter-spacing: 4px;
+    color: var(--text-dim);
+    text-transform: uppercase;
+    margin-top: 32px;
+    margin-bottom: 8px;
+    padding: 0 4px;
+  }
+
+  .danger {
+    display: block;
+    width: 100%;
+    margin-top: 40px;
+    padding: 14px;
+    background: transparent;
+    color: #B8334A;
+    font-family: 'Inter', sans-serif;
+    font-size: 12px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    border: 1px solid rgba(184,51,74,.3);
+    border-radius: 6px;
+    cursor: pointer;
+    transition: all .15s;
+  }
+  .danger:hover, .danger:active {
+    background: rgba(184,51,74,.08);
+    border-color: #B8334A;
+  }
+  .danger.confirm {
+    background: #B8334A;
+    color: var(--void);
+    border-color: #B8334A;
+    font-weight: 600;
+  }
+
+  .footer { margin-top: 32px; text-align: center; font-size: 11px; letter-spacing: 2px; color: var(--text-dim); text-transform: uppercase; }
+  .footer .em { color: var(--text-mid); }
+
+  @media (max-width: 480px) { body { padding: 0; } .phone { width: 100vw; min-height: 100vh; border-radius: 0; box-shadow: none; } }
+</style>
+</head>
+<body>
+
+<div class="phone">
+  <div class="container">
+
+    <div class="me">
+      <div class="name" id="userName">Aziz</div>
+      <div class="sub"><span class="em" id="streakN">0</span> kun yo'l</div>
+    </div>
+
+    <div class="section-lbl">Mentor</div>
+
+    <div class="row">
+      <div class="lbl">Mentor ohangi</div>
+      <select data-pref="tone">
+        <option value="warm">Iliq</option>
+        <option value="mid" selected>O'rta</option>
+        <option value="strict">Qattiq</option>
+      </select>
+    </div>
+
+    <div class="row">
+      <div class="lbl">Aralashish darajasi</div>
+      <select data-pref="meddle">
+        <option value="quiet" selected>Kamtar</option>
+        <option value="mid">O'rta</option>
+        <option value="active">Faol</option>
+      </select>
+    </div>
+
+    <div class="section-lbl">Sessiya</div>
+
+    <div class="row">
+      <div class="lbl">Sessiya davomiyligi</div>
+      <select data-pref="sessionMins">
+        <option value="25">25 daq</option>
+        <option value="45" selected>45 daq</option>
+        <option value="60">60 daq</option>
+        <option value="90">90 daq</option>
+      </select>
+    </div>
+
+    <div class="row">
+      <div class="lbl">Uyg'onish vaqti</div>
+      <input type="time" data-pref="wakeTime" value="06:00">
+    </div>
+
+    <div class="section-lbl">Bildirishnomalar</div>
+
+    <div class="row">
+      <div class="lbl">Auto-davom</div>
+      <div class="toggle" data-toggle="autoNext" role="switch" tabindex="0" aria-label="Auto-davom" aria-checked="false"></div>
+    </div>
+
+    <div class="row">
+      <div class="lbl">Ovozli eslatma</div>
+      <div class="toggle" data-toggle="voiceRemind" role="switch" tabindex="0" aria-label="Ovozli eslatma" aria-checked="false"></div>
+    </div>
+
+    <div class="row">
+      <div class="lbl">Diqqat sinovi</div>
+      <div class="toggle" data-toggle="negotiation" role="switch" tabindex="0" aria-label="Diqqat sinovi" aria-checked="false"></div>
+    </div>
+
+    <div class="row" style="margin-top:24px;">
+      <a href="about.html" style="font-size:14px;color:var(--text);text-decoration:none;">Bu ilov haqida</a>
+      <span style="color:var(--text-dim);">›</span>
+    </div>
+
+    <button class="danger" id="resetBtn" type="button">Hammasini tozalash</button>
+
+    <div class="footer">v <span class="em" data-brand="name">brend</span> 9.2</div>
+
+  </div>
+</div>
+
+<script src="data.js" defer></script>
+<script src="nav-overlay.js" defer></script>
+<script>
+  document.addEventListener('DOMContentLoaded', () => {
+    // Ism
+    const userName = (localStorage.getItem('mvow.userName') || 'Aziz').trim();
+    document.getElementById('userName').textContent = userName;
+    // Streak
+    const streakRaw = localStorage.getItem('mvow.streak');
+    const streak = streakRaw != null ? parseInt(streakRaw, 10) : 12;
+    document.getElementById('streakN').textContent = streak;
+
+    // Tanlovlar — saqlash/yuklash
+    const PREFS_KEY = 'mvow.prefs';
+    const prefs = (() => {
+      try { return JSON.parse(localStorage.getItem(PREFS_KEY) || '{}'); }
+      catch { return {}; }
+    })();
+    const defaults = {
+      tone: 'mid', meddle: 'quiet', sessionMins: '45', wakeTime: '06:00',
+      autoNext: true, voiceRemind: true, negotiation: true
+    };
+    const merged = Object.assign({}, defaults, prefs);
+
+    function save() {
+      localStorage.setItem(PREFS_KEY, JSON.stringify(merged));
+      // wakeTime alohida ham
+      localStorage.setItem('mvow.wakeTime', merged.wakeTime);
+    }
+
+    // Select/input pref'lari
+    document.querySelectorAll('[data-pref]').forEach(el => {
+      const key = el.dataset.pref;
+      if (merged[key] != null) el.value = merged[key];
+      el.addEventListener('change', () => {
+        merged[key] = el.value;
+        save();
+      });
+    });
+
+    // Reset button — confirm then clear
+    const resetBtn = document.getElementById('resetBtn');
+    let confirmTimer = null;
+    resetBtn.addEventListener('click', () => {
+      if (resetBtn.classList.contains('confirm')) {
+        // Hammasini tozalash
+        const keys = Object.keys(localStorage).filter(k => k.startsWith('mvow.'));
+        keys.forEach(k => localStorage.removeItem(k));
+        resetBtn.textContent = 'Tozalandi · qaytamiz';
+        setTimeout(() => { location.replace('welcome.html'); }, 800);
+      } else {
+        resetBtn.classList.add('confirm');
+        resetBtn.textContent = 'Aniqmisan? Bos';
+        confirmTimer = setTimeout(() => {
+          resetBtn.classList.remove('confirm');
+          resetBtn.textContent = 'Hammasini tozalash';
+        }, 3000);
+      }
+    });
+
+    // Toggle'lar
+    document.querySelectorAll('[data-toggle]').forEach(el => {
+      const key = el.dataset.toggle;
+      if (merged[key]) { el.classList.add('on'); el.setAttribute('aria-checked','true'); }
+      const flip = () => {
+        const on = !el.classList.contains('on');
+        el.classList.toggle('on', on);
+        el.setAttribute('aria-checked', on ? 'true' : 'false');
+        merged[key] = on;
+        save();
+      };
+      el.addEventListener('click', flip);
+      el.addEventListener('keydown', e => {
+        if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); flip(); }
+      });
+    });
+  });
+</script>
+
+</body>
+</html>
