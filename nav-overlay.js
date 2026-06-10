@@ -187,27 +187,26 @@
   // today-plan.html qo'shildi: AI tuzgan kun tartibi ro'yxati — boshlashdan oldin.
   const SEQ = [
     // Onboarding (1-3)
-    'intro.html',             // 1. Tanishuv (Murabbiy)
-    'welcome.html',           // 2. Ism
-    'goal.html',              // 3. Anketa
-    'vada.html',              // 4. Va'da
-    'permissions.html',       // 5. Ruxsatlar
-    'settings.html',          // 6. Sozlamalar
-    // Kun (7-11)
-    'alarm.html',             // 7. Uyg'on
-    'home.html',              // 8. Bosh sahifa
-    'routine.html',           // 9. Reja
-    'today-plan.html',        // 10. Bugungi reja
-    'calendar.html',          // 11. Kalendar
-    // Bajarish (12-15)
-    'day-flow.html',          // 12. Taymer
-    'hard-lock.html',         // 13. Qulflash
-    'negotiation.html',       // 14. Diqqat sinovi
-    'session-reflection.html',// 15. Sessiya bahosi
-    // Natija (16-18)
-    'notifications.html',     // 16. Xabarlar
-    'weekly-review.html',     // 17. Natijalar
-    'celebrate.html'          // 18. Bayram
+    'intro.html',             // 1. Do'st o'zini tanishtiradi
+    'anketa.html',            // 2. 8 qadamli savol-javob (ism + profil)
+    'vada.html',              // 3. Va'da
+    'permissions.html',       // 4. Ruxsatlar
+    'settings.html',          // 5. Sozlamalar
+    // Kun (6-10)
+    'alarm.html',             // 6. Uyg'on
+    'home.html',              // 7. Bosh sahifa
+    'routine.html',           // 8. Reja
+    'today-plan.html',        // 9. Bugungi reja
+    'calendar.html',          // 10. Kalendar
+    // Bajarish (11-14)
+    'day-flow.html',          // 11. Taymer
+    'hard-lock.html',         // 12. Qulflash
+    'negotiation.html',       // 13. Diqqat sinovi
+    'session-reflection.html',// 14. Sessiya bahosi
+    // Natija (15-17)
+    'notifications.html',     // 15. Xabarlar
+    'weekly-review.html',     // 16. Natijalar
+    'celebrate.html'          // 17. Bayram
   ];
 
   const file = (location.pathname.split('/').pop() || 'welcome.html').toLowerCase();
@@ -217,13 +216,13 @@
   const prev = idx > 0 ? SEQ[idx - 1] : null;
   const next = idx < SEQ.length - 1 ? SEQ[idx + 1] : null;
 
-  // 5 ta bo'lim — qaysi ekran qaysi bo'limga tegishli
+  // 5 ta bo'lim
   const SECTIONS = [
-    { name: 'Tanishuv',  range: [0, 4] },   // 1-4 (intro, welcome, goal, vada)
-    { name: 'Sozlama',   range: [4, 6] },   // 5-6 (permissions, settings)
-    { name: 'Kun',       range: [6, 11] },  // 7-11 (alarm, home, routine, today-plan, calendar)
-    { name: 'Bajarish',  range: [11, 15] }, // 12-15
-    { name: 'Natija',    range: [15, 18] }  // 16-18
+    { name: 'Tanishuv',  range: [0, 3] },   // 1-3 (intro, anketa, vada)
+    { name: 'Sozlama',   range: [3, 5] },   // 4-5 (permissions, settings)
+    { name: 'Kun',       range: [5, 10] },  // 6-10 (alarm, home, routine, today-plan, calendar)
+    { name: 'Bajarish',  range: [10, 14] }, // 11-14
+    { name: 'Natija',    range: [14, 17] }  // 15-17
   ];
   const currentSection = SECTIONS.find(s => idx >= s.range[0] && idx < s.range[1]) || SECTIONS[0];
   const sectionIdx = idx - currentSection.range[0] + 1;
