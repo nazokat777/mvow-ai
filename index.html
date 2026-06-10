@@ -13,65 +13,110 @@
 <link rel="icon" type="image/png" href="assets/mnsm-logo.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
 <style>
   * { box-sizing: border-box; margin: 0; padding: 0; }
-  :root {
-    --void:#04060B;
-    --text:#F5F2EC;
-    --accent:#00E5D4;
-  }
+  :root { --void:#04060B; --text:#F5F2EC; --text-mid:#B8BBC2; --text-dim:#9CA0A8; --accent:#00E5D4; --accent-soft:#00B5A8; }
   html, body {
-    background: var(--void);
-    color: var(--text);
-    min-height: 100vh;
-    overflow: hidden;
+    background: var(--void); color: var(--text);
+    min-height: 100vh; overflow: hidden;
     -webkit-font-smoothing: antialiased;
-    font-family: 'Cormorant Garamond', serif;
+    font-family: 'Inter', sans-serif;
   }
   .stage {
     position: fixed; inset: 0;
     display: flex; flex-direction: column;
     align-items: center; justify-content: center;
-    gap: 18px;
+    gap: 18px; padding: 40px 32px 140px;
   }
   .halo {
     position: absolute;
-    width: 320px; height: 320px;
+    width: 340px; height: 340px;
     background: radial-gradient(circle, rgba(0,229,212,.22), transparent 60%);
     border-radius: 50%;
     opacity: 0;
-    animation: halo-in 1.0s ease 0.1s forwards;
+    animation: halo-in 1.2s ease .2s forwards, halo-pulse 5s ease-in-out 2s infinite;
     pointer-events: none;
+    top: 30%; transform: translateY(-50%);
   }
   @keyframes halo-in { to { opacity: 1; } }
+  @keyframes halo-pulse {
+    0%,100% { transform: translateY(-50%) scale(1); opacity: .8; }
+    50%     { transform: translateY(-50%) scale(1.08); opacity: 1; }
+  }
   .logo {
-    width: 88px; height: 88px;
+    width: 92px; height: 92px;
     background: url('assets/mnsm-logo.png') center/contain no-repeat;
     filter: hue-rotate(160deg) saturate(1.4) drop-shadow(0 0 18px rgba(0,229,212,.45));
-    opacity: 0;
-    transform: scale(0.7);
-    animation: logo-in 1.0s cubic-bezier(.16,.84,.32,1) 0.1s forwards;
+    opacity: 0; transform: scale(0.7);
+    animation: logo-in 1.0s cubic-bezier(.16,.84,.32,1) .1s forwards;
+    z-index: 2;
   }
   @keyframes logo-in { to { opacity: 1; transform: scale(1); } }
   .name {
-    font-weight: 500;
-    font-size: 28px;
-    letter-spacing: 4px;
-    color: var(--text);
+    font-family: 'Cormorant Garamond', serif;
+    font-weight: 600; font-size: 36px;
+    letter-spacing: 6px; color: var(--text);
     opacity: 0;
-    animation: fade-up 0.7s ease 0.7s forwards;
+    animation: fade-up 0.7s ease .8s forwards; z-index: 2;
   }
   @keyframes fade-up {
-    from { opacity: 0; transform: translateY(6px); }
+    from { opacity: 0; transform: translateY(8px); }
     to   { opacity: 1; transform: translateY(0); }
   }
-  .tag {
-    font-style: italic;
-    font-size: 13px;
-    color: rgba(245,242,236,.55);
+  .tagline {
+    font-family: 'Cormorant Garamond', serif;
+    font-style: italic; font-size: 14px;
+    color: var(--text-mid);
     opacity: 0;
-    animation: fade-up 0.7s ease 1.0s forwards;
+    animation: fade-up 0.7s ease 1.1s forwards;
+    z-index: 2; text-align: center; margin-top: -4px;
+  }
+  .lang-block {
+    margin-top: 40px; width: 100%; max-width: 320px;
+    opacity: 0;
+    animation: fade-up 0.7s ease 1.5s forwards; z-index: 2;
+  }
+  .lang-lbl {
+    font-size: 10px; letter-spacing: 4px;
+    color: var(--text-dim); text-transform: uppercase;
+    text-align: center; margin-bottom: 14px;
+  }
+  .lang-row { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 8px; }
+  .lang-btn {
+    padding: 14px 12px;
+    background: transparent;
+    border: 1px solid rgba(255,255,255,.08);
+    border-radius: 8px; color: var(--text-mid);
+    font-family: 'Inter', sans-serif;
+    font-size: 13px; font-weight: 500; letter-spacing: 1px;
+    cursor: pointer; transition: all .15s;
+    text-align: center; min-height: 48px;
+  }
+  .lang-btn:hover, .lang-btn:active {
+    border-color: rgba(0,229,212,.4);
+    color: var(--text); background: rgba(0,229,212,.04);
+  }
+  .lang-btn.on {
+    border-color: var(--accent); color: var(--accent);
+    background: rgba(0,229,212,.08);
+  }
+  .cta-row {
+    position: fixed; bottom: 0; left: 0; right: 0;
+    padding: 18px 32px env(safe-area-inset-bottom, 24px);
+    background: linear-gradient(180deg, transparent, var(--void) 30%);
+    opacity: 0;
+    animation: fade-up 0.7s ease 1.8s forwards; z-index: 5;
+  }
+  .cta {
+    display: block; width: 100%; max-width: 360px; margin: 0 auto;
+    padding: 16px;
+    background: linear-gradient(180deg, var(--accent), var(--accent-soft));
+    color: var(--void); font-size: 13px; font-weight: 600;
+    letter-spacing: 2px; text-transform: uppercase;
+    border: none; border-radius: 6px;
+    text-align: center; text-decoration: none;
+    cursor: pointer; min-height: 52px;
   }
 </style>
 </head>
@@ -81,21 +126,65 @@
   <div class="halo"></div>
   <div class="logo"></div>
   <div class="name">brend</div>
-  <div class="tag">sening intizom do'sting</div>
+  <div class="tagline" id="tagline">sening intizom do'sting</div>
+
+  <div class="lang-block">
+    <div class="lang-lbl">til · язык · language</div>
+    <div class="lang-row">
+      <button class="lang-btn" data-lang="uz">O'ZBEK</button>
+      <button class="lang-btn" data-lang="ru">РУССКИЙ</button>
+      <button class="lang-btn" data-lang="en">ENGLISH</button>
+    </div>
+  </div>
 </div>
 
+<div class="cta-row">
+  <a class="cta" id="goBtn" href="intro.html">Davom</a>
+</div>
+
+<script src="i18n.js" defer></script>
 <script>
-  // Returning vs new user
+  // Qaytuvchi foydalanuvchi — to'g'ridan-to'g'ri uy
   const hasUser = !!localStorage.getItem('mvow.userName');
-  const introSeen = !!localStorage.getItem('mvow.introSeen');
   const isMobile = window.matchMedia('(max-width: 720px)').matches
                 || /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
-  let target;
-  if (!isMobile) target = 'gallery.html';
-  else if (hasUser) target = 'home.html';
-  else if (!introSeen) target = 'intro.html';
-  else target = 'welcome.html';
-  setTimeout(() => { location.replace(target); }, 1600);
+  if (!isMobile) {
+    location.replace('gallery.html');
+  } else if (hasUser) {
+    location.replace('home.html');
+  }
+
+  const TAGLINES = {
+    uz: "sening intizom do'sting",
+    ru: "твой друг по дисциплине",
+    en: "your discipline companion"
+  };
+  const CTA_TEXT = { uz: 'Davom', ru: 'Продолжить', en: 'Continue' };
+  const tagEl = document.getElementById('tagline');
+  const goBtn = document.getElementById('goBtn');
+
+  function setLang(lang) {
+    if (window.I18N) I18N.set(lang);
+    else localStorage.setItem('mvow.lang', lang);
+    document.querySelectorAll('.lang-btn').forEach(b =>
+      b.classList.toggle('on', b.dataset.lang === lang)
+    );
+    if (TAGLINES[lang]) tagEl.textContent = TAGLINES[lang];
+    if (CTA_TEXT[lang]) goBtn.textContent = CTA_TEXT[lang];
+    document.documentElement.lang = lang;
+  }
+
+  const current = localStorage.getItem('mvow.lang') || ((navigator.language || 'uz').slice(0,2));
+  const initLang = ['uz','ru','en'].includes(current) ? current : 'uz';
+  setLang(initLang);
+
+  document.querySelectorAll('.lang-btn').forEach(b =>
+    b.addEventListener('click', () => setLang(b.dataset.lang))
+  );
+
+  goBtn.addEventListener('click', () => {
+    localStorage.setItem('mvow.introSeen', '1');
+  });
 </script>
 
 </body>

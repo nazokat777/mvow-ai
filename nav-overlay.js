@@ -399,4 +399,108 @@
     <a class="seq-arrow ${next ? '' : 'disabled'}" href="${next || '#'}" aria-label="Keyingi">›</a>
   `;
   document.body.appendChild(side);
+
+  // ──────────────────────────────────────────────────────────────
+  // GLOBUS — til tanlash (taymer sahifalardan tashqari hammada)
+  // ──────────────────────────────────────────────────────────────
+  const TIMER_PAGES = ['day-flow.html', 'hard-lock.html', 'alarm.html'];
+  if (!TIMER_PAGES.includes(file)) {
+    const langStyle = document.createElement('style');
+    langStyle.textContent = `
+      .seq-globe {
+        position: fixed;
+        top: 8px;
+        right: 60px;
+        width: 44px; height: 44px;
+        border-radius: 50%;
+        border: 1px solid rgba(0,229,212,0.45);
+        background: rgba(8,8,12,0.85);
+        backdrop-filter: blur(8px);
+        -webkit-backdrop-filter: blur(8px);
+        color: #7AF5EC;
+        display: flex; align-items: center; justify-content: center;
+        cursor: pointer; user-select: none;
+        -webkit-tap-highlight-color: transparent;
+        z-index: 99999;
+        transition: transform .12s, background .15s;
+      }
+      .seq-globe:active { transform: scale(0.93); background: rgba(0,229,212,0.18); }
+      .seq-globe svg { width: 22px; height: 22px; }
+      .seq-lang-menu {
+        position: fixed;
+        top: 60px; right: 8px;
+        background: rgba(12,15,22,.96);
+        border: 1px solid rgba(0,229,212,.25);
+        border-radius: 10px;
+        padding: 6px;
+        display: none;
+        flex-direction: column;
+        gap: 2px;
+        min-width: 140px;
+        z-index: 99999;
+        backdrop-filter: blur(12px);
+        box-shadow: 0 8px 28px rgba(0,0,0,.6);
+      }
+      .seq-lang-menu.show { display: flex; }
+      .seq-lang-menu button {
+        background: transparent;
+        border: none;
+        color: #F5F2EC;
+        font-family: 'Inter', sans-serif;
+        font-size: 13px;
+        padding: 10px 14px;
+        text-align: left;
+        cursor: pointer;
+        border-radius: 6px;
+        letter-spacing: 0.5px;
+      }
+      .seq-lang-menu button:hover, .seq-lang-menu button:active {
+        background: rgba(0,229,212,.08); color: #7AF5EC;
+      }
+      .seq-lang-menu button.on { color: #00E5D4; }
+      .seq-lang-menu button .check { float: right; opacity: 0; }
+      .seq-lang-menu button.on .check { opacity: 1; }
+    `;
+    document.head.appendChild(langStyle);
+
+    const globe = document.createElement('button');
+    globe.className = 'seq-globe';
+    globe.setAttribute('aria-label', 'Language');
+    globe.innerHTML = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+      <circle cx="12" cy="12" r="9"/>
+      <path d="M3 12h18M12 3a14 14 0 0 1 0 18M12 3a14 14 0 0 0 0 18"/>
+    </svg>`;
+    document.body.appendChild(globe);
+
+    const menu = document.createElement('div');
+    menu.className = 'seq-lang-menu';
+    const currentLang = (window.I18N && I18N.lang) || localStorage.getItem('mvow.lang') || 'uz';
+    const LANGS = [
+      { code: 'uz', label: "O'zbekcha" },
+      { code: 'ru', label: 'Русский' },
+      { code: 'en', label: 'English' }
+    ];
+    menu.innerHTML = LANGS.map(l =>
+      `<button data-lang="${l.code}" class="${l.code === currentLang ? 'on' : ''}">${l.label}<span class="check">✓</span></button>`
+    ).join('');
+    document.body.appendChild(menu);
+
+    globe.addEventListener('click', (e) => {
+      e.stopPropagation();
+      menu.classList.toggle('show');
+    });
+    document.addEventListener('click', (e) => {
+      if (!menu.contains(e.target) && e.target !== globe) {
+        menu.classList.remove('show');
+      }
+    });
+    menu.querySelectorAll('button').forEach(b => {
+      b.addEventListener('click', () => {
+        const lang = b.dataset.lang;
+        if (window.I18N) I18N.set(lang);
+        else localStorage.setItem('mvow.lang', lang);
+        setTimeout(() => location.reload(), 100);
+      });
+    });
+  }
 })();
