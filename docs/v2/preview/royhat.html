@@ -1,0 +1,267 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>brend — Ro'yhat</title>
+<link rel="manifest" href="manifest.webmanifest">
+<meta name="theme-color" content="#04060B">
+<link rel="apple-touch-icon" href="assets/mnsm-logo.png">
+<link rel="icon" type="image/png" href="assets/mnsm-logo.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;1,500&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  :root {
+    --void:#04060B; --void-soft:#0C0F16;
+    --text:#F5F2EC; --text-mid:#B8BBC2; --text-dim:#9CA0A8;
+    --accent:#00E5D4; --accent-soft:#00B5A8;
+    --card:#11151E;
+  }
+  html, body {
+    background: var(--void);
+    color: var(--text);
+    min-height: 100vh;
+    font-family: 'Inter', sans-serif;
+    -webkit-font-smoothing: antialiased;
+  }
+  .wrap {
+    max-width: 480px;
+    margin: 0 auto;
+    padding: 60px 28px 140px;
+  }
+  .logo {
+    width: 56px; height: 56px;
+    margin: 0 auto 18px;
+    background: url('assets/mnsm-logo.png') center/contain no-repeat;
+    filter: hue-rotate(160deg) saturate(1.4) drop-shadow(0 0 14px rgba(0,229,212,.4));
+  }
+  .brandname {
+    text-align: center;
+    font-family: 'Cormorant Garamond', serif;
+    font-weight: 500;
+    font-size: 22px;
+    letter-spacing: 4px;
+    color: var(--text-mid);
+    margin-bottom: 36px;
+  }
+  .title {
+    font-family: 'Cormorant Garamond', serif;
+    font-style: italic;
+    font-weight: 500;
+    font-size: 36px;
+    text-align: center;
+    margin-bottom: 8px;
+  }
+  .sub {
+    text-align: center;
+    font-size: 14px;
+    color: var(--text-mid);
+    margin-bottom: 36px;
+  }
+
+  /* Google button */
+  .google-btn {
+    width: 100%;
+    background: #fff;
+    color: #1f1f1f;
+    border: none;
+    border-radius: 12px;
+    padding: 14px 18px;
+    font-family: 'Inter', sans-serif;
+    font-size: 15px;
+    font-weight: 500;
+    cursor: pointer;
+    display: flex; align-items: center; justify-content: center;
+    gap: 12px;
+    min-height: 52px;
+    transition: opacity .15s, transform .12s;
+    margin-bottom: 24px;
+  }
+  .google-btn:hover { opacity: .94; }
+  .google-btn:active { transform: scale(0.98); }
+  .google-icon { width: 20px; height: 20px; flex-shrink: 0; }
+
+  /* OR divider */
+  .or {
+    display: grid;
+    grid-template-columns: 1fr auto 1fr;
+    gap: 14px;
+    align-items: center;
+    margin-bottom: 24px;
+  }
+  .or::before, .or::after {
+    content: '';
+    height: 1px;
+    background: rgba(255,255,255,.08);
+  }
+  .or-text {
+    font-size: 11px;
+    color: var(--text-dim);
+    letter-spacing: 3px;
+    text-transform: uppercase;
+  }
+
+  /* Email form */
+  .input-lbl {
+    display: block;
+    font-size: 11px;
+    color: var(--text-mid);
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    margin-bottom: 8px;
+    margin-top: 14px;
+  }
+  .input {
+    width: 100%;
+    background: var(--card);
+    border: 1.5px solid rgba(255,255,255,.08);
+    border-radius: 10px;
+    color: var(--text);
+    padding: 14px 16px;
+    font-family: 'Inter', sans-serif;
+    font-size: 15px;
+    outline: none;
+    transition: border-color .15s;
+  }
+  .input:focus { border-color: var(--accent); }
+  .input::placeholder { color: var(--text-dim); }
+  .err {
+    display: none;
+    font-size: 12px;
+    color: #FF8E97;
+    margin-top: 6px;
+    letter-spacing: 0.5px;
+  }
+  .err.show { display: block; }
+
+  .submit {
+    width: 100%;
+    margin-top: 24px;
+    background: linear-gradient(180deg, var(--accent), var(--accent-soft));
+    color: var(--void);
+    border: none;
+    border-radius: 10px;
+    padding: 16px;
+    font-family: 'Inter', sans-serif;
+    font-size: 14px;
+    font-weight: 600;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    cursor: pointer;
+    transition: opacity .15s, transform .12s;
+    min-height: 52px;
+  }
+  .submit.disabled { opacity: 0.35; pointer-events: none; }
+  .submit:active { transform: scale(0.97); }
+
+  .skip {
+    display: block;
+    text-align: center;
+    margin-top: 18px;
+    font-size: 12px;
+    color: var(--text-mid);
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    text-decoration: none;
+    padding: 12px;
+  }
+
+  .terms {
+    margin-top: 28px;
+    text-align: center;
+    font-size: 11px;
+    color: var(--text-dim);
+    line-height: 1.6;
+    padding: 0 8px;
+  }
+</style>
+</head>
+<body>
+
+<div class="wrap">
+  <div class="logo"></div>
+  <div class="brandname">brend</div>
+
+  <h1 class="title" data-i18n="auth.title">Ro'yhatdan o'tish</h1>
+  <p class="sub" data-i18n="auth.sub">Yo'lingni saqlash uchun</p>
+
+  <button class="google-btn" id="googleBtn" type="button">
+    <svg class="google-icon" viewBox="0 0 48 48" xmlns="http://www.w3.org/2000/svg">
+      <path fill="#FFC107" d="M43.6 20.5H42V20H24v8h11.3c-1.6 4.7-6.1 8-11.3 8-6.6 0-12-5.4-12-12s5.4-12 12-12c3.1 0 5.8 1.2 7.9 3.1l5.7-5.7C34 6.1 29.3 4 24 4 12.9 4 4 12.9 4 24s8.9 20 20 20c11 0 19.6-8 19.6-20 0-1.3-.1-2.4-.4-3.5z"/>
+      <path fill="#FF3D00" d="M6.3 14.7l6.6 4.8C14.6 16 18.9 13 24 13c3.1 0 5.8 1.2 7.9 3.1l5.7-5.7C34 6.1 29.3 4 24 4 16.3 4 9.7 8.3 6.3 14.7z"/>
+      <path fill="#4CAF50" d="M24 44c5.2 0 9.9-2 13.4-5.2l-6.2-5.2c-2 1.4-4.5 2.3-7.2 2.3-5.2 0-9.6-3.3-11.3-7.9l-6.5 5C9.5 39.6 16.2 44 24 44z"/>
+      <path fill="#1976D2" d="M43.6 20.5H42V20H24v8h11.3c-.8 2.3-2.3 4.2-4.3 5.6l6.2 5.2c-.4.4 6.8-5 6.8-14.8 0-1.3-.1-2.4-.4-3.5z"/>
+    </svg>
+    <span data-i18n="auth.google">Google bilan davom</span>
+  </button>
+
+  <div class="or"><span class="or-text" data-i18n="auth.or">yoki</span></div>
+
+  <label class="input-lbl" data-i18n="auth.email_lbl">Email</label>
+  <input class="input" id="emailInput" type="email" placeholder="ism@example.com" autocomplete="email" inputmode="email">
+  <div class="err" id="emailErr" data-i18n="auth.email_err">To'g'ri email kirit</div>
+
+  <button class="submit disabled" id="submitBtn" type="button" data-i18n="auth.cta">Ro'yhatdan o'tish</button>
+
+  <a class="skip" href="intro.html" id="skipLink" data-i18n="auth.skip">Hozircha o'tkazib yubor</a>
+
+  <p class="terms" data-i18n="auth.terms">Ro'yhatdan o'tish bilan sen <span data-i18n="auth.terms_link">Foydalanish shartlari</span>ga rozi bo'lasan.</p>
+</div>
+
+<script src="i18n.js" defer></script>
+<script>
+  const $ = id => document.getElementById(id);
+  const emailInp = $('emailInput');
+  const emailErr = $('emailErr');
+  const submitBtn = $('submitBtn');
+  const googleBtn = $('googleBtn');
+  const skipLink = $('skipLink');
+
+  function isValidEmail(v) {
+    return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v.trim());
+  }
+  function check() {
+    const v = emailInp.value.trim();
+    const valid = isValidEmail(v);
+    submitBtn.classList.toggle('disabled', !valid);
+    emailErr.classList.toggle('show', v.length > 5 && !valid);
+  }
+  emailInp.addEventListener('input', check);
+  emailInp.addEventListener('keydown', e => {
+    if (e.key === 'Enter' && isValidEmail(emailInp.value.trim())) {
+      submitBtn.click();
+    }
+  });
+
+  function saveAndContinue(email, name) {
+    localStorage.setItem('mvow.email', email || '');
+    if (name) localStorage.setItem('mvow.userName', name);
+    localStorage.setItem('mvow.registeredAt', new Date().toISOString());
+    location.href = 'intro.html';
+  }
+
+  submitBtn.addEventListener('click', () => {
+    const email = emailInp.value.trim();
+    if (!isValidEmail(email)) return;
+    saveAndContinue(email, '');
+  });
+
+  googleBtn.addEventListener('click', () => {
+    // Google Sign-In hozircha sozlanmagan — ClientID kerak
+    // Vaqtinchalik: foydalanuvchini email orqali davom etishga yo'naltirish
+    alert('Google ulanish hozircha sozlanmagan.\n\nEmail bilan davom et yoki "O\'tkazib yubor".');
+    emailInp.focus();
+  });
+
+  // Saqlangan email
+  const savedEmail = localStorage.getItem('mvow.email');
+  if (savedEmail) {
+    emailInp.value = savedEmail;
+    check();
+  }
+</script>
+
+</body>
+</html>
