@@ -13,13 +13,25 @@
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
 <style>
   * { box-sizing: border-box; margin: 0; padding: 0; }
-  :root { --void:#04060B; --text:#F5F2EC; --text-mid:#8A8D94; --text-dim:#4A4D54; --accent:#00E5D4; --accent-soft:#00B5A8; --emerald:#4A8A5C; --crimson:#B8334A; }
+  :root { --void:#04060B; --text:#F5F2EC; --text-mid:#8A8D94; --text-dim:#4A4D54; --accent:#00E5D4; --emerald:#4A8A5C; --crimson:#B8334A; }
   body { background: var(--void); font-family:'Inter',sans-serif; color: var(--text); min-height: 100vh; display:flex; justify-content:center; align-items:flex-start; padding: 24px; -webkit-font-smoothing: antialiased; }
   .phone { width: 380px; min-height: 800px; background: var(--void); border-radius: 40px; overflow: hidden; position: relative; box-shadow: 0 0 0 8px #1a1d24, 0 30px 80px rgba(0,0,0,.7); }
   .container { padding: 60px 24px 40px; }
+
   .h { text-align:center; margin-bottom: 32px; }
   .h .title { font-family:'Cormorant Garamond',serif; font-size: 26px; font-weight:500; }
   .h .day { font-size: 10px; letter-spacing: 3px; color: var(--text-mid); text-transform: uppercase; margin-top: 4px; }
+
+  .empty {
+    text-align: center;
+    color: var(--text-dim);
+    font-family: 'Cormorant Garamond', serif;
+    font-style: italic;
+    font-size: 15px;
+    padding: 48px 16px;
+    line-height: 1.6;
+  }
+
   .item {
     display: grid;
     grid-template-columns: 60px 1fr;
@@ -35,9 +47,29 @@
     font-feature-settings: "tnum";
   }
   .item .text { font-size: 14px; color: var(--text-mid); line-height: 1.4; }
+
   .item.win .text { color: var(--accent); }
+  .item.streak .text { color: var(--accent); }
   .item.bad .text { color: var(--crimson); }
   .item.now .text { color: var(--text); }
+  .item.done .text { color: var(--emerald); }
+
+  .clear-btn {
+    display: block;
+    width: 100%;
+    margin-top: 24px;
+    padding: 12px;
+    background: transparent;
+    color: var(--text-dim);
+    font-size: 11px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    border: 1px solid rgba(255,255,255,.06);
+    border-radius: 6px;
+    cursor: pointer;
+  }
+  .clear-btn:hover, .clear-btn:active { color: var(--crimson); border-color: var(--crimson); }
+
   @media (max-width: 480px) { body { padding: 0; } .phone { width: 100vw; min-height: 100vh; border-radius: 0; box-shadow: none; } }
 </style>
 </head>
@@ -48,35 +80,102 @@
 
     <div class="h">
       <div class="title">Xabarlar</div>
-      <div class="day"><span data-mvow="today.date">10-MAY</span></div>
+      <div class="day" id="dateLbl">10-JUN</div>
     </div>
 
-    <div class="item now">
-      <span class="at">14:30</span>
-      <span class="text">Keyingi sessiya 30 daqiqadan keyin.</span>
-    </div>
-    <div class="item win">
-      <span class="at">12:00</span>
-      <span class="text">12 kun streak. Yutuq.</span>
-    </div>
-    <div class="item">
-      <span class="at">07:20</span>
-      <span class="text">Arab grammatikasi — bajardim.</span>
-    </div>
-    <div class="item bad">
-      <span class="at">06:45</span>
-      <span class="text">Instagram so'rading — rad.</span>
-    </div>
-    <div class="item">
-      <span class="at">04:00</span>
-      <span class="text">Qur'on darsi — boshlandi.</span>
-    </div>
+    <div id="items"></div>
+
+    <button class="clear-btn" id="clearBtn" type="button">Tozalash</button>
 
   </div>
 </div>
 
 <script src="data.js" defer></script>
 <script src="nav-overlay.js" defer></script>
+<script>
+  function fmtTime(ts) {
+    const d = new Date(ts);
+    return String(d.getHours()).padStart(2,'0') + ':' + String(d.getMinutes()).padStart(2,'0');
+  }
+  function todayDateStr() {
+    const d = new Date();
+    const mons = ['YAN','FEV','MAR','APR','MAY','JUN','IYU','AVG','SEN','OKT','NOY','DEK'];
+    return `${String(d.getDate()).padStart(2,'0')}-${mons[d.getMonth()]}`;
+  }
+
+  function loadEvents() {
+    try {
+      const e = JSON.parse(localStorage.getItem('mvow.events') || '[]');
+      return Array.isArray(e) ? e : [];
+    } catch { return []; }
+  }
+
+  // localStorage'dagi holatdan avtomatik hodisalar yaratish (agar bo'sh bo'lsa)
+  function autogenerateFromState(events) {
+    const out = [...events];
+    const now = Date.now();
+
+    // Streak voqeasi (agar mavjud)
+    const streak = parseInt(localStorage.getItem('mvow.streak') || '0', 10);
+    if (streak > 0 && !out.some(e => e.type === 'streak' && e.day === todayDateStr())) {
+      out.push({ ts: now - 60000 * 30, type: 'streak', text: `${streak} kun streak.`, day: todayDateStr() });
+    }
+
+    // Reja tuzilgan
+    const planRaw = localStorage.getItem('mvow.todayPlan');
+    if (planRaw && planRaw.length > 4 && !out.some(e => e.type === 'plan' && e.day === todayDateStr())) {
+      try {
+        const plan = JSON.parse(planRaw);
+        if (Array.isArray(plan) && plan.length) {
+          out.push({ ts: now - 60000 * 90, type: 'plan', text: `Bugungi reja tuzildi — ${plan.length} ish.`, day: todayDateStr() });
+        }
+      } catch {}
+    }
+
+    // Bajarilgan
+    const todayKey = 'mvow.done.' + new Date().toISOString().slice(0,10);
+    const done = parseInt(localStorage.getItem(todayKey) || '0', 10);
+    if (done > 0 && !out.some(e => e.type === 'done' && e.day === todayDateStr() && e.count === done)) {
+      out.push({ ts: now - 60000 * 5, type: 'done', text: `${done} ta sessiya bajarildi.`, day: todayDateStr(), count: done });
+    }
+
+    return out;
+  }
+
+  function classFor(type) {
+    if (type === 'win' || type === 'streak') return 'streak';
+    if (type === 'done') return 'done';
+    if (type === 'bad' || type === 'fail') return 'bad';
+    if (type === 'now' || type === 'plan') return 'now';
+    return '';
+  }
+
+  function render() {
+    document.getElementById('dateLbl').textContent = todayDateStr();
+    const evts = autogenerateFromState(loadEvents());
+    evts.sort((a, b) => b.ts - a.ts); // eng yangi tepada
+
+    const container = document.getElementById('items');
+    if (!evts.length) {
+      container.innerHTML = `<div class="empty">Bugun hech qanday xabar yo'q.<br>Reja tuz, sessiyani bajar — bu yerda chiqadi.</div>`;
+      return;
+    }
+
+    container.innerHTML = evts.map(e => `
+      <div class="item ${classFor(e.type)}">
+        <span class="at">${fmtTime(e.ts)}</span>
+        <span class="text">${e.text}</span>
+      </div>
+    `).join('');
+  }
+
+  document.getElementById('clearBtn').addEventListener('click', () => {
+    localStorage.setItem('mvow.events', '[]');
+    render();
+  });
+
+  render();
+</script>
 
 </body>
 </html>

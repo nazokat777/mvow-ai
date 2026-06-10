@@ -111,19 +111,60 @@
 <script src="data.js" defer></script>
 <script src="nav-overlay.js" defer></script>
 <script>
+  // Haftaning 7 kuni uchun bajarilgan sessiyalar (localStorage'dan)
+  function getWeekData() {
+    const out = [];
+    const today = new Date();
+    // Dushanbadan boshlanadigan hafta
+    const dayOfWeek = today.getDay(); // 0=Yakshanba
+    const monday = new Date(today);
+    monday.setDate(today.getDate() - ((dayOfWeek + 6) % 7));
+
+    for (let i = 0; i < 7; i++) {
+      const d = new Date(monday);
+      d.setDate(monday.getDate() + i);
+      const key = 'mvow.done.' + d.toISOString().slice(0,10);
+      const count = parseInt(localStorage.getItem(key) || '0', 10);
+      // Har sessiya ~ 45 daq = 0.75 soat (taxmin)
+      out.push(count * 0.75);
+    }
+    return out;
+  }
+
   document.addEventListener('DOMContentLoaded', () => {
-    const data = window.MVOW_DATA ? MVOW_DATA.week.days : [5.5,7.2,6,5,8,4,2];
-    const max = Math.max(...data);
+    const realData = getWeekData();
+    const fallback = [5.5, 7.2, 6, 5, 8, 4, 2];
+    const hasReal = realData.some(v => v > 0);
+    const data = hasReal ? realData : fallback;
+    const max = Math.max(...data, 1);
+
+    // Asosiy raqamlar
+    const totalH = Math.round(data.reduce((s,v) => s + v, 0) * 10) / 10;
+    const sessionTotal = data.reduce((s,v) => s + Math.round(v / 0.75), 0);
+    const streak = parseInt(localStorage.getItem('mvow.streak') || '0', 10);
+
+    const focusEl = document.querySelector('[data-mvow="week.focusHours"]');
+    if (focusEl) focusEl.textContent = totalH || 0;
+    const sessEl = document.querySelector('[data-mvow="week.sessionCount"]');
+    if (sessEl) sessEl.textContent = sessionTotal || 0;
+    const streakEl = document.querySelector('[data-mvow="streak"]');
+    if (streakEl) streakEl.textContent = streak;
+    const changeEl = document.querySelector('[data-mvow="week.change"]');
+    if (changeEl) changeEl.textContent = hasReal ? '+' + sessionTotal + ' ish' : '—';
+
+    // Chart
     const chart = document.getElementById('chart');
     const days = document.getElementById('days');
     const labels = ['Du','Se','Ch','Pa','Ju','Sh','Ya'];
+    const todayIdx = (new Date().getDay() + 6) % 7; // Du = 0
+
     data.forEach((v, i) => {
       const bar = document.createElement('div');
       bar.className = 'bar' + (v < max * .5 ? ' dim' : '');
-      bar.style.height = ((v / max) * 100) + '%';
+      bar.style.height = Math.max(2, (v / max) * 100) + '%';
       chart.appendChild(bar);
       const lbl = document.createElement('span');
-      lbl.textContent = labels[i];
+      lbl.textContent = labels[i] + (i === todayIdx ? ' ·' : '');
       days.appendChild(lbl);
     });
   });

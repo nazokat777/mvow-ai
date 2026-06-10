@@ -219,13 +219,15 @@
   const dots = document.querySelectorAll('.progress .dot');
   const timeEl = document.getElementById('time');
 
-  // Joriy vaqt
-  function updateTime() {
-    const d = new Date();
-    timeEl.textContent = String(d.getHours()).padStart(2,'0') + ':' + String(d.getMinutes()).padStart(2,'0');
+  // Uyg'onish vaqti — birinchi sessiya yoki saqlangan qiymat
+  function getWakeTime() {
+    try {
+      const plan = JSON.parse(localStorage.getItem('mvow.todayPlan') || '[]');
+      if (Array.isArray(plan) && plan[0] && plan[0].time) return plan[0].time;
+    } catch {}
+    return localStorage.getItem('mvow.wakeTime') || '04:00';
   }
-  updateTime();
-  setInterval(updateTime, 30000);
+  timeEl.textContent = getWakeTime();
 
   // Tasodifiy misol — qo'shish yoki ayirish, 1-20
   function rand(a, b) { return Math.floor(Math.random() * (b - a + 1)) + a; }
