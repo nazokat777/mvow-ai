@@ -40,12 +40,12 @@
       },
       intro: {
         salom: 'Salom.',
-        sub_line1: 'Men — sening murabbiying.',
+        sub_line1: 'Men — sening do'sting.',
         sub_line2: 'Sen — niyating ortidan boruvchi odam.',
         promise1_head: 'Sen ayt — men eshitaman.',
         promise1_body: "Rejani sen tuzasan. Yozma yoki ovozda — bo'ladi. Men ularni kun tartibiga aylantiraman.",
         promise2_head: 'Fokus paytida — yoningda turaman.',
-        promise2_body: "Taymer ishlaydi, chalg'ituvchi narsalar qulflanadi. Telefon yo'ldan adashsa — qaytaraman.",
+        promise2_body: "Taymer ishlaydi, chalg'ituvchi narsalar diqqat kuchayadi. Telefon yo'ldan adashsa — qaytaraman.",
         promise3_head: 'Har kun — bitta qadam sanayman.',
         promise3_body: "Streak, bajarish hisobi, haftalik o'sish. Tog' bir kechada qurilmaydi — har qadam ko'rinib turadi.",
         promise4_head: "Sen va men — bo'lib qolamiz.",
@@ -107,7 +107,7 @@
       permissions: {
         title: 'Ruxsatlar',
         screen_time: 'Ekran vaqti',
-        screen_time_why: "Fokus paytida chalg'ituvchi ilovalarni qulflash uchun.",
+        screen_time_why: "Fokus paytida chalg'ituvchi ilovalarni fokus rejimi uchun.",
         notif: 'Bildirishnomalar',
         notif_why: "Sessiya boshlanishi va eslatma uchun. Spam yo'q.",
         cta: 'Davom'
@@ -201,7 +201,7 @@
         end: 'Yaxshi, qaytaman'
       },
       negotiation: {
-        thinking_stamp: "Murabbiy o'ylayapti",
+        thinking_stamp: "Do'st o'ylayapti",
         thinking_text: 'Sababingni tinglayapman.',
         thinking_wait: 'Bir lahza…',
         thinking_btn: 'Kutaman',
@@ -244,7 +244,7 @@
       },
       about: {
         what_lbl: 'Nima bu?',
-        what_text: "Bu ilov senga kunlik rejani tuzish, fokus paytida chalg'imaslik va har kuni bitta qadam tashlashda yordam beradi. Murabbiy — sening intizom do'sting.",
+        what_text: "Bu ilov senga kunlik rejani tuzish, fokus paytida chalg'imaslik va har kuni bitta qadam tashlashda yordam beradi. Do'st — sening intizom do'sting.",
         feat_lbl: 'Imkoniyatlar',
         feat1: 'Rejani yozma yoki ovozli kiritish',
         feat2: 'Bugungi kun tartibi — tahrirlanadi',

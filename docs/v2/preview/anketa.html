@@ -1,0 +1,521 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>{brand} — Tanishuv</title>
+<link rel="manifest" href="manifest.webmanifest">
+<meta name="theme-color" content="#04060B">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="brend">
+<link rel="apple-touch-icon" href="assets/mnsm-logo.png">
+<link rel="icon" type="image/png" href="assets/mnsm-logo.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,600;1,500;1,600&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  :root {
+    --void:#04060B; --void-soft:#0C0F16;
+    --text:#F5F2EC; --text-mid:#B8BBC2; --text-dim:#9CA0A8;
+    --accent:#00E5D4; --accent-soft:#00B5A8;
+    --card:#11151E;
+  }
+  html, body {
+    background: var(--void);
+    color: var(--text);
+    min-height: 100vh;
+    font-family: 'Inter', sans-serif;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  /* Top progress bar */
+  .top {
+    position: sticky;
+    top: 0;
+    z-index: 5;
+    background: var(--void);
+    padding: 26px 28px 18px;
+    display: flex;
+    align-items: center;
+    gap: 14px;
+  }
+  .progress {
+    flex: 1;
+    height: 4px;
+    background: rgba(255,255,255,.06);
+    border-radius: 2px;
+    overflow: hidden;
+  }
+  .progress-fill {
+    height: 100%;
+    background: var(--accent);
+    transition: width .35s cubic-bezier(.16,.84,.32,1);
+    border-radius: 2px;
+  }
+  .counter {
+    font-size: 12px;
+    color: var(--text-mid);
+    letter-spacing: 1px;
+    font-feature-settings: "tnum";
+    min-width: 32px;
+    text-align: right;
+  }
+
+  /* Container */
+  .wrap {
+    max-width: 600px;
+    margin: 0 auto;
+    padding: 8px 28px 140px;
+  }
+
+  .section-lbl {
+    font-size: 12px;
+    letter-spacing: 4px;
+    color: var(--accent);
+    text-transform: uppercase;
+    font-weight: 500;
+    margin-bottom: 16px;
+    margin-top: 16px;
+  }
+
+  .question {
+    font-family: 'Cormorant Garamond', serif;
+    font-style: italic;
+    font-weight: 500;
+    font-size: 38px;
+    line-height: 1.18;
+    color: var(--text);
+    margin-bottom: 32px;
+  }
+
+  /* Text input */
+  .text-input {
+    width: 100%;
+    background: var(--card);
+    border: 2px solid var(--accent);
+    border-radius: 12px;
+    color: var(--text);
+    padding: 16px 18px;
+    font-family: 'Inter', sans-serif;
+    font-size: 17px;
+    outline: none;
+    transition: border-color .15s;
+  }
+  .text-input::placeholder { color: var(--text-dim); }
+
+  /* Choice cards */
+  .choices {
+    display: flex; flex-direction: column;
+    gap: 12px;
+  }
+  .choice {
+    display: grid;
+    grid-template-columns: 1fr auto;
+    align-items: center;
+    gap: 16px;
+    padding: 18px 22px;
+    background: var(--card);
+    border: 1px solid rgba(255,255,255,.06);
+    border-radius: 14px;
+    color: var(--text);
+    font-size: 16px;
+    cursor: pointer;
+    transition: all .15s;
+    min-height: 60px;
+    user-select: none;
+    -webkit-tap-highlight-color: transparent;
+  }
+  .choice:hover, .choice:active {
+    border-color: rgba(0,229,212,.25);
+    background: rgba(0,229,212,.04);
+  }
+  .choice.on {
+    border-color: var(--accent);
+    background: rgba(0,229,212,.06);
+  }
+  .choice .radio {
+    width: 22px; height: 22px;
+    border-radius: 50%;
+    border: 1.5px solid rgba(255,255,255,.15);
+    display: flex; align-items: center; justify-content: center;
+    transition: border-color .15s;
+  }
+  .choice.on .radio {
+    border-color: var(--accent);
+  }
+  .choice.on .radio::after {
+    content: '';
+    width: 12px; height: 12px;
+    border-radius: 50%;
+    background: var(--accent);
+  }
+
+  .footer-note {
+    margin-top: 28px;
+    text-align: center;
+    font-size: 12px;
+    color: var(--text-dim);
+    line-height: 1.6;
+    padding: 0 12px;
+  }
+
+  /* Bottom nav */
+  .bottom {
+    position: fixed;
+    bottom: 0; left: 0; right: 0;
+    padding: 20px 28px env(safe-area-inset-bottom, 24px);
+    background: linear-gradient(180deg, transparent, var(--void) 40%);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    z-index: 10;
+  }
+  .back-link {
+    background: transparent;
+    border: none;
+    color: var(--text-mid);
+    font-family: 'Inter', sans-serif;
+    font-size: 14px;
+    cursor: pointer;
+    padding: 14px 8px;
+    min-height: 44px;
+  }
+  .back-link.hidden { visibility: hidden; pointer-events: none; }
+  .next-btn {
+    background: var(--accent);
+    color: var(--void);
+    border: none;
+    border-radius: 999px;
+    padding: 14px 32px;
+    font-family: 'Inter', sans-serif;
+    font-size: 15px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: opacity .15s, transform .12s;
+    min-height: 48px;
+    min-width: 120px;
+  }
+  .next-btn:active { transform: scale(0.96); }
+  .next-btn.disabled { opacity: 0.35; pointer-events: none; }
+
+  /* Animations between steps */
+  .step {
+    animation: stepIn .35s cubic-bezier(.16,.84,.32,1);
+  }
+  @keyframes stepIn {
+    from { opacity: 0; transform: translateY(12px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  /* Done page */
+  .done {
+    display: none;
+    text-align: center;
+    padding: 80px 28px 40px;
+  }
+  .done.show { display: block; }
+  .done .check {
+    width: 72px; height: 72px;
+    margin: 0 auto 24px;
+    border-radius: 50%;
+    border: 2px solid var(--accent);
+    display: flex; align-items: center; justify-content: center;
+    animation: stepIn .5s ease;
+  }
+  .done .check svg { width: 36px; height: 36px; stroke: var(--accent); }
+  .done .title {
+    font-family: 'Cormorant Garamond', serif;
+    font-style: italic;
+    font-weight: 500;
+    font-size: 32px;
+    margin-bottom: 12px;
+  }
+  .done .sub {
+    font-size: 14px;
+    color: var(--text-mid);
+    margin-bottom: 36px;
+    line-height: 1.6;
+  }
+</style>
+</head>
+<body>
+
+<div class="top">
+  <div class="progress"><div class="progress-fill" id="progFill" style="width:0%"></div></div>
+  <div class="counter" id="counter">1 / 8</div>
+</div>
+
+<div class="wrap">
+  <div id="step"></div>
+
+  <div class="done" id="doneScreen">
+    <div class="check">
+      <svg viewBox="0 0 24 24" fill="none" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+        <polyline points="5 12 10 17 19 8"/>
+      </svg>
+    </div>
+    <div class="title">Tanishuv tugadi.</div>
+    <div class="sub">Endi sen va men birga ish boshlaymiz.</div>
+  </div>
+</div>
+
+<div class="bottom" id="bottomNav">
+  <button class="back-link" id="backBtn">← Orqaga</button>
+  <button class="next-btn disabled" id="nextBtn">Keyingi</button>
+</div>
+
+<script>
+  // ── 8 ta savol ──
+  const QUESTIONS = [
+    {
+      id: 'name',
+      type: 'text',
+      title: 'Ismingiz nima?',
+      placeholder: 'Ism',
+      maxlen: 24,
+      validate: v => v.trim().length >= 2,
+    },
+    {
+      id: 'age',
+      type: 'choice',
+      title: 'Yoshingiz nechada?',
+      options: [
+        { v: '<18',   label: '18 dan kichik' },
+        { v: '18-24', label: '18–24' },
+        { v: '25-34', label: '25–34' },
+        { v: '35-44', label: '35–44' },
+        { v: '45+',   label: '45+' }
+      ],
+      note: "Bu javoblar faqat tavsiyalarni shaxsiylashtirish uchun."
+    },
+    {
+      id: 'gender',
+      type: 'choice',
+      title: 'Jinsingiz?',
+      options: [
+        { v: 'm', label: 'Erkak' },
+        { v: 'f', label: 'Ayol' },
+        { v: 'x', label: 'Aytmayman' }
+      ]
+    },
+    {
+      id: 'job',
+      type: 'choice',
+      title: "Asosan nima bilan shug'ullanasiz?",
+      options: [
+        { v: 'study',  label: "O'qiyman" },
+        { v: 'mental', label: 'Aqliy mehnat' },
+        { v: 'phys',   label: 'Jismoniy mehnat' },
+        { v: 'lead',   label: 'Rahbarlik' },
+        { v: 'other',  label: 'Boshqa' }
+      ]
+    },
+    {
+      id: 'focus_time',
+      type: 'choice',
+      title: 'Qachon eng yaxshi fokusda bo\'lasiz?',
+      options: [
+        { v: 'dawn',    label: 'Erta tong (5–8)' },
+        { v: 'morning', label: 'Ertalab (8–12)' },
+        { v: 'noon',    label: 'Tushlikdan keyin (13–17)' },
+        { v: 'evening', label: 'Kechqurun (17–21)' },
+        { v: 'night',   label: 'Tunda (21+)' }
+      ]
+    },
+    {
+      id: 'distract',
+      type: 'choice',
+      title: 'Diqqatingiz qaerda chalg\'iydi?',
+      options: [
+        { v: 'phone',   label: 'Telefon · ilovalar' },
+        { v: 'noise',   label: 'Atrofdagi shovqin' },
+        { v: 'tired',   label: 'Charchoq' },
+        { v: 'thought', label: 'Boshqa fikrlar' },
+        { v: 'mixed',   label: 'Hammasi' }
+      ]
+    },
+    {
+      id: 'session',
+      type: 'choice',
+      title: 'Bitta sessiya qancha bo\'lsin?',
+      options: [
+        { v: '25', label: '25 daqiqa' },
+        { v: '45', label: '45 daqiqa' },
+        { v: '60', label: '60 daqiqa' },
+        { v: '90', label: '90 daqiqa' }
+      ]
+    },
+    {
+      id: 'aim',
+      type: 'text',
+      title: 'Bir jumlada — niyating?',
+      placeholder: "masalan, intizomli bo'lish",
+      maxlen: 80,
+      validate: v => true,  // ixtiyoriy
+      optional: true
+    }
+  ];
+
+  // ── State ──
+  const PROFILE_KEY = 'mvow.profile';
+  const SAVED_KEY = 'mvow.anketa';
+  let answers = {};
+  try { answers = JSON.parse(localStorage.getItem(SAVED_KEY) || '{}'); } catch {}
+  let stepIdx = 0;
+
+  const $ = id => document.getElementById(id);
+  const stepEl = $('step');
+  const progFill = $('progFill');
+  const counter = $('counter');
+  const backBtn = $('backBtn');
+  const nextBtn = $('nextBtn');
+  const doneScreen = $('doneScreen');
+  const bottomNav = $('bottomNav');
+
+  function escapeHtml(s) {
+    return String(s).replace(/[<>"&]/g, c => ({'<':'&lt;','>':'&gt;','"':'&quot;','&':'&amp;'}[c]));
+  }
+
+  function render() {
+    const q = QUESTIONS[stepIdx];
+    const total = QUESTIONS.length;
+    progFill.style.width = ((stepIdx) / total * 100) + '%';
+    counter.textContent = `${stepIdx + 1} / ${total}`;
+    backBtn.classList.toggle('hidden', stepIdx === 0);
+
+    let html = '<div class="step">';
+    html += '<div class="section-lbl">Tanishuv</div>';
+    html += `<h1 class="question">${escapeHtml(q.title)}</h1>`;
+
+    if (q.type === 'text') {
+      const cur = answers[q.id] || '';
+      html += `<input class="text-input" id="qInput" type="text" maxlength="${q.maxlen || 100}" placeholder="${escapeHtml(q.placeholder || '')}" value="${escapeHtml(cur)}" autocomplete="off">`;
+    } else if (q.type === 'choice') {
+      html += '<div class="choices">';
+      for (const opt of q.options) {
+        const on = answers[q.id] === opt.v;
+        html += `<div class="choice ${on ? 'on' : ''}" data-v="${escapeHtml(opt.v)}" role="radio" tabindex="0" aria-checked="${on}">
+          <span>${escapeHtml(opt.label)}</span>
+          <span class="radio"></span>
+        </div>`;
+      }
+      html += '</div>';
+    }
+
+    if (q.note) {
+      html += `<div class="footer-note">${escapeHtml(q.note)}</div>`;
+    }
+
+    html += '</div>';
+    stepEl.innerHTML = html;
+
+    // Wire up inputs
+    if (q.type === 'text') {
+      const inp = $('qInput');
+      inp.addEventListener('input', updateNext);
+      setTimeout(() => inp.focus(), 100);
+    } else {
+      stepEl.querySelectorAll('.choice').forEach(c => {
+        c.addEventListener('click', () => {
+          stepEl.querySelectorAll('.choice').forEach(x => {
+            x.classList.remove('on');
+            x.setAttribute('aria-checked', 'false');
+          });
+          c.classList.add('on');
+          c.setAttribute('aria-checked', 'true');
+          answers[q.id] = c.dataset.v;
+          localStorage.setItem(SAVED_KEY, JSON.stringify(answers));
+          updateNext();
+          // Avtomatik o'tish (single-choice qulayligi)
+          setTimeout(() => { if (canGoNext()) goNext(); }, 250);
+        });
+        c.addEventListener('keydown', e => {
+          if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); c.click(); }
+        });
+      });
+    }
+    updateNext();
+  }
+
+  function canGoNext() {
+    const q = QUESTIONS[stepIdx];
+    if (q.optional) return true;
+    if (q.type === 'text') {
+      const v = ($('qInput') ? $('qInput').value : (answers[q.id] || ''));
+      return q.validate ? q.validate(v) : v.trim().length > 0;
+    }
+    if (q.type === 'choice') {
+      return !!answers[q.id];
+    }
+    return true;
+  }
+  function updateNext() {
+    nextBtn.classList.toggle('disabled', !canGoNext());
+  }
+
+  function goNext() {
+    const q = QUESTIONS[stepIdx];
+    if (q.type === 'text') {
+      answers[q.id] = ($('qInput') ? $('qInput').value.trim() : '');
+      localStorage.setItem(SAVED_KEY, JSON.stringify(answers));
+    }
+    stepIdx++;
+    if (stepIdx >= QUESTIONS.length) {
+      finish();
+    } else {
+      render();
+    }
+  }
+  function goBack() {
+    if (stepIdx > 0) {
+      stepIdx--;
+      render();
+    }
+  }
+  nextBtn.addEventListener('click', () => { if (canGoNext()) goNext(); });
+  backBtn.addEventListener('click', goBack);
+  document.addEventListener('keydown', e => {
+    if (e.key === 'Enter' && canGoNext()) goNext();
+    if (e.key === 'Escape') goBack();
+  });
+
+  function finish() {
+    // Profilga ko'chir
+    const profile = {
+      name:   answers.name || '',
+      age:    answers.age || '',
+      gender: answers.gender || '',
+      job:    answers.job || '',
+      focusTime: answers.focus_time || '',
+      distract:  answers.distract || '',
+      sessionMins: answers.session || '45',
+      aim: answers.aim || ''
+    };
+    localStorage.setItem(PROFILE_KEY, JSON.stringify(profile));
+    if (profile.name) localStorage.setItem('mvow.userName', profile.name);
+    // Sozlamalar prefslariga sessiya
+    try {
+      const prefs = JSON.parse(localStorage.getItem('mvow.prefs') || '{}');
+      prefs.sessionMins = profile.sessionMins;
+      localStorage.setItem('mvow.prefs', JSON.stringify(prefs));
+    } catch {}
+
+    progFill.style.width = '100%';
+    counter.textContent = `${QUESTIONS.length} / ${QUESTIONS.length}`;
+    stepEl.style.display = 'none';
+    bottomNav.style.display = 'none';
+    doneScreen.classList.add('show');
+
+    setTimeout(() => {
+      window.location.href = 'vada.html';
+    }, 1600);
+  }
+
+  render();
+</script>
+
+</body>
+</html>
