@@ -133,10 +133,9 @@
   }
 
   document.addEventListener('DOMContentLoaded', () => {
-    const realData = getWeekData();
-    const fallback = [5.5, 7.2, 6, 5, 8, 4, 2];
-    const hasReal = realData.some(v => v > 0);
-    const data = hasReal ? realData : fallback;
+    // Faqat real ma'lumot — namuna ko'rsatilmaydi
+    const data = getWeekData();
+    const hasReal = data.some(v => v > 0);
     const max = Math.max(...data, 1);
 
     // Asosiy raqamlar

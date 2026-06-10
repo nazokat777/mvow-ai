@@ -166,18 +166,14 @@
       bioEl.classList.add('show');
     }
 
-    // Streak — saqlangan bo'lsa o'sha, yo'q bo'lsa namuna sifatida 12
-    const streakRaw = localStorage.getItem('mvow.streak');
-    const streak = streakRaw != null ? parseInt(streakRaw, 10) : 12;
+    // Streak — saqlangan bo'lsa o'sha, yo'q bo'lsa 0 (soxta default yo'q)
+    const streak = parseInt(localStorage.getItem('mvow.streak') || '0', 10);
     document.getElementById('streakN').textContent = streak;
 
-    // Bugungi reja — saqlangan bo'lsa o'sha, yo'q bo'lsa data.js'dan namuna
+    // Bugungi reja — faqat foydalanuvchi tuzgan reja (namuna ko'rsatilmaydi)
     let plan = [];
-    try { plan = JSON.parse(localStorage.getItem('mvow.todayPlan') || '[]'); } catch {}
-    if (!Array.isArray(plan) || !plan.length) {
-      if (window.MVOW_DATA && MVOW_DATA.sessions) {
-        plan = MVOW_DATA.sessions.map(s => ({ time: s.time, name: s.name, dur: s.dur }));
-      }
+    if (window.MVOW_DATA) {
+      plan = MVOW_DATA.getTodayPlan();
     }
 
     // Saralash
