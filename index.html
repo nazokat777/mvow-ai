@@ -87,11 +87,14 @@
 <script>
   // Returning vs new user
   const hasUser = !!localStorage.getItem('mvow.userName');
+  const introSeen = !!localStorage.getItem('mvow.introSeen');
   const isMobile = window.matchMedia('(max-width: 720px)').matches
                 || /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
-  const target = !isMobile
-    ? 'gallery.html'
-    : (hasUser ? 'home.html' : 'welcome.html');
+  let target;
+  if (!isMobile) target = 'gallery.html';
+  else if (hasUser) target = 'home.html';
+  else if (!introSeen) target = 'intro.html';
+  else target = 'welcome.html';
   setTimeout(() => { location.replace(target); }, 1600);
 </script>
 

@@ -1,0 +1,284 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>{brand} — Tanishaylik</title>
+<link rel="manifest" href="manifest.webmanifest">
+<meta name="theme-color" content="#04060B">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="brend">
+<link rel="apple-touch-icon" href="assets/mnsm-logo.png">
+<link rel="icon" type="image/png" href="assets/mnsm-logo.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  :root {
+    --void:#04060B; --void-soft:#0C0F16;
+    --text:#F5F2EC; --text-mid:#8A8D94; --text-dim:#6E7178;
+    --accent:#00E5D4; --accent-soft:#00B5A8;
+  }
+  body {
+    background: var(--void);
+    font-family: 'Inter', sans-serif;
+    color: var(--text);
+    min-height: 100vh;
+    display: flex; justify-content: center; align-items: flex-start;
+    padding: 24px;
+    -webkit-font-smoothing: antialiased;
+  }
+  .phone {
+    width: 380px; min-height: 800px;
+    background: var(--void);
+    border-radius: 40px;
+    position: relative;
+    box-shadow: 0 0 0 8px #1a1d24, 0 30px 80px rgba(0,0,0,.7);
+    overflow: hidden;
+    display: flex; flex-direction: column;
+  }
+
+  /* Halo */
+  .halo {
+    position: absolute;
+    top: 40px; left: 50%;
+    transform: translateX(-50%);
+    width: 240px; height: 240px;
+    background: radial-gradient(circle, rgba(0,229,212,.12), transparent 60%);
+    border-radius: 50%;
+    opacity: 0;
+    animation: halo-in 1.4s ease 0.3s forwards;
+    pointer-events: none;
+  }
+  @keyframes halo-in { to { opacity: 1; } }
+
+  .container {
+    flex: 1;
+    padding: 60px 30px 100px;
+    overflow-y: auto;
+    position: relative;
+    z-index: 2;
+  }
+
+  /* Top */
+  .top {
+    text-align: center;
+    margin-bottom: 32px;
+    opacity: 0;
+    animation: fade-up .6s ease .1s forwards;
+  }
+  @keyframes fade-up {
+    from { opacity: 0; transform: translateY(8px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+  .logo {
+    width: 56px; height: 56px;
+    margin: 0 auto 14px;
+    background: url('assets/mnsm-logo.png') center/contain no-repeat;
+    filter: hue-rotate(160deg) saturate(1.4) drop-shadow(0 0 14px rgba(0,229,212,.4));
+  }
+  .brandname {
+    font-family: 'Cormorant Garamond', serif;
+    font-weight: 500;
+    font-size: 18px;
+    letter-spacing: 4px;
+    color: var(--text-mid);
+  }
+
+  /* Greet — Murabbiy's first words */
+  .greet {
+    text-align: center;
+    margin-bottom: 28px;
+    opacity: 0;
+    animation: fade-up .8s ease .5s forwards;
+  }
+  .greet .salom {
+    font-family: 'Cormorant Garamond', serif;
+    font-style: italic;
+    font-weight: 500;
+    font-size: 32px;
+    color: var(--accent);
+    line-height: 1.2;
+    margin-bottom: 10px;
+  }
+  .greet .sub {
+    font-family: 'Cormorant Garamond', serif;
+    font-style: italic;
+    font-size: 16px;
+    color: var(--text);
+    line-height: 1.5;
+  }
+
+  /* What I do — Murabbiy's promises */
+  .promises {
+    margin-bottom: 28px;
+    opacity: 0;
+    animation: fade-up .8s ease .9s forwards;
+  }
+  .promise {
+    position: relative;
+    padding: 14px 0 14px 24px;
+    border-left: 1px solid rgba(0,229,212,.15);
+  }
+  .promise:not(:last-child) {
+    margin-bottom: 4px;
+  }
+  .promise::before {
+    content: '';
+    position: absolute;
+    left: -3px;
+    top: 22px;
+    width: 5px; height: 5px;
+    border-radius: 50%;
+    background: var(--accent);
+  }
+  .promise .top {
+    /* override default top class */
+    text-align: left;
+    margin-bottom: 4px;
+    opacity: 1;
+    animation: none;
+  }
+  .promise .head {
+    font-family: 'Cormorant Garamond', serif;
+    font-weight: 500;
+    font-size: 16px;
+    color: var(--text);
+    margin-bottom: 4px;
+    line-height: 1.3;
+  }
+  .promise .head .em { color: var(--accent); font-style: italic; }
+  .promise .body {
+    font-size: 13px;
+    color: var(--text-mid);
+    line-height: 1.5;
+  }
+
+  /* Pact box */
+  .pact {
+    background: var(--void-soft);
+    border: 1px solid rgba(0,229,212,.18);
+    border-radius: 12px;
+    padding: 18px 18px 20px;
+    margin-bottom: 24px;
+    text-align: center;
+    opacity: 0;
+    animation: fade-up .8s ease 1.3s forwards;
+  }
+  .pact .lbl {
+    font-size: 9px;
+    letter-spacing: 4px;
+    color: var(--accent);
+    text-transform: uppercase;
+    margin-bottom: 10px;
+  }
+  .pact .body {
+    font-family: 'Cormorant Garamond', serif;
+    font-style: italic;
+    font-size: 15px;
+    color: var(--text);
+    line-height: 1.7;
+  }
+  .pact .body strong { color: var(--accent); font-weight: 500; }
+
+  .bottom-bar {
+    padding: 18px 30px env(safe-area-inset-bottom, 18px);
+    background: linear-gradient(180deg, transparent, var(--void) 30%);
+    opacity: 0;
+    animation: fade-up .8s ease 1.6s forwards;
+  }
+  .cta {
+    display: block;
+    width: 100%;
+    padding: 16px;
+    background: linear-gradient(180deg, var(--accent), var(--accent-soft));
+    color: var(--void);
+    font-size: 13px;
+    font-weight: 600;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    border: none;
+    border-radius: 6px;
+    text-align: center;
+    text-decoration: none;
+  }
+
+  @media (max-width: 480px) {
+    body { padding: 0; }
+    .phone { width: 100vw; min-height: 100vh; border-radius: 0; box-shadow: none; }
+  }
+</style>
+</head>
+<body>
+
+<div class="phone">
+  <div class="halo"></div>
+
+  <div class="container">
+
+    <div class="top">
+      <div class="logo"></div>
+      <div class="brandname" data-brand="name">brend</div>
+    </div>
+
+    <div class="greet">
+      <div class="salom">Salom.</div>
+      <div class="sub">
+        Men — sening murabbiying.<br>
+        Sen — niyating ortidan boruvchi odam.
+      </div>
+    </div>
+
+    <div class="promises">
+
+      <div class="promise">
+        <div class="head"><span class="em">Sen ayt</span> — men eshitaman.</div>
+        <div class="body">Rejani sen tuzasan. Yozma yoki ovozda — bo'ladi. Men ularni kun tartibiga aylantiraman.</div>
+      </div>
+
+      <div class="promise">
+        <div class="head"><span class="em">Fokus paytida</span> — yoningda turaman.</div>
+        <div class="body">Taymer ishlaydi, chalg'ituvchi narsalar qulflanadi. Telefon yo'ldan adashsa — qaytaraman.</div>
+      </div>
+
+      <div class="promise">
+        <div class="head"><span class="em">Har kun</span> — bitta qadam sanayman.</div>
+        <div class="body">Streak, bajarish hisobi, haftalik o'sish. Tog' bir kechada qurilmaydi — har qadam ko'rinib turadi.</div>
+      </div>
+
+      <div class="promise">
+        <div class="head"><span class="em">Sen va men</span> — bo'lib qolamiz.</div>
+        <div class="body">Ma'lumoting telefoningda. Server yo'q, kuzatuv yo'q, AI'ga jo'natilmaydi. Hech kim bilmaydi.</div>
+      </div>
+
+    </div>
+
+    <div class="pact">
+      <div class="lbl">Bizning kelishuv</div>
+      <div class="body">
+        Sen <strong>"qila olmadim"</strong> deysan —<br>
+        men <strong>"ertaga ham bormiz"</strong> deyman.<br>
+        <span style="opacity:.7;">Intizom — qo'rqitish emas,</span><br>
+        <strong>qo'llab turish.</strong>
+      </div>
+    </div>
+
+  </div>
+
+  <div class="bottom-bar">
+    <a class="cta" id="startBtn" href="welcome.html">Tanishaylik</a>
+  </div>
+</div>
+
+<script src="data.js" defer></script>
+<script src="nav-overlay.js" defer></script>
+<script>
+  document.getElementById('startBtn').addEventListener('click', () => {
+    localStorage.setItem('mvow.introSeen', '1');
+  });
+</script>
+
+</body>
+</html>
