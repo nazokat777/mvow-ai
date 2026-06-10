@@ -17,88 +17,84 @@
 <style>
   * { box-sizing: border-box; margin: 0; padding: 0; }
   :root {
-    --void:      #04060B;
-    --void-soft: #0C0F16;
-    --text:      #F5F2EC;
-    --text-mid:  #8A8D94;
-    --text-dim:  #4A4D54;
-    --accent:      #00E5D4;
-    --accent-soft: #00B5A8;
+    --void:#04060B; --void-soft:#0C0F16;
+    --text:#F5F2EC; --text-mid:#8A8D94; --text-dim:#4A4D54;
+    --accent:#00E5D4; --accent-soft:#00B5A8;
   }
   body {
     background: var(--void);
     font-family: 'Inter', sans-serif;
     color: var(--text);
     min-height: 100vh;
-    display: flex;
-    justify-content: center;
-    align-items: flex-start;
+    display: flex; justify-content: center; align-items: flex-start;
     padding: 24px;
     -webkit-font-smoothing: antialiased;
   }
   .phone {
-    width: 380px;
-    min-height: 800px;
+    width: 380px; min-height: 800px;
     background: var(--void);
     border-radius: 40px;
     position: relative;
     box-shadow: 0 0 0 8px #1a1d24, 0 30px 80px rgba(0,0,0,.7);
     overflow: hidden;
-    display: flex;
-    flex-direction: column;
+    display: flex; flex-direction: column;
   }
   .container {
     flex: 1;
-    display: flex;
-    flex-direction: column;
+    display: flex; flex-direction: column;
     align-items: center;
-    justify-content: center;
-    padding: 80px 40px 100px;
-    gap: 40px;
-    position: relative;
+    padding: 80px 32px 100px;
+    gap: 28px;
   }
   .logo {
-    width: 120px;
-    height: 120px;
+    width: 96px; height: 96px;
     background: url(assets/mnsm-logo.png) center/contain no-repeat;
-    filter: hue-rotate(160deg) saturate(1.4) drop-shadow(0 0 24px rgba(0,229,212,.4));
+    filter: hue-rotate(160deg) saturate(1.4) drop-shadow(0 0 20px rgba(0,229,212,.4));
   }
   .name {
     font-family: 'Cormorant Garamond', serif;
     font-weight: 500;
-    font-size: 32px;
+    font-size: 30px;
     color: var(--text);
     letter-spacing: 4px;
     text-align: center;
+    margin-top: -8px;
   }
   .tag {
-    font-size: 13px;
+    font-size: 12px;
     color: var(--text-mid);
     text-align: center;
-    margin-top: -28px;
+    margin-top: -16px;
   }
-  .field {
+  .fields {
     width: 100%;
-    margin-top: 16px;
+    display: flex; flex-direction: column;
+    gap: 16px;
+    margin-top: 8px;
   }
-  .field input {
+  .field input,
+  .field textarea {
     width: 100%;
     background: var(--void-soft);
     border: none;
     border-bottom: 1px solid rgba(255,255,255,.1);
     color: var(--text);
-    padding: 16px 0;
+    padding: 14px 0;
     font-family: 'Cormorant Garamond', serif;
     font-style: italic;
-    font-size: 18px;
+    font-size: 16px;
     text-align: center;
     outline: none;
     transition: border-color .2s;
+    resize: none;
+    line-height: 1.4;
   }
-  .field input:focus { border-bottom-color: var(--accent); }
-  .field input::placeholder { color: var(--text-dim); font-style: italic; }
+  .field input:focus,
+  .field textarea:focus { border-bottom-color: var(--accent); }
+  .field input::placeholder,
+  .field textarea::placeholder { color: var(--text-dim); font-style: italic; }
   .bottom-bar {
-    padding: 24px 40px env(safe-area-inset-bottom, 24px);
+    padding: 20px 32px env(safe-area-inset-bottom, 20px);
     background: linear-gradient(180deg, transparent, var(--void) 30%);
   }
   .cta {
@@ -117,7 +113,8 @@
     text-align: center;
     text-decoration: none;
   }
-  .cta:disabled, .cta.disabled { opacity: .3; pointer-events: none; }
+  .cta.disabled { opacity: .3; pointer-events: none; }
+
   @media (max-width: 480px) {
     body { padding: 0; }
     .phone { width: 100vw; min-height: 100vh; border-radius: 0; box-shadow: none; }
@@ -131,10 +128,17 @@
     <div class="logo"></div>
     <h1 class="name" data-brand="name">brend</h1>
     <p class="tag" data-brand="tagline">sening intizom do'sting</p>
-    <div class="field">
-      <input id="nameInput" type="text" placeholder="ismingni yoz" autocomplete="given-name" maxlength="24">
+
+    <div class="fields">
+      <div class="field">
+        <input id="nameInput" type="text" placeholder="ismingni yoz" autocomplete="given-name" maxlength="24">
+      </div>
+      <div class="field">
+        <textarea id="bioInput" placeholder="o'zing haqingda bir-ikki jumla" maxlength="160" rows="3"></textarea>
+      </div>
     </div>
   </div>
+
   <div class="bottom-bar">
     <a class="cta disabled" id="startBtn" href="voice-commitment.html">Boshlaymiz</a>
   </div>
@@ -143,15 +147,27 @@
 <script src="data.js" defer></script>
 <script src="nav-overlay.js" defer></script>
 <script>
-  const inp = document.getElementById('nameInput');
+  const nameInp = document.getElementById('nameInput');
+  const bioInp = document.getElementById('bioInput');
   const btn = document.getElementById('startBtn');
-  inp.addEventListener('input', () => {
-    btn.classList.toggle('disabled', !inp.value.trim());
-  });
+
+  function check() {
+    btn.classList.toggle('disabled', !nameInp.value.trim());
+  }
+  nameInp.addEventListener('input', check);
+  bioInp.addEventListener('input', check);
+
   btn.addEventListener('click', e => {
     if (btn.classList.contains('disabled')) { e.preventDefault(); return; }
-    localStorage.setItem('mvow.userName', inp.value.trim());
+    localStorage.setItem('mvow.userName', nameInp.value.trim());
+    if (bioInp.value.trim()) localStorage.setItem('mvow.userBio', bioInp.value.trim());
   });
+
+  // Saqlangan ma'lumotni qaytarish
+  const savedName = localStorage.getItem('mvow.userName');
+  const savedBio = localStorage.getItem('mvow.userBio');
+  if (savedName) { nameInp.value = savedName; check(); }
+  if (savedBio) { bioInp.value = savedBio; }
 </script>
 
 </body>
