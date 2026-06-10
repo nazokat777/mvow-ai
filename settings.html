@@ -89,7 +89,34 @@
     padding: 0 4px;
   }
 
-  .footer { margin-top: 56px; text-align: center; font-size: 11px; letter-spacing: 2px; color: var(--text-dim); text-transform: uppercase; }
+  .danger {
+    display: block;
+    width: 100%;
+    margin-top: 40px;
+    padding: 14px;
+    background: transparent;
+    color: #B8334A;
+    font-family: 'Inter', sans-serif;
+    font-size: 12px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    border: 1px solid rgba(184,51,74,.3);
+    border-radius: 6px;
+    cursor: pointer;
+    transition: all .15s;
+  }
+  .danger:hover, .danger:active {
+    background: rgba(184,51,74,.08);
+    border-color: #B8334A;
+  }
+  .danger.confirm {
+    background: #B8334A;
+    color: var(--void);
+    border-color: #B8334A;
+    font-weight: 600;
+  }
+
+  .footer { margin-top: 32px; text-align: center; font-size: 11px; letter-spacing: 2px; color: var(--text-dim); text-transform: uppercase; }
   .footer .em { color: var(--text-mid); }
 
   @media (max-width: 480px) { body { padding: 0; } .phone { width: 100vw; min-height: 100vh; border-radius: 0; box-shadow: none; } }
@@ -159,7 +186,9 @@
       <div class="toggle" data-toggle="negotiation" role="switch" tabindex="0" aria-label="Diqqat sinovi" aria-checked="false"></div>
     </div>
 
-    <div class="footer">v <span class="em" data-brand="name">brend</span> 8.1</div>
+    <button class="danger" id="resetBtn" type="button">Hammasini tozalash</button>
+
+    <div class="footer">v <span class="em" data-brand="name">brend</span></div>
 
   </div>
 </div>
@@ -202,6 +231,26 @@
         merged[key] = el.value;
         save();
       });
+    });
+
+    // Reset button — confirm then clear
+    const resetBtn = document.getElementById('resetBtn');
+    let confirmTimer = null;
+    resetBtn.addEventListener('click', () => {
+      if (resetBtn.classList.contains('confirm')) {
+        // Hammasini tozalash
+        const keys = Object.keys(localStorage).filter(k => k.startsWith('mvow.'));
+        keys.forEach(k => localStorage.removeItem(k));
+        resetBtn.textContent = 'Tozalandi · qaytamiz';
+        setTimeout(() => { location.replace('welcome.html'); }, 800);
+      } else {
+        resetBtn.classList.add('confirm');
+        resetBtn.textContent = 'Aniqmisan? Bos';
+        confirmTimer = setTimeout(() => {
+          resetBtn.classList.remove('confirm');
+          resetBtn.textContent = 'Hammasini tozalash';
+        }, 3000);
+      }
     });
 
     // Toggle'lar

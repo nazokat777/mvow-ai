@@ -242,6 +242,11 @@
   function render() {
     sortTasks();
     list.innerHTML = '';
+    if (!tasks.length) {
+      list.innerHTML = '<p style="text-align:center;padding:24px 8px;font-family:\'Cormorant Garamond\',serif;font-style:italic;font-size:15px;color:#8A8D94;line-height:1.5;">Bugun bo\'sh.<br>Bitta ish bilan boshla — past tomondan qo\'sh.</p>';
+      updateTotals();
+      return;
+    }
     tasks.forEach((t, idx) => {
       const row = document.createElement('div');
       row.className = 'task';

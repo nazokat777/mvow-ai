@@ -38,6 +38,31 @@
         filter: hue-rotate(160deg) saturate(1.4) drop-shadow(0 0 4px rgba(0,229,212,.5)) !important;
       }
 
+      /* === Universal mikro-animatsiyalar === */
+      /* Sahifa kirishi — fade-in */
+      @keyframes mvow-fade-in {
+        from { opacity: 0; transform: translateY(8px); }
+        to   { opacity: 1; transform: translateY(0); }
+      }
+      .phone {
+        animation: mvow-fade-in 0.4s ease-out;
+      }
+      /* CTA tap feedback */
+      .cta, .ghost, .chip, .add-btn, button {
+        transition: transform 0.12s ease, opacity 0.12s ease, background-color 0.15s ease, color 0.15s ease, border-color 0.15s ease;
+      }
+      .cta:active, .ghost:active, .add-btn:active {
+        transform: scale(0.97);
+      }
+      /* Reduced motion — animatsiyalarni o'chir */
+      @media (prefers-reduced-motion: reduce) {
+        *, *::before, *::after {
+          animation-duration: 0.01ms !important;
+          animation-iteration-count: 1 !important;
+          transition-duration: 0.01ms !important;
+        }
+      }
+
       /* === Universal mobile scroll — every screen flows like a normal page === */
       @media (max-width: 480px) {
         body {
