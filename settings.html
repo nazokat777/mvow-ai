@@ -229,8 +229,7 @@
     const userName = (localStorage.getItem('mvow.userName') || 'Aziz').trim();
     document.getElementById('userName').textContent = userName;
     // Streak
-    const streakRaw = localStorage.getItem('mvow.streak');
-    const streak = streakRaw != null ? parseInt(streakRaw, 10) : 12;
+    const streak = parseInt(localStorage.getItem('mvow.streak') || '0', 10);
     document.getElementById('streakN').textContent = streak;
 
     // Tanlovlar — saqlash/yuklash
