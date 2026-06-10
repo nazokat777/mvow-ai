@@ -221,6 +221,20 @@
       cta.textContent = 'Boshlayman';
       cta.href = 'day-flow.html';
     }
+
+    // ── Streak yo'qotish ogohlantirish ──
+    // Agar kech bo'lib qoldi VA bugun bitta sessiya bajarilmagan bo'lsa
+    const todayKey = 'mvow.done.' + new Date().toISOString().slice(0,10);
+    const todayDone = parseInt(localStorage.getItem(todayKey) || '0', 10);
+    const hour = d.getHours();
+    if (streak > 0 && todayDone === 0 && hour >= 18) {
+      const warn = document.createElement('div');
+      warn.style.cssText = 'background:rgba(255,71,87,.06);border:1px solid rgba(255,71,87,.25);border-radius:8px;padding:14px 16px;text-align:center;font-family:"Cormorant Garamond",serif;font-style:italic;font-size:14px;color:#FF8E97;line-height:1.5;margin-top:-8px;';
+      const remaining = 24 - hour;
+      warn.innerHTML = `Streak yo'qoladi — bugun bitta sessiya qoldi.<br><span style="font-size:12px;opacity:.7;">${remaining} soat qoldi.</span>`;
+      const actions = document.querySelector('.actions');
+      if (actions) actions.parentNode.insertBefore(warn, actions);
+    }
   });
 </script>
 
