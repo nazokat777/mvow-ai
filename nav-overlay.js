@@ -166,21 +166,20 @@
     'voice-commitment.html',  // 2. Mentor bilan tanishuv (va'da)
     'goal.html',              // 3. Maqsadingni so'rash (reja aytish)
     'permissions.html',       // 4. Ruxsatlar (rejani amalga oshirish uchun)
-    'routine.html',           // 5. "Rejalaringni ayt, kun tartibini tuzamiz" — AI
-    'settings.html',          // 6. Sozlamalar — mentor ohangi, sessiya sozlamalari
-    'chat.html',              // 7. Mentor bilan suhbat — istalgan paytda gaplashish
-    'home.html',              // 8. Bosh sahifa — kundalik dashboard
-    'today-plan.html',        // 9. Bugungi tayyor kun tartibi ro'yxati
-    'calendar.html',          // 10. Haftalik kalendar
-    // Bajarish (11-14)
-    'day-flow.html',          // 11. Taymer + nazorat
-    'hard-lock.html',         // 12. Ekran qulflash
-    'negotiation.html',       // 13. Diqqat buzishga urinish — qizil ogohlantirish + ruxsat so'rash
-    'session-reflection.html',// 14. Sessiya bahosi
-    // Bildirishnomalar va natijalar (15-17)
-    'notifications.html',     // 15. Mentor xabarlari · yutuqlar
-    'weekly-review.html',     // 16. Natijalar — 1 kun / 1 hafta / 1 oy
-    'celebrate.html'          // 17. Haftalik bayram
+    'settings.html',          // 5. Sozlamalar — mentor ohangi, sessiya sozlamalari
+    'chat.html',              // 6. Mentor bilan suhbat — istalgan paytda gaplashish
+    'home.html',              // 7. Bosh sahifa — kundalik dashboard
+    'today-plan.html',        // 8. Bugungi tayyor kun tartibi ro'yxati
+    'calendar.html',          // 9. Haftalik kalendar
+    // Bajarish (10-13)
+    'day-flow.html',          // 10. Taymer + nazorat
+    'hard-lock.html',         // 11. Ekran qulflash
+    'negotiation.html',       // 12. Diqqat buzishga urinish
+    'session-reflection.html',// 13. Sessiya bahosi
+    // Bildirishnomalar va natijalar (14-16)
+    'notifications.html',     // 14. Mentor xabarlari · yutuqlar
+    'weekly-review.html',     // 15. Natijalar
+    'celebrate.html'          // 16. Haftalik bayram
   ];
 
   const file = (location.pathname.split('/').pop() || 'welcome.html').toLowerCase();

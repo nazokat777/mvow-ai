@@ -3,7 +3,7 @@
  * after first load. Caches all preview HTML files + the logo.
  */
 
-const CACHE_NAME = 'mvow-v6.0.0';
+const CACHE_NAME = 'mvow-v6.1.0';
 const ASSETS = [
   './',
   // Asosiy infratuzilma
@@ -14,24 +14,23 @@ const ASSETS = [
   './menu.html',
   './gallery.html',
   './assets/mnsm-logo.png',
-  // 17 ta MVP ekran (SEQ tartibida)
+  // 16 ta MVP ekran (SEQ tartibida)
   './welcome.html',           // 1
   './voice-commitment.html',  // 2
   './goal.html',              // 3
   './permissions.html',       // 4
-  './routine.html',           // 5
-  './settings.html',          // 6
-  './chat.html',              // 7
-  './home.html',              // 8
-  './today-plan.html',        // 9
-  './calendar.html',          // 10
-  './day-flow.html',          // 11
-  './hard-lock.html',         // 12
-  './negotiation.html',       // 13
-  './session-reflection.html',// 14
-  './notifications.html',     // 15
-  './weekly-review.html',     // 16
-  './celebrate.html'          // 17
+  './settings.html',          // 5
+  './chat.html',              // 6
+  './home.html',              // 7
+  './today-plan.html',        // 8
+  './calendar.html',          // 9
+  './day-flow.html',          // 10
+  './hard-lock.html',         // 11
+  './negotiation.html',       // 12
+  './session-reflection.html',// 13
+  './notifications.html',     // 14
+  './weekly-review.html',     // 15
+  './celebrate.html'          // 16
 ];
 
 // Install — pre-cache all app assets

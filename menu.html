@@ -6,432 +6,81 @@
 <title>{brand} — Barcha ekranlar</title>
 <link rel="manifest" href="manifest.webmanifest">
 <meta name="theme-color" content="#04060B">
-<meta name="apple-mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<meta name="apple-mobile-web-app-title" content="M·VoW">
 <link rel="apple-touch-icon" href="assets/mnsm-logo.png">
 <link rel="icon" type="image/png" href="assets/mnsm-logo.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;600;700&family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,500&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500&family=Inter:wght@300;400;500&display=swap" rel="stylesheet">
 <style>
   * { box-sizing: border-box; margin: 0; padding: 0; }
-
-  :root {
-    --void:        #04060B;
-    --void-2:      #0A0E16;
-    --shadow:      #11151D;
-    --text-primary: #F5F2EC;
-    --text-body:    #B8BBC2;
-    --text-muted:   #6B6E76;
-    --text-ghost:   #3A3D44;
-    --accent:        #00E5D4;
-    --accent-deep:   #007D75;
-    --accent-flash:  #7AF5EC;
-    --accent-soft:       #00B5A8;
-    --crimson:     #B8334A;
-    --emerald:     #4A8A5C;
-  }
-
-  html, body {
-    background:
-      radial-gradient(ellipse 100% 25% at 50% 0%, rgba(0,229,212,0.10), transparent 70%),
-      var(--void);
-    font-family: 'Inter', sans-serif;
-    color: var(--text-primary);
-    min-height: 100vh;
-    padding-top: env(safe-area-inset-top, 0);
-    padding-bottom: env(safe-area-inset-bottom, 0);
-  }
-
-  body::before {
-    content: '';
-    position: fixed; inset: 0;
-    opacity: 0.025;
-    background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='120' height='120' viewBox='0 0 120 120'><g fill='none' stroke='%2300E5D4' stroke-width='0.5'><polygon points='60,10 74,42 110,42 80,62 92,98 60,80 28,98 40,62 10,42 46,42'/></g></svg>");
-    background-size: 160px 160px;
-    pointer-events: none;
-    z-index: 0;
-  }
-
-  .container {
-    max-width: 520px;
-    margin: 0 auto;
-    padding: 32px 18px 60px;
-    position: relative;
-    z-index: 1;
-  }
-
-  /* === Top header === */
-  .top-bar {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    margin-bottom: 22px;
-  }
-  .back-btn {
-    display: inline-flex;
-    align-items: center;
-    gap: 6px;
-    padding: 8px 14px;
-    border: 1px solid var(--accent-deep);
-    border-radius: 999px;
-    background: rgba(0,229,212,0.04);
-    color: var(--accent);
+  :root { --void:#04060B; --text:#F5F2EC; --text-mid:#8A8D94; --text-dim:#4A4D54; --accent:#00E5D4; }
+  body { background: var(--void); font-family:'Inter',sans-serif; color: var(--text); min-height: 100vh; padding: 60px 24px 60px; -webkit-font-smoothing: antialiased; }
+  .wrap { max-width: 420px; margin: 0 auto; }
+  .h { text-align:center; margin-bottom: 40px; }
+  .h .title { font-family:'Cormorant Garamond',serif; font-size: 28px; font-weight: 500; }
+  .h .sub { font-size: 11px; letter-spacing: 3px; color: var(--text-mid); text-transform: uppercase; margin-top: 6px; }
+  .section { margin-bottom: 32px; }
+  .section .lbl { font-size: 10px; letter-spacing: 4px; color: var(--text-dim); text-transform: uppercase; padding: 0 4px 12px; }
+  .row {
+    display: grid;
+    grid-template-columns: 32px 1fr;
+    gap: 16px;
+    padding: 14px 4px;
+    align-items: baseline;
+    border-bottom: 1px solid rgba(255,255,255,.04);
     text-decoration: none;
-    font-family: 'JetBrains Mono', monospace;
-    font-size: 9.5px;
-    letter-spacing: 2px;
+    color: var(--text);
   }
-  .stamp {
-    padding: 5px 14px;
-    border: 1px solid var(--accent);
-    border-radius: 999px;
-    background: rgba(0,229,212,0.08);
-    font-family: 'JetBrains Mono', monospace;
-    font-size: 9.5px;
-    letter-spacing: 4px;
-    color: var(--accent);
-  }
-
-  /* === Hero === */
-  .hero {
-    text-align: center;
-    margin-bottom: 32px;
-  }
-  .hero .title {
-    font-family: 'Cinzel', serif;
-    font-weight: 700;
-    font-size: 30px;
-    letter-spacing: 8px;
-    color: var(--accent);
-    text-shadow: 0 0 24px rgba(0,229,212,0.40);
-    line-height: 1;
-    margin-bottom: 6px;
-  }
-  .hero .sub {
-    font-family: 'Cormorant Garamond', serif;
-    font-style: italic;
-    font-size: 14px;
-    color: var(--accent-soft);
-    letter-spacing: 1px;
-  }
-
-  /* === Sections === */
-  .section { margin-bottom: 28px; }
-  .section-head {
-    display: flex; align-items: baseline; gap: 10px;
-    margin-bottom: 10px;
-    padding: 0 4px;
-  }
-  .section-head .num {
-    font-family: 'Cinzel', serif;
-    font-weight: 700;
-    font-size: 16px;
-    color: var(--accent);
-    letter-spacing: 2px;
-  }
-  .section-head .name {
-    font-family: 'Cormorant Garamond', serif;
-    font-style: italic;
-    font-weight: 600;
-    font-size: 18px;
-    color: var(--text-primary);
-  }
-  .section-head .count {
-    margin-left: auto;
-    font-family: 'JetBrains Mono', monospace;
-    font-size: 9px;
-    color: var(--accent-deep);
-    letter-spacing: 2px;
-  }
-  .section-head .line {
-    flex: 1; height: 1px;
-    background: linear-gradient(90deg, transparent, var(--accent-deep), transparent);
-  }
-
-  /* === Screen rows === */
-  .screen-list {
-    display: flex; flex-direction: column;
-    gap: 6px;
-  }
-  .screen-row {
-    display: flex; align-items: center; gap: 12px;
-    padding: 12px 14px;
-    background: rgba(0,229,212,0.04);
-    border: 1px solid rgba(0,125,117,0.30);
-    border-radius: 8px;
-    text-decoration: none;
-    color: inherit;
-    transition: all 0.15s;
-    -webkit-tap-highlight-color: transparent;
-  }
-  .screen-row:active {
-    background: rgba(0,229,212,0.10);
-    border-color: var(--accent);
-    transform: scale(0.99);
-  }
-
-  .screen-row .ic {
-    width: 36px; height: 36px;
-    border-radius: 8px;
-    display: flex; align-items: center; justify-content: center;
-    font-size: 18px;
-    color: var(--accent);
-    background: rgba(0,229,212,0.06);
-    border: 1px solid var(--accent-deep);
-    flex-shrink: 0;
-  }
-  .screen-row.crimson .ic { color: var(--crimson); border-color: rgba(184,51,74,0.5); background: rgba(184,51,74,0.06); }
-  .screen-row.emerald .ic { color: var(--emerald); border-color: rgba(74,138,92,0.5); background: rgba(74,138,92,0.06); }
-  .screen-row.honey .ic   { color: var(--accent-soft);   border-color: rgba(0,181,168,0.5); background: rgba(0,181,168,0.06); }
-
-  .screen-row .info { flex: 1; min-width: 0; }
-  .screen-row .title {
-    font-family: 'Cinzel', serif;
-    font-weight: 600;
-    font-size: 13px;
-    letter-spacing: 2px;
-    color: var(--accent);
-    line-height: 1.2;
-    text-transform: uppercase;
-  }
-  .screen-row .desc {
-    margin-top: 2px;
-    font-family: 'Cormorant Garamond', serif;
-    font-style: italic;
-    font-size: 13px;
-    color: var(--text-muted);
-    line-height: 1.3;
-  }
-  .screen-row .arrow {
-    color: var(--accent-deep);
-    font-size: 18px;
-    flex-shrink: 0;
-  }
-
-  .footer {
-    margin-top: 32px;
-    text-align: center;
-    font-family: 'Cormorant Garamond', serif;
-    font-style: italic;
-    font-size: 12px;
-    color: var(--text-muted);
-    line-height: 1.6;
-  }
-  .footer .em { color: var(--accent); }
-  .footer .signature {
-    margin-top: 6px;
-    font-family: 'JetBrains Mono', monospace;
-    font-size: 8px;
-    letter-spacing: 4px;
-    color: var(--accent-deep);
-  }
+  .row:active { color: var(--accent); }
+  .row .num { font-size: 13px; color: var(--accent); }
+  .row .name { font-size: 15px; }
 </style>
 </head>
 <body>
 
-<div class="container">
+<div class="wrap">
 
-  <div class="top-bar">
-    <a class="back-btn" href="welcome.html">← BOSH</a>
-    <span class="stamp">17 EKRAN</span>
-  </div>
-
-  <div class="hero">
+  <div class="h">
     <div class="title" data-brand="name">brend</div>
-    <div class="sub">barcha ekranlar — bossang ochiladi</div>
+    <div class="sub">16 ekran</div>
   </div>
 
-  <!-- Section: Tanishuv -->
   <div class="section">
-    <div class="section-head">
-      <span class="num">I</span>
-      <span class="name">Tanishuv</span>
-      <span class="line"></span>
-      <span class="count">4</span>
-    </div>
-    <div class="screen-list">
-      <a class="screen-row" href="welcome.html">
-        <span class="ic">✦</span>
-        <span class="info">
-          <span class="title">1 · Tanishuv</span>
-          <span class="desc">ism · birinchi kirish</span>
-        </span>
-        <span class="arrow">›</span>
-      </a>
-      <a class="screen-row" href="voice-commitment.html">
-        <span class="ic">🎙</span>
-        <span class="info">
-          <span class="title">2 · Va'da</span>
-          <span class="desc">ovozda intizom ahdi</span>
-        </span>
-        <span class="arrow">›</span>
-      </a>
-      <a class="screen-row" href="goal.html">
-        <span class="ic">★</span>
-        <span class="info">
-          <span class="title">3 · Niyat</span>
-          <span class="desc">3 oydan keyingi sen</span>
-        </span>
-        <span class="arrow">›</span>
-      </a>
-      <a class="screen-row" href="permissions.html">
-        <span class="ic">🔓</span>
-        <span class="info">
-          <span class="title">4 · Ruxsatlar</span>
-          <span class="desc">bloklash uchun zarur</span>
-        </span>
-        <span class="arrow">›</span>
-      </a>
-    </div>
+    <div class="lbl">Tanishuv</div>
+    <a class="row" href="welcome.html"><span class="num">1</span><span class="name">Tanishuv</span></a>
+    <a class="row" href="voice-commitment.html"><span class="num">2</span><span class="name">Va'da</span></a>
+    <a class="row" href="goal.html"><span class="num">3</span><span class="name">Niyat</span></a>
+    <a class="row" href="permissions.html"><span class="num">4</span><span class="name">Ruxsatlar</span></a>
   </div>
 
-  <!-- Section: Reja -->
   <div class="section">
-    <div class="section-head">
-      <span class="num">II</span>
-      <span class="name">Reja</span>
-      <span class="line"></span>
-      <span class="count">6</span>
-    </div>
-    <div class="screen-list">
-      <a class="screen-row" href="routine.html">
-        <span class="ic">◇</span>
-        <span class="info">
-          <span class="title">5 · Reja tuzish</span>
-          <span class="desc">AI bilan savol-javob</span>
-        </span>
-        <span class="arrow">›</span>
-      </a>
-      <a class="screen-row" href="settings.html">
-        <span class="ic">⚙</span>
-        <span class="info">
-          <span class="title">6 · Sozlamalar</span>
-          <span class="desc">mentor ohangi · sessiya</span>
-        </span>
-        <span class="arrow">›</span>
-      </a>
-      <a class="screen-row" href="chat.html">
-        <span class="ic">💬</span>
-        <span class="info">
-          <span class="title">7 · Suhbat</span>
-          <span class="desc">mentor bilan istalgan paytda</span>
-        </span>
-        <span class="arrow">›</span>
-      </a>
-      <a class="screen-row" href="home.html">
-        <span class="ic">⌂</span>
-        <span class="info">
-          <span class="title">8 · Bosh sahifa</span>
-          <span class="desc">kundalik dashboard · haftalik progress</span>
-        </span>
-        <span class="arrow">›</span>
-      </a>
-      <a class="screen-row honey" href="today-plan.html">
-        <span class="ic">☀</span>
-        <span class="info">
-          <span class="title">9 · Bugungi reja</span>
-          <span class="desc">tayyor kun tartibi ro'yxati</span>
-        </span>
-        <span class="arrow">›</span>
-      </a>
-      <a class="screen-row" href="calendar.html">
-        <span class="ic">▦</span>
-        <span class="info">
-          <span class="title">10 · Kalendar</span>
-          <span class="desc">haftalik ko'rinish</span>
-        </span>
-        <span class="arrow">›</span>
-      </a>
-    </div>
+    <div class="lbl">Reja</div>
+    <a class="row" href="settings.html"><span class="num">5</span><span class="name">Sozlamalar</span></a>
+    <a class="row" href="chat.html"><span class="num">6</span><span class="name">Suhbat</span></a>
+    <a class="row" href="home.html"><span class="num">7</span><span class="name">Bosh sahifa</span></a>
+    <a class="row" href="today-plan.html"><span class="num">8</span><span class="name">Bugungi reja</span></a>
+    <a class="row" href="calendar.html"><span class="num">9</span><span class="name">Kalendar</span></a>
   </div>
 
-  <!-- Section: Bajarish -->
   <div class="section">
-    <div class="section-head">
-      <span class="num">III</span>
-      <span class="name">Bajarish</span>
-      <span class="line"></span>
-      <span class="count">4</span>
-    </div>
-    <div class="screen-list">
-      <a class="screen-row" href="day-flow.html">
-        <span class="ic">⊙</span>
-        <span class="info">
-          <span class="title">11 · Bugungi yo'l</span>
-          <span class="desc">taymer · pomodoro · nazorat</span>
-        </span>
-        <span class="arrow">›</span>
-      </a>
-      <a class="screen-row crimson" href="hard-lock.html">
-        <span class="ic">🔒</span>
-        <span class="info">
-          <span class="title">12 · Hard Lock</span>
-          <span class="desc">ekran qulflash · fokusda</span>
-        </span>
-        <span class="arrow">›</span>
-      </a>
-      <a class="screen-row crimson" href="negotiation.html">
-        <span class="ic">⚠</span>
-        <span class="info">
-          <span class="title">13 · Diqqat buzilishi</span>
-          <span class="desc">qizil ogohlantirish · ruxsat so'rash</span>
-        </span>
-        <span class="arrow">›</span>
-      </a>
-      <a class="screen-row emerald" href="session-reflection.html">
-        <span class="ic">✓</span>
-        <span class="info">
-          <span class="title">14 · Sessiya bahosi</span>
-          <span class="desc">bajarilganni mustahkamlash</span>
-        </span>
-        <span class="arrow">›</span>
-      </a>
-    </div>
+    <div class="lbl">Bajarish</div>
+    <a class="row" href="day-flow.html"><span class="num">10</span><span class="name">Bugungi yo'l</span></a>
+    <a class="row" href="hard-lock.html"><span class="num">11</span><span class="name">Qulflangan</span></a>
+    <a class="row" href="negotiation.html"><span class="num">12</span><span class="name">Diqqat sinovi</span></a>
+    <a class="row" href="session-reflection.html"><span class="num">13</span><span class="name">Bajardim</span></a>
   </div>
 
-  <!-- Section: Natija -->
   <div class="section">
-    <div class="section-head">
-      <span class="num">IV</span>
-      <span class="name">Natija</span>
-      <span class="line"></span>
-      <span class="count">3</span>
-    </div>
-    <div class="screen-list">
-      <a class="screen-row" href="notifications.html">
-        <span class="ic">✉</span>
-        <span class="info">
-          <span class="title">15 · Xabarlar</span>
-          <span class="desc">mentor ovozi · yutuqlar</span>
-        </span>
-        <span class="arrow">›</span>
-      </a>
-      <a class="screen-row honey" href="weekly-review.html">
-        <span class="ic">▥</span>
-        <span class="info">
-          <span class="title">16 · Natijalar</span>
-          <span class="desc">1 kun · 1 hafta · 1 oy</span>
-        </span>
-        <span class="arrow">›</span>
-      </a>
-      <a class="screen-row honey" href="celebrate.html">
-        <span class="ic">★</span>
-        <span class="info">
-          <span class="title">17 · Bayram</span>
-          <span class="desc">haftalik nishonlash</span>
-        </span>
-        <span class="arrow">›</span>
-      </a>
-    </div>
-  </div>
-
-  <div class="footer">
-    <p>Mentor — qattiq nazoratchi emas. <span class="em">Sening intizom do'sting.</span></p>
+    <div class="lbl">Natija</div>
+    <a class="row" href="notifications.html"><span class="num">14</span><span class="name">Xabarlar</span></a>
+    <a class="row" href="weekly-review.html"><span class="num">15</span><span class="name">Natijalar</span></a>
+    <a class="row" href="celebrate.html"><span class="num">16</span><span class="name">Bayram</span></a>
   </div>
 
 </div>
+
+<script src="data.js" defer></script>
+<script src="nav-overlay.js" defer></script>
 
 </body>
 </html>
