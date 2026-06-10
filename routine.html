@@ -86,6 +86,40 @@
     opacity: 0;
     transition: opacity .2s;
   }
+
+  .suggest { margin-top: 12px; transition: opacity .25s; }
+  .suggest.hide { opacity: 0; pointer-events: none; max-height: 0; overflow: hidden; margin: 0; }
+  .suggest .lbl {
+    font-size: 11px;
+    letter-spacing: 2px;
+    color: var(--text-dim);
+    text-transform: uppercase;
+    margin-bottom: 10px;
+    text-align: center;
+  }
+  .suggest .chips {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    justify-content: center;
+  }
+  .sug {
+    background: var(--void-soft);
+    border: 1px solid rgba(0,229,212,.18);
+    border-radius: 999px;
+    padding: 10px 14px;
+    color: var(--text);
+    font-family: 'Inter', sans-serif;
+    font-size: 12px;
+    cursor: pointer;
+    transition: all .15s;
+    min-height: 44px;
+  }
+  .sug:hover, .sug:active {
+    background: rgba(0,229,212,.08);
+    border-color: var(--accent);
+    color: var(--accent);
+  }
   .voice-status.show { opacity: 1; }
   .voice-status.bad { color: var(--alert); }
 
@@ -118,6 +152,18 @@
 
     <p class="voice-status" id="status"></p>
 
+    <div class="suggest" id="suggest">
+      <div class="lbl">Yoki tezda boshla:</div>
+      <div class="chips">
+        <button class="sug" data-add="07:00 O'qish (1 soat)" type="button">📚 O'qish</button>
+        <button class="sug" data-add="08:00 Mashq (45 daq)" type="button">🏃 Mashq</button>
+        <button class="sug" data-add="10:00 Loyiha (1 soat 30 daq)" type="button">💻 Loyiha</button>
+        <button class="sug" data-add="14:00 Kitob (45 daq)" type="button">📖 Kitob</button>
+        <button class="sug" data-add="16:00 Yozish (30 daq)" type="button">✍️ Yozish</button>
+        <button class="sug" data-add="18:00 Sayr (30 daq)" type="button">🚶 Sayr</button>
+      </div>
+    </div>
+
   </div>
 
   <div class="bottom-bar">
@@ -132,6 +178,7 @@
   const btn = document.getElementById('cta');
   const mic = document.getElementById('micBtn');
   const status = document.getElementById('status');
+  const suggest = document.getElementById('suggest');
 
   // Saqlangan matn
   const saved = localStorage.getItem('mvow.plansRaw');
@@ -139,8 +186,23 @@
   check();
 
   function check() {
-    btn.classList.toggle('disabled', !t.value.trim());
+    const v = t.value.trim();
+    btn.classList.toggle('disabled', !v);
+    // Matn yozilgan bo'lsa, suggest yashir
+    suggest.classList.toggle('hide', !!v);
   }
+
+  // Quick suggest chiplari — bos → matnga qo'shadi
+  document.querySelectorAll('.sug').forEach(s => {
+    s.addEventListener('click', () => {
+      const add = s.dataset.add;
+      const cur = t.value.trim();
+      t.value = cur ? cur + '\n' + add : add;
+      if (window.MVOW_DATA) MVOW_DATA.fxTap();
+      check();
+      t.focus();
+    });
+  });
   t.addEventListener('input', check);
 
   // ── Matnni sessiyalarga parse qilish ──
