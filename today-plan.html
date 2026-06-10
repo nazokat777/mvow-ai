@@ -1,0 +1,338 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>{brand} — Bugungi reja</title>
+<link rel="manifest" href="manifest.webmanifest">
+<meta name="theme-color" content="#04060B">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="brend">
+<link rel="apple-touch-icon" href="assets/mnsm-logo.png">
+<link rel="icon" type="image/png" href="assets/mnsm-logo.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  :root {
+    --void:#04060B; --void-soft:#0C0F16;
+    --text:#F5F2EC; --text-mid:#8A8D94; --text-dim:#4A4D54;
+    --accent:#00E5D4; --accent-soft:#00B5A8;
+    --alert:#FF4757;
+  }
+  body { background: var(--void); font-family:'Inter',sans-serif; color: var(--text); min-height: 100vh; display:flex; justify-content:center; align-items:flex-start; padding: 24px; -webkit-font-smoothing: antialiased; }
+  .phone { width: 380px; min-height: 800px; background: var(--void); border-radius: 40px; position: relative; box-shadow: 0 0 0 8px #1a1d24, 0 30px 80px rgba(0,0,0,.7); overflow: hidden; }
+  .backdrop { position: absolute; inset: 0; background: radial-gradient(ellipse 70% 40% at 50% 0%, rgba(0,229,212,.06), transparent 60%); pointer-events: none; }
+  .container { position: relative; padding: 56px 28px 120px; z-index: 2; }
+
+  .stamp { text-align: center; font-size: 10px; letter-spacing: 4px; color: var(--text-dim); font-weight: 500; text-transform: uppercase; margin-bottom: 28px; }
+
+  .title { font-family: 'Cormorant Garamond', serif; font-weight: 500; font-size: 36px; text-align: center; color: var(--text); letter-spacing: 0.5px; margin-bottom: 8px; }
+
+  .subtitle { text-align: center; font-size: 13px; color: var(--text-mid); margin-bottom: 36px; font-weight: 400; }
+  .subtitle .em { color: var(--accent); }
+
+  .tasks { margin-bottom: 16px; }
+
+  .task {
+    display: grid;
+    grid-template-columns: 60px 1fr auto;
+    gap: 12px;
+    align-items: baseline;
+    padding: 16px 0;
+    border-bottom: 1px solid rgba(255,255,255,.04);
+    transition: opacity .25s, transform .25s;
+  }
+  .task.deleting { opacity: 0; transform: translateX(60px); }
+  .task .time {
+    font-size: 14px; font-weight: 500;
+    color: var(--accent); letter-spacing: 0.5px;
+    cursor: pointer;
+  }
+  .task .name {
+    font-size: 15px; font-weight: 400; color: var(--text);
+    cursor: pointer; line-height: 1.3;
+  }
+  .task .dur {
+    font-size: 12px; color: var(--text-dim); font-weight: 400;
+    cursor: pointer;
+  }
+  .task .x {
+    grid-column: 3;
+    color: var(--text-dim);
+    font-size: 20px;
+    line-height: 1;
+    width: 28px; height: 28px;
+    display: flex; align-items: center; justify-content: center;
+    cursor: pointer;
+    transition: color .15s;
+    border-radius: 50%;
+  }
+  .task .x:hover, .task .x:active { color: var(--alert); background: rgba(255,71,87,.06); }
+
+  /* Edit mode — inputlar */
+  .task.edit { grid-template-columns: 1fr; gap: 8px; padding: 14px 0; }
+  .task.edit .row {
+    display: grid;
+    grid-template-columns: 64px 1fr 64px;
+    gap: 8px;
+  }
+  .task.edit .row input {
+    background: var(--void-soft);
+    border: 1px solid rgba(255,255,255,.06);
+    border-radius: 4px;
+    padding: 10px 8px;
+    color: var(--text);
+    font-family: 'Inter', sans-serif;
+    font-size: 13px;
+    outline: none;
+    min-width: 0;
+    transition: border-color .15s;
+  }
+  .task.edit .row input:focus { border-color: var(--accent); }
+  .task.edit .row input.name {
+    font-family: 'Cormorant Garamond', serif;
+    font-style: italic;
+    font-size: 15px;
+  }
+  .task.edit .actions { display: flex; gap: 8px; justify-content: flex-end; padding-top: 4px; }
+  .task.edit .actions button {
+    padding: 8px 14px;
+    border: none;
+    border-radius: 4px;
+    font-family: 'Inter', sans-serif;
+    font-size: 11px;
+    letter-spacing: 1px;
+    cursor: pointer;
+    text-transform: uppercase;
+  }
+  .task.edit .actions .save { background: var(--accent); color: var(--void); font-weight: 600; }
+  .task.edit .actions .cancel { background: transparent; color: var(--text-mid); border: 1px solid rgba(255,255,255,.1); }
+
+  /* Qo'shish */
+  .add-btn {
+    display: block;
+    width: 100%;
+    margin-top: 12px;
+    padding: 14px;
+    background: transparent;
+    border: 1px dashed rgba(255,255,255,.1);
+    border-radius: 8px;
+    color: var(--text-mid);
+    font-family: 'Inter', sans-serif;
+    font-size: 13px;
+    cursor: pointer;
+    transition: all .15s;
+  }
+  .add-btn:hover, .add-btn:active {
+    color: var(--accent);
+    border-color: var(--accent);
+    background: rgba(0,229,212,.04);
+  }
+
+  /* CTA */
+  .bottom-bar { position: fixed; bottom: 0; left: 50%; transform: translateX(-50%); width: 100%; max-width: 380px; padding: 24px 32px env(safe-area-inset-bottom, 24px); background: linear-gradient(180deg, transparent, var(--void) 30%); z-index: 50; }
+  .cta { display: block; width: 100%; padding: 16px; background: linear-gradient(180deg, var(--accent), var(--accent-soft)); color: var(--void); font-family: 'Inter', sans-serif; font-size: 13px; font-weight: 600; letter-spacing: 2px; text-transform: uppercase; border: none; border-radius: 6px; text-align: center; text-decoration: none; }
+
+  @media (max-width: 480px) {
+    body { padding: 0; }
+    .phone { width: 100vw; min-height: 100vh; border-radius: 0; box-shadow: none; }
+    .bottom-bar { max-width: 100vw; }
+  }
+</style>
+</head>
+<body>
+
+<div class="phone">
+  <div class="backdrop"></div>
+
+  <div class="container">
+    <div class="stamp">
+      <span data-mvow="today.date">10-MAY</span> · <span data-mvow="today.weekday">DUSHANBA</span>
+    </div>
+
+    <h1 class="title">Bugungi reja</h1>
+
+    <p class="subtitle">
+      <span class="em" id="focusLbl">7 soat 15 daq</span>
+      fokus  ·  <span class="em" id="countLbl">5</span> ish
+    </p>
+
+    <div class="tasks" id="tasks"></div>
+
+    <button class="add-btn" id="addBtn" type="button">+ ish qo'sh</button>
+  </div>
+
+  <div class="bottom-bar">
+    <a class="cta" href="day-flow.html">boshlayman</a>
+  </div>
+</div>
+
+<script src="data.js" defer></script>
+<script src="nav-overlay.js" defer></script>
+
+<script>
+  const STORAGE_KEY = 'mvow.todayPlan';
+
+  // ── Storage ──
+  function loadTasks() {
+    try {
+      const saved = JSON.parse(localStorage.getItem(STORAGE_KEY) || 'null');
+      if (Array.isArray(saved) && saved.length) return saved;
+    } catch {}
+    // Fallback: data.js'dan
+    if (window.MVOW_DATA && MVOW_DATA.sessions) {
+      return MVOW_DATA.sessions.map(s => ({ time: s.time, name: s.name, dur: s.dur }));
+    }
+    return [];
+  }
+  function saveTasks() {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(tasks));
+  }
+
+  let tasks = loadTasks();
+
+  // ── Render ──
+  const list = document.getElementById('tasks');
+  const focusLbl = document.getElementById('focusLbl');
+  const countLbl = document.getElementById('countLbl');
+
+  function parseMins(durStr) {
+    if (!durStr) return 0;
+    const s = durStr.toLowerCase().replace(',', '.').trim();
+    const h = s.match(/(\d+(?:\.\d+)?)\s*s(oat)?/);
+    const m = s.match(/(\d+)\s*daq/);
+    let total = 0;
+    if (h) total += Math.round(parseFloat(h[1]) * 60);
+    if (m) total += parseInt(m[1], 10);
+    if (!h && !m) {
+      const n = parseInt(s, 10);
+      if (!isNaN(n)) total = n;
+    }
+    return total;
+  }
+
+  function fmtMins(mins) {
+    if (mins <= 0) return '0 daq';
+    const h = Math.floor(mins / 60);
+    const m = mins % 60;
+    if (h && m) return h + ' soat ' + m + ' daq';
+    if (h)      return h + ' soat';
+    return m + ' daq';
+  }
+
+  function updateTotals() {
+    const totalMins = tasks.reduce((s, t) => s + parseMins(t.dur), 0);
+    focusLbl.textContent = fmtMins(totalMins);
+    countLbl.textContent = tasks.length;
+  }
+
+  function timeKey(t) {
+    const m = /^(\d{1,2}):?(\d{2})?$/.exec((t || '').trim());
+    if (!m) return 99999;
+    return (+m[1]) * 60 + (+(m[2] || 0));
+  }
+
+  function sortTasks() {
+    tasks.sort((a, b) => timeKey(a.time) - timeKey(b.time));
+  }
+
+  function render() {
+    sortTasks();
+    list.innerHTML = '';
+    tasks.forEach((t, idx) => {
+      const row = document.createElement('div');
+      row.className = 'task';
+      row.dataset.idx = idx;
+      row.innerHTML = `
+        <span class="time">${escapeHtml(t.time || '—')}</span>
+        <span class="name">${escapeHtml(t.name || 'ish')}</span>
+        <span class="dur">${escapeHtml(t.dur || '')}</span>
+        <span class="x" title="O'chir">×</span>
+      `;
+      // Tap to edit (except × button)
+      row.querySelectorAll('.time, .name, .dur').forEach(el => {
+        el.addEventListener('click', () => enterEditMode(row, idx));
+      });
+      // Delete
+      row.querySelector('.x').addEventListener('click', (e) => {
+        e.stopPropagation();
+        deleteTask(row, idx);
+      });
+      list.appendChild(row);
+    });
+    updateTotals();
+  }
+
+  function escapeHtml(s) {
+    return String(s).replace(/[&<>"']/g, c => ({ '&':'&amp;', '<':'&lt;', '>':'&gt;', '"':'&quot;', "'":'&#39;' }[c]));
+  }
+
+  function deleteTask(row, idx) {
+    row.classList.add('deleting');
+    setTimeout(() => {
+      tasks.splice(idx, 1);
+      saveTasks();
+      render();
+    }, 250);
+  }
+
+  function enterEditMode(row, idx) {
+    if (row.classList.contains('edit')) return;
+    const t = tasks[idx];
+    row.classList.add('edit');
+    row.innerHTML = `
+      <div class="row">
+        <input class="t time" type="text" placeholder="07:00" value="${escapeHtml(t.time || '')}" maxlength="5">
+        <input class="t name" type="text" placeholder="ish nomi" value="${escapeHtml(t.name || '')}" maxlength="48">
+        <input class="t dur"  type="text" placeholder="45 daq" value="${escapeHtml(t.dur || '')}" maxlength="20">
+      </div>
+      <div class="actions">
+        <button class="cancel" type="button">Bekor</button>
+        <button class="save" type="button">Saqla</button>
+      </div>
+    `;
+    const [timeIn, nameIn, durIn] = row.querySelectorAll('input');
+    setTimeout(() => timeIn.focus(), 50);
+
+    row.querySelector('.save').addEventListener('click', () => {
+      tasks[idx] = {
+        time: timeIn.value.trim(),
+        name: nameIn.value.trim() || 'ish',
+        dur: durIn.value.trim()
+      };
+      saveTasks();
+      render();
+    });
+    row.querySelector('.cancel').addEventListener('click', () => render());
+
+    // Enter saves, Esc cancels
+    row.querySelectorAll('input').forEach(inp => {
+      inp.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter') { e.preventDefault(); row.querySelector('.save').click(); }
+        if (e.key === 'Escape') { e.preventDefault(); row.querySelector('.cancel').click(); }
+      });
+    });
+  }
+
+  function addNew() {
+    tasks.push({ time: '', name: '', dur: '' });
+    const newIdx = tasks.length - 1;
+    render();
+    // Avtomatik edit mode'ga o'tkazish
+    const allRows = list.querySelectorAll('.task');
+    const lastRow = allRows[allRows.length - 1];
+    if (lastRow) enterEditMode(lastRow, parseInt(lastRow.dataset.idx, 10));
+  }
+
+  document.getElementById('addBtn').addEventListener('click', addNew);
+
+  // Boshlash
+  document.addEventListener('DOMContentLoaded', render);
+  if (document.readyState !== 'loading') render();
+</script>
+
+</body>
+</html>
