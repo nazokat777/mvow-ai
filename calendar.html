@@ -13,41 +13,165 @@
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
 <style>
   * { box-sizing: border-box; margin: 0; padding: 0; }
-  :root { --void:#04060B; --void-soft:#0C0F16; --text:#F5F2EC; --text-mid:#8A8D94; --text-dim:#4A4D54; --accent:#00E5D4; --accent-soft:#00B5A8; --emerald:#4A8A5C; }
+  :root {
+    --void:#04060B; --void-soft:#0C0F16;
+    --text:#F5F2EC; --text-mid:#8A8D94; --text-dim:#4A4D54;
+    --accent:#00E5D4; --accent-soft:#00B5A8;
+    --alert:#FF4757;
+  }
   body { background: var(--void); font-family:'Inter',sans-serif; color: var(--text); min-height: 100vh; display:flex; justify-content:center; align-items:flex-start; padding: 24px; -webkit-font-smoothing: antialiased; }
   .phone { width: 380px; min-height: 800px; background: var(--void); border-radius: 40px; overflow: hidden; position: relative; box-shadow: 0 0 0 8px #1a1d24, 0 30px 80px rgba(0,0,0,.7); }
-  .container { padding: 60px 24px 60px; }
-  .header { text-align: center; margin-bottom: 32px; }
-  .header .month { font-family:'Cormorant Garamond',serif; font-size: 24px; font-weight: 500; }
-  .tabs { display: flex; gap: 4px; padding: 4px; background: var(--void-soft); border-radius: 8px; margin-bottom: 32px; }
-  .tab { flex: 1; padding: 10px; text-align:center; font-size: 11px; letter-spacing: 2px; text-transform: uppercase; color: var(--text-mid); cursor: pointer; border-radius: 6px; transition: all .15s; }
-  .tab.on { background: var(--accent); color: var(--void); font-weight: 600; }
-  .week-row { display: grid; grid-template-columns: repeat(7, 1fr); gap: 4px; margin-bottom: 24px; }
+  .container { padding: 60px 24px 40px; }
+
+  .h { text-align: center; margin-bottom: 24px; }
+  .h .month { font-family:'Cormorant Garamond',serif; font-size: 24px; font-weight: 500; }
+
+  /* Day chips */
+  .week-row {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 4px;
+    margin-bottom: 28px;
+  }
   .day {
-    display: flex; flex-direction: column; align-items: center; gap: 6px;
-    padding: 12px 4px;
-    border-radius: 8px;
+    display: flex; flex-direction: column; align-items: center; gap: 4px;
+    padding: 10px 2px;
+    border-radius: 10px;
     cursor: pointer;
+    transition: all .15s;
+    border: 1px solid transparent;
   }
   .day .d { font-size: 9px; letter-spacing: 1px; color: var(--text-dim); text-transform: uppercase; }
   .day .n { font-size: 14px; color: var(--text); }
-  .day.today { background: var(--accent); }
-  .day.today .d, .day.today .n { color: var(--void); font-weight: 600; }
-  .sessions { display:flex; flex-direction: column; gap: 0; }
-  .session-row {
+  .day .dot {
+    width: 4px; height: 4px;
+    border-radius: 50%;
+    background: var(--accent);
+    margin-top: 2px;
+    opacity: 0;
+    transition: opacity .15s;
+  }
+  .day.has .dot { opacity: 1; }
+  .day.today { border-color: var(--accent); background: rgba(0,229,212,.06); }
+  .day.selected {
+    background: var(--accent);
+  }
+  .day.selected .d, .day.selected .n { color: var(--void); font-weight: 600; }
+  .day.selected .dot { background: var(--void); opacity: 1; }
+
+  /* Selected day label */
+  .day-label {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 17px;
+    color: var(--text-mid);
+    text-align: center;
+    margin-bottom: 16px;
+    font-style: italic;
+  }
+  .day-label .em { color: var(--accent); font-style: normal; }
+
+  /* Tasks per day */
+  .tasks { display: flex; flex-direction: column; }
+  .task {
     display: grid;
     grid-template-columns: 56px 1fr auto;
-    align-items: baseline;
     gap: 12px;
+    align-items: baseline;
     padding: 14px 0;
     border-bottom: 1px solid rgba(255,255,255,.04);
+    transition: opacity .25s, transform .25s;
   }
-  .session-row .t { font-size: 13px; color: var(--accent); }
-  .session-row .name { font-size: 14px; }
-  .session-row .dur { font-size: 11px; color: var(--text-dim); }
-  .session-row.done .name { color: var(--emerald); }
-  .session-row.done .t { color: var(--emerald); }
-  .session-row.missed .name { color: var(--text-dim); text-decoration: line-through; }
+  .task.deleting { opacity: 0; transform: translateX(60px); }
+  .task .time {
+    font-size: 13px; font-weight: 500;
+    color: var(--accent);
+    cursor: pointer;
+  }
+  .task .name {
+    font-size: 14px; color: var(--text);
+    cursor: pointer; line-height: 1.3;
+  }
+  .task .dur {
+    font-size: 11px; color: var(--text-dim);
+    cursor: pointer;
+  }
+  .task .x {
+    color: var(--text-dim);
+    font-size: 18px; line-height: 1;
+    width: 26px; height: 26px;
+    display: flex; align-items: center; justify-content: center;
+    cursor: pointer;
+    transition: color .15s;
+    border-radius: 50%;
+  }
+  .task .x:active, .task .x:hover { color: var(--alert); background: rgba(255,71,87,.06); }
+
+  .task.edit { grid-template-columns: 1fr; gap: 8px; padding: 12px 0; }
+  .task.edit .row {
+    display: grid;
+    grid-template-columns: 60px 1fr 60px;
+    gap: 8px;
+  }
+  .task.edit input {
+    background: var(--void-soft);
+    border: 1px solid rgba(255,255,255,.06);
+    border-radius: 4px;
+    padding: 9px 8px;
+    color: var(--text);
+    font-family: 'Inter', sans-serif;
+    font-size: 12px;
+    outline: none;
+    min-width: 0;
+    transition: border-color .15s;
+  }
+  .task.edit input:focus { border-color: var(--accent); }
+  .task.edit input.name {
+    font-family: 'Cormorant Garamond', serif;
+    font-style: italic;
+    font-size: 14px;
+  }
+  .task.edit .actions { display: flex; gap: 8px; justify-content: flex-end; padding-top: 4px; }
+  .task.edit .actions button {
+    padding: 7px 12px;
+    border: none; border-radius: 4px;
+    font-family: 'Inter', sans-serif;
+    font-size: 10px;
+    letter-spacing: 1px;
+    cursor: pointer;
+    text-transform: uppercase;
+  }
+  .task.edit .actions .save { background: var(--accent); color: var(--void); font-weight: 600; }
+  .task.edit .actions .cancel { background: transparent; color: var(--text-mid); border: 1px solid rgba(255,255,255,.1); }
+
+  /* Empty state */
+  .empty {
+    text-align: center;
+    color: var(--text-dim);
+    font-family: 'Cormorant Garamond', serif;
+    font-style: italic;
+    font-size: 14px;
+    padding: 24px 0;
+  }
+
+  .add-btn {
+    display: block;
+    width: 100%;
+    margin-top: 12px;
+    padding: 12px;
+    background: transparent;
+    border: 1px dashed rgba(255,255,255,.1);
+    border-radius: 8px;
+    color: var(--text-mid);
+    font-family: 'Inter', sans-serif;
+    font-size: 12px;
+    cursor: pointer;
+    transition: all .15s;
+  }
+  .add-btn:hover, .add-btn:active {
+    color: var(--accent); border-color: var(--accent);
+    background: rgba(0,229,212,.04);
+  }
+
   @media (max-width: 480px) { body { padding: 0; } .phone { width: 100vw; min-height: 100vh; border-radius: 0; box-shadow: none; } }
 </style>
 </head>
@@ -56,55 +180,187 @@
 <div class="phone">
   <div class="container">
 
-    <div class="header">
+    <div class="h">
       <div class="month">May 2026</div>
-    </div>
-
-    <div class="tabs">
-      <div class="tab">Kun</div>
-      <div class="tab on">Hafta</div>
-      <div class="tab">Oy</div>
     </div>
 
     <div class="week-row" id="weekRow"></div>
 
-    <div class="sessions" id="sessions"></div>
+    <div class="day-label" id="dayLabel">Du · 4-may</div>
+
+    <div class="tasks" id="tasks"></div>
+
+    <button class="add-btn" id="addBtn" type="button">+ ish qo'sh</button>
 
   </div>
 </div>
 
 <script src="data.js" defer></script>
 <script src="nav-overlay.js" defer></script>
+
 <script>
-  // Hafta kunlari
-  const days = ['DU','SE','CH','PA','JU','SH','YA'];
-  const dates = [4,5,6,7,8,9,10];
-  const today = 6;
-  const wr = document.getElementById('weekRow');
-  dates.forEach((n, i) => {
-    const c = document.createElement('div');
-    c.className = 'day' + (i === today ? ' today' : '');
-    c.innerHTML = `<span class="d">${days[i]}</span><span class="n">${n}</span>`;
-    wr.appendChild(c);
-  });
+  // Hafta strukturasi (Du dan Yakshanba'gacha)
+  const DAYS = [
+    { key: 'mon', d: 'DU', n: 4, full: 'Dushanba'    },
+    { key: 'tue', d: 'SE', n: 5, full: 'Seshanba'    },
+    { key: 'wed', d: 'CH', n: 6, full: 'Chorshanba'  },
+    { key: 'thu', d: 'PA', n: 7, full: 'Payshanba'   },
+    { key: 'fri', d: 'JU', n: 8, full: 'Juma'        },
+    { key: 'sat', d: 'SH', n: 9, full: 'Shanba'      },
+    { key: 'sun', d: 'YA', n: 10, full: 'Yakshanba'  }
+  ];
+  const TODAY_IDX = 6; // Yakshanba — namuna uchun
 
-  document.querySelectorAll('.tab').forEach(t => t.addEventListener('click', () => {
-    document.querySelectorAll('.tab').forEach(x => x.classList.remove('on'));
-    t.classList.add('on');
-  }));
+  const STORAGE_KEY = 'mvow.weekPlan';
 
-  // Sessiyalar
-  document.addEventListener('DOMContentLoaded', () => {
-    if (!window.MVOW_DATA) return;
-    const list = document.getElementById('sessions');
-    list.innerHTML = MVOW_DATA.sessions.map(s => `
-      <div class="session-row ${s.status === 'done' ? 'done' : ''}">
-        <span class="t">${s.time}</span>
-        <span class="name">${s.name}</span>
-        <span class="dur">${s.dur}</span>
+  function loadAll() {
+    try {
+      const saved = JSON.parse(localStorage.getItem(STORAGE_KEY) || 'null');
+      if (saved && typeof saved === 'object') return saved;
+    } catch {}
+    // Default: today (Yakshanba) ga data.js dagi sessions
+    const init = {};
+    DAYS.forEach(d => init[d.key] = []);
+    if (window.MVOW_DATA && MVOW_DATA.sessions) {
+      init[DAYS[TODAY_IDX].key] = MVOW_DATA.sessions.map(s => ({ time: s.time, name: s.name, dur: s.dur }));
+    }
+    return init;
+  }
+  function saveAll() {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(weekData));
+  }
+
+  let weekData = loadAll();
+  let selectedKey = DAYS[TODAY_IDX].key;
+
+  // ── Render week chips ──
+  const weekRow = document.getElementById('weekRow');
+  function renderWeek() {
+    weekRow.innerHTML = '';
+    DAYS.forEach((d, i) => {
+      const el = document.createElement('div');
+      el.className = 'day';
+      if (i === TODAY_IDX) el.classList.add('today');
+      if (d.key === selectedKey) el.classList.add('selected');
+      if ((weekData[d.key] || []).length) el.classList.add('has');
+      el.innerHTML = `<span class="d">${d.d}</span><span class="n">${d.n}</span><span class="dot"></span>`;
+      el.addEventListener('click', () => {
+        selectedKey = d.key;
+        renderWeek();
+        renderDay();
+      });
+      weekRow.appendChild(el);
+    });
+  }
+
+  // ── Render selected day's tasks ──
+  const dayLabel = document.getElementById('dayLabel');
+  const tasksEl = document.getElementById('tasks');
+
+  function timeKey(t) {
+    const m = /^(\d{1,2}):?(\d{2})?$/.exec((t || '').trim());
+    if (!m) return 99999;
+    return (+m[1]) * 60 + (+(m[2] || 0));
+  }
+
+  function escapeHtml(s) {
+    return String(s).replace(/[&<>"']/g, c => ({ '&':'&amp;', '<':'&lt;', '>':'&gt;', '"':'&quot;', "'":'&#39;' }[c]));
+  }
+
+  function renderDay() {
+    const day = DAYS.find(d => d.key === selectedKey);
+    dayLabel.innerHTML = `${day.full} · <span class="em">${day.n}-may</span>`;
+
+    const list = weekData[selectedKey] || [];
+    list.sort((a, b) => timeKey(a.time) - timeKey(b.time));
+    tasksEl.innerHTML = '';
+
+    if (!list.length) {
+      tasksEl.innerHTML = '<p class="empty">Bu kuni hech narsa rejalashtirilmagan.</p>';
+      return;
+    }
+
+    list.forEach((t, idx) => {
+      const row = document.createElement('div');
+      row.className = 'task';
+      row.dataset.idx = idx;
+      row.innerHTML = `
+        <span class="time">${escapeHtml(t.time || '—')}</span>
+        <span class="name">${escapeHtml(t.name || 'ish')}</span>
+        <span class="dur">${escapeHtml(t.dur || '')}</span>
+        <span class="x" title="O'chir">×</span>
+      `;
+      row.querySelectorAll('.time, .name, .dur').forEach(el =>
+        el.addEventListener('click', () => enterEdit(row, idx))
+      );
+      row.querySelector('.x').addEventListener('click', (e) => {
+        e.stopPropagation();
+        deleteTask(row, idx);
+      });
+      tasksEl.appendChild(row);
+    });
+  }
+
+  function deleteTask(row, idx) {
+    row.classList.add('deleting');
+    setTimeout(() => {
+      weekData[selectedKey].splice(idx, 1);
+      saveAll();
+      renderWeek();
+      renderDay();
+    }, 220);
+  }
+
+  function enterEdit(row, idx) {
+    if (row.classList.contains('edit')) return;
+    const t = weekData[selectedKey][idx];
+    row.classList.add('edit');
+    row.innerHTML = `
+      <div class="row">
+        <input class="time" type="text" placeholder="07:00" value="${escapeHtml(t.time || '')}" maxlength="5">
+        <input class="name" type="text" placeholder="ish nomi" value="${escapeHtml(t.name || '')}" maxlength="48">
+        <input class="dur" type="text" placeholder="45 daq" value="${escapeHtml(t.dur || '')}" maxlength="20">
       </div>
-    `).join('');
+      <div class="actions">
+        <button class="cancel" type="button">Bekor</button>
+        <button class="save" type="button">Saqla</button>
+      </div>
+    `;
+    const [timeIn, nameIn, durIn] = row.querySelectorAll('input');
+    setTimeout(() => timeIn.focus(), 50);
+
+    row.querySelector('.save').addEventListener('click', () => {
+      weekData[selectedKey][idx] = {
+        time: timeIn.value.trim(),
+        name: nameIn.value.trim() || 'ish',
+        dur: durIn.value.trim()
+      };
+      saveAll();
+      renderWeek();
+      renderDay();
+    });
+    row.querySelector('.cancel').addEventListener('click', renderDay);
+    row.querySelectorAll('input').forEach(inp => {
+      inp.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter') { e.preventDefault(); row.querySelector('.save').click(); }
+        if (e.key === 'Escape') { e.preventDefault(); renderDay(); }
+      });
+    });
+  }
+
+  document.getElementById('addBtn').addEventListener('click', () => {
+    if (!weekData[selectedKey]) weekData[selectedKey] = [];
+    weekData[selectedKey].push({ time: '', name: '', dur: '' });
+    const newIdx = weekData[selectedKey].length - 1;
+    renderWeek();
+    renderDay();
+    const rows = tasksEl.querySelectorAll('.task');
+    const lastRow = rows[rows.length - 1];
+    if (lastRow) enterEdit(lastRow, parseInt(lastRow.dataset.idx, 10));
   });
+
+  document.addEventListener('DOMContentLoaded', () => { renderWeek(); renderDay(); });
+  if (document.readyState !== 'loading') { renderWeek(); renderDay(); }
 </script>
 
 </body>
