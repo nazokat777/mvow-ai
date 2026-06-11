@@ -3,7 +3,7 @@
  * after first load. Caches all preview HTML files + the logo.
  */
 
-const CACHE_NAME = 'mvow-v12.5.0';
+const CACHE_NAME = 'mvow-v13.0.0';
 const ASSETS = [
   './',
   // Asosiy infratuzilma
@@ -113,4 +113,42 @@ self.addEventListener('fetch', event => {
       );
     }
   }
+});
+
+// ──────────────────────────────────────────────────────────────
+// NOTIFICATIONS — bildirishnoma boslsa, alarm.html'ga olib boradi
+// ──────────────────────────────────────────────────────────────
+self.addEventListener('notificationclick', event => {
+  event.notification.close();
+  const url = (event.notification.data && event.notification.data.url) || './alarm.html';
+  event.waitUntil(
+    self.clients.matchAll({ type: 'window', includeUncontrolled: true }).then(clientList => {
+      // Agar ilov ochiq bo'lsa, alarm sahifasiga olib boramiz
+      for (const client of clientList) {
+        if ('focus' in client) {
+          client.navigate(url).catch(() => {});
+          return client.focus();
+        }
+      }
+      // Aks holda yangi oyna ochish
+      if (self.clients.openWindow) return self.clients.openWindow(url);
+    })
+  );
+});
+
+// Push event (kelajak uchun, server yuborgan push'larni qo'llab-quvvatlash)
+self.addEventListener('push', event => {
+  let data = { title: "Uyg'on", body: 'Vaqt keldi. Misolni yech.', url: './alarm.html' };
+  try { if (event.data) data = Object.assign(data, event.data.json()); } catch {}
+  event.waitUntil(
+    self.registration.showNotification(data.title, {
+      body: data.body,
+      icon: './assets/mnsm-logo.png',
+      badge: './assets/mnsm-logo.png',
+      vibrate: [500, 200, 500, 200, 500, 200, 500],
+      tag: 'wake-alarm',
+      requireInteraction: true,
+      data: { url: data.url }
+    })
+  );
 });

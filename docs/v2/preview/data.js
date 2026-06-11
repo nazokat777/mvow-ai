@@ -168,6 +168,99 @@
   DATA.fxFinish  = () => { DATA.vibrate([40, 60, 40, 60, 80]); DATA.beep({ freq: 880, dur: 0.12 }); setTimeout(() => DATA.beep({ freq: 1320, dur: 0.18 }), 120); };
   DATA.fxTap     = () => { DATA.vibrate(8); };
 
+  // ──────────────────────────────────────────────────────────────
+  // BILDIRISHNOMA — uyg'onish budilnigi (real notification)
+  // ──────────────────────────────────────────────────────────────
+
+  // Brauzer ruxsatini so'rash (foydalanuvchi tugma bossa)
+  DATA.requestNotifPermission = async function () {
+    if (!('Notification' in window)) return 'unsupported';
+    if (Notification.permission === 'granted') return 'granted';
+    if (Notification.permission === 'denied')  return 'denied';
+    try {
+      const res = await Notification.requestPermission();
+      return res;
+    } catch {
+      return 'denied';
+    }
+  };
+
+  // Joriy taymer (sahifa ochiq bo'lganda ishlaydi)
+  let _alarmTimer = null;
+
+  // Uyg'onish vaqtini hisoblash — keyingi marta qachon
+  function nextAlarmTime(wakeTime) {
+    if (!wakeTime) return null;
+    const [h, m] = wakeTime.split(':').map(n => parseInt(n, 10));
+    if (isNaN(h) || isNaN(m)) return null;
+    const now = new Date();
+    const target = new Date();
+    target.setHours(h, m, 0, 0);
+    // Agar vaqt o'tib ketgan bo'lsa, ertaga
+    if (target <= now) target.setDate(target.getDate() + 1);
+    return target;
+  }
+
+  // Bildirishnomani aniq ko'rsatish (service worker orqali — eng ishonchli)
+  async function fireAlarm() {
+    const title = "Uyg'on";
+    const body  = "Vaqt keldi. Misolni yech.";
+    const opts = {
+      body,
+      icon: 'assets/mnsm-logo.png',
+      badge: 'assets/mnsm-logo.png',
+      vibrate: [500, 200, 500, 200, 500],
+      tag: 'wake-alarm',
+      requireInteraction: true,
+      data: { url: 'alarm.html' }
+    };
+    try {
+      if ('serviceWorker' in navigator) {
+        const reg = await navigator.serviceWorker.ready;
+        if (reg && reg.showNotification) {
+          reg.showNotification(title, opts);
+          return;
+        }
+      }
+      // Fallback — oddiy Notification
+      const n = new Notification(title, opts);
+      n.onclick = () => {
+        window.focus();
+        window.location.href = 'alarm.html';
+        n.close();
+      };
+    } catch (e) {
+      console.warn('Alarm yuborilmadi:', e);
+    }
+  }
+
+  // Uyg'onish vaqtini rejalashtir (sahifa ochiq bo'lsa ishlaydi)
+  DATA.scheduleAlarm = function () {
+    if (_alarmTimer) { clearTimeout(_alarmTimer); _alarmTimer = null; }
+    const enabled = localStorage.getItem('mvow.alarmOn') !== '0';
+    if (!enabled) return;
+    const wakeTime = localStorage.getItem('mvow.wakeTime') || '07:00';
+    if (Notification.permission !== 'granted') return;
+    const target = nextAlarmTime(wakeTime);
+    if (!target) return;
+    const delay = target - Date.now();
+    if (delay <= 0 || delay > 24 * 3600 * 1000) return;
+    _alarmTimer = setTimeout(() => {
+      fireAlarm();
+      // Ertangi kun uchun qayta rejalash
+      setTimeout(() => DATA.scheduleAlarm(), 60 * 1000);
+    }, delay);
+    // Debug: console.log('Alarm', Math.round(delay / 60000), 'daqiqada');
+  };
+
+  // Test — darrov yuborish (settings'da test tugmasi uchun)
+  DATA.testNotification = async function () {
+    const perm = await DATA.requestNotifPermission();
+    if (perm !== 'granted') return perm;
+    await fireAlarm();
+    return 'sent';
+  };
+
   // Yoshga qarab murabbiy ohangi (juda oddiy individual yondashuv)
   DATA.toneByAge = () => {
     const a = parseInt(DATA.profile.age, 10);
@@ -211,10 +304,16 @@
     });
   }
 
-  if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', applyBindings);
-  } else {
+  function onReady() {
     applyBindings();
+    // Har sahifa yuklanganda alarm avtomatik rejalanadi (ruxsat berilgan bo'lsa)
+    try { DATA.scheduleAlarm(); } catch {}
+  }
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', onReady);
+  } else {
+    onReady();
   }
 
   // Global'ga ochish — boshqa skriptlar (per-screen) ham foydalanishi uchun
