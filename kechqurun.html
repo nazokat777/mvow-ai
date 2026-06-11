@@ -391,16 +391,31 @@
     const wakeInput = document.getElementById('wakeTime');
     const savedWake = localStorage.getItem('mvow.wakeTime') || '07:00';
     wakeInput.value = savedWake;
+    wakeInput.addEventListener('change', () => {
+      localStorage.setItem('mvow.wakeTime', wakeInput.value);
+      if (window.MVOW_DATA) MVOW_DATA.scheduleAlarm();
+    });
 
     const alarmToggle = document.getElementById('alarmToggle');
     const alarmOn = localStorage.getItem('mvow.alarmOn') !== '0';
     alarmToggle.classList.toggle('on', alarmOn);
     alarmToggle.setAttribute('aria-checked', alarmOn ? 'true' : 'false');
-    function flipAlarm() {
-      const on = !alarmToggle.classList.contains('on');
-      alarmToggle.classList.toggle('on', on);
-      alarmToggle.setAttribute('aria-checked', on ? 'true' : 'false');
-      localStorage.setItem('mvow.alarmOn', on ? '1' : '0');
+    async function flipAlarm() {
+      const willTurnOn = !alarmToggle.classList.contains('on');
+      // Yoqilayotganda ruxsat so'ramiz
+      if (willTurnOn && window.MVOW_DATA) {
+        const perm = await MVOW_DATA.requestNotifPermission();
+        if (perm !== 'granted') {
+          alert("Bildirishnoma ruxsati berilmadi. Telefon Sozlamalaridan brauzerga bildirishnoma ruxsatini bering.");
+          return;
+        }
+      }
+      alarmToggle.classList.toggle('on', willTurnOn);
+      alarmToggle.setAttribute('aria-checked', willTurnOn ? 'true' : 'false');
+      localStorage.setItem('mvow.alarmOn', willTurnOn ? '1' : '0');
+      // Yangi uyg'onish vaqtini saqlab darrov rejalashtir
+      localStorage.setItem('mvow.wakeTime', wakeInput.value);
+      if (window.MVOW_DATA) MVOW_DATA.scheduleAlarm();
     }
     alarmToggle.addEventListener('click', flipAlarm);
     alarmToggle.addEventListener('keydown', e => {

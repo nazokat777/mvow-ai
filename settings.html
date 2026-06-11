@@ -197,6 +197,9 @@
       <div class="toggle" data-toggle="negotiation" role="switch" tabindex="0" aria-label="Diqqat sinovi" aria-checked="false"></div>
     </div>
 
+    <button id="testNotifBtn" type="button" style="margin-top:16px;width:100%;padding:14px;background:transparent;border:1px solid rgba(0,229,212,.25);border-radius:8px;color:var(--accent);font-family:'Inter',sans-serif;font-size:12px;letter-spacing:2px;text-transform:uppercase;cursor:pointer;min-height:48px;">Bildirishnoma sinovi</button>
+    <div id="testNotifStatus" style="text-align:center;font-size:11px;color:var(--text-mid);margin-top:8px;letter-spacing:1px;"></div>
+
     <div class="row" style="margin-top:24px;">
       <a href="about.html" style="font-size:14px;color:var(--text);text-decoration:none;">Bu ilov haqida</a>
       <span style="color:var(--text-dim);">›</span>
@@ -259,6 +262,26 @@
         save();
       });
     });
+
+    // Bildirishnoma sinovi
+    const testBtn = document.getElementById('testNotifBtn');
+    const testStatus = document.getElementById('testNotifStatus');
+    if (testBtn) {
+      testBtn.addEventListener('click', async () => {
+        if (!window.MVOW_DATA) return;
+        testStatus.textContent = '...';
+        const res = await MVOW_DATA.testNotification();
+        if (res === 'sent') {
+          testStatus.textContent = 'Yuborildi ✓';
+        } else if (res === 'denied') {
+          testStatus.textContent = 'Ruxsat rad qilindi. Brauzer sozlamasidan ruxsat ber.';
+        } else if (res === 'unsupported') {
+          testStatus.textContent = 'Bu brauzerda qo\'llab-quvvatlanmaydi.';
+        } else {
+          testStatus.textContent = 'Holat: ' + res;
+        }
+      });
+    }
 
     // Reset button — confirm then clear
     const resetBtn = document.getElementById('resetBtn');
