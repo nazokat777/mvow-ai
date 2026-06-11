@@ -212,19 +212,23 @@
     document.getElementById('focusH').textContent = totalH || 0;
     document.getElementById('sessN').textContent = plan.length;
 
-    // CTA — reja bor bo'lsa "Boshlash", yo'q bo'lsa "Rejani tuz"
+    // CTA — vaqtga qarab moslashadi
     const cta = document.getElementById('primaryCta');
-    if (plan.length) {
+    const hourNow = d.getHours();
+    if (hourNow >= 20) {
+      // Kech bo'ldi — kun yakuni
+      cta.textContent = 'Kun yakuni';
+      cta.href = 'kechqurun.html';
+    } else if (plan.length) {
       cta.textContent = 'Boshlayman';
       cta.href = 'day-flow.html';
     }
 
     // ── Streak yo'qotish ogohlantirish ──
-    // Agar kech bo'lib qoldi VA bugun bitta sessiya bajarilmagan bo'lsa
     const todayKey = 'mvow.done.' + new Date().toISOString().slice(0,10);
     const todayDone = parseInt(localStorage.getItem(todayKey) || '0', 10);
-    const hour = d.getHours();
-    if (streak > 0 && todayDone === 0 && hour >= 18) {
+    const hour = hourNow;
+    if (streak > 0 && todayDone === 0 && hour >= 18 && hour < 22) {
       const warn = document.createElement('div');
       warn.style.cssText = 'background:rgba(255,71,87,.06);border:1px solid rgba(255,71,87,.25);border-radius:8px;padding:14px 16px;text-align:center;font-family:"Cormorant Garamond",serif;font-style:italic;font-size:14px;color:#FF8E97;line-height:1.5;margin-top:-8px;';
       const remaining = 24 - hour;
