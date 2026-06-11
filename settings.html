@@ -166,12 +166,39 @@
     <div class="section-lbl">Sessiya</div>
 
     <div class="row">
+      <div class="lbl">Rejim</div>
+      <select data-pref="mode">
+        <option value="simple" selected>Oddiy</option>
+        <option value="pomodoro">Pomodoro</option>
+      </select>
+    </div>
+
+    <div class="row">
       <div class="lbl">Sessiya davomiyligi</div>
       <select data-pref="sessionMins">
         <option value="25">25 daq</option>
         <option value="45" selected>45 daq</option>
         <option value="60">60 daq</option>
         <option value="90">90 daq</option>
+      </select>
+    </div>
+
+    <div class="row">
+      <div class="lbl">Pomodoro sikllari</div>
+      <select data-pref="pomoCycles">
+        <option value="2">2 sikl</option>
+        <option value="3" selected>3 sikl</option>
+        <option value="4">4 sikl</option>
+        <option value="5">5 sikl</option>
+      </select>
+    </div>
+
+    <div class="row">
+      <div class="lbl">Dam vaqti</div>
+      <select data-pref="breakMins">
+        <option value="5" selected>5 daq</option>
+        <option value="10">10 daq</option>
+        <option value="15">15 daq</option>
       </select>
     </div>
 
@@ -242,7 +269,9 @@
       catch { return {}; }
     })();
     const defaults = {
-      tone: 'mid', meddle: 'quiet', sessionMins: '45', wakeTime: '06:00',
+      tone: 'mid', meddle: 'quiet',
+      mode: 'simple', sessionMins: '45', pomoCycles: '3', breakMins: '5',
+      wakeTime: '06:00',
       autoNext: true, voiceRemind: true, negotiation: true
     };
     const merged = Object.assign({}, defaults, prefs);

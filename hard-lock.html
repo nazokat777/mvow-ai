@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-<title>{brand} — Qulflangan</title>
+<title>{brand} — Fokus rejimi</title>
 <link rel="manifest" href="manifest.webmanifest">
 <meta name="theme-color" content="#04060B">
 <link rel="apple-touch-icon" href="assets/mnsm-logo.png">
@@ -88,6 +88,7 @@
     <div class="task">
       <div class="name" id="tname">Til o'rganish</div>
       <div class="time" id="tsub">fokusdasan</div>
+      <div id="cycleDots" style="display:none;justify-content:center;gap:8px;margin-top:10px;"></div>
     </div>
 
     <div class="ring-wrap">
@@ -123,41 +124,34 @@
   </div>
 </div>
 
+<script src="i18n.js" defer></script>
 <script src="data.js" defer></script>
 <script src="nav-overlay.js" defer></script>
 <script>
-  // ── Joriy sessiya ma'lumotlari ──
+  // ── Joriy sessiya va sozlamalar ──
   const current = (window.MVOW_DATA && MVOW_DATA.currentSession()) || (MVOW_DATA && MVOW_DATA.sessions && MVOW_DATA.sessions[0]) || { name:"Til o'rganish", mins: 25 };
-
   document.getElementById('tname').textContent = current.name;
 
-  // ── Haqiqiy taymer: 25:00 → 0:00 ──
-  const TOTAL_SEC = (current.mins || 25) * 60;
+  let prefs = {};
+  try { prefs = JSON.parse(localStorage.getItem('mvow.prefs') || '{}'); } catch {}
+  const MODE = prefs.mode || 'simple';                                  // 'simple' yoki 'pomodoro'
+  const WORK_MIN  = parseInt(prefs.sessionMins || current.mins || 25, 10);
+  const BREAK_MIN = parseInt(prefs.breakMins   || 5, 10);
+  const TOTAL_CYC = parseInt(prefs.pomoCycles  || 3, 10);
+
   const RING_CIRC = 729;
-  let remaining = TOTAL_SEC;
-
-  // localStorage'dan davom ettirish (sahifa qayta yuklansa)
-  const ST_KEY = 'mvow.timer';
-  function loadState() {
-    try {
-      const s = JSON.parse(localStorage.getItem(ST_KEY) || 'null');
-      if (s && s.endsAt) {
-        const now = Date.now();
-        const left = Math.max(0, Math.floor((s.endsAt - now) / 1000));
-        if (left > 0 && left <= TOTAL_SEC) return left;
-      }
-    } catch {}
-    return TOTAL_SEC;
-  }
-  function saveState() {
-    localStorage.setItem(ST_KEY, JSON.stringify({ endsAt: Date.now() + remaining * 1000 }));
-  }
-
-  remaining = loadState();
-  if (remaining === TOTAL_SEC) saveState();
-
   const digits = document.getElementById('digits');
   const ring = document.getElementById('ring');
+  const tsub = document.getElementById('tsub');
+  const sub = document.getElementById('sub');
+  const dotsEl = document.getElementById('cycleDots');
+
+  // State
+  const ST_KEY = 'mvow.timer';
+  let phase   = 'work';   // 'work' yoki 'break'
+  let cycle   = 1;        // 1..TOTAL_CYC
+  let totalSec = WORK_MIN * 60;
+  let remaining = totalSec;
 
   function fmt(s) {
     const m = Math.floor(s / 60);
@@ -165,21 +159,112 @@
     return String(m).padStart(2, '0') + ':' + String(sec).padStart(2, '0');
   }
 
+  function renderCycleDots() {
+    if (MODE !== 'pomodoro') { dotsEl.style.display = 'none'; return; }
+    dotsEl.style.display = 'flex';
+    let html = '';
+    for (let i = 1; i <= TOTAL_CYC; i++) {
+      const active = (i === cycle);
+      const done = (i < cycle);
+      const bg = done ? '#00E5D4' : (active ? 'transparent' : 'rgba(255,255,255,.12)');
+      const border = active ? '1.5px solid #00E5D4' : 'none';
+      html += `<span style="width:9px;height:9px;border-radius:50%;background:${bg};border:${border};"></span>`;
+    }
+    dotsEl.innerHTML = html;
+  }
+
+  function applyPhaseStyle() {
+    if (phase === 'work') {
+      tsub.textContent = 'fokusdasan';
+      sub.textContent  = 'davom etyapsan';
+      ring.style.stroke = '#00E5D4';
+    } else {
+      tsub.textContent = 'dam ol';
+      sub.textContent  = 'tinch tur';
+      ring.style.stroke = '#F5C26B';
+    }
+  }
+
+  function saveState() {
+    localStorage.setItem(ST_KEY, JSON.stringify({
+      endsAt: Date.now() + remaining * 1000,
+      phase, cycle, mode: MODE
+    }));
+  }
+
+  function loadState() {
+    try {
+      const s = JSON.parse(localStorage.getItem(ST_KEY) || 'null');
+      if (s && s.endsAt && s.mode === MODE) {
+        phase = s.phase || 'work';
+        cycle = s.cycle || 1;
+        totalSec = (phase === 'work' ? WORK_MIN : BREAK_MIN) * 60;
+        const left = Math.max(0, Math.floor((s.endsAt - Date.now()) / 1000));
+        if (left > 0 && left <= totalSec) {
+          remaining = left;
+          return;
+        }
+      }
+    } catch {}
+    // Default
+    phase = 'work'; cycle = 1;
+    totalSec = WORK_MIN * 60;
+    remaining = totalSec;
+  }
+
   function paint() {
     digits.textContent = fmt(remaining);
-    const offset = RING_CIRC * (1 - remaining / TOTAL_SEC);
+    const offset = RING_CIRC * (1 - remaining / totalSec);
     ring.style.strokeDashoffset = offset;
   }
+
+  function nextPhase() {
+    if (window.MVOW_DATA) MVOW_DATA.fxFinish();
+    if (MODE !== 'pomodoro') {
+      // Oddiy rejim — taymer tugadi
+      localStorage.removeItem(ST_KEY);
+      setTimeout(() => { location.href = 'session-reflection.html'; }, 1000);
+      return;
+    }
+    // Pomodoro — keyingi fazaga o'tamiz
+    if (phase === 'work') {
+      // Ish tugadi
+      if (cycle >= TOTAL_CYC) {
+        // Hammasi tamom
+        localStorage.removeItem(ST_KEY);
+        setTimeout(() => { location.href = 'session-reflection.html'; }, 1200);
+        return;
+      }
+      // Damga o'tamiz
+      phase = 'break';
+      totalSec = BREAK_MIN * 60;
+      remaining = totalSec;
+    } else {
+      // Dam tugadi → keyingi ish sikli
+      cycle++;
+      phase = 'work';
+      totalSec = WORK_MIN * 60;
+      remaining = totalSec;
+    }
+    applyPhaseStyle();
+    renderCycleDots();
+    saveState();
+    paint();
+  }
+
+  // Init
+  loadState();
+  applyPhaseStyle();
+  renderCycleDots();
+  if (remaining === totalSec) saveState();
   paint();
 
   const interval = setInterval(() => {
     remaining = Math.max(0, remaining - 1);
     paint();
     if (remaining === 0) {
-      clearInterval(interval);
-      localStorage.removeItem(ST_KEY);
-      if (window.MVOW_DATA) MVOW_DATA.fxFinish();
-      setTimeout(() => { location.href = 'session-reflection.html'; }, 1000);
+      // Yangi fazaga o'tish
+      nextPhase();
     }
   }, 1000);
 
