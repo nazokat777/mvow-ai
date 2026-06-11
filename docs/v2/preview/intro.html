@@ -3,301 +3,132 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-<title>{brand} — Tanishaylik</title>
+<title>{brand} — Tanishuv</title>
 <link rel="manifest" href="manifest.webmanifest">
 <meta name="theme-color" content="#04060B">
-<meta name="apple-mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<meta name="apple-mobile-web-app-title" content="brend">
 <link rel="apple-touch-icon" href="assets/mnsm-logo.png">
 <link rel="icon" type="image/png" href="assets/mnsm-logo.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
 <style>
   * { box-sizing: border-box; margin: 0; padding: 0; }
   :root {
     --void:#04060B; --void-soft:#0C0F16;
     --text:#F5F2EC; --text-mid:#B8BBC2; --text-dim:#9CA0A8;
     --accent:#00E5D4; --accent-soft:#00B5A8;
+    --card:#11151E;
   }
-  body {
-    background: var(--void);
-    font-family: 'Inter', sans-serif;
-    color: var(--text);
+  html, body {
+    background: var(--void); color: var(--text);
     min-height: 100vh;
-    display: flex; justify-content: center; align-items: flex-start;
-    padding: 24px;
+    font-family: 'Inter', sans-serif;
     -webkit-font-smoothing: antialiased;
   }
-  .phone {
-    width: 380px; min-height: 800px;
-    background: var(--void);
-    border-radius: 40px;
-    position: relative;
-    box-shadow: 0 0 0 8px #1a1d24, 0 30px 80px rgba(0,0,0,.7);
-    overflow: hidden;
-    display: flex; flex-direction: column;
+  .wrap {
+    max-width: 480px;
+    margin: 0 auto;
+    padding: 60px 28px 140px;
   }
 
-  /* Halo */
-  .halo {
-    position: absolute;
-    top: 40px; left: 50%;
-    transform: translateX(-50%);
-    width: 240px; height: 240px;
-    background: radial-gradient(circle, rgba(0,229,212,.12), transparent 60%);
-    border-radius: 50%;
-    opacity: 0;
-    animation: halo-in 1.4s ease 0.3s forwards;
-    pointer-events: none;
-  }
-  @keyframes halo-in { to { opacity: 1; } }
-
-  .container {
-    flex: 1;
-    padding: 60px 30px 100px;
-    overflow-y: auto;
-    position: relative;
-    z-index: 2;
-  }
-
-  /* Top */
-  .top {
-    text-align: center;
-    margin-bottom: 32px;
-    opacity: 0;
-    animation: fade-up .6s ease .1s forwards;
-  }
-  @keyframes fade-up {
-    from { opacity: 0; transform: translateY(8px); }
-    to   { opacity: 1; transform: translateY(0); }
-  }
   .logo {
-    width: 56px; height: 56px;
-    margin: 0 auto 14px;
+    width: 64px; height: 64px;
+    margin: 0 auto 16px;
     background: url('assets/mnsm-logo.png') center/contain no-repeat;
-    filter: hue-rotate(160deg) saturate(1.4) drop-shadow(0 0 14px rgba(0,229,212,.4));
+    filter: hue-rotate(160deg) saturate(1.4) drop-shadow(0 0 14px rgba(0,229,212,.35));
   }
   .brandname {
-    font-family: 'Cormorant Garamond', serif;
-    font-weight: 500;
-    font-size: 18px;
-    letter-spacing: 4px;
-    color: var(--text-mid);
-  }
-
-  /* Greet — Do'st's first words */
-  .greet {
     text-align: center;
-    margin-bottom: 28px;
-    opacity: 0;
-    animation: fade-up .8s ease .5s forwards;
-  }
-  .greet .salom {
-    font-family: 'Cormorant Garamond', serif;
-    font-style: italic;
-    font-weight: 500;
-    font-size: 32px;
-    color: var(--accent);
-    line-height: 1.2;
-    margin-bottom: 10px;
-  }
-  .greet .sub {
-    font-family: 'Cormorant Garamond', serif;
-    font-style: italic;
-    font-size: 16px;
-    color: var(--text);
-    line-height: 1.5;
-  }
-
-  /* What I do — Do'st's promises */
-  .promises {
-    margin-bottom: 28px;
-    opacity: 0;
-    animation: fade-up .8s ease .9s forwards;
-  }
-  .promise {
-    position: relative;
-    padding: 14px 0 14px 24px;
-    border-left: 1px solid rgba(0,229,212,.15);
-  }
-  .promise:not(:last-child) {
-    margin-bottom: 4px;
-  }
-  .promise::before {
-    content: '';
-    position: absolute;
-    left: -3px;
-    top: 22px;
-    width: 5px; height: 5px;
-    border-radius: 50%;
-    background: var(--accent);
-  }
-  .promise .top {
-    /* override default top class */
-    text-align: left;
-    margin-bottom: 4px;
-    opacity: 1;
-    animation: none;
-  }
-  .promise .head {
     font-family: 'Cormorant Garamond', serif;
     font-weight: 500;
-    font-size: 16px;
+    font-size: 22px;
+    letter-spacing: 4px;
     color: var(--text);
     margin-bottom: 4px;
-    line-height: 1.3;
   }
-  .promise .head .em { color: var(--accent); font-style: italic; }
-  .promise .body {
-    font-size: 13px;
-    color: var(--text-mid);
-    line-height: 1.5;
+  .tagline {
+    text-align: center;
+    font-size: 12px;
+    letter-spacing: 2px;
+    color: var(--text-dim);
+    text-transform: uppercase;
+    margin-bottom: 40px;
   }
 
-  /* Pact box */
-  .pact {
-    background: var(--void-soft);
-    border: 1px solid rgba(0,229,212,.18);
+  .features { display: flex; flex-direction: column; gap: 14px; margin-bottom: 36px; }
+  .feat {
+    display: grid;
+    grid-template-columns: 36px 1fr;
+    gap: 14px;
+    align-items: center;
+    padding: 14px 16px;
+    background: var(--card);
+    border: 1px solid rgba(255,255,255,.05);
     border-radius: 12px;
-    padding: 18px 18px 20px;
-    margin-bottom: 24px;
-    text-align: center;
-    opacity: 0;
-    animation: fade-up .8s ease 1.3s forwards;
   }
-  .pact .lbl {
-    font-size: 9px;
-    letter-spacing: 4px;
-    color: var(--accent);
-    text-transform: uppercase;
-    margin-bottom: 10px;
-  }
-  .pact .body {
-    font-family: 'Cormorant Garamond', serif;
-    font-style: italic;
-    font-size: 15px;
-    color: var(--text);
-    line-height: 1.7;
-  }
-  .pact .body strong { color: var(--accent); font-weight: 500; }
-
-  /* Til tanlash — yuqori o'ng burchakda */
-  .lang-pick {
-    position: absolute;
-    top: 18px; right: 18px;
-    z-index: 10;
-    background: rgba(0,229,212,.06);
+  .feat .ic {
+    width: 36px; height: 36px;
+    border-radius: 10px;
+    background: rgba(0,229,212,.08);
     border: 1px solid rgba(0,229,212,.25);
-    border-radius: 999px;
-    padding: 6px 12px;
+    display: flex; align-items: center; justify-content: center;
     color: var(--accent);
-    font-family: 'Inter', sans-serif;
-    font-size: 11px;
+    font-size: 16px;
+    font-family: 'Cormorant Garamond', serif;
     font-weight: 500;
-    letter-spacing: 1px;
-    text-transform: uppercase;
-    cursor: pointer;
-    outline: none;
-    appearance: none;
-    -webkit-appearance: none;
-    background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 12' fill='%2300E5D4'><polygon points='3,5 9,5 6,9'/></svg>");
-    background-repeat: no-repeat;
-    background-position: right 6px center;
-    background-size: 10px;
-    padding-right: 22px;
   }
-  .lang-pick option { background: #04060B; color: #F5F2EC; }
+  .feat .txt {
+    font-size: 14px;
+    color: var(--text);
+    line-height: 1.4;
+  }
 
-  .bottom-bar {
-    padding: 18px 30px env(safe-area-inset-bottom, 18px);
-    background: linear-gradient(180deg, transparent, var(--void) 30%);
-    opacity: 0;
-    animation: fade-up .8s ease 1.6s forwards;
+  .bottom {
+    position: fixed;
+    bottom: 0; left: 0; right: 0;
+    padding: 18px 28px env(safe-area-inset-bottom, 22px);
+    background: linear-gradient(180deg, transparent, var(--void) 40%);
   }
   .cta {
     display: block;
     width: 100%;
+    max-width: 440px;
+    margin: 0 auto;
     padding: 16px;
     background: linear-gradient(180deg, var(--accent), var(--accent-soft));
     color: var(--void);
-    font-size: 13px;
+    font-family: 'Inter', sans-serif;
+    font-size: 14px;
     font-weight: 600;
     letter-spacing: 2px;
     text-transform: uppercase;
     border: none;
-    border-radius: 6px;
+    border-radius: 999px;
     text-align: center;
     text-decoration: none;
-  }
-
-  @media (max-width: 480px) {
-    body { padding: 0; }
-    .phone { width: 100vw; min-height: 100vh; border-radius: 0; box-shadow: none; }
+    cursor: pointer;
+    min-height: 52px;
   }
 </style>
 </head>
 <body>
 
-<div class="phone">
-  <div class="halo"></div>
+<div class="wrap">
 
-  <select class="lang-pick" id="langPickIntro" aria-label="Language">
-    <option value="uz">UZ</option>
-    <option value="ru">RU</option>
-    <option value="en">EN</option>
-  </select>
+  <div class="logo"></div>
+  <div class="brandname" data-brand="name">brend</div>
+  <div class="tagline" data-i18n="intro.tagline">Intizom · fokus · natija</div>
 
-  <div class="container">
-
-    <div class="top">
-      <div class="logo"></div>
-      <div class="brandname" data-brand="name">brend</div>
-    </div>
-
-    <div class="greet">
-      <div class="salom">Salom.</div>
-      <div class="sub">
-        Men — sening do'sting.<br>
-        Sen — niyating ortidan boruvchi odam.
-      </div>
-    </div>
-
-    <div class="promises">
-
-      <div class="promise">
-        <div class="head"><span class="em">Sen ayt</span> — men eshitaman.</div>
-        <div class="body">Rejani sen tuzasan. Yozma yoki ovozda — bo'ladi. Men ularni kun tartibiga aylantiraman.</div>
-      </div>
-
-      <div class="promise">
-        <div class="head"><span class="em">Fokus paytida</span> — yoningda turaman.</div>
-        <div class="body">Taymer ishlaydi, diqqat kuchayadi. Telefon yo'ldan adashsa — qaytaraman.</div>
-      </div>
-
-      <div class="promise">
-        <div class="head"><span class="em">Har kun</span> — bitta qadam sanayman.</div>
-        <div class="body">Streak, bajarish hisobi, haftalik o'sish. Tog' bir kechada qurilmaydi — har qadam ko'rinib turadi.</div>
-      </div>
-
-    </div>
-
-    <div class="pact">
-      <div class="lbl">Bizning kelishuv</div>
-      <div class="body">
-        Sen <strong>"qila olmadim"</strong> deysan —<br>
-        men <strong>"ertaga ham bormiz"</strong> deyman.<br>
-        <span style="opacity:.7;">Intizom — qo'rqitish emas,</span><br>
-        <strong>qo'llab turish.</strong>
-      </div>
-    </div>
-
+  <div class="features">
+    <div class="feat"><div class="ic">1</div><div class="txt" data-i18n="intro.feat1">Reja tuzasan — kun tartibiga aylanadi</div></div>
+    <div class="feat"><div class="ic">2</div><div class="txt" data-i18n="intro.feat2">Taymer ishlaydi — chalg'ituvchi ilovalar bo'shaydi</div></div>
+    <div class="feat"><div class="ic">3</div><div class="txt" data-i18n="intro.feat3">Streak ko'tariladi — kunlar ortidan kunlar</div></div>
   </div>
 
-  <div class="bottom-bar">
-    <a class="cta" id="startBtn" href="anketa.html">Tanishaylik</a>
-  </div>
+</div>
+
+<div class="bottom">
+  <a class="cta" id="startBtn" href="anketa.html" data-i18n="intro.cta">Boshlaymiz</a>
 </div>
 
 <script src="i18n.js" defer></script>
@@ -306,18 +137,6 @@
 <script>
   document.getElementById('startBtn').addEventListener('click', () => {
     localStorage.setItem('mvow.introSeen', '1');
-  });
-
-  // Til tanlash
-  document.addEventListener('DOMContentLoaded', () => {
-    const sel = document.getElementById('langPickIntro');
-    if (sel && window.I18N) {
-      sel.value = I18N.lang;
-      sel.addEventListener('change', () => {
-        I18N.set(sel.value);
-        setTimeout(() => location.reload(), 100);
-      });
-    }
   });
 </script>
 

@@ -224,17 +224,17 @@
       cta.href = 'day-flow.html';
     }
 
-    // ── Streak yo'qotish ogohlantirish ──
+    // Streak risk indikatori — gapirmaydi, faqat ko'rsatadi
     const todayKey = 'mvow.done.' + new Date().toISOString().slice(0,10);
     const todayDone = parseInt(localStorage.getItem(todayKey) || '0', 10);
     const hour = hourNow;
     if (streak > 0 && todayDone === 0 && hour >= 18 && hour < 22) {
-      const warn = document.createElement('div');
-      warn.style.cssText = 'background:rgba(255,71,87,.06);border:1px solid rgba(255,71,87,.25);border-radius:8px;padding:14px 16px;text-align:center;font-family:"Cormorant Garamond",serif;font-style:italic;font-size:14px;color:#FF8E97;line-height:1.5;margin-top:-8px;';
-      const remaining = 24 - hour;
-      warn.innerHTML = `Streak yo'qoladi — bugun bitta sessiya qoldi.<br><span style="font-size:12px;opacity:.7;">${remaining} soat qoldi.</span>`;
-      const actions = document.querySelector('.actions');
-      if (actions) actions.parentNode.insertBefore(warn, actions);
+      const streakEl = document.getElementById('streakN');
+      if (streakEl) {
+        streakEl.style.color = '#FF8E97';
+        const lbl = streakEl.parentNode.querySelector('.lbl');
+        if (lbl) lbl.textContent = 'xatarda';
+      }
     }
   });
 </script>
