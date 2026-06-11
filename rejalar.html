@@ -1,0 +1,320 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>{brand} — Rejalar</title>
+<link rel="manifest" href="manifest.webmanifest">
+<meta name="theme-color" content="#04060B">
+<link rel="apple-touch-icon" href="assets/mnsm-logo.png">
+<link rel="icon" type="image/png" href="assets/mnsm-logo.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;1,500&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  :root {
+    --void:#04060B; --void-soft:#0C0F16;
+    --text:#F5F2EC; --text-mid:#B8BBC2; --text-dim:#9CA0A8;
+    --accent:#00E5D4; --accent-soft:#00B5A8;
+    --card:#11151E;
+  }
+  html, body {
+    background: var(--void); color: var(--text);
+    min-height: 100vh;
+    font-family: 'Inter', sans-serif;
+    -webkit-font-smoothing: antialiased;
+  }
+  .wrap {
+    max-width: 600px;
+    margin: 0 auto;
+    padding: 60px 28px 140px;
+  }
+  .title {
+    font-family: 'Cormorant Garamond', serif;
+    font-style: italic;
+    font-weight: 500;
+    font-size: 38px;
+    text-align: center;
+    margin-bottom: 8px;
+  }
+  .sub {
+    text-align: center;
+    font-size: 14px;
+    color: var(--text-mid);
+    margin-bottom: 36px;
+  }
+
+  /* Range tabs */
+  .range-tabs {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 6px;
+    margin-bottom: 28px;
+    background: rgba(255,255,255,.04);
+    padding: 4px;
+    border-radius: 10px;
+  }
+  .range-tab {
+    padding: 12px 8px;
+    background: transparent;
+    border: none;
+    border-radius: 7px;
+    color: var(--text-mid);
+    font-family: 'Inter', sans-serif;
+    font-size: 12px;
+    font-weight: 500;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    cursor: pointer;
+    transition: all .15s;
+  }
+  .range-tab.on {
+    background: var(--accent);
+    color: var(--void);
+    font-weight: 600;
+  }
+
+  /* Section */
+  .panel {
+    display: none;
+  }
+  .panel.show { display: block; animation: fadeIn .35s ease; }
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  .period-meta {
+    text-align: center;
+    margin-bottom: 18px;
+  }
+  .period-meta .when {
+    font-family: 'Cormorant Garamond', serif;
+    font-style: italic;
+    font-size: 22px;
+    color: var(--accent);
+    margin-bottom: 4px;
+  }
+  .period-meta .hint {
+    font-size: 12px;
+    color: var(--text-dim);
+    letter-spacing: 1.5px;
+  }
+
+  .input-block {
+    margin-bottom: 24px;
+  }
+  .input-lbl {
+    display: block;
+    font-size: 11px;
+    color: var(--text-mid);
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    margin-bottom: 8px;
+  }
+  textarea {
+    width: 100%;
+    background: var(--card);
+    border: 1.5px solid rgba(255,255,255,.08);
+    border-radius: 10px;
+    color: var(--text);
+    padding: 14px 16px;
+    font-family: 'Inter', sans-serif;
+    font-size: 15px;
+    line-height: 1.5;
+    outline: none;
+    resize: none;
+    transition: border-color .15s;
+  }
+  textarea:focus { border-color: var(--accent); }
+  textarea::placeholder { color: var(--text-dim); }
+
+  /* Saved goals list */
+  .saved {
+    margin-top: 12px;
+  }
+  .saved-item {
+    background: rgba(0,229,212,.04);
+    border: 1px solid rgba(0,229,212,.18);
+    border-radius: 8px;
+    padding: 12px 14px;
+    margin-bottom: 6px;
+    font-family: 'Cormorant Garamond', serif;
+    font-style: italic;
+    font-size: 14px;
+    color: var(--text);
+    line-height: 1.5;
+  }
+
+  /* Bottom */
+  .bottom {
+    position: fixed;
+    bottom: 0; left: 0; right: 0;
+    padding: 20px 28px env(safe-area-inset-bottom, 24px);
+    background: linear-gradient(180deg, transparent, var(--void) 40%);
+    z-index: 10;
+  }
+  .cta {
+    display: block;
+    width: 100%;
+    max-width: 540px;
+    margin: 0 auto;
+    padding: 16px;
+    background: linear-gradient(180deg, var(--accent), var(--accent-soft));
+    color: var(--void);
+    font-family: 'Inter', sans-serif;
+    font-size: 14px;
+    font-weight: 600;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    border: none;
+    border-radius: 999px;
+    text-align: center;
+    text-decoration: none;
+    cursor: pointer;
+    min-height: 52px;
+  }
+  .saved-banner {
+    display: none;
+    text-align: center;
+    color: var(--accent);
+    font-size: 12px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    margin-top: 12px;
+  }
+  .saved-banner.show { display: block; animation: fadeIn .3s ease; }
+</style>
+</head>
+<body>
+
+<div class="wrap">
+  <h1 class="title">Uzoq yo'l</h1>
+  <p class="sub">Hafta, oy va yil rejalari</p>
+
+  <div class="range-tabs" id="rangeTabs">
+    <button class="range-tab on" data-range="week"  type="button">Hafta</button>
+    <button class="range-tab"    data-range="month" type="button">Oy</button>
+    <button class="range-tab"    data-range="year"  type="button">Yil</button>
+  </div>
+
+  <!-- Weekly -->
+  <div class="panel show" id="panel-week">
+    <div class="period-meta">
+      <div class="when" id="weekWhen">Hafta 23</div>
+      <div class="hint" id="weekRange">10 — 16 iyun</div>
+    </div>
+    <div class="input-block">
+      <label class="input-lbl">Bu hafta nima qilasan?</label>
+      <textarea id="weekGoal" rows="5" placeholder="masalan:&#10;• 3 ta kitob bobi&#10;• 4 ta sport sessiyasi&#10;• 1 ta loyiha bosqichi" maxlength="500"></textarea>
+    </div>
+  </div>
+
+  <!-- Monthly -->
+  <div class="panel" id="panel-month">
+    <div class="period-meta">
+      <div class="when" id="monthWhen">Iyun 2026</div>
+      <div class="hint">Bu oy uchun asosiy yo'nalish</div>
+    </div>
+    <div class="input-block">
+      <label class="input-lbl">Bu oy nima qilasan?</label>
+      <textarea id="monthGoal" rows="5" placeholder="masalan:&#10;• Til o'qishni 2 daraja oshirish&#10;• Sport — 16 sessiya&#10;• Loyiha — birinchi versiya tayyor" maxlength="500"></textarea>
+    </div>
+  </div>
+
+  <!-- Yearly -->
+  <div class="panel" id="panel-year">
+    <div class="period-meta">
+      <div class="when" id="yearWhen">2026</div>
+      <div class="hint">Yil uchun katta niyat</div>
+    </div>
+    <div class="input-block">
+      <label class="input-lbl">Yilning oxiriga nima qilmoqchi?</label>
+      <textarea id="yearGoal" rows="6" placeholder="masalan:&#10;• Yangi mahorat o'rganish&#10;• Sog'lik darajasi yaxshilanishi&#10;• Bir katta loyiha tugatish&#10;• Mustaqil bo'lish" maxlength="700"></textarea>
+    </div>
+  </div>
+
+  <div class="saved-banner" id="savedBanner">✓ Saqlandi</div>
+
+</div>
+
+<div class="bottom">
+  <a class="cta" id="saveBtn" href="calendar.html">Saqla va davom</a>
+</div>
+
+<script src="i18n.js" defer></script>
+<script src="data.js" defer></script>
+<script src="nav-overlay.js" defer></script>
+<script>
+  document.addEventListener('DOMContentLoaded', () => {
+    const KEY = {
+      week:  'mvow.weekGoal',
+      month: 'mvow.monthGoal',
+      year:  'mvow.yearGoal'
+    };
+
+    // Saqlangan ma'lumotni tiklash
+    document.getElementById('weekGoal').value  = localStorage.getItem(KEY.week)  || '';
+    document.getElementById('monthGoal').value = localStorage.getItem(KEY.month) || '';
+    document.getElementById('yearGoal').value  = localStorage.getItem(KEY.year)  || '';
+
+    // Tabs
+    document.querySelectorAll('.range-tab').forEach(t => {
+      t.addEventListener('click', () => {
+        document.querySelectorAll('.range-tab').forEach(x => x.classList.remove('on'));
+        t.classList.add('on');
+        document.querySelectorAll('.panel').forEach(p => p.classList.remove('show'));
+        document.getElementById('panel-' + t.dataset.range).classList.add('show');
+        if (window.MVOW_DATA) MVOW_DATA.fxTap();
+      });
+    });
+
+    // Meta — hozirgi hafta/oy/yil
+    const now = new Date();
+    const monNames = ['Yanvar','Fevral','Mart','Aprel','May','Iyun','Iyul','Avgust','Sentyabr','Oktyabr','Noyabr','Dekabr'];
+    const monShort = ['yan','fev','mar','apr','may','iyun','iyul','avg','sen','okt','noy','dek'];
+    const dow = now.getDay();
+    const monday = new Date(now);
+    monday.setDate(now.getDate() - ((dow + 6) % 7));
+    const sunday = new Date(monday);
+    sunday.setDate(monday.getDate() + 6);
+
+    // ISO hafta soni
+    const t = new Date(now.valueOf());
+    t.setHours(0,0,0,0);
+    t.setDate(t.getDate() + 3 - ((t.getDay() + 6) % 7));
+    const w = new Date(t.getFullYear(), 0, 4);
+    const weekNum = 1 + Math.round(((t - w) / 86400000 - 3 + ((w.getDay() + 6) % 7)) / 7);
+
+    document.getElementById('weekWhen').textContent = `Hafta ${weekNum}`;
+    document.getElementById('weekRange').textContent = `${monday.getDate()} ${monShort[monday.getMonth()]} — ${sunday.getDate()} ${monShort[sunday.getMonth()]}`;
+    document.getElementById('monthWhen').textContent = monNames[now.getMonth()] + ' ' + now.getFullYear();
+    document.getElementById('yearWhen').textContent = String(now.getFullYear());
+
+    // Saqlash
+    const banner = document.getElementById('savedBanner');
+    function saveAll() {
+      localStorage.setItem(KEY.week,  document.getElementById('weekGoal').value.trim());
+      localStorage.setItem(KEY.month, document.getElementById('monthGoal').value.trim());
+      localStorage.setItem(KEY.year,  document.getElementById('yearGoal').value.trim());
+      if (window.MVOW_DATA) MVOW_DATA.fxSuccess();
+      banner.classList.add('show');
+      setTimeout(() => banner.classList.remove('show'), 2000);
+    }
+
+    // Auto-save (yozish to'xtaganda)
+    let saveTimer;
+    document.querySelectorAll('textarea').forEach(ta => {
+      ta.addEventListener('input', () => {
+        clearTimeout(saveTimer);
+        saveTimer = setTimeout(saveAll, 800);
+      });
+    });
+
+    document.getElementById('saveBtn').addEventListener('click', saveAll);
+  });
+</script>
+
+</body>
+</html>
