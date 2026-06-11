@@ -3,7 +3,7 @@
  * after first load. Caches all preview HTML files + the logo.
  */
 
-const CACHE_NAME = 'mvow-v13.1.0';
+const CACHE_NAME = 'mvow-v13.2.0';
 const ASSETS = [
   './',
   // Asosiy infratuzilma
@@ -120,20 +120,42 @@ self.addEventListener('fetch', event => {
 // ──────────────────────────────────────────────────────────────
 self.addEventListener('notificationclick', event => {
   event.notification.close();
-  const url = (event.notification.data && event.notification.data.url) || './alarm.html';
-  event.waitUntil(
-    self.clients.matchAll({ type: 'window', includeUncontrolled: true }).then(clientList => {
-      // Agar ilov ochiq bo'lsa, alarm sahifasiga olib boramiz
-      for (const client of clientList) {
-        if ('focus' in client) {
-          client.navigate(url).catch(() => {});
-          return client.focus();
-        }
+  const raw = (event.notification.data && event.notification.data.url) || 'alarm.html';
+  // Absolute URL — service worker scope'ga nisbatan
+  const targetUrl = new URL(raw, self.registration.scope).href;
+
+  event.waitUntil((async () => {
+    const allClients = await self.clients.matchAll({
+      type: 'window',
+      includeUncontrolled: true
+    });
+
+    // 1) Agar shunday URL bilan oyna ochiq bo'lsa — fokus
+    for (const client of allClients) {
+      if (client.url === targetUrl && 'focus' in client) {
+        return client.focus();
       }
-      // Aks holda yangi oyna ochish
-      if (self.clients.openWindow) return self.clients.openWindow(url);
-    })
-  );
+    }
+
+    // 2) Bo'lmasa — mavjud oynani topib, postMessage bilan navigatsiya
+    for (const client of allClients) {
+      if (client.url.startsWith(self.registration.scope.replace(/\/$/, ''))) {
+        try {
+          await client.focus();
+          // Page tomonida message listener bor (data.js'da)
+          client.postMessage({ type: 'mvow.navigate', url: targetUrl });
+          // Yana navigate ham urinib ko'ramiz (ikki yo'l)
+          try { await client.navigate(targetUrl); } catch {}
+          return;
+        } catch {}
+      }
+    }
+
+    // 3) Hech qanday oyna yo'q — yangi ochish
+    if (self.clients.openWindow) {
+      return self.clients.openWindow(targetUrl);
+    }
+  })());
 });
 
 // Push event (kelajak uchun, server yuborgan push'larni qo'llab-quvvatlash)

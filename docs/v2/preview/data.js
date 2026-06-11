@@ -222,11 +222,15 @@
           return;
         }
       }
-      // Fallback — oddiy Notification
+      // Fallback — oddiy Notification (sahifa tomonida)
       const n = new Notification(title, opts);
-      n.onclick = () => {
-        window.focus();
-        window.location.href = 'alarm.html';
+      n.onclick = (e) => {
+        e.preventDefault();
+        try { window.focus(); } catch {}
+        // Alarm sahifasi'dagi bo'lmasa, o'tkazamiz
+        if (!location.pathname.endsWith('alarm.html')) {
+          window.location.href = 'alarm.html';
+        }
         n.close();
       };
     } catch (e) {
@@ -314,6 +318,15 @@
     document.addEventListener('DOMContentLoaded', onReady);
   } else {
     onReady();
+  }
+
+  // Service worker'dan kelgan navigatsiya so'rovlarini eshitish
+  if ('serviceWorker' in navigator) {
+    navigator.serviceWorker.addEventListener('message', (e) => {
+      if (e.data && e.data.type === 'mvow.navigate' && e.data.url) {
+        try { window.location.href = e.data.url; } catch {}
+      }
+    });
   }
 
   // Global'ga ochish — boshqa skriptlar (per-screen) ham foydalanishi uchun
