@@ -203,10 +203,11 @@
     'hard-lock.html',         // 12. Qulflash
     'negotiation.html',       // 13. Diqqat sinovi
     'session-reflection.html',// 14. Sessiya bahosi
-    // Natija (15-17)
-    'notifications.html',     // 15. Xabarlar
-    'weekly-review.html',     // 16. Natijalar
-    'celebrate.html'          // 17. Bayram
+    'kechqurun.html',         // 15. Kechki sharh (bugun + ertaga + uyg'onish)
+    // Natija (16-18)
+    'notifications.html',     // 16. Xabarlar
+    'weekly-review.html',     // 17. Natijalar
+    'celebrate.html'          // 18. Bayram
   ];
 
   const file = (location.pathname.split('/').pop() || 'welcome.html').toLowerCase();
@@ -221,8 +222,8 @@
     { name: 'Tanishuv',  range: [0, 3] },   // 1-3 (intro, anketa, vada)
     { name: 'Sozlama',   range: [3, 5] },   // 4-5 (permissions, settings)
     { name: 'Kun',       range: [5, 10] },  // 6-10 (alarm, home, routine, today-plan, calendar)
-    { name: 'Bajarish',  range: [10, 14] }, // 11-14
-    { name: 'Natija',    range: [14, 17] }  // 15-17
+    { name: 'Bajarish',  range: [10, 15] }, // 11-15 (day-flow, hard-lock, negotiation, session-reflection, kechqurun)
+    { name: 'Natija',    range: [15, 18] }  // 16-18
   ];
   const currentSection = SECTIONS.find(s => idx >= s.range[0] && idx < s.range[1]) || SECTIONS[0];
   const sectionIdx = idx - currentSection.range[0] + 1;

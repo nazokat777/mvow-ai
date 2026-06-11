@@ -1,0 +1,461 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>{brand} — Kun yakuni</title>
+<link rel="manifest" href="manifest.webmanifest">
+<meta name="theme-color" content="#04060B">
+<link rel="apple-touch-icon" href="assets/mnsm-logo.png">
+<link rel="icon" type="image/png" href="assets/mnsm-logo.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,600;1,500&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  :root {
+    --void:#04060B; --void-soft:#0C0F16;
+    --text:#F5F2EC; --text-mid:#B8BBC2; --text-dim:#9CA0A8;
+    --accent:#00E5D4; --accent-soft:#00B5A8;
+    --card:#11151E;
+  }
+  html, body {
+    background: var(--void); color: var(--text);
+    min-height: 100vh;
+    font-family: 'Inter', sans-serif;
+    -webkit-font-smoothing: antialiased;
+  }
+  .wrap {
+    max-width: 600px;
+    margin: 0 auto;
+    padding: 60px 28px 140px;
+  }
+  .top-stamp {
+    text-align: center;
+    font-size: 11px;
+    letter-spacing: 4px;
+    color: var(--text-dim);
+    text-transform: uppercase;
+    margin-bottom: 14px;
+  }
+  .title {
+    font-family: 'Cormorant Garamond', serif;
+    font-style: italic;
+    font-weight: 500;
+    font-size: 38px;
+    line-height: 1.2;
+    text-align: center;
+    margin-bottom: 8px;
+  }
+  .sub {
+    text-align: center;
+    font-family: 'Cormorant Garamond', serif;
+    font-style: italic;
+    font-size: 16px;
+    color: var(--text-mid);
+    margin-bottom: 36px;
+  }
+
+  /* Sections */
+  .section {
+    margin-bottom: 32px;
+  }
+  .section-head {
+    font-size: 11px;
+    letter-spacing: 3px;
+    color: var(--accent);
+    text-transform: uppercase;
+    font-weight: 500;
+    margin-bottom: 14px;
+  }
+
+  /* Win cards */
+  .wins { display:flex; flex-direction: column; gap: 8px; }
+  .win {
+    display: grid;
+    grid-template-columns: auto 1fr auto;
+    align-items: center;
+    gap: 14px;
+    padding: 14px 16px;
+    background: var(--card);
+    border: 1px solid rgba(0,229,212,.15);
+    border-radius: 10px;
+  }
+  .win .check {
+    width: 22px; height: 22px;
+    border-radius: 50%;
+    background: var(--accent);
+    display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0;
+  }
+  .win .check svg { width: 12px; height: 12px; stroke: var(--void); }
+  .win .name { font-size: 15px; color: var(--text); }
+  .win .dur { font-size: 12px; color: var(--text-dim); }
+
+  .no-wins {
+    text-align: center;
+    padding: 24px 16px;
+    font-family: 'Cormorant Garamond', serif;
+    font-style: italic;
+    font-size: 14px;
+    color: var(--text-mid);
+    line-height: 1.5;
+  }
+
+  /* Tomorrow plan */
+  .tom-input {
+    width: 100%;
+    background: var(--card);
+    border: 1.5px solid rgba(255,255,255,.08);
+    border-radius: 10px;
+    color: var(--text);
+    padding: 14px 16px;
+    font-family: 'Inter', sans-serif;
+    font-size: 14px;
+    outline: none;
+    resize: none;
+    min-height: 90px;
+    line-height: 1.5;
+    transition: border-color .15s;
+  }
+  .tom-input:focus { border-color: var(--accent); }
+  .tom-input::placeholder { color: var(--text-dim); }
+
+  .quick-chips {
+    display: flex; flex-wrap: wrap; gap: 6px;
+    margin-top: 10px;
+  }
+  .quick-chip {
+    padding: 8px 12px;
+    background: transparent;
+    border: 1px solid rgba(0,229,212,.25);
+    border-radius: 999px;
+    color: var(--accent);
+    font-size: 12px;
+    cursor: pointer;
+    transition: all .15s;
+  }
+  .quick-chip:hover, .quick-chip:active {
+    background: rgba(0,229,212,.06);
+  }
+
+  /* Wake time */
+  .wake-row {
+    display: grid;
+    grid-template-columns: 1fr auto;
+    align-items: center;
+    gap: 12px;
+    padding: 14px 16px;
+    background: var(--card);
+    border: 1.5px solid rgba(255,255,255,.08);
+    border-radius: 10px;
+  }
+  .wake-row label {
+    font-size: 14px;
+    color: var(--text);
+  }
+  .wake-row input[type="time"] {
+    background: transparent;
+    border: none;
+    color: var(--accent);
+    font-family: 'Inter', sans-serif;
+    font-size: 17px;
+    font-weight: 500;
+    text-align: right;
+    outline: none;
+    width: 110px;
+  }
+  .alarm-toggle {
+    display: grid;
+    grid-template-columns: 1fr auto;
+    align-items: center;
+    gap: 12px;
+    padding: 14px 16px;
+    background: var(--card);
+    border: 1.5px solid rgba(255,255,255,.08);
+    border-radius: 10px;
+    margin-top: 8px;
+  }
+  .alarm-toggle .lbl { font-size: 14px; color: var(--text); }
+  .alarm-toggle .why { font-size: 12px; color: var(--text-dim); margin-top: 2px; }
+  .toggle {
+    width: 44px; height: 26px;
+    background: rgba(255,255,255,.08);
+    border-radius: 13px;
+    cursor: pointer;
+    position: relative;
+    transition: background .2s;
+    flex-shrink: 0;
+  }
+  .toggle::after {
+    content: '';
+    position: absolute;
+    top: 3px; left: 3px;
+    width: 20px; height: 20px;
+    border-radius: 50%;
+    background: var(--text);
+    transition: transform .2s;
+  }
+  .toggle.on { background: var(--accent); }
+  .toggle.on::after { transform: translateX(18px); background: var(--void); }
+
+  /* Stats row */
+  .stats {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 10px;
+    margin-bottom: 28px;
+  }
+  .stat {
+    background: var(--card);
+    border-radius: 10px;
+    padding: 14px 8px;
+    text-align: center;
+  }
+  .stat .v {
+    font-family: 'Cormorant Garamond', serif;
+    font-weight: 500;
+    font-size: 22px;
+    color: var(--accent);
+  }
+  .stat .l {
+    font-size: 9px;
+    letter-spacing: 2px;
+    color: var(--text-dim);
+    text-transform: uppercase;
+    margin-top: 2px;
+  }
+
+  /* Bottom nav */
+  .bottom {
+    position: fixed;
+    bottom: 0; left: 0; right: 0;
+    padding: 20px 28px env(safe-area-inset-bottom, 24px);
+    background: linear-gradient(180deg, transparent, var(--void) 40%);
+    z-index: 10;
+  }
+  .cta {
+    display: block;
+    width: 100%;
+    max-width: 540px;
+    margin: 0 auto;
+    padding: 16px;
+    background: linear-gradient(180deg, var(--accent), var(--accent-soft));
+    color: var(--void);
+    font-family: 'Inter', sans-serif;
+    font-size: 14px;
+    font-weight: 600;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    border: none;
+    border-radius: 999px;
+    text-align: center;
+    text-decoration: none;
+    cursor: pointer;
+    min-height: 52px;
+  }
+</style>
+</head>
+<body>
+
+<div class="wrap">
+
+  <div class="top-stamp" id="dateStamp">Kechki sharh</div>
+  <h1 class="title">Kun yakuni</h1>
+  <p class="sub" id="greetSub">Yaxshi qadam tashlading.</p>
+
+  <!-- Stats -->
+  <div class="stats">
+    <div class="stat">
+      <div class="v" id="doneN">0</div>
+      <div class="l">Bajardim</div>
+    </div>
+    <div class="stat">
+      <div class="v" id="focusH">0</div>
+      <div class="l">Soat fokus</div>
+    </div>
+    <div class="stat">
+      <div class="v" id="streakN">0</div>
+      <div class="l">Streak</div>
+    </div>
+  </div>
+
+  <!-- Today's wins -->
+  <div class="section">
+    <div class="section-head">Bugungi muvaffaqiyatlar</div>
+    <div class="wins" id="winsList">
+      <div class="no-wins">Bugun hech narsa belgilanmagan.<br>Ertaga yangidan boshlaymiz.</div>
+    </div>
+  </div>
+
+  <!-- Tomorrow's plan -->
+  <div class="section">
+    <div class="section-head">Ertangi reja</div>
+    <textarea class="tom-input" id="tomInput" placeholder="ertaga nima qilasan? (har satr — bitta ish)" maxlength="600"></textarea>
+    <div class="quick-chips">
+      <button class="quick-chip" data-add="Sport (45 daq)" type="button">🏃 Sport</button>
+      <button class="quick-chip" data-add="O'qish (1 soat)" type="button">📚 O'qish</button>
+      <button class="quick-chip" data-add="Loyiha (1.5 soat)" type="button">💻 Loyiha</button>
+      <button class="quick-chip" data-add="Kitob (30 daq)" type="button">📖 Kitob</button>
+      <button class="quick-chip" data-add="Sayr (30 daq)" type="button">🚶 Sayr</button>
+    </div>
+  </div>
+
+  <!-- Wake time + alarm -->
+  <div class="section">
+    <div class="section-head">Uyg'onish</div>
+    <div class="wake-row">
+      <label for="wakeTime">Uyg'onish vaqti</label>
+      <input id="wakeTime" type="time" value="07:00">
+    </div>
+    <div class="alarm-toggle">
+      <div>
+        <div class="lbl">Budilnik yoq</div>
+        <div class="why">Vaqt kelganda 3 misol bilan uyg'otamiz</div>
+      </div>
+      <div class="toggle on" id="alarmToggle" role="switch" tabindex="0" aria-checked="true"></div>
+    </div>
+  </div>
+
+</div>
+
+<div class="bottom">
+  <a class="cta" id="saveBtn" href="home.html">Yaxshi tundir</a>
+</div>
+
+<script src="i18n.js" defer></script>
+<script src="data.js" defer></script>
+<script src="nav-overlay.js" defer></script>
+<script>
+  document.addEventListener('DOMContentLoaded', () => {
+    // ── Sana ──
+    const d = new Date();
+    const months = ['YAN','FEV','MAR','APR','MAY','IYUN','IYUL','AVG','SEN','OKT','NOY','DEK'];
+    const days = ['YAKSHANBA','DUSHANBA','SESHANBA','CHORSHANBA','PAYSHANBA','JUMA','SHANBA'];
+    document.getElementById('dateStamp').textContent =
+      `${String(d.getDate()).padStart(2,'0')}-${months[d.getMonth()]} · ${days[d.getDay()]}`;
+
+    // ── Stats ──
+    const todayKey = 'mvow.done.' + d.toISOString().slice(0,10);
+    const done = parseInt(localStorage.getItem(todayKey) || '0', 10);
+    document.getElementById('doneN').textContent = done;
+
+    // Fokus soati (har sessiya ~ 45 daq taxmin)
+    const focusH = Math.round(done * 0.75 * 10) / 10;
+    document.getElementById('focusH').textContent = focusH;
+
+    const streak = parseInt(localStorage.getItem('mvow.streak') || '0', 10);
+    document.getElementById('streakN').textContent = streak;
+
+    // Greeting
+    const name = (localStorage.getItem('mvow.userName') || '').trim();
+    const greetEl = document.getElementById('greetSub');
+    if (done === 0) {
+      greetEl.textContent = name ? `Hech qisi yo'q, ${name}. Ertaga yangidan.` : "Hech qisi yo'q. Ertaga yangidan.";
+    } else if (done < 3) {
+      greetEl.textContent = name ? `Bir qadam tashlading, ${name}.` : 'Bir qadam tashlading.';
+    } else {
+      greetEl.textContent = name ? `Yaxshi ish bo'ldi, ${name}.` : "Yaxshi ish bo'ldi.";
+    }
+
+    // ── Bugungi muvaffaqiyatlar ──
+    let plan = [];
+    if (window.MVOW_DATA) plan = MVOW_DATA.getTodayPlan();
+    const winsEl = document.getElementById('winsList');
+    if (done > 0 && plan.length) {
+      // Birinchi N ta sessiya bajarilgan deb hisoblaymiz
+      const wins = plan.slice(0, done);
+      winsEl.innerHTML = wins.map(w => `
+        <div class="win">
+          <div class="check"><svg viewBox="0 0 24 24" fill="none" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="5 12 10 17 19 8"/></svg></div>
+          <div class="name">${escapeHtml(w.name || 'Ish')}</div>
+          <div class="dur">${escapeHtml(w.dur || '')}</div>
+        </div>
+      `).join('');
+    }
+
+    // ── Ertangi reja ──
+    const tomInput = document.getElementById('tomInput');
+    const tomSaved = localStorage.getItem('mvow.tomorrowPlan') || '';
+    tomInput.value = tomSaved;
+
+    document.querySelectorAll('.quick-chip').forEach(c => {
+      c.addEventListener('click', () => {
+        const cur = tomInput.value.trim();
+        tomInput.value = cur ? cur + '\n' + c.dataset.add : c.dataset.add;
+        if (window.MVOW_DATA) MVOW_DATA.fxTap();
+      });
+    });
+
+    // ── Uyg'onish ──
+    const wakeInput = document.getElementById('wakeTime');
+    const savedWake = localStorage.getItem('mvow.wakeTime') || '07:00';
+    wakeInput.value = savedWake;
+
+    const alarmToggle = document.getElementById('alarmToggle');
+    const alarmOn = localStorage.getItem('mvow.alarmOn') !== '0';
+    alarmToggle.classList.toggle('on', alarmOn);
+    alarmToggle.setAttribute('aria-checked', alarmOn ? 'true' : 'false');
+    function flipAlarm() {
+      const on = !alarmToggle.classList.contains('on');
+      alarmToggle.classList.toggle('on', on);
+      alarmToggle.setAttribute('aria-checked', on ? 'true' : 'false');
+      localStorage.setItem('mvow.alarmOn', on ? '1' : '0');
+    }
+    alarmToggle.addEventListener('click', flipAlarm);
+    alarmToggle.addEventListener('keydown', e => {
+      if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); flipAlarm(); }
+    });
+
+    // ── Saqlash + uyga ──
+    document.getElementById('saveBtn').addEventListener('click', (e) => {
+      const tomRaw = tomInput.value.trim();
+      localStorage.setItem('mvow.tomorrowPlan', tomRaw);
+      localStorage.setItem('mvow.wakeTime', wakeInput.value);
+      // Ertangi reja matnini parse qilib weekPlan'ga saqlash
+      if (tomRaw && window.MVOW_DATA) {
+        const sessions = parsePlans(tomRaw);
+        const tomKey = 'd' + new Date(Date.now() + 86400000).toISOString().slice(0,10);
+        const w = MVOW_DATA.getWeekPlan();
+        if (sessions.length) {
+          w[tomKey] = sessions;
+          MVOW_DATA.setWeekPlan(w);
+        }
+      }
+      if (window.MVOW_DATA) MVOW_DATA.fxTap();
+    });
+
+    function parsePlans(raw) {
+      const lines = raw.split(/[\n,;•]+/).map(s => s.trim()).filter(Boolean);
+      const out = [];
+      let hour = 7;
+      for (const line of lines) {
+        let time = '', name = line, dur = '1 soat';
+        const m = line.match(/^(\d{1,2}):(\d{2})\s+(.+?)(?:\s+\((.+?)\))?$/);
+        if (m) {
+          time = `${m[1].padStart(2,'0')}:${m[2]}`;
+          name = m[3].trim();
+          if (m[4]) dur = m[4].trim();
+        } else {
+          // Tekshiruv: dur qavs ichida
+          const dm = line.match(/^(.+?)\s+\((.+?)\)$/);
+          if (dm) {
+            name = dm[1].trim();
+            dur = dm[2].trim();
+          }
+          time = `${String(hour).padStart(2,'0')}:00`;
+          hour++;
+        }
+        out.push({ time, name, dur });
+      }
+      return out;
+    }
+
+    function escapeHtml(s) {
+      return String(s).replace(/[<>"&]/g, c => ({'<':'&lt;','>':'&gt;','"':'&quot;','&':'&amp;'}[c]));
+    }
+  });
+</script>
+
+</body>
+</html>
