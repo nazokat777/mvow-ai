@@ -76,26 +76,36 @@
 <script src="nav-overlay.js" defer></script>
 <script>
   document.addEventListener('DOMContentLoaded', () => {
-    let mins = 25;
+    let prefs = {};
+    try { prefs = JSON.parse(localStorage.getItem('mvow.prefs') || '{}'); } catch {}
+    const mode = prefs.mode || 'simple';
+    const workMin = parseInt(prefs.sessionMins || 25, 10);
+    const breakMin = parseInt(prefs.breakMins || 5, 10);
+    const cycles = parseInt(prefs.pomoCycles || 3, 10);
+    let mins = workMin;
+
     if (window.MVOW_DATA) {
       const cur = MVOW_DATA.currentSession() || MVOW_DATA.sessions[0];
       if (cur) {
         document.getElementById('taskName').textContent = cur.name;
-        mins = cur.mins || 25;
         const start = cur.time;
         if (start && start.includes(':')) {
           const sm = (+start.split(':')[0]) * 60 + (+start.split(':')[1]);
-          const em = sm + mins;
+          // Pomodoro rejimida — work*cycles + break*(cycles-1)
+          const totalMin = (mode === 'pomodoro')
+            ? (workMin * cycles + breakMin * (cycles - 1))
+            : mins;
+          const em = sm + totalMin;
           const end = String(Math.floor(em/60)).padStart(2,'0') + ':' + String(em%60).padStart(2,'0');
-          document.getElementById('taskTime').textContent = `${start} — ${end}`;
+          document.getElementById('taskTime').textContent = `${start} — ${end}` + (mode === 'pomodoro' ? `  ·  ${cycles} sikl` : '');
         }
         document.getElementById('digits').textContent = String(mins).padStart(2,'0') + ':00';
       }
     }
 
-    // Boshlash bosilganda taymerni jonli qil (hard-lock'da davom etadi)
     document.getElementById('startBtn').addEventListener('click', () => {
-      localStorage.setItem('mvow.timer', JSON.stringify({ endsAt: Date.now() + mins * 60 * 1000 }));
+      // Hard-lock'da taymer state'i yangidan boshlanadi
+      localStorage.removeItem('mvow.timer');
     });
   });
 </script>
