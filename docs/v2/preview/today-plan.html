@@ -48,16 +48,22 @@
   }
   .task.done .name { color: var(--text-mid); text-decoration: line-through; text-decoration-color: rgba(0,229,212,.4); }
   .task.done .time { color: var(--text-dim); }
-  .task .check-badge {
+  .task.missed .name { color: var(--text-mid); text-decoration: line-through; text-decoration-color: rgba(255,71,87,.4); }
+  .task.missed .time { color: var(--alert); opacity: .8; }
+  .task.missed .dur { opacity: .5; }
+  .task .check-badge, .task .miss-badge {
     position: absolute; left: -18px; top: 50%;
     transform: translateY(-50%);
     width: 16px; height: 16px; border-radius: 50%;
-    background: var(--accent);
     display: none;
     align-items: center; justify-content: center;
   }
+  .task .check-badge { background: var(--accent); }
+  .task .miss-badge { background: var(--alert); }
   .task.done .check-badge { display: flex; }
+  .task.missed .miss-badge { display: flex; }
   .task .check-badge svg { width: 9px; height: 9px; stroke: var(--void); }
+  .task .miss-badge svg { width: 8px; height: 8px; stroke: var(--void); }
   .task.deleting { opacity: 0; transform: translateX(60px); }
   .task .time {
     font-size: 14px; font-weight: 500;
@@ -253,14 +259,26 @@
       return;
     }
     const completedKeys = (window.MVOW_DATA ? MVOW_DATA.getCompletedKeysToday() : new Set());
+    const now = new Date();
+    const nowMin = now.getHours() * 60 + now.getMinutes();
+    function isMissed(t) {
+      if (!t.time) return false;
+      const m = String(t.time).match(/^(\d{1,2}):(\d{2})$/);
+      if (!m) return false;
+      const startMin = (+m[1]) * 60 + (+m[2]);
+      const durMin = window.MVOW_DATA ? MVOW_DATA.parseDurMins(t.dur) : 60;
+      return nowMin > startMin + durMin;
+    }
     tasks.forEach((t, idx) => {
       const row = document.createElement('div');
       const key = window.MVOW_DATA ? MVOW_DATA.taskKey(MVOW_DATA.today.iso, t.time, t.name) : '';
       const isDone = completedKeys.has(key);
-      row.className = 'task' + (isDone ? ' done' : '');
+      const isMiss = !isDone && isMissed(t);
+      row.className = 'task' + (isDone ? ' done' : (isMiss ? ' missed' : ''));
       row.dataset.idx = idx;
       row.innerHTML = `
         <span class="check-badge"><svg viewBox="0 0 24 24" fill="none" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="5 12 10 17 19 8"/></svg></span>
+        <span class="miss-badge"><svg viewBox="0 0 24 24" fill="none" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><line x1="6" y1="6" x2="18" y2="18"/><line x1="6" y1="18" x2="18" y2="6"/></svg></span>
         <span class="time">${escapeHtml(t.time || '—')}</span>
         <span class="name">${escapeHtml(t.name || 'ish')}</span>
         <span class="dur">${escapeHtml(t.dur || '')}</span>

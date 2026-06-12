@@ -250,9 +250,16 @@
     ring.style.strokeDashoffset = offset;
   }
 
+  let askedAlready = false;
   function paintElapsed() {
     const elapsedSec = Math.floor((Date.now() - startedAt) / 1000);
     elapsedEl.textContent = fmt(elapsedSec);
+    // Taymersiz: rejalashtirilgan vaqt o'tgach avtomatik so'roq (bir marta)
+    if (mode === 'no-timer' && !askedAlready && elapsedSec >= WORK_MIN * 60) {
+      askedAlready = true;
+      if (window.MVOW_DATA && MVOW_DATA.fxFinish) MVOW_DATA.fxFinish();
+      askOverlay.classList.add('show');
+    }
   }
 
   function recordAndExit(completed) {
