@@ -267,7 +267,7 @@
 </div>
 
 <script>
-  // ── 8 ta savol ──
+  // ── 6 ta savol ──
   const QUESTIONS = [
     {
       id: 'name',
@@ -343,6 +343,12 @@
   const SAVED_KEY = 'mvow.anketa';
   let answers = {};
   try { answers = JSON.parse(localStorage.getItem(SAVED_KEY) || '{}'); } catch {}
+  // Eski (olib tashlangan) savollardan saqlangan javoblarni tozalash
+  const VALID_IDS = QUESTIONS.map(q => q.id);
+  Object.keys(answers).forEach(k => {
+    if (!VALID_IDS.includes(k)) delete answers[k];
+  });
+  localStorage.setItem(SAVED_KEY, JSON.stringify(answers));
   let stepIdx = 0;
 
   const $ = id => document.getElementById(id);
