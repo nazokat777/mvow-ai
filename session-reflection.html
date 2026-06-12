@@ -100,13 +100,14 @@
     const name = (localStorage.getItem('mvow.userName') || '').trim();
     if (name) document.getElementById('userName').textContent = name;
 
-    // Joriy task
+    // Joriy task — saqlangan rejadan
     let cur = null;
     let plan = [];
-    try { plan = JSON.parse(localStorage.getItem('mvow.todayPlan') || '[]'); } catch {}
-    if (Array.isArray(plan) && plan.length) {
-      cur = plan[0];
-    } else if (window.MVOW_DATA) {
+    if (window.MVOW_DATA) {
+      plan = MVOW_DATA.getTodayPlan();
+      cur = MVOW_DATA.currentTaskFromPlan();
+    }
+    if (!cur && window.MVOW_DATA) {
       cur = MVOW_DATA.currentSession() || MVOW_DATA.sessions[0];
     }
     if (cur) {

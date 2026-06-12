@@ -170,14 +170,34 @@
     return out;
   }
 
-  btn.addEventListener('click', () => {
+  btn.addEventListener('click', (e) => {
     const raw = t.value.trim();
-    localStorage.setItem('mvow.plansRaw', raw);
-    const sessions = parsePlansToSessions(raw);
-    // Yangi API — calendar/today-plan/home bilan birga ishlaydi
-    if (sessions.length && window.MVOW_DATA) {
-      MVOW_DATA.setTodayPlan(sessions);
+    if (!raw) {
+      e.preventDefault();
+      return;
     }
+    try {
+      localStorage.setItem('mvow.plansRaw', raw);
+      const sessions = parsePlansToSessions(raw);
+      if (sessions.length) {
+        if (window.MVOW_DATA && MVOW_DATA.setTodayPlan) {
+          MVOW_DATA.setTodayPlan(sessions);
+        } else {
+          // Fallback — to'g'ridan-to'g'ri weekPlan'ga yozish
+          const todayKey = 'd' + new Date().toISOString().slice(0,10);
+          let w = {};
+          try { w = JSON.parse(localStorage.getItem('mvow.weekPlan') || '{}'); } catch {}
+          w[todayKey] = sessions;
+          localStorage.setItem('mvow.weekPlan', JSON.stringify(w));
+          localStorage.setItem('mvow.todayPlan', JSON.stringify(sessions));
+        }
+      }
+    } catch (err) {
+      console.error('Reja saqlash xato:', err);
+    }
+    // Navigatsiya — href avtomatik ishlaydi, lekin xavfsizlik uchun
+    e.preventDefault();
+    setTimeout(() => { window.location.href = 'today-plan.html'; }, 30);
   });
 
   // ── Ovozli kiritish (Web Speech API) ──
