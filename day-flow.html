@@ -152,9 +152,9 @@
     preview.textContent = `${cyclesNeeded} sikl · ${pomoTotal} daq jami (${POMO_WORK}+${POMO_BREAK})`;
 
     startBtn.addEventListener('click', () => {
-      // Modal ochiladi
       localStorage.removeItem('mvow.timer');
       preview.style.display = 'block';
+      modal.style.display = 'flex';
       modal.classList.add('show');
     });
 
