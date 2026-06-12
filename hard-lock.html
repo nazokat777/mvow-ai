@@ -142,8 +142,9 @@
   let prefs = {};
   try { prefs = JSON.parse(localStorage.getItem('mvow.prefs') || '{}'); } catch {}
   const MODE = prefs.mode || 'simple';
+  // Sessiya vaqti — har doim task'ning haqiqiy davomiyligidan
   const taskMins = window.MVOW_DATA ? MVOW_DATA.parseDurMins(current.dur) : 25;
-  const WORK_MIN  = (MODE === 'pomodoro') ? parseInt(prefs.sessionMins || 25, 10) : taskMins;
+  const WORK_MIN  = taskMins;
   const BREAK_MIN = parseInt(prefs.breakMins  || 5, 10);
   const TOTAL_CYC = parseInt(prefs.pomoCycles || 3, 10);
 
