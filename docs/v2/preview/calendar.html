@@ -186,10 +186,13 @@
       <button id="nextW" type="button" aria-label="Keyingi" style="background:transparent;border:none;color:var(--text-mid);font-size:22px;width:44px;height:44px;cursor:pointer;border-radius:50%;">›</button>
     </div>
 
+    <!-- Maqsad banner — rejalar'dan joriy oyga -->
+    <a href="rejalar.html" id="goalBanner" style="display:none;background:rgba(0,229,212,.06);border:1px solid rgba(0,229,212,.25);border-radius:10px;padding:12px 14px;margin-bottom:16px;text-decoration:none;color:var(--accent);font-family:'Cormorant Garamond',serif;font-style:italic;font-size:14px;line-height:1.4;text-align:center;"></a>
+
     <!-- View tabs: Hafta / Oy -->
     <div id="viewTabs" style="display:flex;gap:4px;padding:4px;background:rgba(255,255,255,.04);border-radius:8px;margin-bottom:20px;">
-      <button class="vt on" data-view="week" type="button" style="flex:1;padding:10px;background:var(--accent);color:var(--void);border:none;border-radius:6px;font-family:Inter;font-size:11px;letter-spacing:2px;text-transform:uppercase;font-weight:600;cursor:pointer;">Hafta</button>
-      <button class="vt" data-view="month" type="button" style="flex:1;padding:10px;background:transparent;color:var(--text-mid);border:none;border-radius:6px;font-family:Inter;font-size:11px;letter-spacing:2px;text-transform:uppercase;cursor:pointer;">Oy</button>
+      <button class="vt" data-view="week" type="button" style="flex:1;padding:10px;background:transparent;color:var(--text-mid);border:none;border-radius:6px;font-family:Inter;font-size:11px;letter-spacing:2px;text-transform:uppercase;cursor:pointer;">Hafta</button>
+      <button class="vt on" data-view="month" type="button" style="flex:1;padding:10px;background:var(--accent);color:var(--void);border:none;border-radius:6px;font-family:Inter;font-size:11px;letter-spacing:2px;text-transform:uppercase;font-weight:600;cursor:pointer;">Oy</button>
     </div>
 
     <div class="week-row" id="weekRow"></div>
@@ -266,9 +269,9 @@
   let weekData = loadAll();
   let selectedKey = TODAY_IDX >= 0 ? DAYS[TODAY_IDX].key : DAYS[0].key;
 
-  // ── View state (hafta yoki oy) ──
-  let viewMode = 'week'; // 'week' yoki 'month'
-  let monthOffset = 0;   // 0 = joriy oy, -1 oldingi, +1 keyingi
+  // ── View state (oylik default) ──
+  let viewMode = 'month'; // 'week' yoki 'month'
+  let monthOffset = 0;
 
   // Prev/Next tugmalari — view'ga qarab ishlaydi
   document.getElementById('prevW').addEventListener('click', () => {
@@ -517,8 +520,31 @@
     if (lastRow) enterEdit(lastRow, parseInt(lastRow.dataset.idx, 10));
   });
 
-  document.addEventListener('DOMContentLoaded', () => { renderWeek(); renderDay(); });
-  if (document.readyState !== 'loading') { renderWeek(); renderDay(); }
+  // Maqsad banner — rejalar.html'dan
+  function showGoalBanner() {
+    const banner = document.getElementById('goalBanner');
+    if (!banner) return;
+    const monthGoal = (localStorage.getItem('mvow.monthGoal') || '').trim();
+    if (monthGoal) {
+      const firstLine = monthGoal.split('\n')[0].slice(0, 80);
+      banner.textContent = '“' + firstLine + '”';
+      banner.style.display = 'block';
+    } else {
+      banner.textContent = '+ Bu oy uchun maqsad qo\'sh';
+      banner.style.color = 'var(--text-mid)';
+      banner.style.fontStyle = 'normal';
+      banner.style.display = 'block';
+    }
+  }
+
+  // Default: oylik view
+  function initView() {
+    if (viewMode === 'month') switchView();
+    else { renderWeek(); renderDay(); }
+    showGoalBanner();
+  }
+  document.addEventListener('DOMContentLoaded', initView);
+  if (document.readyState !== 'loading') initView();
 </script>
 
 </body>
