@@ -256,6 +256,12 @@
       <div class="ex" data-fill="Til o'rganish">· Til o'rganish</div>
     </div>
 
+    <!-- Band vaqtlar (boshqa maqsadlardan) -->
+    <div id="occupiedHint" style="display:none;background:rgba(0,229,212,.05);border:1px solid rgba(0,229,212,.18);border-radius:10px;padding:10px 14px;margin:8px 0 4px;">
+      <div style="font-size:10px;color:var(--text-dim);letter-spacing:2px;text-transform:uppercase;margin-bottom:6px;">Band vaqtlar</div>
+      <div id="occupiedList" style="font-size:12px;color:var(--text-mid);line-height:1.6;"></div>
+    </div>
+
     <div class="time-input">
       <label for="dailyTime">Har kun qaysi vaqtda?</label>
       <input id="dailyTime" type="time" value="07:00">
@@ -264,6 +270,11 @@
     <div class="time-input">
       <label for="dailyDur">Davomiylik (daqiqa)</label>
       <input id="dailyDur" type="number" min="10" max="240" value="60" style="text-align:right;">
+    </div>
+
+    <!-- Konflikt xabari -->
+    <div id="conflictMsg" style="display:none;background:rgba(255,71,87,.08);border:1px solid rgba(255,71,87,.35);border-radius:10px;padding:12px 14px;margin-top:10px;font-size:12px;color:#FF8E97;line-height:1.5;">
+      <span id="conflictText">Bu vaqt allaqachon band.</span>
     </div>
   </div>
 
@@ -314,26 +325,110 @@
       });
     });
 
+    // ── Vaqt utilities ──
+    function timeToMin(t) {
+      const m = String(t || '').match(/^(\d{1,2}):(\d{2})$/);
+      if (!m) return null;
+      return (+m[1]) * 60 + (+m[2]);
+    }
+    function minToTime(min) {
+      const m = ((min % (24*60)) + 24*60) % (24*60);
+      return String(Math.floor(m/60)).padStart(2,'0') + ':' + String(m%60).padStart(2,'0');
+    }
+    function durMinsFrom(g) {
+      if (window.MVOW_DATA && MVOW_DATA.parseDurMins) return MVOW_DATA.parseDurMins(g.dur);
+      const s = String(g.dur || '').toLowerCase();
+      const h = s.match(/(\d+(?:\.\d+)?)\s*s/);
+      const mm = s.match(/(\d+)\s*d/);
+      let t = 0;
+      if (h) t += Math.round(parseFloat(h[1]) * 60);
+      if (mm) t += parseInt(mm[1], 10);
+      return t || 60;
+    }
+
+    // Mavjud maqsadlarning vaqt slotlari
+    function getOccupiedSlots() {
+      let goals = [];
+      try { goals = JSON.parse(localStorage.getItem('mvow.goals') || '[]'); } catch {}
+      if (!Array.isArray(goals)) return [];
+      return goals.map(g => {
+        const start = timeToMin(g.time);
+        const dur = durMinsFrom(g);
+        return { text: g.text, time: g.time, dur: g.dur, start, end: start + dur };
+      }).filter(s => s.start !== null);
+    }
+
+    // Yangi vaqt boshqa maqsad bilan to'qnashadimi?
+    function findConflict() {
+      const newStart = timeToMin(dailyTime.value);
+      const newDur = parseInt(dailyDur.value, 10) || 60;
+      if (newStart === null || newDur <= 0) return null;
+      const newEnd = newStart + newDur;
+      const slots = getOccupiedSlots();
+      for (const s of slots) {
+        if (s.start < newEnd && s.end > newStart) return s;
+      }
+      return null;
+    }
+
+    function renderOccupied() {
+      const slots = getOccupiedSlots();
+      const wrap = document.getElementById('occupiedHint');
+      const list = document.getElementById('occupiedList');
+      if (!slots.length) { wrap.style.display = 'none'; return; }
+      wrap.style.display = 'block';
+      list.innerHTML = slots.map(s =>
+        '<div>' + s.time + '–' + minToTime(s.end) + ' · <em style="color:#F5F2EC;font-style:normal;">' + escapeHtmlMaqsad(s.text) + '</em></div>'
+      ).join('');
+    }
+    function escapeHtmlMaqsad(s) {
+      return String(s).replace(/[<>"&]/g, c => ({'<':'&lt;','>':'&gt;','"':'&quot;','&':'&amp;'}[c]));
+    }
+
     function checkStep2() {
-      nextBtn.classList.toggle('disabled', !goalText.value.trim());
+      const hasText = !!goalText.value.trim();
+      const conflict = findConflict();
+      const conflictMsg = document.getElementById('conflictMsg');
+      const conflictText = document.getElementById('conflictText');
+      if (conflict) {
+        const endStr = minToTime(conflict.end);
+        conflictText.innerHTML = 'Bu vaqt band: <strong style="color:#F5F2EC;">' + escapeHtmlMaqsad(conflict.text) + '</strong> ' + conflict.time + '–' + endStr + '. <span style="color:#9CA0A8;">' + endStr + '\'dan keyin tanlang.</span>';
+        conflictMsg.style.display = 'block';
+      } else {
+        conflictMsg.style.display = 'none';
+      }
+      nextBtn.classList.toggle('disabled', !hasText || !!conflict);
     }
     goalText.addEventListener('input', checkStep2);
+    dailyTime.addEventListener('input', checkStep2);
+    dailyTime.addEventListener('change', checkStep2);
+    dailyDur.addEventListener('input', checkStep2);
+    dailyDur.addEventListener('change', checkStep2);
 
     function gotoStep2() {
       currentStep = 2;
       const titles = {
-        'week':  '1 haftada nimaga erishasan?',
-        'month': '1 oyda nimaga erishasan?',
-        '3mo':   '3 oyda nimaga erishasan?',
-        '6mo':   '6 oyda nimaga erishasan?',
-        'year':  '1 yilda nimaga erishasan?'
+        'week':  '1 haftada nimaga erishasiz?',
+        'month': '1 oyda nimaga erishasiz?',
+        '3mo':   '3 oyda nimaga erishasiz?',
+        '6mo':   '6 oyda nimaga erishasiz?',
+        'year':  '1 yilda nimaga erishasiz?'
       };
-      step2Title.textContent = titles[selectedDuration] || 'Nimaga erishasan?';
+      step2Title.textContent = titles[selectedDuration] || 'Nimaga erishasiz?';
       step1.classList.remove('show');
       step2.classList.add('show');
       backLink.style.display = 'block';
       nextBtn.textContent = 'Kalendarga belgila';
       nextBtn.classList.add('disabled');
+      // Band vaqtlarni ko'rsatish + birinchi bo'sh slotni avto-tanlash
+      renderOccupied();
+      const slots = getOccupiedSlots();
+      if (slots.length) {
+        // Eng oxirgi tugaydigan slotdan keyingi vaqtni taklif qilish
+        const latestEnd = Math.max(...slots.map(s => s.end));
+        const startMin = Math.min(latestEnd, 23*60 + 50); // 23:50'dan oshmasin
+        dailyTime.value = minToTime(startMin);
+      }
       checkStep2();
       setTimeout(() => goalText.focus(), 100);
     }
@@ -362,6 +457,12 @@
     });
 
     function saveGoalToCalendar() {
+      // Xavfsizlik tekshiruvi — agar konflikt bo'lsa, saqlamaymiz
+      const conflict = findConflict();
+      if (conflict) {
+        checkStep2();
+        return;
+      }
       const text = goalText.value.trim();
       const time = dailyTime.value || '07:00';
       const durMin = parseInt(dailyDur.value, 10) || 60;
