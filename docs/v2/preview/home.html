@@ -268,24 +268,11 @@
       // Hozir vaqti yoki 30 daq ichida boshlash kerak
       cta.textContent = 'Boshlayman';
       cta.href = 'hard-lock.html';
-    } else if (plan.length) {
-      // Reja bor, lekin vaqti hali yetmagan (mas. 04:23, birinchi ish 07:00)
+    } else {
+      // Reja bor yoki yo'q — bari bir 'Bugungi reja'ga olib boradi
+      // (today-plan'da foydalanuvchi qo'lda ish qo'shishi yoki maqsad orqali avtomatik kelishi mumkin)
       cta.textContent = 'Bugungi reja';
       cta.href = 'today-plan.html';
-    } else {
-      // Reja yo'q — maqsadlardan tuzish kerak
-      let hasGoals = false;
-      try {
-        const g = JSON.parse(localStorage.getItem('mvow.goals') || '[]');
-        hasGoals = Array.isArray(g) && g.length > 0;
-      } catch {}
-      if (hasGoals) {
-        cta.textContent = 'Bugungi reja';
-        cta.href = 'today-plan.html';
-      } else {
-        cta.textContent = 'Maqsad qo\'shish';
-        cta.href = 'maqsadlar.html';
-      }
     }
 
     // Tile takrorlarini yashir — CTA bilan bir xil joyga bormaslik kerak

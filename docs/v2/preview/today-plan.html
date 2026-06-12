@@ -268,24 +268,13 @@
     const hint = document.getElementById('goalHint');
     const primaryCta = document.getElementById('primaryCta');
     if (!tasks.length) {
-      // Maqsad bormi?
-      if (hasGoals()) {
-        list.innerHTML = `
-          <div style="text-align:center;padding:32px 16px;background:var(--void-soft);border-radius:12px;margin:8px 0 16px;">
-            <div style="font-family:'Cormorant Garamond',serif;font-style:italic;font-size:16px;color:var(--text-mid);margin-bottom:10px;">Bugunga ish yo'q.</div>
-            <div style="font-size:12px;color:var(--text-dim);line-height:1.5;">Pastdagi tugma bilan ish qo'shing<br>yoki yangi maqsad qo'shing.</div>
-            <a href="maqsadlar.html" style="display:inline-block;margin-top:14px;padding:10px 18px;background:rgba(0,229,212,.08);border:1px solid rgba(0,229,212,.3);border-radius:999px;color:var(--accent);font-size:12px;font-weight:500;letter-spacing:1px;text-decoration:none;">+ Yangi maqsad</a>
-          </div>
-        `;
-      } else {
-        list.innerHTML = `
-          <div style="text-align:center;padding:36px 20px;background:var(--void-soft);border:1px dashed rgba(0,229,212,.25);border-radius:12px;margin:8px 0;">
-            <div style="font-family:'Cormorant Garamond',serif;font-style:italic;font-size:18px;color:var(--text);margin-bottom:8px;">Maqsad qo'ying.</div>
-            <div style="font-size:13px;color:var(--text-dim);line-height:1.5;margin-bottom:18px;">Kun tartibi maqsadlaringizdan<br>avtomatik tuziladi.</div>
-            <a href="maqsadlar.html" style="display:inline-block;padding:12px 22px;background:linear-gradient(180deg,var(--accent),var(--accent-soft));color:var(--void);border-radius:999px;font-size:12px;font-weight:600;letter-spacing:1.5px;text-transform:uppercase;text-decoration:none;">Maqsad qo'shish</a>
-          </div>
-        `;
-      }
+      // Bo'sh — oddiy eslatma, foydalanuvchi pastdagi '+ ish qo'shing' bilan to'ldiradi
+      list.innerHTML = `
+        <div style="text-align:center;padding:32px 16px;font-family:'Cormorant Garamond',serif;font-style:italic;font-size:16px;color:var(--text-dim);line-height:1.6;">
+          Bugun bo'sh.<br>
+          <span style="font-size:13px;font-family:'Inter',sans-serif;font-style:normal;letter-spacing:0.5px;color:var(--text-dim);">pastdan ish qo'shing</span>
+        </div>
+      `;
       if (hint) hint.style.display = 'none';
       if (primaryCta) primaryCta.style.display = 'none';
       updateTotals();
