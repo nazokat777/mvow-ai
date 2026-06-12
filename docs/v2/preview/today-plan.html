@@ -179,13 +179,18 @@
       fokus  ·  <span class="em" id="countLbl">5</span> ish
     </p>
 
+    <!-- Maqsadlardan tuzilgan eslatma -->
+    <div id="goalHint" style="display:none;text-align:center;font-family:'Cormorant Garamond',serif;font-style:italic;font-size:13px;color:var(--text-dim);margin-bottom:18px;padding:0 8px;">
+      Maqsadlaringizdan tuzildi
+    </div>
+
     <div class="tasks" id="tasks"></div>
 
     <button class="add-btn" id="addBtn" type="button" data-i18n="today.add">+ ish qo'shish</button>
   </div>
 
   <div class="bottom-bar">
-    <a class="cta" href="hard-lock.html" data-i18n="today.cta">Boshlayman</a>
+    <a class="cta" href="hard-lock.html" id="primaryCta" data-i18n="today.cta">Boshlayman</a>
   </div>
 </div>
 
@@ -250,14 +255,45 @@
     tasks.sort((a, b) => timeKey(a.time) - timeKey(b.time));
   }
 
+  function hasGoals() {
+    try {
+      const g = JSON.parse(localStorage.getItem('mvow.goals') || '[]');
+      return Array.isArray(g) && g.length > 0;
+    } catch { return false; }
+  }
+
   function render() {
     sortTasks();
     list.innerHTML = '';
+    const hint = document.getElementById('goalHint');
+    const primaryCta = document.getElementById('primaryCta');
     if (!tasks.length) {
-      list.innerHTML = '<p style="text-align:center;padding:24px 8px;font-family:\'Cormorant Garamond\',serif;font-style:italic;font-size:15px;color:#8A8D94;line-height:1.5;">Bugun bo\'sh.<br>Bitta ish bilan boshlang — past tomondan qo\'shing.</p>';
+      // Maqsad bormi?
+      if (hasGoals()) {
+        list.innerHTML = `
+          <div style="text-align:center;padding:32px 16px;background:var(--void-soft);border-radius:12px;margin:8px 0 16px;">
+            <div style="font-family:'Cormorant Garamond',serif;font-style:italic;font-size:16px;color:var(--text-mid);margin-bottom:10px;">Bugunga ish yo'q.</div>
+            <div style="font-size:12px;color:var(--text-dim);line-height:1.5;">Pastdagi tugma bilan ish qo'shing<br>yoki yangi maqsad qo'shing.</div>
+            <a href="maqsadlar.html" style="display:inline-block;margin-top:14px;padding:10px 18px;background:rgba(0,229,212,.08);border:1px solid rgba(0,229,212,.3);border-radius:999px;color:var(--accent);font-size:12px;font-weight:500;letter-spacing:1px;text-decoration:none;">+ Yangi maqsad</a>
+          </div>
+        `;
+      } else {
+        list.innerHTML = `
+          <div style="text-align:center;padding:36px 20px;background:var(--void-soft);border:1px dashed rgba(0,229,212,.25);border-radius:12px;margin:8px 0;">
+            <div style="font-family:'Cormorant Garamond',serif;font-style:italic;font-size:18px;color:var(--text);margin-bottom:8px;">Maqsad qo'ying.</div>
+            <div style="font-size:13px;color:var(--text-dim);line-height:1.5;margin-bottom:18px;">Kun tartibi maqsadlaringizdan<br>avtomatik tuziladi.</div>
+            <a href="maqsadlar.html" style="display:inline-block;padding:12px 22px;background:linear-gradient(180deg,var(--accent),var(--accent-soft));color:var(--void);border-radius:999px;font-size:12px;font-weight:600;letter-spacing:1.5px;text-transform:uppercase;text-decoration:none;">Maqsad qo'shish</a>
+          </div>
+        `;
+      }
+      if (hint) hint.style.display = 'none';
+      if (primaryCta) primaryCta.style.display = 'none';
       updateTotals();
       return;
     }
+    // Reja bor — eslatma va boshlash tugmasi ko'rinadi
+    if (hint && hasGoals()) hint.style.display = 'block';
+    if (primaryCta) primaryCta.style.display = '';
     const completedKeys = (window.MVOW_DATA ? MVOW_DATA.getCompletedKeysToday() : new Set());
     tasks.forEach((t, idx) => {
       const row = document.createElement('div');

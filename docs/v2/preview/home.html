@@ -273,9 +273,19 @@
       cta.textContent = 'Bugungi reja';
       cta.href = 'today-plan.html';
     } else {
-      // Reja yo'q
-      cta.textContent = 'Rejani tuzing';
-      cta.href = 'routine.html';
+      // Reja yo'q — maqsadlardan tuzish kerak
+      let hasGoals = false;
+      try {
+        const g = JSON.parse(localStorage.getItem('mvow.goals') || '[]');
+        hasGoals = Array.isArray(g) && g.length > 0;
+      } catch {}
+      if (hasGoals) {
+        cta.textContent = 'Bugungi reja';
+        cta.href = 'today-plan.html';
+      } else {
+        cta.textContent = 'Maqsad qo\'shish';
+        cta.href = 'maqsadlar.html';
+      }
     }
 
     // Tile takrorlarini yashir — CTA bilan bir xil joyga bormaslik kerak
