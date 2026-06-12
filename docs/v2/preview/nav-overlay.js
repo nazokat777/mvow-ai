@@ -201,9 +201,8 @@
     'calendar.html',          // 10. Kalendar
     // Bajarish (11-14)
     'day-flow.html',          // 11. Taymer
-    'hard-lock.html',         // 12. Qulflash
-    'negotiation.html',       // 13. Diqqat sinovi
-    'session-reflection.html',// 14. Sessiya bahosi
+    'hard-lock.html',         // 12. Fokus rejimi
+    'session-reflection.html',// 13. Sessiya bahosi
     'kechqurun.html',         // 15. Kechki sharh (bugun + ertaga + uyg'onish)
     // Natija (16-18)
     'notifications.html',     // 16. Xabarlar
@@ -220,11 +219,11 @@
 
   // 5 ta bo'lim
   const SECTIONS = [
-    { name: 'Tanishuv',  range: [0, 4] },   // 1-4 (intro, anketa, vada, maqsad)
-    { name: 'Sozlama',   range: [4, 6] },   // 5-6 (permissions, settings)
-    { name: 'Kun',       range: [6, 11] },  // 7-11 (home, routine, today-plan, rejalar, calendar)
-    { name: 'Bajarish',  range: [11, 16] }, // 12-16
-    { name: 'Natija',    range: [16, 19] }  // 17-19
+    { name: 'Tanishuv',  range: [0, 4] },   // 1-4
+    { name: 'Sozlama',   range: [4, 6] },   // 5-6
+    { name: 'Kun',       range: [6, 11] },  // 7-11
+    { name: 'Bajarish',  range: [11, 15] }, // 12-15 (day-flow, hard-lock, session-reflection, kechqurun)
+    { name: 'Natija',    range: [15, 18] }  // 16-18
   ];
   const currentSection = SECTIONS.find(s => idx >= s.range[0] && idx < s.range[1]) || SECTIONS[0];
   const sectionIdx = idx - currentSection.range[0] + 1;
