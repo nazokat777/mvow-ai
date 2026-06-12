@@ -132,6 +132,18 @@
       <div class="sub"><span class="em" id="streakN">0</span> kun yo'l</div>
     </div>
 
+    <div class="section-lbl">Ruxsatlar</div>
+
+    <div class="row">
+      <div class="lbl">Ekran vaqti</div>
+      <div class="toggle" data-perm="screenTime" role="switch" tabindex="0" aria-label="Ekran vaqti ruxsati" aria-checked="false"></div>
+    </div>
+
+    <div class="row">
+      <div class="lbl">Bildirishnomalar</div>
+      <div class="toggle" data-perm="notification" role="switch" tabindex="0" aria-label="Bildirishnoma ruxsati" aria-checked="false"></div>
+    </div>
+
     <div class="section-lbl">Uyg'onish</div>
 
     <div class="row">
@@ -257,7 +269,7 @@
       }
     });
 
-    // Toggle'lar
+    // Toggle'lar (sozlama)
     document.querySelectorAll('[data-toggle]').forEach(el => {
       const key = el.dataset.toggle;
       if (merged[key]) { el.classList.add('on'); el.setAttribute('aria-checked','true'); }
@@ -270,6 +282,35 @@
       };
       el.addEventListener('click', flip);
       el.addEventListener('keydown', e => {
+        if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); flip(); }
+      });
+    });
+
+    // Ruxsat toggle'lari (data-perm) — haqiqiy brauzer ruxsatini so'rash
+    const PERM_KEY = 'mvow.perm';
+    let permSaved = {};
+    try { permSaved = JSON.parse(localStorage.getItem(PERM_KEY) || '{}'); } catch {}
+    document.querySelectorAll('[data-perm]').forEach(t => {
+      const key = t.dataset.perm;
+      if (permSaved[key]) { t.classList.add('on'); t.setAttribute('aria-checked','true'); }
+      const flip = async () => {
+        if (window.MVOW_DATA && MVOW_DATA.fxTap) MVOW_DATA.fxTap();
+        if (key === 'notification' && !t.classList.contains('on')) {
+          if ('Notification' in window) {
+            try {
+              const res = await Notification.requestPermission();
+              if (res !== 'granted') return;
+            } catch {}
+          }
+        }
+        const on = !t.classList.contains('on');
+        t.classList.toggle('on', on);
+        t.setAttribute('aria-checked', on ? 'true' : 'false');
+        permSaved[key] = on;
+        localStorage.setItem(PERM_KEY, JSON.stringify(permSaved));
+      };
+      t.addEventListener('click', flip);
+      t.addEventListener('keydown', e => {
         if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); flip(); }
       });
     });

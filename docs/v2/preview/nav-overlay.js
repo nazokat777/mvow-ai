@@ -191,21 +191,20 @@
     'anketa.html',            // 2. 6 qadamli savol-javob
     'vada.html',              // 3. Va'da
     'maqsadlar.html',         // 4. Maqsadlar ro'yhati
-    // Sozlama (5-6)
-    'permissions.html',       // 5. Ruxsatlar
-    'settings.html',          // 6. Sozlamalar
-    // Kun (7-10)
-    'home.html',              // 7. Bosh sahifa
-    'routine.html',           // 8. Reja
-    'today-plan.html',        // 9. Bugungi reja
-    'calendar.html',          // 10. Kalendar
-    // Bajarish (11-13)
-    'hard-lock.html',         // 11. Fokus taymeri
-    'session-reflection.html',// 12. Bajardim
-    'kechqurun.html',         // 13. Kechki sharh
-    // Natija (14)
-    'weekly-review.html',     // 14. Natijalar
-    'celebrate.html'          // 15. Bayram
+    // Sozlama (5)
+    'settings.html',          // 5. Sozlamalar + Ruxsatlar (birlashtirilgan)
+    // Kun (6-9)
+    'home.html',              // 6. Bosh sahifa
+    'routine.html',           // 7. Reja
+    'today-plan.html',        // 8. Bugungi reja
+    'calendar.html',          // 9. Kalendar
+    // Bajarish (10-12)
+    'hard-lock.html',         // 10. Fokus taymeri
+    'session-reflection.html',// 11. Bajardim
+    'kechqurun.html',         // 12. Kechki sharh
+    // Natija (13-14)
+    'weekly-review.html',     // 13. Tarix
+    'celebrate.html'          // 14. Bayram
   ];
 
   const file = (location.pathname.split('/').pop() || 'welcome.html').toLowerCase();
@@ -215,13 +214,13 @@
   const prev = idx > 0 ? SEQ[idx - 1] : null;
   const next = idx < SEQ.length - 1 ? SEQ[idx + 1] : null;
 
-  // 5 ta bo'lim — yangi 15 ekran (rejalar/notifications/day-flow olindi)
+  // 5 ta bo'lim — 14 ekran (permissions settings'ga birlashtirildi)
   const SECTIONS = [
     { name: 'Tanishuv',  range: [0, 4] },   // 1-4
-    { name: 'Sozlama',   range: [4, 6] },   // 5-6
-    { name: 'Kun',       range: [6, 10] },  // 7-10
-    { name: 'Bajarish',  range: [10, 13] }, // 11-13
-    { name: 'Natija',    range: [13, 15] }  // 14-15
+    { name: 'Sozlama',   range: [4, 5] },   // 5
+    { name: 'Kun',       range: [5, 9] },   // 6-9
+    { name: 'Bajarish',  range: [9, 12] },  // 10-12
+    { name: 'Natija',    range: [12, 14] }  // 13-14
   ];
   const currentSection = SECTIONS.find(s => idx >= s.range[0] && idx < s.range[1]) || SECTIONS[0];
   const sectionIdx = idx - currentSection.range[0] + 1;

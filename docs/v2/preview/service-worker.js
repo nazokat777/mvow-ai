@@ -3,7 +3,7 @@
  * after first load. Caches all preview HTML files + the logo.
  */
 
-const CACHE_NAME = 'mvow-v16.0.0';
+const CACHE_NAME = 'mvow-v16.1.0';
 const ASSETS = [
   './',
   // Asosiy infratuzilma
@@ -23,8 +23,7 @@ const ASSETS = [
   './vada.html',              // 3
   './maqsad.html',            // (maqsad qo'shish)
   './maqsadlar.html',         // 4 (maqsadlar ro'yhati)
-  './permissions.html',       // 5
-  './settings.html',          // 5
+  './settings.html',          // 5 (Sozlamalar + Ruxsatlar birlashtirilgan)
   './alarm.html',             // 6
   './home.html',              // 7
   './routine.html',           // 8
