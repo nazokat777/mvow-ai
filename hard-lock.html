@@ -103,20 +103,6 @@
       </div>
     </div>
 
-    <div class="blocked">
-      <span class="app" data-app="Instagram">Instagram</span>·
-      <span class="app" data-app="TikTok">TikTok</span>·
-      <span class="app" data-app="YouTube">YouTube</span>
-    </div>
-
-    <div class="alert" id="alertBox">
-      <div class="msg"><span class="em" id="alertApp">Instagram</span> ochmoqchimisan?</div>
-      <div class="actions">
-        <button class="stay" id="stayBtn">Fokusda qol</button>
-        <a class="ask" href="negotiation.html">Ruxsat so'ra</a>
-      </div>
-    </div>
-
   </div>
 
   <div class="bottom-bar">
@@ -277,14 +263,7 @@
     }
   }, 1000);
 
-  // ── Diqqat sinovi flow ──
-  const phone = document.getElementById('phone');
-  const alertApp = document.getElementById('alertApp');
-  document.querySelectorAll('.app').forEach(a => a.addEventListener('click', () => {
-    alertApp.textContent = a.dataset.app;
-    phone.dataset.alert = '1';
-  }));
-  document.getElementById('stayBtn').addEventListener('click', () => phone.dataset.alert = '0');
+  // Diqqat sinovi olib tashlandi
 </script>
 
 </body>
