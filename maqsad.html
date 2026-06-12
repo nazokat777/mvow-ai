@@ -369,29 +369,37 @@
         ? (durMin % 60 === 0 ? (durMin/60) + ' soat' : Math.floor(durMin/60) + ' soat ' + (durMin%60) + ' daq')
         : durMin + ' daq';
 
-      // Maqsadni saqlash
-      const goalKeys = {
-        'week':  'mvow.weekGoal',
-        'month': 'mvow.monthGoal',
-        '3mo':   'mvow.threeMoGoal',
-        '6mo':   'mvow.sixMoGoal',
-        'year':  'mvow.yearGoal'
+      const today = new Date();
+      const startIso = today.toISOString().slice(0, 10);
+
+      // Maqsadlar ro'yhatiga qo'shish (yangi ID)
+      let goals = [];
+      try { goals = JSON.parse(localStorage.getItem('mvow.goals') || '[]'); } catch {}
+      if (!Array.isArray(goals)) goals = [];
+
+      const newGoal = {
+        id: Date.now(),
+        text: text,
+        duration: selectedDuration,
+        days: selectedDays,
+        time: time,
+        dur: dur,
+        startDate: startIso
       };
-      localStorage.setItem(goalKeys[selectedDuration], text);
+      goals.push(newGoal);
+      localStorage.setItem('mvow.goals', JSON.stringify(goals));
 
       // Kalendarga tarqatish
       if (window.MVOW_DATA) {
         const w = MVOW_DATA.getWeekPlan();
-        const today = new Date();
         for (let i = 0; i < selectedDays; i++) {
           const d = new Date(today);
           d.setDate(today.getDate() + i);
           const key = 'd' + d.toISOString().slice(0, 10);
           if (!Array.isArray(w[key])) w[key] = [];
-          // Bir xil maqsad ikkilab qo'shilmasin
           const exists = w[key].some(s => s.name === text && s.time === time);
           if (!exists) {
-            w[key].push({ time, name: text, dur });
+            w[key].push({ time, name: text, dur, goalId: newGoal.id });
           }
         }
         MVOW_DATA.setWeekPlan(w);
@@ -404,7 +412,7 @@
       toast.innerHTML = '✓ Belgilandi<br><span style="font-size:12px;color:#9CA0A8;letter-spacing:1px;text-transform:uppercase;margin-top:8px;display:block;">' + selectedDays + ' kunga · har kuni ' + time + '</span>';
       document.body.appendChild(toast);
 
-      setTimeout(() => { window.location.href = 'calendar.html'; }, 1400);
+      setTimeout(() => { window.location.href = 'maqsadlar.html'; }, 1400);
     }
   });
 </script>
