@@ -113,20 +113,94 @@
     let recorded = false;
     const mic = document.getElementById('micBtn');
     const status = document.getElementById('status');
-    function toggle() {
-      recording = !recording;
-      mic.classList.toggle('recording', recording);
+    let mediaStream = null;
+    let audioCtx = null;
+    let analyser = null;
+    let monitorRAF = null;
+    let detectedSpeech = false;
+    let speechTimer = null;
+
+    function setStatus(text, cls) {
+      status.textContent = text;
+      status.className = 'status' + (cls ? ' ' + cls : '');
+    }
+
+    async function startRecording() {
+      try {
+        mediaStream = await navigator.mediaDevices.getUserMedia({ audio: true });
+      } catch (err) {
+        if (err.name === 'NotAllowedError') {
+          setStatus("Mikrofonga ruxsat kerak", 'done');
+        } else if (err.name === 'NotFoundError') {
+          setStatus("Mikrofon topilmadi", 'done');
+        } else {
+          setStatus("Ulanish xatosi", 'done');
+        }
+        return false;
+      }
+      recording = true;
+      detectedSpeech = false;
+      mic.classList.add('recording');
+      setStatus(window.I18N ? I18N.t('vada.recording', "Tinglayapman…") : "Tinglayapman…");
       if (window.MVOW_DATA) MVOW_DATA.fxTap();
-      if (recording) {
-        status.textContent = window.I18N ? I18N.t('vada.recording', 'Tinglayapman…') : 'Tinglayapman…';
-      } else {
+
+      // Ovoz darajasini kuzatish — odam gapirayotganini aniqlash
+      try {
+        const AC = window.AudioContext || window.webkitAudioContext;
+        audioCtx = new AC();
+        const src = audioCtx.createMediaStreamSource(mediaStream);
+        analyser = audioCtx.createAnalyser();
+        analyser.fftSize = 512;
+        src.connect(analyser);
+        const buf = new Uint8Array(analyser.frequencyBinCount);
+
+        function tick() {
+          analyser.getByteFrequencyData(buf);
+          let sum = 0;
+          for (let i = 0; i < buf.length; i++) sum += buf[i];
+          const avg = sum / buf.length;
+          if (avg > 14) detectedSpeech = true;  // gap eshitildi
+          monitorRAF = requestAnimationFrame(tick);
+        }
+        tick();
+      } catch {}
+
+      // Maksimal 20 sek — keyin avtomatik to'xtaydi
+      speechTimer = setTimeout(stopRecording, 20000);
+      return true;
+    }
+
+    function stopRecording() {
+      if (!recording) return;
+      recording = false;
+      if (monitorRAF) cancelAnimationFrame(monitorRAF);
+      if (speechTimer) clearTimeout(speechTimer);
+      if (mediaStream) mediaStream.getTracks().forEach(t => t.stop());
+      if (audioCtx && audioCtx.state !== 'closed') {
+        try { audioCtx.close(); } catch {}
+      }
+      mic.classList.remove('recording');
+
+      if (detectedSpeech) {
         recorded = true;
-        status.textContent = window.I18N ? I18N.t('vada.done', "Va'da berildi") : "Va'da berildi";
-        status.classList.add('done');
+        setStatus(window.I18N ? I18N.t('vada.done', "Va'da berildi") : "Va'da berildi", 'done');
         localStorage.setItem('mvow.vowGiven', '1');
         localStorage.setItem('mvow.vowAt', new Date().toISOString());
+        if (window.MVOW_DATA) MVOW_DATA.fxSuccess();
+      } else {
+        setStatus("Eshitilmadi — yana urinib ko'r", 'done');
       }
     }
+
+    async function toggle() {
+      if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+        setStatus("Brauzer mikrofonni qo'llamaydi", 'done');
+        return;
+      }
+      if (recording) stopRecording();
+      else await startRecording();
+    }
+
     mic.addEventListener('click', toggle);
     mic.addEventListener('keydown', e => {
       if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); toggle(); }
