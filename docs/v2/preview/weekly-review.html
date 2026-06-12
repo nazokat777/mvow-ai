@@ -3,70 +3,131 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-<title>{brand} — Natijalar</title>
+<title>{brand} — Tarix</title>
 <link rel="manifest" href="manifest.webmanifest">
 <meta name="theme-color" content="#04060B">
 <link rel="apple-touch-icon" href="assets/mnsm-logo.png">
 <link rel="icon" type="image/png" href="assets/mnsm-logo.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
 <style>
   * { box-sizing: border-box; margin: 0; padding: 0; }
-  :root { --void:#04060B; --void-soft:#0C0F16; --text:#F5F2EC; --text-mid:#B8BBC2; --text-dim:#9CA0A8; --accent:#00E5D4; --accent-soft:#00B5A8; }
+  :root { --void:#04060B; --void-soft:#0C0F16; --card:#11151E; --text:#F5F2EC; --text-mid:#B8BBC2; --text-dim:#9CA0A8; --accent:#00E5D4; --accent-soft:#00B5A8; }
   body { background: var(--void); font-family:'Inter',sans-serif; color: var(--text); min-height: 100vh; display:flex; justify-content:center; align-items:flex-start; padding: 24px; -webkit-font-smoothing: antialiased; }
   .phone { width: 380px; min-height: 800px; background: var(--void); border-radius: 40px; overflow: hidden; position: relative; box-shadow: 0 0 0 8px #1a1d24, 0 30px 80px rgba(0,0,0,.7); }
-  .container { padding: 60px 32px 40px; }
+  .container { padding: 60px 28px 80px; }
 
-  .tabs { display:flex; gap: 4px; padding: 4px; background: var(--void-soft); border-radius: 8px; margin-bottom: 40px; }
-  .tab { flex:1; padding: 10px; text-align:center; font-size: 11px; letter-spacing: 2px; text-transform: uppercase; color: var(--text-mid); cursor: pointer; border-radius: 6px; }
+  .title { font-family: 'Cormorant Garamond', serif; font-weight: 500; font-size: 32px; text-align: center; margin-bottom: 6px; }
+  .subtitle { text-align: center; font-size: 11px; letter-spacing: 3px; color: var(--text-dim); text-transform: uppercase; margin-bottom: 28px; }
+
+  .tabs { display:flex; gap: 4px; padding: 4px; background: var(--void-soft); border-radius: 8px; margin-bottom: 24px; }
+  .tab { flex:1; padding: 10px; text-align:center; font-size: 11px; letter-spacing: 2px; text-transform: uppercase; color: var(--text-mid); cursor: pointer; border-radius: 6px; transition: all .15s; }
   .tab.on { background: var(--accent); color: var(--void); font-weight: 600; }
 
-  /* Hero — bitta katta raqam */
-  .hero { text-align: center; margin-bottom: 48px; }
-  .hero .big {
-    font-family:'Cormorant Garamond',serif;
-    font-weight: 500;
-    font-size: 96px;
-    color: var(--accent);
-    line-height: 1;
-  }
-  .hero .lbl { font-size: 11px; letter-spacing: 4px; color: var(--text-mid); text-transform: uppercase; margin-top: 4px; }
-
-  /* Bar chart — 7 kun */
-  .chart {
-    display: grid;
-    grid-template-columns: repeat(7, 1fr);
-    gap: 8px;
-    align-items: end;
-    height: 110px;
-    margin-bottom: 12px;
-  }
-  .bar {
-    background: var(--accent);
-    border-radius: 4px 4px 0 0;
-    transition: opacity .2s;
-  }
-  .bar.dim { opacity: .25; }
-  .days {
-    display: grid;
-    grid-template-columns: repeat(7, 1fr);
-    gap: 8px;
-    margin-bottom: 40px;
-  }
-  .days span { text-align:center; font-size: 9px; letter-spacing: 1px; color: var(--text-dim); text-transform: uppercase; }
-
-  /* 3 ta minimal stat */
-  .stats {
+  /* Summary row — kompakt 3 ta raqam */
+  .summary {
     display: grid;
     grid-template-columns: 1fr 1fr 1fr;
-    gap: 16px;
-    padding-top: 24px;
-    border-top: 1px solid rgba(255,255,255,.04);
+    gap: 10px;
+    margin-bottom: 28px;
   }
-  .stat { text-align: center; }
-  .stat .v { font-family:'Cormorant Garamond',serif; font-size: 22px; font-weight: 500; color: var(--accent); }
-  .stat .l { font-size: 9px; letter-spacing: 2px; color: var(--text-mid); text-transform: uppercase; margin-top: 4px; }
+  .sum-stat {
+    background: var(--card);
+    border-radius: 10px;
+    padding: 12px 6px;
+    text-align: center;
+  }
+  .sum-stat .v {
+    font-family: 'Cormorant Garamond', serif;
+    font-weight: 500;
+    font-size: 22px;
+    color: var(--accent);
+  }
+  .sum-stat .l {
+    font-size: 9px;
+    letter-spacing: 2px;
+    color: var(--text-dim);
+    text-transform: uppercase;
+    margin-top: 4px;
+  }
+
+  /* History list */
+  .day-group { margin-bottom: 24px; }
+  .day-head {
+    font-size: 11px;
+    letter-spacing: 3px;
+    color: var(--accent);
+    text-transform: uppercase;
+    font-weight: 500;
+    margin-bottom: 10px;
+    padding-bottom: 6px;
+    border-bottom: 1px solid rgba(0,229,212,.15);
+  }
+  .h-item {
+    display: grid;
+    grid-template-columns: 56px 1fr auto;
+    gap: 10px;
+    align-items: center;
+    padding: 10px 0;
+  }
+  .h-item .check {
+    width: 18px; height: 18px;
+    border-radius: 50%;
+    background: var(--accent);
+    display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0;
+    grid-column: 1;
+    margin-left: 4px;
+  }
+  .h-item .check svg { width: 11px; height: 11px; stroke: var(--void); }
+  .h-item .when {
+    font-size: 12px;
+    color: var(--accent);
+    font-weight: 500;
+    letter-spacing: 0.5px;
+  }
+  .h-item .body {
+    grid-column: 2;
+  }
+  .h-item .name {
+    font-size: 14px;
+    color: var(--text);
+    line-height: 1.3;
+  }
+  .h-item .meta {
+    font-size: 11px;
+    color: var(--text-dim);
+    margin-top: 2px;
+    letter-spacing: 0.3px;
+  }
+  .h-item .dur {
+    grid-column: 3;
+    font-size: 12px;
+    color: var(--text-dim);
+    text-align: right;
+  }
+
+  /* Empty state */
+  .empty {
+    text-align: center;
+    padding: 40px 24px;
+    background: var(--card);
+    border-radius: 12px;
+    margin-top: 12px;
+  }
+  .empty .lbl {
+    font-family: 'Cormorant Garamond', serif;
+    font-style: italic;
+    font-size: 17px;
+    color: var(--text-mid);
+    margin-bottom: 6px;
+  }
+  .empty .hint {
+    font-size: 12px;
+    color: var(--text-dim);
+    line-height: 1.5;
+  }
 
   @media (max-width: 480px) { body { padding: 0; } .phone { width: 100vw; min-height: 100vh; border-radius: 0; box-shadow: none; } }
 </style>
@@ -76,34 +137,31 @@
 <div class="phone">
   <div class="container">
 
+    <h1 class="title">Tarix</h1>
+    <div class="subtitle">Bajarilgan ishlar</div>
+
     <div class="tabs">
-      <div class="tab">Kun</div>
-      <div class="tab on">Hafta</div>
-      <div class="tab">Oy</div>
+      <div class="tab" data-range="day">Bugun</div>
+      <div class="tab on" data-range="week">Hafta</div>
+      <div class="tab" data-range="month">Oy</div>
     </div>
 
-    <div class="hero">
-      <div class="big" data-mvow="week.focusHours">38</div>
-      <div class="lbl">Soat fokus</div>
-    </div>
-
-    <div class="chart" id="chart"></div>
-    <div class="days" id="days"></div>
-
-    <div class="stats">
-      <div class="stat">
-        <div class="v" data-mvow="week.sessionCount">38</div>
-        <div class="l">Ish</div>
+    <div class="summary">
+      <div class="sum-stat">
+        <div class="v" id="sumCount">0</div>
+        <div class="l">ish</div>
       </div>
-      <div class="stat">
-        <div class="v" data-mvow="streak">12</div>
-        <div class="l">Streak</div>
+      <div class="sum-stat">
+        <div class="v" id="sumHours">0</div>
+        <div class="l">soat fokus</div>
       </div>
-      <div class="stat">
-        <div class="v" data-mvow="week.change">+12%</div>
-        <div class="l">O'zgarish</div>
+      <div class="sum-stat">
+        <div class="v" id="sumStreak">0</div>
+        <div class="l">streak</div>
       </div>
     </div>
+
+    <div id="historyList"></div>
 
   </div>
 </div>
@@ -112,66 +170,114 @@
 <script src="data.js" defer></script>
 <script src="nav-overlay.js" defer></script>
 <script>
-  // Haftaning 7 kuni uchun bajarilgan sessiyalar (localStorage'dan)
-  function getWeekData() {
-    const out = [];
-    const today = new Date();
-    // Dushanbadan boshlanadigan hafta
-    const dayOfWeek = today.getDay(); // 0=Yakshanba
-    const monday = new Date(today);
-    monday.setDate(today.getDate() - ((dayOfWeek + 6) % 7));
+  const MONTHS = ['YAN','FEV','MAR','APR','MAY','IYUN','IYUL','AVG','SEN','OKT','NOY','DEK'];
+  const DAYS_FULL = ['Yakshanba','Dushanba','Seshanba','Chorshanba','Payshanba','Juma','Shanba'];
 
-    for (let i = 0; i < 7; i++) {
-      const d = new Date(monday);
-      d.setDate(monday.getDate() + i);
-      const key = 'mvow.done.' + d.toISOString().slice(0,10);
-      const count = parseInt(localStorage.getItem(key) || '0', 10);
-      // Har sessiya ~ 45 daq = 0.75 soat (taxmin)
-      out.push(count * 0.75);
+  function formatDateLabel(iso) {
+    const d = new Date(iso);
+    return `${String(d.getDate()).padStart(2,'0')}-${MONTHS[d.getMonth()]} · ${DAYS_FULL[d.getDay()]}`;
+  }
+
+  function fmtTime(ts) {
+    const d = new Date(ts);
+    return String(d.getHours()).padStart(2,'0') + ':' + String(d.getMinutes()).padStart(2,'0');
+  }
+
+  function fmtDur(mins) {
+    if (!mins || mins <= 0) return '—';
+    const h = Math.floor(mins / 60);
+    const m = mins % 60;
+    if (h && m) return h + ' soat ' + m + ' daq';
+    if (h) return h + ' soat';
+    return m + ' daq';
+  }
+
+  function escapeHtml(s) {
+    return String(s).replace(/[<>"&]/g, c => ({'<':'&lt;','>':'&gt;','"':'&quot;','&':'&amp;'}[c]));
+  }
+
+  function inRange(iso, range) {
+    const d = new Date(iso);
+    const now = new Date();
+    if (range === 'day') {
+      return d.toISOString().slice(0,10) === now.toISOString().slice(0,10);
     }
-    return out;
+    if (range === 'week') {
+      const dayOfWeek = now.getDay();
+      const monday = new Date(now);
+      monday.setHours(0,0,0,0);
+      monday.setDate(now.getDate() - ((dayOfWeek + 6) % 7));
+      return d >= monday;
+    }
+    if (range === 'month') {
+      return d.getFullYear() === now.getFullYear() && d.getMonth() === now.getMonth();
+    }
+    return true;
+  }
+
+  function render(range) {
+    const history = (window.MVOW_DATA ? MVOW_DATA.getHistory() : []).filter(h => inRange(h.dateIso, range));
+    history.sort((a,b) => (b.completedAt || 0) - (a.completedAt || 0));
+
+    // Summary
+    const totalMins = history.reduce((s,h) => s + (h.actualMins || 0), 0);
+    document.getElementById('sumCount').textContent = history.length;
+    document.getElementById('sumHours').textContent = Math.round(totalMins / 60 * 10) / 10 || 0;
+    const streak = parseInt(localStorage.getItem('mvow.streak') || '0', 10);
+    document.getElementById('sumStreak').textContent = streak;
+
+    // List
+    const list = document.getElementById('historyList');
+    if (!history.length) {
+      list.innerHTML = `
+        <div class="empty">
+          <div class="lbl">Hozircha bo'sh.</div>
+          <div class="hint">Ish bajarilganda bu yerda ko'rinadi —<br>vaqt, davomiylik bilan.</div>
+        </div>
+      `;
+      return;
+    }
+
+    // Group by date
+    const groups = {};
+    for (const h of history) {
+      const k = h.dateIso;
+      if (!groups[k]) groups[k] = [];
+      groups[k].push(h);
+    }
+    const sortedDates = Object.keys(groups).sort((a,b) => b.localeCompare(a));
+
+    list.innerHTML = sortedDates.map(iso => `
+      <div class="day-group">
+        <div class="day-head">${formatDateLabel(iso)}</div>
+        ${groups[iso].map(h => `
+          <div class="h-item">
+            <div class="check">
+              <svg viewBox="0 0 24 24" fill="none" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="5 12 10 17 19 8"/></svg>
+            </div>
+            <div class="body">
+              <div class="name">${escapeHtml(h.name || 'ish')}</div>
+              <div class="meta">${h.plannedTime || fmtTime(h.completedAt)} · ${h.withTimer ? 'taymer bilan' : 'taymersiz'}</div>
+            </div>
+            <div class="dur">${fmtDur(h.actualMins)}</div>
+          </div>
+        `).join('')}
+      </div>
+    `).join('');
   }
 
   document.addEventListener('DOMContentLoaded', () => {
-    // Faqat real ma'lumot — namuna ko'rsatilmaydi
-    const data = getWeekData();
-    const hasReal = data.some(v => v > 0);
-    const max = Math.max(...data, 1);
-
-    // Asosiy raqamlar
-    const totalH = Math.round(data.reduce((s,v) => s + v, 0) * 10) / 10;
-    const sessionTotal = data.reduce((s,v) => s + Math.round(v / 0.75), 0);
-    const streak = parseInt(localStorage.getItem('mvow.streak') || '0', 10);
-
-    const focusEl = document.querySelector('[data-mvow="week.focusHours"]');
-    if (focusEl) focusEl.textContent = totalH || 0;
-    const sessEl = document.querySelector('[data-mvow="week.sessionCount"]');
-    if (sessEl) sessEl.textContent = sessionTotal || 0;
-    const streakEl = document.querySelector('[data-mvow="streak"]');
-    if (streakEl) streakEl.textContent = streak;
-    const changeEl = document.querySelector('[data-mvow="week.change"]');
-    if (changeEl) changeEl.textContent = hasReal ? '+' + sessionTotal + ' ish' : '—';
-
-    // Chart
-    const chart = document.getElementById('chart');
-    const days = document.getElementById('days');
-    const labels = ['Du','Se','Ch','Pa','Ju','Sh','Ya'];
-    const todayIdx = (new Date().getDay() + 6) % 7; // Du = 0
-
-    data.forEach((v, i) => {
-      const bar = document.createElement('div');
-      bar.className = 'bar' + (v < max * .5 ? ' dim' : '');
-      bar.style.height = Math.max(2, (v / max) * 100) + '%';
-      chart.appendChild(bar);
-      const lbl = document.createElement('span');
-      lbl.textContent = labels[i] + (i === todayIdx ? ' ·' : '');
-      days.appendChild(lbl);
+    let cur = 'week';
+    render(cur);
+    document.querySelectorAll('.tab').forEach(t => {
+      t.addEventListener('click', () => {
+        document.querySelectorAll('.tab').forEach(x => x.classList.remove('on'));
+        t.classList.add('on');
+        cur = t.dataset.range;
+        render(cur);
+      });
     });
   });
-  document.querySelectorAll('.tab').forEach(t => t.addEventListener('click', () => {
-    document.querySelectorAll('.tab').forEach(x => x.classList.remove('on'));
-    t.classList.add('on');
-  }));
 </script>
 
 </body>

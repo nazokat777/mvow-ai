@@ -150,6 +150,36 @@
     return total || 60;
   };
 
+  // ──────────────────────────────────────────────────────────────
+  // TARIX (HISTORY) — bajarilgan ishlar ro'yxati
+  // Format: [{ name, plannedTime, plannedDur, dateIso, startedAt, completedAt, actualMins, withTimer }]
+  // ──────────────────────────────────────────────────────────────
+  DATA.getHistory = function () {
+    try {
+      const h = JSON.parse(localStorage.getItem('mvow.history') || '[]');
+      return Array.isArray(h) ? h : [];
+    } catch { return []; }
+  };
+  DATA.addHistory = function (entry) {
+    const list = DATA.getHistory();
+    list.push(entry);
+    localStorage.setItem('mvow.history', JSON.stringify(list));
+    return entry;
+  };
+  // Tugallangan ishlarni today-plan'da belgilash uchun unique key
+  // Format: "d2026-06-12|07:00|Sport"
+  DATA.taskKey = function (dateIso, time, name) {
+    return 'd' + dateIso + '|' + (time || '') + '|' + (name || '');
+  };
+  // Bugungi tugallangan task'larning unique key'lari (Set)
+  DATA.getCompletedKeysToday = function () {
+    const today = DATA.today.iso;
+    return new Set(DATA.getHistory()
+      .filter(h => h.dateIso === today)
+      .map(h => DATA.taskKey(today, h.plannedTime, h.name))
+    );
+  };
+
   // Joriy task — foydalanuvchining saqlangan rejasidan
   DATA.currentTaskFromPlan = function () {
     const plan = DATA.getTodayPlan();

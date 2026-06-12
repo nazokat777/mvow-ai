@@ -362,9 +362,49 @@
   // Yon strelka tugmalar olib tashlandi — foydalanuvchi sahifa ichidagi CTA bilan davom etadi
 
   // ──────────────────────────────────────────────────────────────
-  // GLOBUS — til tanlash (taymer sahifalardan tashqari hammada)
+  // TARIX (HISTORY) — har sahifada tepada clock ikonkasi
   // ──────────────────────────────────────────────────────────────
   const TIMER_PAGES = ['hard-lock.html', 'alarm.html'];
+  // weekly-review (Tarix sahifasi)'da ikonka shart emas
+  const HISTORY_PAGE = 'weekly-review.html';
+  if (file !== HISTORY_PAGE) {
+    const hStyle = document.createElement('style');
+    hStyle.textContent = `
+      .seq-history {
+        position: fixed;
+        top: 8px;
+        right: ${TIMER_PAGES.includes(file) ? 60 : 112}px;
+        width: 44px; height: 44px;
+        border-radius: 50%;
+        border: 1px solid rgba(0,229,212,0.45);
+        background: rgba(8,8,12,0.85);
+        backdrop-filter: blur(8px);
+        -webkit-backdrop-filter: blur(8px);
+        color: #7AF5EC;
+        display: flex; align-items: center; justify-content: center;
+        cursor: pointer; user-select: none;
+        text-decoration: none;
+        -webkit-tap-highlight-color: transparent;
+        z-index: 99999;
+        transition: transform .12s, background .15s;
+      }
+      .seq-history:active { transform: scale(0.93); background: rgba(0,229,212,0.18); }
+      .seq-history svg { width: 22px; height: 22px; }
+    `;
+    document.head.appendChild(hStyle);
+
+    const hist = document.createElement('a');
+    hist.className = 'seq-history';
+    hist.href = 'weekly-review.html';
+    hist.setAttribute('aria-label', 'Tarix');
+    hist.setAttribute('title', 'Tarix');
+    hist.innerHTML = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+      <circle cx="12" cy="12" r="9"/>
+      <polyline points="12 7 12 12 15 14"/>
+    </svg>`;
+    document.body.appendChild(hist);
+  }
+
   if (!TIMER_PAGES.includes(file)) {
     const langStyle = document.createElement('style');
     langStyle.textContent = `

@@ -44,7 +44,20 @@
     padding: 16px 0;
     border-bottom: 1px solid rgba(255,255,255,.04);
     transition: opacity .25s, transform .25s;
+    position: relative;
   }
+  .task.done .name { color: var(--text-mid); text-decoration: line-through; text-decoration-color: rgba(0,229,212,.4); }
+  .task.done .time { color: var(--text-dim); }
+  .task .check-badge {
+    position: absolute; left: -18px; top: 50%;
+    transform: translateY(-50%);
+    width: 16px; height: 16px; border-radius: 50%;
+    background: var(--accent);
+    display: none;
+    align-items: center; justify-content: center;
+  }
+  .task.done .check-badge { display: flex; }
+  .task .check-badge svg { width: 9px; height: 9px; stroke: var(--void); }
   .task.deleting { opacity: 0; transform: translateX(60px); }
   .task .time {
     font-size: 14px; font-weight: 500;
@@ -239,11 +252,15 @@
       updateTotals();
       return;
     }
+    const completedKeys = (window.MVOW_DATA ? MVOW_DATA.getCompletedKeysToday() : new Set());
     tasks.forEach((t, idx) => {
       const row = document.createElement('div');
-      row.className = 'task';
+      const key = window.MVOW_DATA ? MVOW_DATA.taskKey(MVOW_DATA.today.iso, t.time, t.name) : '';
+      const isDone = completedKeys.has(key);
+      row.className = 'task' + (isDone ? ' done' : '');
       row.dataset.idx = idx;
       row.innerHTML = `
+        <span class="check-badge"><svg viewBox="0 0 24 24" fill="none" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="5 12 10 17 19 8"/></svg></span>
         <span class="time">${escapeHtml(t.time || '—')}</span>
         <span class="name">${escapeHtml(t.name || 'ish')}</span>
         <span class="dur">${escapeHtml(t.dur || '')}</span>

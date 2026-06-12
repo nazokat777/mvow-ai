@@ -115,26 +115,12 @@
       document.getElementById('taskTime').textContent = (cur.dur || '') + ' fokus';
     }
 
-    // Hisoblagich (sahifa ochilganda 1 ga oshadi, lekin bir kunda bir marta)
-    const todayKey = 'mvow.done.' + new Date().toISOString().slice(0,10);
-    let done = parseInt(localStorage.getItem(todayKey) || '0', 10);
-    // sahifa qayta yuklansa, ikkilab oshmasin — sessiya unique key kerak
-    const sessionKey = todayKey + '.last';
-    const lastSessionId = localStorage.getItem(sessionKey);
-    const thisSessionId = Date.now() - (Date.now() % 30000); // 30 sek ichida bir xil
-    if (lastSessionId !== String(thisSessionId)) {
-      done++;
-      localStorage.setItem(todayKey, String(done));
-      localStorage.setItem(sessionKey, String(thisSessionId));
-
-      // Umumiy bajarilgan sessiyalar
-      const tot = parseInt(localStorage.getItem('mvow.totalDone') || '0', 10) + 1;
-      localStorage.setItem('mvow.totalDone', String(tot));
-    }
+    // Hisoblagich — tarixdan bevosita (hard-lock bajarilgan ishni addHistory qiladi)
+    const todayIso = window.MVOW_DATA ? MVOW_DATA.today.iso : new Date().toISOString().slice(0,10);
+    const done = window.MVOW_DATA
+      ? MVOW_DATA.getHistory().filter(h => h.dateIso === todayIso).length
+      : parseInt(localStorage.getItem('mvow.done.' + todayIso) || '0', 10);
     document.getElementById('doneN').textContent = done;
-
-    // Sessiya tugaganda nozik feedback (tasdiq)
-    if (window.MVOW_DATA) MVOW_DATA.fxSuccess();
 
     // Bugungi reja umumiy hajmi
     document.getElementById('totalN').textContent = plan.length || (window.MVOW_DATA ? MVOW_DATA.sessions.length : 5);
@@ -145,13 +131,12 @@
       cta.textContent = 'Yakuniy bayram';
       cta.href = 'celebrate.html';
 
-      // Streak ham oshadi
+      // Streak ham oshadi (kunda bir marta)
       const lastStreakDate = localStorage.getItem('mvow.lastStreakDate');
-      const today = new Date().toISOString().slice(0,10);
-      if (lastStreakDate !== today) {
-        const cur = parseInt(localStorage.getItem('mvow.streak') || '0', 10);
-        localStorage.setItem('mvow.streak', String(cur + 1));
-        localStorage.setItem('mvow.lastStreakDate', today);
+      if (lastStreakDate !== todayIso) {
+        const curStreak = parseInt(localStorage.getItem('mvow.streak') || '0', 10);
+        localStorage.setItem('mvow.streak', String(curStreak + 1));
+        localStorage.setItem('mvow.lastStreakDate', todayIso);
       }
     }
   });

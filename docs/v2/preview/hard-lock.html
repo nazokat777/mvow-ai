@@ -13,66 +13,120 @@
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
 <style>
   * { box-sizing: border-box; margin: 0; padding: 0; }
-  :root { --void:#04060B; --text:#F5F2EC; --text-mid:#B8BBC2; --text-dim:#9CA0A8; --accent:#00E5D4; --accent-soft:#00B5A8; --alert:#FF4757; }
+  :root { --void:#04060B; --void-soft:#0C0F16; --card:#11151E; --text:#F5F2EC; --text-mid:#B8BBC2; --text-dim:#9CA0A8; --accent:#00E5D4; --accent-soft:#00B5A8; --alert:#FF4757; }
   body { background: var(--void); font-family:'Inter',sans-serif; color: var(--text); min-height: 100vh; display:flex; justify-content:center; align-items:flex-start; padding: 24px; -webkit-font-smoothing: antialiased; }
   .phone {
     width: 380px; min-height: 800px; background: var(--void); border-radius: 40px;
     overflow: hidden; position: relative;
     box-shadow: 0 0 0 8px #1a1d24, 0 30px 80px rgba(0,0,0,.7);
     display: flex; flex-direction: column;
-    transition: background .3s;
   }
-  .phone[data-alert="1"] { background: #1c0a0e; }
   .container { flex:1; display:flex; flex-direction: column; align-items:center; justify-content:center; padding: 60px 32px 100px; gap: 22px; }
 
   .task { text-align: center; }
   .task .name { font-family:'Cormorant Garamond',serif; font-size: 22px; font-weight: 500; }
   .task .time { font-size: 11px; letter-spacing: 3px; color: var(--text-mid); text-transform: uppercase; margin-top: 8px; }
 
+  /* Choice modal (Taymer bilan / Taymersiz) */
+  .choice-overlay {
+    position: fixed; inset: 0;
+    background: rgba(4,6,11,.92);
+    backdrop-filter: blur(10px);
+    z-index: 9999;
+    display: flex; align-items: center; justify-content: center;
+    padding: 24px;
+  }
+  .choice-card {
+    width: 100%; max-width: 340px;
+    background: var(--card);
+    border: 1px solid rgba(0,229,212,.2);
+    border-radius: 16px;
+    padding: 26px 22px;
+    text-align: center;
+    animation: chIn .4s cubic-bezier(.16,.84,.32,1);
+  }
+  @keyframes chIn { from { opacity: 0; transform: translateY(20px) scale(.96); } to { opacity: 1; transform: translateY(0) scale(1); } }
+  .choice-card .ctitle {
+    font-family: 'Cormorant Garamond', serif;
+    font-style: italic; font-size: 22px;
+    line-height: 1.3; color: var(--text);
+    margin-bottom: 6px;
+  }
+  .choice-card .ctask {
+    font-size: 13px; color: var(--accent);
+    margin-bottom: 18px;
+    font-weight: 500;
+  }
+  .choice-card .csub {
+    font-size: 12px; color: var(--text-dim);
+    line-height: 1.5;
+    margin-bottom: 22px;
+  }
+  .choice-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+  .choice-btn {
+    padding: 14px 10px;
+    border: none; border-radius: 999px;
+    font-family: 'Inter', sans-serif;
+    font-size: 12px; font-weight: 600;
+    letter-spacing: 1px; text-transform: uppercase;
+    cursor: pointer; min-height: 48px;
+  }
+  .choice-btn.primary { background: linear-gradient(180deg, var(--accent), var(--accent-soft)); color: var(--void); }
+  .choice-btn.secondary { background: transparent; color: var(--text-mid); border: 1px solid rgba(255,255,255,.12); }
+
+  /* Timer-on ring */
   .ring-wrap { position: relative; width: 240px; height: 240px; }
   .ring-svg { width: 100%; height: 100%; transform: rotate(-90deg); }
   .ring-track { fill: none; stroke: rgba(255,255,255,.06); stroke-width: 3; }
-  .ring-prog {
-    fill: none;
-    stroke: var(--accent);
-    stroke-width: 3;
-    stroke-linecap: round;
-    transition: stroke .3s, stroke-dashoffset 1s linear;
-  }
-  .phone[data-alert="1"] .ring-prog { stroke: var(--alert); }
+  .ring-prog { fill: none; stroke: var(--accent); stroke-width: 3; stroke-linecap: round; transition: stroke-dashoffset 1s linear; }
   .ring-center { position: absolute; inset: 0; display: flex; flex-direction: column; align-items:center; justify-content:center; gap: 6px; }
-  .digits { font-size: 44px; font-weight: 300; color: var(--accent); letter-spacing: 1px; transition: color .3s; font-feature-settings: "tnum"; }
-  .phone[data-alert="1"] .digits { color: var(--alert); }
+  .digits { font-size: 44px; font-weight: 300; color: var(--accent); letter-spacing: 1px; font-feature-settings: "tnum"; }
   .sub { font-size: 9px; letter-spacing: 3px; color: var(--text-dim); text-transform: uppercase; }
 
-  .blocked { font-size: 11px; color: var(--text-mid); letter-spacing: 1px; text-align: center; }
-  .blocked .app { color: var(--text-dim); margin: 0 6px; cursor: pointer; text-decoration: line-through; }
-  .blocked .app:active, .blocked .app:hover { color: var(--alert); }
+  /* Taymersiz katta tugma */
+  .no-timer-area { display: none; text-align: center; gap: 18px; }
+  .no-timer-area.show { display: flex; flex-direction: column; align-items: center; }
+  .no-timer-elapsed {
+    font-family: 'Cormorant Garamond', serif;
+    font-weight: 500;
+    font-size: 56px;
+    color: var(--accent);
+    line-height: 1;
+    font-feature-settings: "tnum";
+  }
+  .no-timer-lbl {
+    font-size: 10px;
+    letter-spacing: 3px;
+    color: var(--text-dim);
+    text-transform: uppercase;
+  }
+  .done-btn {
+    margin-top: 8px;
+    padding: 16px 36px;
+    background: linear-gradient(180deg, var(--accent), var(--accent-soft));
+    color: var(--void);
+    border: none; border-radius: 999px;
+    font-family: 'Inter', sans-serif;
+    font-size: 13px; font-weight: 600;
+    letter-spacing: 2px; text-transform: uppercase;
+    cursor: pointer; min-height: 52px;
+  }
 
-  .alert {
+  /* "Bajardingizmi?" so'roq modali */
+  .ask-overlay {
+    position: fixed; inset: 0;
+    background: rgba(4,6,11,.92);
+    backdrop-filter: blur(10px);
+    z-index: 9998;
     display: none;
-    width: 100%;
-    padding: 14px 16px;
-    border: 1.5px solid var(--alert);
-    border-radius: 10px;
-    background: rgba(255,71,87,.08);
-    text-align: center;
+    align-items: center; justify-content: center;
+    padding: 24px;
   }
-  .phone[data-alert="1"] .alert { display: block; }
-  .alert .msg { font-size: 13px; color: var(--text); margin-bottom: 12px; line-height: 1.4; }
-  .alert .msg .em { color: var(--alert); font-weight: 600; }
-  .alert .actions { display: flex; gap: 8px; }
-  .alert button, .alert a {
-    flex: 1; padding: 10px;
-    border: none; border-radius: 6px;
-    font-family: 'Inter', sans-serif; font-size: 11px; font-weight: 600;
-    letter-spacing: 1px; text-transform: uppercase;
-    cursor: pointer;
-    text-decoration: none;
-    display: flex; align-items: center; justify-content: center;
-  }
-  .alert .stay { background: var(--accent); color: var(--void); }
-  .alert .ask  { background: transparent; color: var(--alert); border: 1px solid var(--alert); }
+  .ask-overlay.show { display: flex; }
+
+  /* Timer hidden when no-timer chosen */
+  .timer-area { display: flex; flex-direction: column; align-items: center; gap: 22px; }
+  .timer-area.hidden { display: none; }
 
   .bottom-bar { padding: 18px 32px env(safe-area-inset-bottom, 18px); }
   .cta { display:block; width:100%; padding:14px; background: transparent; color: var(--text-mid); font-size:12px; letter-spacing:2px; text-transform: uppercase; border:1px solid rgba(255,255,255,.1); border-radius:6px; text-align:center; text-decoration:none; }
@@ -82,25 +136,34 @@
 </head>
 <body>
 
-<div class="phone" id="phone" data-alert="0">
+<div class="phone" id="phone">
   <div class="container">
 
     <div class="task">
-      <div class="name" id="tname">Til o'rganish</div>
+      <div class="name" id="tname">Ish</div>
       <div class="time" id="tsub">fokusdasiz</div>
-      <div id="cycleDots" style="display:none;justify-content:center;gap:8px;margin-top:10px;"></div>
     </div>
 
-    <div class="ring-wrap">
-      <svg class="ring-svg" viewBox="0 0 240 240">
-        <circle class="ring-track" cx="120" cy="120" r="116"/>
-        <circle id="ring" class="ring-prog" cx="120" cy="120" r="116"
-                stroke-dasharray="729" stroke-dashoffset="0"/>
-      </svg>
-      <div class="ring-center">
-        <div class="digits" id="digits">25:00</div>
-        <div class="sub" id="sub">davom etyapsiz</div>
+    <!-- Taymer ko'rinishi -->
+    <div class="timer-area" id="timerArea">
+      <div class="ring-wrap">
+        <svg class="ring-svg" viewBox="0 0 240 240">
+          <circle class="ring-track" cx="120" cy="120" r="116"/>
+          <circle id="ring" class="ring-prog" cx="120" cy="120" r="116"
+                  stroke-dasharray="729" stroke-dashoffset="0"/>
+        </svg>
+        <div class="ring-center">
+          <div class="digits" id="digits">25:00</div>
+          <div class="sub" id="sub">davom etyapsiz</div>
+        </div>
       </div>
+    </div>
+
+    <!-- Taymersiz ko'rinishi -->
+    <div class="no-timer-area" id="noTimerArea">
+      <div class="no-timer-elapsed" id="elapsed">00:00</div>
+      <div class="no-timer-lbl">o'tgan vaqt</div>
+      <button class="done-btn" id="doneBtn" type="button">Bajardim</button>
     </div>
 
   </div>
@@ -110,11 +173,37 @@
   </div>
 </div>
 
+<!-- 1) Boshlash tanlovi: Taymer bilan / Taymersiz -->
+<div class="choice-overlay" id="choiceOverlay">
+  <div class="choice-card">
+    <div class="ctitle">Qanday boshlaymiz?</div>
+    <div class="ctask" id="cTaskName">Ish</div>
+    <div class="csub">Taymer bilan — vaqtni ushlab turamiz.<br>Taymersiz — siz tayyor bo'lganda "Bajardim" deysiz.</div>
+    <div class="choice-grid">
+      <button class="choice-btn secondary" id="chNoTimer" type="button">Taymersiz</button>
+      <button class="choice-btn primary" id="chTimer" type="button">Taymer bilan</button>
+    </div>
+  </div>
+</div>
+
+<!-- 2) Tugagandan keyin so'roq: Bajardingizmi? -->
+<div class="ask-overlay" id="askOverlay">
+  <div class="choice-card">
+    <div class="ctitle">Bajardingizmi?</div>
+    <div class="ctask" id="aTaskName">Ish</div>
+    <div class="csub">Tugadi. Vaqt — <span id="aDur">25 daq</span>.</div>
+    <div class="choice-grid">
+      <button class="choice-btn secondary" id="askNo" type="button">Yo'q</button>
+      <button class="choice-btn primary" id="askYes" type="button">Ha</button>
+    </div>
+  </div>
+</div>
+
 <script src="i18n.js" defer></script>
 <script src="data.js" defer></script>
 <script src="nav-overlay.js" defer></script>
 <script>
-  // ── Joriy sessiya va sozlamalar ──
+  // ── Joriy ish va sozlamalar ──
   let current = null;
   if (window.MVOW_DATA) {
     current = MVOW_DATA.currentTaskFromPlan();
@@ -122,89 +211,37 @@
   if (!current && window.MVOW_DATA) {
     current = MVOW_DATA.currentSession() || (MVOW_DATA.sessions && MVOW_DATA.sessions[0]);
   }
-  if (!current) current = { name: 'Ish', dur: '25 daq' };
+  if (!current) current = { name: 'Ish', time: '', dur: '25 daq' };
+
   document.getElementById('tname').textContent = current.name;
+  document.getElementById('cTaskName').textContent = current.name;
+  document.getElementById('aTaskName').textContent = current.name;
+  document.getElementById('aDur').textContent = current.dur || '25 daq';
 
-  let prefs = {};
-  try { prefs = JSON.parse(localStorage.getItem('mvow.prefs') || '{}'); } catch {}
-  const MODE = prefs.mode || 'simple';
-  // Sessiya vaqti — har doim task'ning haqiqiy davomiyligidan
   const taskMins = window.MVOW_DATA ? MVOW_DATA.parseDurMins(current.dur) : 25;
-  const WORK_MIN  = taskMins;
-  const BREAK_MIN = parseInt(prefs.breakMins  || 5, 10);
-  const TOTAL_CYC = parseInt(prefs.pomoCycles || 3, 10);
-
+  const WORK_MIN = taskMins;
   const RING_CIRC = 729;
+
   const digits = document.getElementById('digits');
   const ring = document.getElementById('ring');
   const tsub = document.getElementById('tsub');
-  const sub = document.getElementById('sub');
-  const dotsEl = document.getElementById('cycleDots');
+  const timerArea = document.getElementById('timerArea');
+  const noTimerArea = document.getElementById('noTimerArea');
+  const elapsedEl = document.getElementById('elapsed');
 
-  // State
-  const ST_KEY = 'mvow.timer';
-  let phase   = 'work';   // 'work' yoki 'break'
-  let cycle   = 1;        // 1..TOTAL_CYC
+  const choiceOverlay = document.getElementById('choiceOverlay');
+  const askOverlay = document.getElementById('askOverlay');
+
+  let mode = null; // 'timer' | 'no-timer'
   let totalSec = WORK_MIN * 60;
   let remaining = totalSec;
+  let startedAt = Date.now();
+  let interval = null;
 
   function fmt(s) {
     const m = Math.floor(s / 60);
     const sec = s % 60;
     return String(m).padStart(2, '0') + ':' + String(sec).padStart(2, '0');
-  }
-
-  function renderCycleDots() {
-    if (MODE !== 'pomodoro') { dotsEl.style.display = 'none'; return; }
-    dotsEl.style.display = 'flex';
-    let html = '';
-    for (let i = 1; i <= TOTAL_CYC; i++) {
-      const active = (i === cycle);
-      const done = (i < cycle);
-      const bg = done ? '#00E5D4' : (active ? 'transparent' : 'rgba(255,255,255,.12)');
-      const border = active ? '1.5px solid #00E5D4' : 'none';
-      html += `<span style="width:9px;height:9px;border-radius:50%;background:${bg};border:${border};"></span>`;
-    }
-    dotsEl.innerHTML = html;
-  }
-
-  function applyPhaseStyle() {
-    if (phase === 'work') {
-      tsub.textContent = 'fokusdasiz';
-      sub.textContent  = 'davom etyapsiz';
-      ring.style.stroke = '#00E5D4';
-    } else {
-      tsub.textContent = 'dam ol';
-      sub.textContent  = 'tinch turing';
-      ring.style.stroke = '#F5C26B';
-    }
-  }
-
-  function saveState() {
-    localStorage.setItem(ST_KEY, JSON.stringify({
-      endsAt: Date.now() + remaining * 1000,
-      phase, cycle, mode: MODE
-    }));
-  }
-
-  function loadState() {
-    try {
-      const s = JSON.parse(localStorage.getItem(ST_KEY) || 'null');
-      if (s && s.endsAt && s.mode === MODE) {
-        phase = s.phase || 'work';
-        cycle = s.cycle || 1;
-        totalSec = (phase === 'work' ? WORK_MIN : BREAK_MIN) * 60;
-        const left = Math.max(0, Math.floor((s.endsAt - Date.now()) / 1000));
-        if (left > 0 && left <= totalSec) {
-          remaining = left;
-          return;
-        }
-      }
-    } catch {}
-    // Default
-    phase = 'work'; cycle = 1;
-    totalSec = WORK_MIN * 60;
-    remaining = totalSec;
   }
 
   function paint() {
@@ -213,57 +250,85 @@
     ring.style.strokeDashoffset = offset;
   }
 
-  function nextPhase() {
-    if (window.MVOW_DATA) MVOW_DATA.fxFinish();
-    if (MODE !== 'pomodoro') {
-      // Oddiy rejim — taymer tugadi
-      localStorage.removeItem(ST_KEY);
-      setTimeout(() => { location.href = 'session-reflection.html'; }, 1000);
-      return;
-    }
-    // Pomodoro — keyingi fazaga o'tamiz
-    if (phase === 'work') {
-      // Ish tugadi
-      if (cycle >= TOTAL_CYC) {
-        // Hammasi tamom
-        localStorage.removeItem(ST_KEY);
-        setTimeout(() => { location.href = 'session-reflection.html'; }, 1200);
-        return;
-      }
-      // Damga o'tamiz
-      phase = 'break';
-      totalSec = BREAK_MIN * 60;
-      remaining = totalSec;
-    } else {
-      // Dam tugadi → keyingi ish sikli
-      cycle++;
-      phase = 'work';
-      totalSec = WORK_MIN * 60;
-      remaining = totalSec;
-    }
-    applyPhaseStyle();
-    renderCycleDots();
-    saveState();
-    paint();
+  function paintElapsed() {
+    const elapsedSec = Math.floor((Date.now() - startedAt) / 1000);
+    elapsedEl.textContent = fmt(elapsedSec);
   }
 
-  // Init
-  loadState();
-  applyPhaseStyle();
-  renderCycleDots();
-  if (remaining === totalSec) saveState();
-  paint();
-
-  const interval = setInterval(() => {
-    remaining = Math.max(0, remaining - 1);
-    paint();
-    if (remaining === 0) {
-      // Yangi fazaga o'tish
-      nextPhase();
+  function recordAndExit(completed) {
+    if (window.MVOW_DATA) {
+      const actualMins = Math.max(1, Math.round((Date.now() - startedAt) / 60000));
+      if (completed) {
+        MVOW_DATA.addHistory({
+          name: current.name || 'Ish',
+          plannedTime: current.time || '',
+          plannedDur: current.dur || '',
+          dateIso: MVOW_DATA.today.iso,
+          startedAt,
+          completedAt: Date.now(),
+          actualMins,
+          withTimer: (mode === 'timer')
+        });
+        // Bugungi sanoq oshadi
+        const todayKey = 'mvow.done.' + new Date().toISOString().slice(0,10);
+        const cur = parseInt(localStorage.getItem(todayKey) || '0', 10);
+        localStorage.setItem(todayKey, String(cur + 1));
+        if (MVOW_DATA.fxSuccess) MVOW_DATA.fxSuccess();
+      }
     }
-  }, 1000);
+    setTimeout(() => { location.href = 'session-reflection.html'; }, 600);
+  }
 
-  // Diqqat sinovi olib tashlandi
+  function showAskModal() {
+    if (interval) clearInterval(interval);
+    askOverlay.classList.add('show');
+  }
+
+  // Boshlash tanlovi
+  document.getElementById('chTimer').addEventListener('click', () => {
+    mode = 'timer';
+    choiceOverlay.style.display = 'none';
+    timerArea.classList.remove('hidden');
+    noTimerArea.classList.remove('show');
+    tsub.textContent = 'fokusdasiz';
+    startedAt = Date.now();
+    paint();
+    interval = setInterval(() => {
+      remaining = Math.max(0, remaining - 1);
+      paint();
+      if (remaining === 0) {
+        if (window.MVOW_DATA && MVOW_DATA.fxFinish) MVOW_DATA.fxFinish();
+        showAskModal();
+      }
+    }, 1000);
+  });
+
+  document.getElementById('chNoTimer').addEventListener('click', () => {
+    mode = 'no-timer';
+    choiceOverlay.style.display = 'none';
+    timerArea.classList.add('hidden');
+    noTimerArea.classList.add('show');
+    tsub.textContent = 'taymersiz';
+    startedAt = Date.now();
+    paintElapsed();
+    interval = setInterval(paintElapsed, 1000);
+  });
+
+  // Taymersiz "Bajardim" → addHistory darrov
+  document.getElementById('doneBtn').addEventListener('click', () => {
+    if (interval) clearInterval(interval);
+    recordAndExit(true);
+  });
+
+  // "Bajardingizmi?" so'roq
+  document.getElementById('askYes').addEventListener('click', () => {
+    askOverlay.classList.remove('show');
+    recordAndExit(true);
+  });
+  document.getElementById('askNo').addEventListener('click', () => {
+    askOverlay.classList.remove('show');
+    recordAndExit(false);
+  });
 </script>
 
 </body>
