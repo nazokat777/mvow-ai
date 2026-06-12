@@ -93,11 +93,9 @@
     }
     if (!cur) cur = { name: 'Sessiya', time: '07:00', dur: '25 daq' };
 
-    // Vaqt — task'dan yoki settings'dan
+    // Vaqt — har doim task'ning haqiqiy davomiyligidan
     const taskMins = window.MVOW_DATA ? MVOW_DATA.parseDurMins(cur.dur) : 25;
-    const workMin = (mode === 'pomodoro')
-      ? parseInt(prefs.sessionMins || 25, 10)
-      : taskMins;
+    const workMin = taskMins;
 
     document.getElementById('taskName').textContent = cur.name;
     const start = cur.time || '07:00';
