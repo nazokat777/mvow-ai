@@ -280,15 +280,22 @@
 
   <!-- Tomorrow's plan -->
   <div class="section">
-    <div class="section-head">Ertangi reja</div>
-    <textarea class="tom-input" id="tomInput" placeholder="ertaga nima qilasan? (har satr — bitta ish)" maxlength="600"></textarea>
-    <div class="quick-chips">
-      <button class="quick-chip" data-add="Sport (45 daq)" type="button">🏃 Sport</button>
-      <button class="quick-chip" data-add="O'qish (1 soat)" type="button">📚 O'qish</button>
-      <button class="quick-chip" data-add="Loyiha (1.5 soat)" type="button">💻 Loyiha</button>
-      <button class="quick-chip" data-add="Kitob (30 daq)" type="button">📖 Kitob</button>
-      <button class="quick-chip" data-add="Sayr (30 daq)" type="button">🚶 Sayr</button>
+    <div class="section-head" id="tomHead">Ertangi reja</div>
+
+    <!-- Auto-generated tasks list (from maqsadlar) -->
+    <div id="tomList" style="display:flex;flex-direction:column;gap:8px;"></div>
+
+    <!-- Empty state -->
+    <div id="tomEmpty" style="display:none;text-align:center;padding:24px 16px;background:var(--card);border:1px dashed rgba(0,229,212,.25);border-radius:12px;">
+      <div style="font-family:'Cormorant Garamond',serif;font-style:italic;font-size:16px;color:var(--text-mid);margin-bottom:14px;">Ertangi reja yo'q</div>
+      <a href="routine.html" style="display:inline-block;padding:12px 20px;background:rgba(0,229,212,.08);border:1px solid rgba(0,229,212,.35);border-radius:999px;color:var(--accent);font-family:'Inter',sans-serif;font-size:13px;font-weight:500;letter-spacing:1px;text-decoration:none;">+ Kun tartibini tuz</a>
     </div>
+
+    <!-- Add new task -->
+    <button id="tomAddBtn" type="button" style="display:flex;align-items:center;justify-content:center;gap:8px;width:100%;margin-top:10px;padding:14px;background:transparent;border:1px dashed rgba(0,229,212,.25);border-radius:10px;color:var(--accent);font-family:'Inter',sans-serif;font-size:13px;cursor:pointer;">
+      <span style="font-size:18px;">+</span>
+      <span>Yana ish qo'sh</span>
+    </button>
   </div>
 
   <!-- Wake time + alarm -->
@@ -355,18 +362,146 @@
       `).join('');
     }
 
-    // ── Ertangi reja ──
-    const tomInput = document.getElementById('tomInput');
-    const tomSaved = localStorage.getItem('mvow.tomorrowPlan') || '';
-    tomInput.value = tomSaved;
+    // ── Ertangi reja — weekPlan'dan o'qiydi (auto-generated from maqsadlar) ──
+    const tomList = document.getElementById('tomList');
+    const tomEmpty = document.getElementById('tomEmpty');
+    const tomHead = document.getElementById('tomHead');
+    const tomAddBtn = document.getElementById('tomAddBtn');
 
-    document.querySelectorAll('.quick-chip').forEach(c => {
-      c.addEventListener('click', () => {
-        const cur = tomInput.value.trim();
-        tomInput.value = cur ? cur + '\n' + c.dataset.add : c.dataset.add;
-        if (window.MVOW_DATA) MVOW_DATA.fxTap();
+    function tomorrowKey() {
+      const tom = new Date(Date.now() + 86400000);
+      return 'd' + tom.toISOString().slice(0, 10);
+    }
+
+    function loadTomPlan() {
+      if (!window.MVOW_DATA) return [];
+      const w = MVOW_DATA.getWeekPlan();
+      const k = tomorrowKey();
+      return Array.isArray(w[k]) ? w[k] : [];
+    }
+
+    function saveTomPlan(arr) {
+      if (!window.MVOW_DATA) return;
+      const w = MVOW_DATA.getWeekPlan();
+      w[tomorrowKey()] = arr;
+      MVOW_DATA.setWeekPlan(w);
+    }
+
+    function escapeHtml(s) {
+      return String(s).replace(/[<>"&]/g, c => ({'<':'&lt;','>':'&gt;','"':'&quot;','&':'&amp;'}[c]));
+    }
+
+    function timeKey(t) {
+      const m = /^(\d{1,2}):?(\d{2})?$/.exec((t || '').trim());
+      if (!m) return 99999;
+      return (+m[1]) * 60 + (+(m[2] || 0));
+    }
+
+    function renderTomPlan() {
+      const tasks = loadTomPlan().sort((a,b) => timeKey(a.time) - timeKey(b.time));
+      tomList.innerHTML = '';
+      if (!tasks.length) {
+        tomEmpty.style.display = 'block';
+        tomAddBtn.style.display = 'none';
+        tomHead.textContent = 'Ertangi reja';
+        return;
+      }
+      tomEmpty.style.display = 'none';
+      tomAddBtn.style.display = 'flex';
+      tomHead.textContent = 'Ertangi reja · ' + tasks.length + ' ish';
+
+      tasks.forEach((t, idx) => {
+        const row = document.createElement('div');
+        row.style.cssText = 'display:grid;grid-template-columns:60px 1fr auto;align-items:center;gap:12px;padding:12px 14px;background:var(--card);border:1px solid rgba(255,255,255,.05);border-radius:10px;';
+        row.innerHTML = `
+          <span class="tap-edit time" style="color:var(--accent);font-size:14px;font-weight:500;cursor:pointer;">${escapeHtml(t.time || '—')}</span>
+          <div class="tap-edit name-block" style="cursor:pointer;">
+            <div style="font-size:15px;color:var(--text);line-height:1.3;">${escapeHtml(t.name || 'ish')}</div>
+            <div style="font-size:11px;color:var(--text-dim);margin-top:2px;letter-spacing:.5px;">${escapeHtml(t.dur || '')}</div>
+          </div>
+          <button class="tom-del" type="button" style="background:transparent;border:none;color:var(--text-dim);font-size:20px;width:32px;height:32px;cursor:pointer;border-radius:50%;">×</button>
+        `;
+        tomList.appendChild(row);
+
+        const delBtn = row.querySelector('.tom-del');
+        delBtn.addEventListener('click', () => {
+          const arr = loadTomPlan();
+          arr.splice(arr.indexOf(t), 1);
+          // index by name+time to be safe
+          const filtered = arr.filter(x => !(x.time === t.time && x.name === t.name));
+          saveTomPlan(filtered);
+          renderTomPlan();
+          if (window.MVOW_DATA) MVOW_DATA.fxTap();
+        });
+
+        // Tap to edit
+        row.querySelectorAll('.tap-edit').forEach(el => {
+          el.addEventListener('click', () => enterEdit(row, t));
+        });
       });
+    }
+
+    function enterEdit(row, task) {
+      const arr = loadTomPlan();
+      const idx = arr.findIndex(x => x.time === task.time && x.name === task.name);
+      if (idx < 0) return;
+      row.innerHTML = `
+        <div style="display:grid;grid-template-columns:60px 1fr 60px;gap:8px;grid-column:1/-1;">
+          <input class="ed-time" type="text" value="${escapeHtml(task.time)}" maxlength="5" style="background:var(--void-soft);border:1px solid var(--accent);border-radius:6px;padding:8px;color:var(--text);font-size:13px;outline:none;">
+          <input class="ed-name" type="text" value="${escapeHtml(task.name)}" maxlength="48" style="background:var(--void-soft);border:1px solid var(--accent);border-radius:6px;padding:8px;color:var(--text);font-size:13px;outline:none;">
+          <input class="ed-dur" type="text" value="${escapeHtml(task.dur)}" maxlength="20" style="background:var(--void-soft);border:1px solid var(--accent);border-radius:6px;padding:8px;color:var(--text);font-size:13px;outline:none;">
+        </div>
+        <div style="grid-column:1/-1;display:flex;gap:8px;justify-content:flex-end;margin-top:8px;">
+          <button class="ed-cancel" type="button" style="padding:8px 14px;background:transparent;color:var(--text-mid);border:1px solid rgba(255,255,255,.1);border-radius:6px;font-size:11px;letter-spacing:1px;text-transform:uppercase;cursor:pointer;">Bekor</button>
+          <button class="ed-save" type="button" style="padding:8px 14px;background:var(--accent);color:var(--void);border:none;border-radius:6px;font-size:11px;font-weight:600;letter-spacing:1px;text-transform:uppercase;cursor:pointer;">Saqla</button>
+        </div>
+      `;
+      const timeIn = row.querySelector('.ed-time');
+      const nameIn = row.querySelector('.ed-name');
+      const durIn  = row.querySelector('.ed-dur');
+      row.querySelector('.ed-save').addEventListener('click', () => {
+        const arr2 = loadTomPlan();
+        arr2[idx] = {
+          time: timeIn.value.trim(),
+          name: nameIn.value.trim() || 'ish',
+          dur:  durIn.value.trim() || '1 soat'
+        };
+        saveTomPlan(arr2);
+        renderTomPlan();
+      });
+      row.querySelector('.ed-cancel').addEventListener('click', renderTomPlan);
+      setTimeout(() => timeIn.focus(), 50);
+    }
+
+    tomAddBtn.addEventListener('click', () => {
+      const row = document.createElement('div');
+      row.style.cssText = 'background:var(--card);border:1px solid rgba(0,229,212,.3);border-radius:10px;padding:12px 14px;';
+      row.innerHTML = `
+        <div style="display:grid;grid-template-columns:60px 1fr 60px;gap:8px;">
+          <input class="new-time" type="text" placeholder="07:00" maxlength="5" style="background:var(--void-soft);border:1px solid var(--accent);border-radius:6px;padding:8px;color:var(--text);font-size:13px;outline:none;">
+          <input class="new-name" type="text" placeholder="ish nomi" maxlength="48" style="background:var(--void-soft);border:1px solid var(--accent);border-radius:6px;padding:8px;color:var(--text);font-size:13px;outline:none;">
+          <input class="new-dur" type="text" placeholder="1 soat" maxlength="20" style="background:var(--void-soft);border:1px solid var(--accent);border-radius:6px;padding:8px;color:var(--text);font-size:13px;outline:none;">
+        </div>
+        <div style="display:flex;gap:8px;justify-content:flex-end;margin-top:8px;">
+          <button class="new-cancel" type="button" style="padding:8px 14px;background:transparent;color:var(--text-mid);border:1px solid rgba(255,255,255,.1);border-radius:6px;font-size:11px;letter-spacing:1px;text-transform:uppercase;cursor:pointer;">Bekor</button>
+          <button class="new-save" type="button" style="padding:8px 14px;background:var(--accent);color:var(--void);border:none;border-radius:6px;font-size:11px;font-weight:600;letter-spacing:1px;text-transform:uppercase;cursor:pointer;">Qo'sh</button>
+        </div>
+      `;
+      tomList.appendChild(row);
+      const t = row.querySelector('.new-time');
+      const n = row.querySelector('.new-name');
+      const dr = row.querySelector('.new-dur');
+      setTimeout(() => t.focus(), 50);
+      row.querySelector('.new-save').addEventListener('click', () => {
+        const arr = loadTomPlan();
+        arr.push({ time: t.value.trim() || '07:00', name: n.value.trim() || 'ish', dur: dr.value.trim() || '1 soat' });
+        saveTomPlan(arr);
+        renderTomPlan();
+      });
+      row.querySelector('.new-cancel').addEventListener('click', () => row.remove());
     });
+
+    renderTomPlan();
 
     // ── Uyg'onish ──
     const wakeInput = document.getElementById('wakeTime');
@@ -406,67 +541,18 @@
     // ── Saqlash + uyga ──
     document.getElementById('saveBtn').addEventListener('click', (e) => {
       e.preventDefault();
-      const tomRaw = tomInput.value.trim();
-      localStorage.setItem('mvow.tomorrowPlan', tomRaw);
       localStorage.setItem('mvow.wakeTime', wakeInput.value);
-
-      let savedCount = 0;
-      // Ertangi reja matnini parse qilib weekPlan'ga saqlash
-      if (tomRaw && window.MVOW_DATA) {
-        const sessions = parsePlans(tomRaw);
-        const tomKey = 'd' + new Date(Date.now() + 86400000).toISOString().slice(0,10);
-        const w = MVOW_DATA.getWeekPlan();
-        if (sessions.length) {
-          w[tomKey] = sessions;
-          MVOW_DATA.setWeekPlan(w);
-          savedCount = sessions.length;
-        }
-      }
+      const tomCount = loadTomPlan().length;
       if (window.MVOW_DATA) MVOW_DATA.fxSuccess();
 
       // Tasdiq toast
       const toast = document.createElement('div');
-      toast.style.cssText = 'position:fixed;left:50%;top:30%;transform:translate(-50%,-50%);background:#11151E;border:1px solid rgba(0,229,212,.4);border-radius:14px;padding:24px 28px;color:#7AF5EC;font-family:Inter,sans-serif;font-size:16px;text-align:center;z-index:9999;box-shadow:0 20px 60px rgba(0,0,0,.6);animation:toastIn .4s cubic-bezier(.16,.84,.32,1);';
-      const wakeText = wakeInput.value;
-      toast.innerHTML = '✓ Saqlandi<br><span style="font-size:12px;color:#9CA0A8;letter-spacing:1px;text-transform:uppercase;margin-top:8px;display:block;">' + (savedCount ? savedCount + ' ish · ' : '') + 'budilnik ' + wakeText + '</span>';
+      toast.style.cssText = 'position:fixed;left:50%;top:30%;transform:translate(-50%,-50%);background:#11151E;border:1px solid rgba(0,229,212,.4);border-radius:14px;padding:24px 28px;color:#7AF5EC;font-family:Inter,sans-serif;font-size:16px;text-align:center;z-index:9999;box-shadow:0 20px 60px rgba(0,0,0,.6);';
+      toast.innerHTML = '✓ Yaxshi tundir<br><span style="font-size:12px;color:#9CA0A8;letter-spacing:1px;text-transform:uppercase;margin-top:8px;display:block;">' + (tomCount ? 'ertaga ' + tomCount + ' ish · ' : '') + 'budilnik ' + wakeInput.value + '</span>';
       document.body.appendChild(toast);
-
-      const style = document.createElement('style');
-      style.textContent = '@keyframes toastIn{from{opacity:0;transform:translate(-50%,-40%) scale(.94);}to{opacity:1;transform:translate(-50%,-50%) scale(1);}}';
-      document.head.appendChild(style);
 
       setTimeout(() => { window.location.href = 'home.html'; }, 1500);
     });
-
-    function parsePlans(raw) {
-      const lines = raw.split(/[\n,;•]+/).map(s => s.trim()).filter(Boolean);
-      const out = [];
-      let hour = 7;
-      for (const line of lines) {
-        let time = '', name = line, dur = '1 soat';
-        const m = line.match(/^(\d{1,2}):(\d{2})\s+(.+?)(?:\s+\((.+?)\))?$/);
-        if (m) {
-          time = `${m[1].padStart(2,'0')}:${m[2]}`;
-          name = m[3].trim();
-          if (m[4]) dur = m[4].trim();
-        } else {
-          // Tekshiruv: dur qavs ichida
-          const dm = line.match(/^(.+?)\s+\((.+?)\)$/);
-          if (dm) {
-            name = dm[1].trim();
-            dur = dm[2].trim();
-          }
-          time = `${String(hour).padStart(2,'0')}:00`;
-          hour++;
-        }
-        out.push({ time, name, dur });
-      }
-      return out;
-    }
-
-    function escapeHtml(s) {
-      return String(s).replace(/[<>"&]/g, c => ({'<':'&lt;','>':'&gt;','"':'&quot;','&':'&amp;'}[c]));
-    }
   });
 </script>
 
