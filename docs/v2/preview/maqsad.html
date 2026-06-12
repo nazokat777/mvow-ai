@@ -1,0 +1,413 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>{brand} — Maqsad</title>
+<link rel="manifest" href="manifest.webmanifest">
+<meta name="theme-color" content="#04060B">
+<link rel="apple-touch-icon" href="assets/mnsm-logo.png">
+<link rel="icon" type="image/png" href="assets/mnsm-logo.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,600;1,500&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  :root {
+    --void:#04060B; --void-soft:#0C0F16;
+    --text:#F5F2EC; --text-mid:#B8BBC2; --text-dim:#9CA0A8;
+    --accent:#00E5D4; --accent-soft:#00B5A8;
+    --card:#11151E;
+  }
+  html, body {
+    background: var(--void); color: var(--text);
+    min-height: 100vh;
+    font-family: 'Inter', sans-serif;
+    -webkit-font-smoothing: antialiased;
+  }
+  .wrap {
+    max-width: 540px;
+    margin: 0 auto;
+    padding: 60px 24px 140px;
+  }
+
+  .step-lbl {
+    font-size: 12px;
+    letter-spacing: 4px;
+    color: var(--accent);
+    text-transform: uppercase;
+    font-weight: 500;
+    margin-bottom: 14px;
+    text-align: center;
+  }
+  .title {
+    font-family: 'Cormorant Garamond', serif;
+    font-style: italic;
+    font-weight: 500;
+    font-size: 32px;
+    line-height: 1.3;
+    text-align: center;
+    margin-bottom: 6px;
+  }
+  .sub {
+    text-align: center;
+    color: var(--text-mid);
+    font-size: 14px;
+    margin-bottom: 32px;
+  }
+
+  /* Step 1: duration picker */
+  .options { display: flex; flex-direction: column; gap: 10px; margin-bottom: 28px; }
+  .opt {
+    display: grid;
+    grid-template-columns: 1fr auto;
+    align-items: center;
+    gap: 14px;
+    padding: 18px 22px;
+    background: var(--card);
+    border: 1px solid rgba(255,255,255,.06);
+    border-radius: 12px;
+    color: var(--text);
+    font-size: 16px;
+    cursor: pointer;
+    transition: all .15s;
+    min-height: 58px;
+    user-select: none;
+  }
+  .opt:hover { border-color: rgba(0,229,212,.3); background: rgba(0,229,212,.04); }
+  .opt.on { border-color: var(--accent); background: rgba(0,229,212,.08); }
+  .opt .radio {
+    width: 22px; height: 22px;
+    border-radius: 50%;
+    border: 1.5px solid rgba(255,255,255,.15);
+    display: flex; align-items: center; justify-content: center;
+  }
+  .opt.on .radio { border-color: var(--accent); }
+  .opt.on .radio::after {
+    content: ''; width: 12px; height: 12px; border-radius: 50%; background: var(--accent);
+  }
+  .opt .lbl { display: flex; flex-direction: column; gap: 2px; }
+  .opt .lbl-main { font-size: 16px; }
+  .opt .lbl-sub { font-size: 12px; color: var(--text-dim); }
+
+  /* Step 2: goal text */
+  .panel { display: none; animation: fadeIn .4s ease; }
+  .panel.show { display: block; }
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  textarea {
+    width: 100%;
+    background: var(--card);
+    border: 1.5px solid rgba(255,255,255,.08);
+    border-radius: 12px;
+    color: var(--text);
+    padding: 16px 18px;
+    font-family: 'Inter', sans-serif;
+    font-size: 16px;
+    line-height: 1.5;
+    outline: none;
+    resize: none;
+    min-height: 120px;
+    transition: border-color .15s;
+    margin-bottom: 16px;
+  }
+  textarea:focus { border-color: var(--accent); }
+  textarea::placeholder { color: var(--text-dim); }
+
+  .examples {
+    background: rgba(0,229,212,.04);
+    border: 1px solid rgba(0,229,212,.15);
+    border-radius: 10px;
+    padding: 14px;
+    margin-bottom: 16px;
+  }
+  .examples .lbl {
+    font-size: 11px;
+    letter-spacing: 2px;
+    color: var(--accent);
+    text-transform: uppercase;
+    margin-bottom: 10px;
+  }
+  .examples .ex {
+    font-family: 'Cormorant Garamond', serif;
+    font-style: italic;
+    font-size: 14px;
+    color: var(--text);
+    line-height: 1.6;
+    padding: 4px 0;
+  }
+
+  .time-input {
+    display: grid;
+    grid-template-columns: 1fr auto;
+    align-items: center;
+    gap: 12px;
+    background: var(--card);
+    border: 1.5px solid rgba(255,255,255,.08);
+    border-radius: 10px;
+    padding: 12px 16px;
+    margin-bottom: 24px;
+  }
+  .time-input label {
+    font-size: 13px;
+    color: var(--text-mid);
+  }
+  .time-input input {
+    background: transparent;
+    border: none;
+    color: var(--accent);
+    font-family: 'Inter', sans-serif;
+    font-size: 15px;
+    font-weight: 500;
+    text-align: right;
+    outline: none;
+    width: 110px;
+  }
+
+  .bottom {
+    position: fixed;
+    bottom: 0; left: 0; right: 0;
+    padding: 18px 24px env(safe-area-inset-bottom, 22px);
+    background: linear-gradient(180deg, transparent, var(--void) 40%);
+    z-index: 10;
+  }
+  .cta {
+    display: block;
+    width: 100%;
+    max-width: 500px;
+    margin: 0 auto;
+    padding: 16px;
+    background: linear-gradient(180deg, var(--accent), var(--accent-soft));
+    color: var(--void);
+    font-family: 'Inter', sans-serif;
+    font-size: 14px;
+    font-weight: 600;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    border: none;
+    border-radius: 999px;
+    text-align: center;
+    text-decoration: none;
+    cursor: pointer;
+    min-height: 52px;
+  }
+  .cta.disabled { opacity: 0.35; pointer-events: none; }
+  .back-link {
+    display: block;
+    text-align: center;
+    margin-top: 12px;
+    font-size: 12px;
+    color: var(--text-mid);
+    text-decoration: none;
+    letter-spacing: 1px;
+  }
+</style>
+</head>
+<body>
+
+<div class="wrap">
+
+  <!-- STEP 1: Duration -->
+  <div class="panel show" id="step1">
+    <div class="step-lbl">1 / 2</div>
+    <h1 class="title">Maqsad muddati</h1>
+    <p class="sub">Qancha vaqt ichida erishasan?</p>
+
+    <div class="options" id="durationList">
+      <div class="opt" data-d="week" data-days="7">
+        <div class="lbl"><div class="lbl-main">1 hafta</div><div class="lbl-sub">Yaqin natija</div></div>
+        <div class="radio"></div>
+      </div>
+      <div class="opt" data-d="month" data-days="30">
+        <div class="lbl"><div class="lbl-main">1 oy</div><div class="lbl-sub">30 kunlik intizom</div></div>
+        <div class="radio"></div>
+      </div>
+      <div class="opt" data-d="3mo" data-days="90">
+        <div class="lbl"><div class="lbl-main">3 oy</div><div class="lbl-sub">Chuqur o'rganish</div></div>
+        <div class="radio"></div>
+      </div>
+      <div class="opt" data-d="6mo" data-days="180">
+        <div class="lbl"><div class="lbl-main">6 oy</div><div class="lbl-sub">Katta o'sish</div></div>
+        <div class="radio"></div>
+      </div>
+      <div class="opt" data-d="year" data-days="365">
+        <div class="lbl"><div class="lbl-main">1 yil</div><div class="lbl-sub">Hayot o'zgarishi</div></div>
+        <div class="radio"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- STEP 2: Goal text + time -->
+  <div class="panel" id="step2">
+    <div class="step-lbl">2 / 2</div>
+    <h1 class="title" id="step2Title">1 oyda nimaga erishasan?</h1>
+    <p class="sub" id="step2Sub">Aniq yoz — har kuni kalendaringga belgilanadi</p>
+
+    <textarea id="goalText" placeholder="masalan: Dasturlash darsini o'rganaman" maxlength="200" rows="3"></textarea>
+
+    <div class="examples">
+      <div class="lbl">Misollar</div>
+      <div class="ex" data-fill="Dasturlash darsi">· Dasturlash darsini o'rganaman</div>
+      <div class="ex" data-fill="Sport mashqi">· Sport mashqi har kuni</div>
+      <div class="ex" data-fill="Kitob o'qish">· Kitob o'qish (har kuni 30 daq)</div>
+      <div class="ex" data-fill="Til o'rganish">· Til o'rganish</div>
+    </div>
+
+    <div class="time-input">
+      <label for="dailyTime">Har kun qaysi vaqtda?</label>
+      <input id="dailyTime" type="time" value="07:00">
+    </div>
+
+    <div class="time-input">
+      <label for="dailyDur">Davomiylik (daqiqa)</label>
+      <input id="dailyDur" type="number" min="10" max="240" value="60" style="text-align:right;">
+    </div>
+  </div>
+
+</div>
+
+<div class="bottom">
+  <button class="cta disabled" id="nextBtn" type="button">Keyingi</button>
+  <a class="back-link" id="backLink" href="#" style="display:none;">← Orqaga</a>
+</div>
+
+<script src="i18n.js" defer></script>
+<script src="data.js" defer></script>
+<script src="nav-overlay.js" defer></script>
+<script>
+  document.addEventListener('DOMContentLoaded', () => {
+    let currentStep = 1;
+    let selectedDuration = null;
+    let selectedDays = 0;
+
+    const step1 = document.getElementById('step1');
+    const step2 = document.getElementById('step2');
+    const nextBtn = document.getElementById('nextBtn');
+    const backLink = document.getElementById('backLink');
+    const goalText = document.getElementById('goalText');
+    const dailyTime = document.getElementById('dailyTime');
+    const dailyDur = document.getElementById('dailyDur');
+    const step2Title = document.getElementById('step2Title');
+
+    // Step 1: duration selection
+    document.querySelectorAll('.opt').forEach(o => {
+      o.addEventListener('click', () => {
+        document.querySelectorAll('.opt').forEach(x => x.classList.remove('on'));
+        o.classList.add('on');
+        selectedDuration = o.dataset.d;
+        selectedDays = parseInt(o.dataset.days, 10);
+        nextBtn.classList.remove('disabled');
+        if (window.MVOW_DATA) MVOW_DATA.fxTap();
+      });
+    });
+
+    // Examples fill
+    document.querySelectorAll('.ex').forEach(e => {
+      e.style.cursor = 'pointer';
+      e.addEventListener('click', () => {
+        goalText.value = e.dataset.fill;
+        checkStep2();
+        goalText.focus();
+      });
+    });
+
+    function checkStep2() {
+      nextBtn.classList.toggle('disabled', !goalText.value.trim());
+    }
+    goalText.addEventListener('input', checkStep2);
+
+    function gotoStep2() {
+      currentStep = 2;
+      const titles = {
+        'week':  '1 haftada nimaga erishasan?',
+        'month': '1 oyda nimaga erishasan?',
+        '3mo':   '3 oyda nimaga erishasan?',
+        '6mo':   '6 oyda nimaga erishasan?',
+        'year':  '1 yilda nimaga erishasan?'
+      };
+      step2Title.textContent = titles[selectedDuration] || 'Nimaga erishasan?';
+      step1.classList.remove('show');
+      step2.classList.add('show');
+      backLink.style.display = 'block';
+      nextBtn.textContent = 'Kalendarga belgila';
+      nextBtn.classList.add('disabled');
+      checkStep2();
+      setTimeout(() => goalText.focus(), 100);
+    }
+
+    function gotoStep1() {
+      currentStep = 1;
+      step2.classList.remove('show');
+      step1.classList.add('show');
+      backLink.style.display = 'none';
+      nextBtn.textContent = 'Keyingi';
+      nextBtn.classList.toggle('disabled', !selectedDuration);
+    }
+
+    backLink.addEventListener('click', (e) => {
+      e.preventDefault();
+      gotoStep1();
+    });
+
+    nextBtn.addEventListener('click', () => {
+      if (currentStep === 1) {
+        gotoStep2();
+      } else {
+        // SAVE — kalendarga avtomatik tarqatish
+        saveGoalToCalendar();
+      }
+    });
+
+    function saveGoalToCalendar() {
+      const text = goalText.value.trim();
+      const time = dailyTime.value || '07:00';
+      const durMin = parseInt(dailyDur.value, 10) || 60;
+      const dur = durMin >= 60
+        ? (durMin % 60 === 0 ? (durMin/60) + ' soat' : Math.floor(durMin/60) + ' soat ' + (durMin%60) + ' daq')
+        : durMin + ' daq';
+
+      // Maqsadni saqlash
+      const goalKeys = {
+        'week':  'mvow.weekGoal',
+        'month': 'mvow.monthGoal',
+        '3mo':   'mvow.threeMoGoal',
+        '6mo':   'mvow.sixMoGoal',
+        'year':  'mvow.yearGoal'
+      };
+      localStorage.setItem(goalKeys[selectedDuration], text);
+
+      // Kalendarga tarqatish
+      if (window.MVOW_DATA) {
+        const w = MVOW_DATA.getWeekPlan();
+        const today = new Date();
+        for (let i = 0; i < selectedDays; i++) {
+          const d = new Date(today);
+          d.setDate(today.getDate() + i);
+          const key = 'd' + d.toISOString().slice(0, 10);
+          if (!Array.isArray(w[key])) w[key] = [];
+          // Bir xil maqsad ikkilab qo'shilmasin
+          const exists = w[key].some(s => s.name === text && s.time === time);
+          if (!exists) {
+            w[key].push({ time, name: text, dur });
+          }
+        }
+        MVOW_DATA.setWeekPlan(w);
+        if (MVOW_DATA.fxSuccess) MVOW_DATA.fxSuccess();
+      }
+
+      // Tasdiq toast
+      const toast = document.createElement('div');
+      toast.style.cssText = 'position:fixed;left:50%;top:30%;transform:translate(-50%,-50%);background:#11151E;border:1px solid rgba(0,229,212,.4);border-radius:14px;padding:24px 28px;color:#7AF5EC;font-family:Inter,sans-serif;font-size:16px;text-align:center;z-index:9999;box-shadow:0 20px 60px rgba(0,0,0,.6);';
+      toast.innerHTML = '✓ Belgilandi<br><span style="font-size:12px;color:#9CA0A8;letter-spacing:1px;text-transform:uppercase;margin-top:8px;display:block;">' + selectedDays + ' kunga · har kuni ' + time + '</span>';
+      document.body.appendChild(toast);
+
+      setTimeout(() => { window.location.href = 'calendar.html'; }, 1400);
+    }
+  });
+</script>
+
+</body>
+</html>

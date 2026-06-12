@@ -190,8 +190,9 @@
     'intro.html',             // 1. Do'st o'zini tanishtiradi
     'anketa.html',            // 2. 8 qadamli savol-javob (ism + profil)
     'vada.html',              // 3. Va'da
-    'permissions.html',       // 4. Ruxsatlar
-    'settings.html',          // 5. Sozlamalar
+    'maqsad.html',            // 4. Maqsad muddati + tarqatish
+    'permissions.html',       // 5. Ruxsatlar
+    'settings.html',          // 6. Sozlamalar
     // Kun (6-10) — alarm SEQ'dan olindi, faqat bildirishnoma orqali ochiladi
     'home.html',              // 6. Bosh sahifa
     'routine.html',           // 7. Reja
@@ -219,11 +220,11 @@
 
   // 5 ta bo'lim
   const SECTIONS = [
-    { name: 'Tanishuv',  range: [0, 3] },   // 1-3 (intro, anketa, vada)
-    { name: 'Sozlama',   range: [3, 5] },   // 4-5 (permissions, settings)
-    { name: 'Kun',       range: [5, 10] },  // 6-10 (home, routine, today-plan, rejalar, calendar)
-    { name: 'Bajarish',  range: [10, 15] }, // 11-15
-    { name: 'Natija',    range: [15, 18] }  // 16-18
+    { name: 'Tanishuv',  range: [0, 4] },   // 1-4 (intro, anketa, vada, maqsad)
+    { name: 'Sozlama',   range: [4, 6] },   // 5-6 (permissions, settings)
+    { name: 'Kun',       range: [6, 11] },  // 7-11 (home, routine, today-plan, rejalar, calendar)
+    { name: 'Bajarish',  range: [11, 16] }, // 12-16
+    { name: 'Natija',    range: [16, 19] }  // 17-19
   ];
   const currentSection = SECTIONS.find(s => idx >= s.range[0] && idx < s.range[1]) || SECTIONS[0];
   const sectionIdx = idx - currentSection.range[0] + 1;
