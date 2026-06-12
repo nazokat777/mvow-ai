@@ -228,7 +228,7 @@
   };
 
   // Tashqaridan chaqirish uchun: Ha (done) — history'ga ham qo'shiladi
-  DATA.markTaskDone = function (task, taskKey) {
+  DATA.markTaskDone = function (task, taskKey, note) {
     DATA.setTaskState(taskKey, { status: 'done' });
     const m = (task.time || '').match(/^(\d{1,2}):(\d{2})$/);
     let startedAt = Date.now();
@@ -246,7 +246,8 @@
       startedAt,
       completedAt: Date.now(),
       actualMins: durMin,
-      withTimer: false
+      withTimer: false,
+      note: (note || '').trim()
     });
     const todayKey = 'mvow.done.' + DATA.today.iso;
     const cur = parseInt(localStorage.getItem(todayKey) || '0', 10);

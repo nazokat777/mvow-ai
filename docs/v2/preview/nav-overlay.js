@@ -601,6 +601,7 @@
         <div class="ask-q-title">Bajardingizmi?</div>
         <div class="ask-q-task" id="askTask">—</div>
         <div class="ask-q-meta" id="askMeta">07:00 · 1 soat</div>
+        <input id="askNote" type="text" maxlength="60" placeholder="Qisqa izoh (mas. speaking)" style="width:100%;margin-bottom:14px;background:#0C0F16;border:1px solid rgba(255,255,255,.1);border-radius:8px;padding:10px 12px;color:#F5F2EC;font-family:'Inter',sans-serif;font-size:13px;outline:none;">
         <div class="ask-q-btns three" id="askBtns">
           <button class="ask-q-btn no" id="askNo">Yo'q</button>
           <button class="ask-q-btn later" id="askLater">Keyinroq</button>
@@ -650,7 +651,9 @@
 
     document.getElementById('askYes').addEventListener('click', () => {
       if (!currentAsk || !window.MVOW_DATA) return;
-      MVOW_DATA.markTaskDone(currentAsk.task, currentAsk.key);
+      const note = document.getElementById('askNote').value;
+      MVOW_DATA.markTaskDone(currentAsk.task, currentAsk.key, note);
+      document.getElementById('askNote').value = '';
       if (MVOW_DATA.fxSuccess) MVOW_DATA.fxSuccess();
       processQueue();
     });
