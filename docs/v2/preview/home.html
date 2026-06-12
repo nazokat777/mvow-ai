@@ -108,7 +108,7 @@
 
     <div class="stamp" id="dateStamp">10-JUN · CHORSHANBA</div>
 
-    <h1 class="greet"><span id="greetWord">Salom</span>, <span class="em" id="userName">do'stim</span>.</h1>
+    <h1 class="greet"><span id="greetWord">Assalomu alaykum</span>, <span class="em" id="userName">do'stim</span>.</h1>
 
     <div class="streak">
       <div class="n" id="streakN">0</div>
@@ -118,7 +118,7 @@
     <div class="next">
       <div class="lbl" data-i18n="home.next">Keyingi</div>
       <div class="row" id="nextRow">
-        <span class="none" data-i18n="home.no_plan">birinchi qadamingni qo'y</span>
+        <span class="none" data-i18n="home.no_plan">birinchi qadamingizni qo'ying</span>
       </div>
     </div>
 
@@ -136,7 +136,7 @@
     <p class="bio" id="bioLine"></p>
 
     <div class="actions">
-      <a class="cta" id="primaryCta" href="routine.html">Rejani tuz</a>
+      <a class="cta" id="primaryCta" href="routine.html">Rejani tuzing</a>
 
       <!-- Tanlovlar — istalganini bos -->
       <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:6px;">
@@ -245,7 +245,7 @@
 
       if (inRange(nowMin, bedMin, wakeMin)) return 'Xayrli tun';
       if (inRange(nowMin, wakeMin, noonMin)) return 'Xayrli tong';
-      if (inRange(nowMin, noonMin, eveningMin)) return 'Xayrli kun';
+      if (inRange(nowMin, noonMin, eveningMin)) return 'Assalomu alaykum';
       return 'Xayrli kech';
     }
     document.getElementById('greetWord').textContent = smartGreeting();

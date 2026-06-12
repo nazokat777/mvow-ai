@@ -185,7 +185,7 @@
   <div class="brandname">brend</div>
 
   <h1 class="title" data-i18n="auth.title">Ro'yhatdan o'tish</h1>
-  <p class="sub" data-i18n="auth.sub">Yo'lingni saqlash uchun</p>
+  <p class="sub" data-i18n="auth.sub">Yo'lingizni saqlash uchun</p>
 
   <button class="google-btn" id="googleBtn" type="button">
     <svg class="google-icon" viewBox="0 0 48 48" xmlns="http://www.w3.org/2000/svg">
@@ -201,13 +201,13 @@
 
   <label class="input-lbl" data-i18n="auth.email_lbl">Email</label>
   <input class="input" id="emailInput" type="email" placeholder="ism@example.com" autocomplete="email" inputmode="email">
-  <div class="err" id="emailErr" data-i18n="auth.email_err">To'g'ri email kirit</div>
+  <div class="err" id="emailErr" data-i18n="auth.email_err">To'g'ri email kiriting</div>
 
   <button class="submit disabled" id="submitBtn" type="button" data-i18n="auth.cta">Ro'yhatdan o'tish</button>
 
-  <a class="skip" href="intro.html" id="skipLink" data-i18n="auth.skip">Hozircha o'tkazib yubor</a>
+  <a class="skip" href="intro.html" id="skipLink" data-i18n="auth.skip">Hozircha o'tkazib yuborish</a>
 
-  <p class="terms" data-i18n="auth.terms">Ro'yhatdan o'tish bilan sen <span data-i18n="auth.terms_link">Foydalanish shartlari</span>ga rozi bo'lasan.</p>
+  <p class="terms" data-i18n="auth.terms">Ro'yhatdan o'tish bilan siz <span data-i18n="auth.terms_link">Foydalanish shartlari</span>ga rozilik bildirasiz.</p>
 </div>
 
 <script src="i18n.js" defer></script>
@@ -251,7 +251,7 @@
   googleBtn.addEventListener('click', () => {
     // Google Sign-In hozircha sozlanmagan — ClientID kerak
     // Vaqtinchalik: foydalanuvchini email orqali davom etishga yo'naltirish
-    alert('Google ulanish hozircha sozlanmagan.\n\nEmail bilan davom et yoki "O\'tkazib yubor".');
+    alert('Google ulanish hozircha sozlanmagan.\n\nEmail bilan davom eting yoki "O\'tkazib yuborish".');
     emailInp.focus();
   });
 

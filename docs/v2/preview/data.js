@@ -31,7 +31,7 @@
       // Vaqtincha placeholder — haqiqiy nom keyin shu yerda yangilanadi
       // va butun ilov bo'ylab avtomatik tarqaladi.
       name:    'brend',
-      tagline: "sening intizom do'sting",
+      tagline: "sizning intizom do'stingiz",
       monogram:'',
       by:      ''
     },
@@ -269,7 +269,7 @@
   // Bildirishnomani aniq ko'rsatish (service worker orqali — eng ishonchli)
   async function fireAlarm() {
     const title = "Uyg'on";
-    const body  = "Vaqt keldi. Misolni yech.";
+    const body  = "Vaqt keldi. Misolni yeching.";
     const opts = {
       body,
       icon: 'assets/mnsm-logo.png',

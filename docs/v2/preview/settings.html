@@ -307,7 +307,7 @@
         if (res === 'sent') {
           testStatus.textContent = 'Yuborildi ✓';
         } else if (res === 'denied') {
-          testStatus.textContent = 'Ruxsat rad qilindi. Brauzer sozlamasidan ruxsat ber.';
+          testStatus.textContent = 'Ruxsat rad qilindi. Brauzer sozlamasidan ruxsat bering.';
         } else if (res === 'unsupported') {
           testStatus.textContent = 'Bu brauzerda qo\'llab-quvvatlanmaydi.';
         } else {
@@ -328,7 +328,7 @@
         setTimeout(() => { location.replace('welcome.html'); }, 800);
       } else {
         resetBtn.classList.add('confirm');
-        resetBtn.textContent = 'Aniqmisan? Bos';
+        resetBtn.textContent = 'Aniqmisiz? Bosing';
         confirmTimer = setTimeout(() => {
           resetBtn.classList.remove('confirm');
           resetBtn.textContent = 'Hammasini tozalash';

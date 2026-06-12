@@ -162,7 +162,7 @@
 
     <div class="tasks" id="tasks"></div>
 
-    <button class="add-btn" id="addBtn" type="button" data-i18n="today.add">+ ish qo'sh</button>
+    <button class="add-btn" id="addBtn" type="button" data-i18n="today.add">+ ish qo'shish</button>
   </div>
 
   <div class="bottom-bar">
@@ -235,7 +235,7 @@
     sortTasks();
     list.innerHTML = '';
     if (!tasks.length) {
-      list.innerHTML = '<p style="text-align:center;padding:24px 8px;font-family:\'Cormorant Garamond\',serif;font-style:italic;font-size:15px;color:#8A8D94;line-height:1.5;">Bugun bo\'sh.<br>Bitta ish bilan boshla — past tomondan qo\'sh.</p>';
+      list.innerHTML = '<p style="text-align:center;padding:24px 8px;font-family:\'Cormorant Garamond\',serif;font-style:italic;font-size:15px;color:#8A8D94;line-height:1.5;">Bugun bo\'sh.<br>Bitta ish bilan boshlang — past tomondan qo\'shing.</p>';
       updateTotals();
       return;
     }
@@ -247,7 +247,7 @@
         <span class="time">${escapeHtml(t.time || '—')}</span>
         <span class="name">${escapeHtml(t.name || 'ish')}</span>
         <span class="dur">${escapeHtml(t.dur || '')}</span>
-        <span class="x" role="button" tabindex="0" aria-label="Ishni o'chirish" title="O'chir">×</span>
+        <span class="x" role="button" tabindex="0" aria-label="Ishni o'chirish" title="O'chirish">×</span>
       `;
       // Tap to edit (except × button)
       row.querySelectorAll('.time, .name, .dur').forEach(el => {

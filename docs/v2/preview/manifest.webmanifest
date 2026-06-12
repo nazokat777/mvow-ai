@@ -1,7 +1,7 @@
 {
-  "name": "M·VoW · Sening intizom do'sting",
+  "name": "M·VoW · Sizning intizom do'stingiz",
   "short_name": "M·VoW",
-  "description": "Discipline AI — psixolog, neyrobiolog, harakatga chorlovchi do'st. MNSM AI Specialist tomonidan.",
+  "description": "Discipline AI — sizning intizom do'stingiz. MNSM AI Specialist tomonidan.",
   "start_url": "./gallery.html",
   "scope": "./",
   "display": "standalone",

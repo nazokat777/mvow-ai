@@ -3,7 +3,7 @@
  * after first load. Caches all preview HTML files + the logo.
  */
 
-const CACHE_NAME = 'mvow-v15.1.0';
+const CACHE_NAME = 'mvow-v15.2.0';
 const ASSETS = [
   './',
   // Asosiy infratuzilma
@@ -162,7 +162,7 @@ self.addEventListener('notificationclick', event => {
 
 // Push event (kelajak uchun, server yuborgan push'larni qo'llab-quvvatlash)
 self.addEventListener('push', event => {
-  let data = { title: "Uyg'on", body: 'Vaqt keldi. Misolni yech.', url: './alarm.html' };
+  let data = { title: "Uyg'oning", body: 'Vaqt keldi. Misolni yeching.', url: './alarm.html' };
   try { if (event.data) data = Object.assign(data, event.data.json()); } catch {}
   event.waitUntil(
     self.registration.showNotification(data.title, {

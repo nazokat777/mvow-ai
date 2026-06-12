@@ -332,7 +332,7 @@
       b.addEventListener('click', (e) => {
         e.stopPropagation();
         const id = parseInt(b.dataset.del, 10);
-        if (!confirm("Bu maqsadni o'chirasanmi? Kalendaringdan ham olib tashlanadi.")) return;
+        if (!confirm("Bu maqsadni o'chirasizmi? Kalendaringizdan ham olib tashlanadi.")) return;
         removeGoal(id);
       });
     });

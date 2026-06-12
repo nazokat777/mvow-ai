@@ -87,7 +87,7 @@
 
     <div class="task">
       <div class="name" id="tname">Til o'rganish</div>
-      <div class="time" id="tsub">fokusdasan</div>
+      <div class="time" id="tsub">fokusdasiz</div>
       <div id="cycleDots" style="display:none;justify-content:center;gap:8px;margin-top:10px;"></div>
     </div>
 
@@ -99,7 +99,7 @@
       </svg>
       <div class="ring-center">
         <div class="digits" id="digits">25:00</div>
-        <div class="sub" id="sub">davom etyapsan</div>
+        <div class="sub" id="sub">davom etyapsiz</div>
       </div>
     </div>
 
@@ -170,12 +170,12 @@
 
   function applyPhaseStyle() {
     if (phase === 'work') {
-      tsub.textContent = 'fokusdasan';
-      sub.textContent  = 'davom etyapsan';
+      tsub.textContent = 'fokusdasiz';
+      sub.textContent  = 'davom etyapsiz';
       ring.style.stroke = '#00E5D4';
     } else {
       tsub.textContent = 'dam ol';
-      sub.textContent  = 'tinch tur';
+      sub.textContent  = 'tinch turing';
       ring.style.stroke = '#F5C26B';
     }
   }
