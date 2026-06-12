@@ -267,14 +267,37 @@
     list.innerHTML = '';
     const hint = document.getElementById('goalHint');
     const primaryCta = document.getElementById('primaryCta');
+    const addBtn = document.getElementById('addBtn');
     if (!tasks.length) {
-      // Bo'sh — oddiy eslatma, foydalanuvchi pastdagi '+ ish qo'shing' bilan to'ldiradi
-      list.innerHTML = `
-        <div style="text-align:center;padding:32px 16px;font-family:'Cormorant Garamond',serif;font-style:italic;font-size:16px;color:var(--text-dim);line-height:1.6;">
-          Bugun bo'sh.<br>
-          <span style="font-size:13px;font-family:'Inter',sans-serif;font-style:normal;letter-spacing:0.5px;color:var(--text-dim);">pastdan ish qo'shing</span>
-        </div>
-      `;
+      if (hasGoals()) {
+        // Maqsad bor, lekin bugunga ish yo'q — tahrirlash yoki yana ish qo'shish
+        list.innerHTML = `
+          <div style="text-align:center;padding:34px 18px;background:var(--void-soft);border-radius:14px;margin:8px 0 12px;">
+            <div style="font-family:'Cormorant Garamond',serif;font-style:italic;font-size:18px;color:var(--text);margin-bottom:6px;">Bugunga ish yo'q.</div>
+            <div style="font-size:12px;color:var(--text-dim);line-height:1.5;margin-bottom:20px;">Maqsadlaringizni tahrirlang<br>yoki yangi ish qo'shing.</div>
+            <div style="display:flex;gap:8px;justify-content:center;flex-wrap:wrap;">
+              <a href="maqsadlar.html" style="padding:11px 18px;background:transparent;border:1px solid rgba(0,229,212,.35);border-radius:999px;color:var(--accent);font-size:12px;font-weight:500;letter-spacing:1px;text-decoration:none;">Maqsadlarni tahrirlash</a>
+              <button id="inlineAddBtn" type="button" style="padding:11px 18px;background:linear-gradient(180deg,var(--accent),var(--accent-soft));color:var(--void);border:none;border-radius:999px;font-family:'Inter',sans-serif;font-size:12px;font-weight:600;letter-spacing:1px;text-transform:uppercase;cursor:pointer;">+ Ish qo'shish</button>
+            </div>
+          </div>
+        `;
+        if (addBtn) addBtn.style.display = 'none';
+        // Inline "+ Ish qo'shish" tugmasini ulash
+        setTimeout(() => {
+          const inlineBtn = document.getElementById('inlineAddBtn');
+          if (inlineBtn) inlineBtn.addEventListener('click', addNew);
+        }, 0);
+      } else {
+        // Maqsad ham yo'q — birinchi navbatda maqsad qo'ydirish
+        list.innerHTML = `
+          <div style="text-align:center;padding:40px 22px;background:var(--void-soft);border:1px dashed rgba(0,229,212,.25);border-radius:14px;margin:8px 0;">
+            <div style="font-family:'Cormorant Garamond',serif;font-style:italic;font-size:20px;color:var(--text);margin-bottom:8px;line-height:1.3;">Maqsad qo'ying.</div>
+            <div style="font-size:13px;color:var(--text-dim);line-height:1.5;margin-bottom:22px;">Kun tartibi maqsadlardan<br>avtomatik tuziladi.</div>
+            <a href="maqsadlar.html" style="display:inline-block;padding:14px 28px;background:linear-gradient(180deg,var(--accent),var(--accent-soft));color:var(--void);border-radius:999px;font-family:'Inter',sans-serif;font-size:12px;font-weight:600;letter-spacing:1.5px;text-transform:uppercase;text-decoration:none;">Maqsad qo'shish</a>
+          </div>
+        `;
+        if (addBtn) addBtn.style.display = 'none';
+      }
       if (hint) hint.style.display = 'none';
       if (primaryCta) primaryCta.style.display = 'none';
       updateTotals();
@@ -283,6 +306,7 @@
     // Reja bor — eslatma va boshlash tugmasi ko'rinadi
     if (hint && hasGoals()) hint.style.display = 'block';
     if (primaryCta) primaryCta.style.display = '';
+    if (addBtn) addBtn.style.display = '';
     const completedKeys = (window.MVOW_DATA ? MVOW_DATA.getCompletedKeysToday() : new Set());
     tasks.forEach((t, idx) => {
       const row = document.createElement('div');
