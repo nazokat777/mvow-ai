@@ -108,7 +108,7 @@
 
     <div class="stamp" id="dateStamp">10-JUN · CHORSHANBA</div>
 
-    <h1 class="greet">Salom, <span class="em" id="userName">do'stim</span>.</h1>
+    <h1 class="greet"><span id="greetWord">Salom</span>, <span class="em" id="userName">do'stim</span>.</h1>
 
     <div class="streak">
       <div class="n" id="streakN">0</div>
@@ -148,12 +148,23 @@
 <script src="nav-overlay.js" defer></script>
 <script>
   document.addEventListener('DOMContentLoaded', () => {
-    // Sana
+    // Sana va vaqt
     const dayNames = ['YAKSHANBA','DUSHANBA','SESHANBA','CHORSHANBA','PAYSHANBA','JUMA','SHANBA'];
     const monNames = ['YAN','FEV','MAR','APR','MAY','JUN','IYU','AVG','SEN','OKT','NOY','DEK'];
     const d = new Date();
+    const hh = String(d.getHours()).padStart(2,'0');
+    const mm = String(d.getMinutes()).padStart(2,'0');
     document.getElementById('dateStamp').textContent =
-      `${String(d.getDate()).padStart(2,'0')}-${monNames[d.getMonth()]} · ${dayNames[d.getDay()]}`;
+      `${String(d.getDate()).padStart(2,'0')}-${monNames[d.getMonth()]} · ${dayNames[d.getDay()]} · ${hh}:${mm}`;
+
+    // Salom — vaqtga qarab
+    const hourForGreet = d.getHours();
+    let greet = 'Salom';
+    if (hourForGreet >= 5 && hourForGreet < 12) greet = 'Xayrli tong';
+    else if (hourForGreet >= 12 && hourForGreet < 17) greet = 'Xayrli kun';
+    else if (hourForGreet >= 17 && hourForGreet < 22) greet = 'Xayrli kech';
+    else greet = 'Xayrli tun';
+    document.getElementById('greetWord').textContent = greet;
 
     // Foydalanuvchi
     const userName = (localStorage.getItem('mvow.userName') || '').trim();
@@ -184,15 +195,23 @@
     }
     plan.sort((a,b) => tKey(a.time) - tKey(b.time));
 
-    // Keyingi sessiya (joriy vaqtdan keyingi birinchi yoki birinchisi)
+    // Joriy vaqt
     const nowMin = d.getHours() * 60 + d.getMinutes();
-    const next = plan.find(p => tKey(p.time) >= nowMin) || plan[0];
-    if (next) {
-      document.getElementById('nextRow').innerHTML =
-        `<span class="time">${next.time || '—'}</span><span class="name">${next.name || 'ish'}</span>`;
+    const hourNow = d.getHours();
+
+    // KEYINGI — faqat BUGUNGI kelajakdagi task'lar
+    const upcoming = plan.find(p => tKey(p.time) >= nowMin);
+    const nextRow = document.getElementById('nextRow');
+    if (upcoming) {
+      nextRow.innerHTML = `<span class="time">${upcoming.time || '—'}</span><span class="name">${upcoming.name || 'ish'}</span>`;
+    } else if (plan.length) {
+      // Bugungilar tugadi
+      nextRow.innerHTML = '<span class="none">bugungi rejalar tugadi</span>';
+    } else {
+      nextRow.innerHTML = '<span class="none">reja yo\'q</span>';
     }
 
-    // Stats — fokus soati va ishlar soni
+    // Stats — bajarilgan va qolgan
     function durMins(s) {
       if (!s) return 0;
       const x = s.toLowerCase();
@@ -214,9 +233,12 @@
 
     // CTA — vaqtga qarab moslashadi
     const cta = document.getElementById('primaryCta');
-    const hourNow = d.getHours();
-    if (hourNow >= 20) {
-      // Kech bo'ldi — kun yakuni
+    if (hourNow >= 20 || hourNow < 5) {
+      // Kech yoki tun — kun yakuni
+      cta.textContent = 'Kun yakuni';
+      cta.href = 'kechqurun.html';
+    } else if (!upcoming && plan.length) {
+      // Bugungilar tugadi
       cta.textContent = 'Kun yakuni';
       cta.href = 'kechqurun.html';
     } else if (plan.length) {
