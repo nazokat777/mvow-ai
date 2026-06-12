@@ -199,54 +199,13 @@
     const nowMin = d.getHours() * 60 + d.getMinutes();
     const hourNow = d.getHours();
 
-    // ── AQLLI SALOM — foydalanuvchining haqiqiy jadvaliga qaraydi ──
-    function tKeyFromStr(t) {
-      const m = /^(\d{1,2}):?(\d{2})?$/.exec((t || '').trim());
-      if (!m) return null;
-      return (+m[1]) * 60 + (+(m[2] || 0));
-    }
+    // ── SALOM — universal vaqt asosida (4-11 tong · 11-17 kun · 17-22 kech · 22-4 tun) ──
     function smartGreeting() {
-      // Wake time — settings'dan yoki rejaning birinchi task'idan
-      let wakeMin = null;
-      try {
-        const wakeStr = localStorage.getItem('mvow.wakeTime');
-        if (wakeStr) {
-          const m = wakeStr.match(/^(\d{1,2}):(\d{2})$/);
-          if (m) wakeMin = (+m[1]) * 60 + (+m[2]);
-        }
-      } catch {}
-
-      let firstMin = null, lastMin = null;
-      if (plan.length) {
-        const sorted = [...plan].sort((a,b) => (tKeyFromStr(a.time) ?? 0) - (tKeyFromStr(b.time) ?? 0));
-        firstMin = tKeyFromStr(sorted[0].time);
-        lastMin = tKeyFromStr(sorted[sorted.length-1].time);
-        if (wakeMin == null && firstMin != null) wakeMin = Math.max(0, firstMin - 30);
-      }
-      // Default wake — sozlama bo'lmasa
-      if (wakeMin == null) wakeMin = 360; // 06:00
-
-      // Bedtime — taxminan 6 soat oldin wake
-      const bedMin = ((wakeMin + 24 * 60 - 6 * 60) % (24 * 60));
-
-      // Fazalar:
-      // 1) bedtime'dan wake'gacha — tun
-      // 2) wake'dan +4 soat — tong
-      // 3) +4 dan +9 soatgacha — kunduz
-      // 4) +9 dan bedtime'gacha — kech
-      const noonMin = (wakeMin + 4 * 60) % (24 * 60);
-      const eveningMin = (wakeMin + 9 * 60) % (24 * 60);
-
-      function inRange(now, start, end) {
-        if (start <= end) return now >= start && now < end;
-        // O'rab qoluvchi (masalan 22:00 → 02:00)
-        return now >= start || now < end;
-      }
-
-      if (inRange(nowMin, bedMin, wakeMin)) return 'Xayrli tun';
-      if (inRange(nowMin, wakeMin, noonMin)) return 'Xayrli tong';
-      if (inRange(nowMin, noonMin, eveningMin)) return 'Assalomu alaykum';
-      return 'Xayrli kech';
+      const h = nowMin / 60;
+      if (h >= 4 && h < 11)  return 'Xayrli tong';
+      if (h >= 11 && h < 17) return 'Assalomu alaykum';
+      if (h >= 17 && h < 22) return 'Xayrli kech';
+      return 'Xayrli tun';
     }
     document.getElementById('greetWord').textContent = smartGreeting();
 
@@ -282,21 +241,49 @@
     document.getElementById('focusH').textContent = totalH || 0;
     document.getElementById('sessN').textContent = plan.length;
 
-    // CTA — foydalanuvchining kun tartibiga moslashadi
+    // ── AQLLI CTA — joriy holat asosida (vaqt + plan) ──
     const cta = document.getElementById('primaryCta');
     const greet = smartGreeting();
-    const isEvening = (greet === 'Xayrli kech' || greet === 'Xayrli tun' || (!upcoming && plan.length));
-    if (isEvening) {
-      // Kech, tun yoki bugungilar tugadi → kun yakuni
+    const tilePlan = document.getElementById('tilePlan');
+    const tileEvening = document.getElementById('tileEvening');
+
+    // Hozir aktiv ish bormi?
+    let activeTask = null;
+    for (const t of plan) {
+      const m = (t.time || '').match(/^(\d{1,2}):(\d{2})$/);
+      if (!m) continue;
+      const startMin = (+m[1]) * 60 + (+m[2]);
+      const durMin = window.MVOW_DATA ? MVOW_DATA.parseDurMins(t.dur) : 60;
+      if (nowMin >= startMin && nowMin < startMin + durMin) { activeTask = t; break; }
+    }
+    const upcomingSoon = upcoming && ((tKey(upcoming.time) - nowMin) <= 30);
+    const isEvening = (greet === 'Xayrli kech' || greet === 'Xayrli tun');
+    const allDone = plan.length && !upcoming && !activeTask;
+
+    if (allDone || isEvening) {
+      // Tun/kech yoki hammasi bajarilgan → kun yakuni
       cta.textContent = 'Kun yakuni';
       cta.href = 'kechqurun.html';
-      // "Bugungi reja" tile yashiriladi — kun yakunida kerakmas
-      const tilePlan = document.getElementById('tilePlan');
-      if (tilePlan) tilePlan.style.display = 'none';
-    } else if (plan.length) {
+    } else if (activeTask || upcomingSoon) {
+      // Hozir vaqti yoki 30 daq ichida boshlash kerak
       cta.textContent = 'Boshlayman';
       cta.href = 'hard-lock.html';
+    } else if (plan.length) {
+      // Reja bor, lekin vaqti hali yetmagan (mas. 04:23, birinchi ish 07:00)
+      cta.textContent = 'Bugungi reja';
+      cta.href = 'today-plan.html';
+    } else {
+      // Reja yo'q
+      cta.textContent = 'Rejani tuzing';
+      cta.href = 'routine.html';
     }
+
+    // Tile takrorlarini yashir — CTA bilan bir xil joyga bormaslik kerak
+    [tilePlan, tileEvening].forEach(t => {
+      if (t && t.getAttribute('href') === cta.getAttribute('href')) {
+        t.style.display = 'none';
+      }
+    });
 
     // Streak risk indikatori — gapirmaydi, faqat ko'rsatadi
     const todayKey = 'mvow.done.' + new Date().toISOString().slice(0,10);
