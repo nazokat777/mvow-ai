@@ -107,6 +107,71 @@
   DATA.weekProgressLabel = () => `${DATA.week.progress.done} / ${DATA.week.progress.target} BAJARILDI`;
 
   // ──────────────────────────────────────────────────────────────
+  // TODAY KEY + WEEK PLAN STORAGE (yangi API)
+  // ──────────────────────────────────────────────────────────────
+  // Joriy kun uchun kalit: 'd2026-06-12'
+  DATA.today.iso = new Date().toISOString().slice(0, 10);
+  DATA.today.key = 'd' + DATA.today.iso;
+
+  DATA.getWeekPlan = function () {
+    try {
+      const w = JSON.parse(localStorage.getItem('mvow.weekPlan') || '{}');
+      return (w && typeof w === 'object') ? w : {};
+    } catch { return {}; }
+  };
+  DATA.setWeekPlan = function (w) {
+    localStorage.setItem('mvow.weekPlan', JSON.stringify(w));
+  };
+  DATA.getTodayPlan = function () {
+    const w = DATA.getWeekPlan();
+    return Array.isArray(w[DATA.today.key]) ? w[DATA.today.key] : [];
+  };
+  DATA.setTodayPlan = function (arr) {
+    const w = DATA.getWeekPlan();
+    w[DATA.today.key] = arr;
+    DATA.setWeekPlan(w);
+    // Eski API uchun ham (backward compat)
+    localStorage.setItem('mvow.todayPlan', JSON.stringify(arr));
+  };
+
+  // Davomiylik daqiqaga aylantirish
+  DATA.parseDurMins = function (durStr) {
+    if (!durStr) return 60;
+    const s = String(durStr).toLowerCase();
+    const h = s.match(/(\d+(?:\.\d+)?)\s*s(oat)?/);
+    const m = s.match(/(\d+)\s*d(aq)?/);
+    let total = 0;
+    if (h) total += Math.round(parseFloat(h[1]) * 60);
+    if (m) total += parseInt(m[1], 10);
+    if (!h && !m) {
+      const n = parseInt(s, 10);
+      if (!isNaN(n)) total = n;
+    }
+    return total || 60;
+  };
+
+  // Joriy task — foydalanuvchining saqlangan rejasidan
+  DATA.currentTaskFromPlan = function () {
+    const plan = DATA.getTodayPlan();
+    if (!plan.length) return null;
+    const now = new Date();
+    const nowMin = now.getHours() * 60 + now.getMinutes();
+    for (const s of plan) {
+      const m = (s.time || '00:00').match(/^(\d{1,2}):(\d{2})$/);
+      if (!m) continue;
+      const sm = (+m[1]) * 60 + (+m[2]);
+      const durMin = DATA.parseDurMins(s.dur);
+      if (nowMin >= sm && nowMin < sm + durMin) return s;
+    }
+    const upcoming = plan.find(s => {
+      const m = (s.time || '00:00').match(/^(\d{1,2}):(\d{2})$/);
+      if (!m) return false;
+      return ((+m[1]) * 60 + (+m[2])) > nowMin;
+    });
+    return upcoming || plan[0];
+  };
+
+  // ──────────────────────────────────────────────────────────────
   // PROFIL — localStorage'dan foydalanuvchi haqida ma'lumot
   // (ism, bio, yosh, jins, ish, niyat) → individual yondashuv uchun.
   // ──────────────────────────────────────────────────────────────

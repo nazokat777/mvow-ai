@@ -129,15 +129,23 @@
 <script src="nav-overlay.js" defer></script>
 <script>
   // ── Joriy sessiya va sozlamalar ──
-  const current = (window.MVOW_DATA && MVOW_DATA.currentSession()) || (MVOW_DATA && MVOW_DATA.sessions && MVOW_DATA.sessions[0]) || { name:"Til o'rganish", mins: 25 };
+  let current = null;
+  if (window.MVOW_DATA) {
+    current = MVOW_DATA.currentTaskFromPlan();
+  }
+  if (!current && window.MVOW_DATA) {
+    current = MVOW_DATA.currentSession() || (MVOW_DATA.sessions && MVOW_DATA.sessions[0]);
+  }
+  if (!current) current = { name: 'Sessiya', dur: '25 daq' };
   document.getElementById('tname').textContent = current.name;
 
   let prefs = {};
   try { prefs = JSON.parse(localStorage.getItem('mvow.prefs') || '{}'); } catch {}
-  const MODE = prefs.mode || 'simple';                                  // 'simple' yoki 'pomodoro'
-  const WORK_MIN  = parseInt(prefs.sessionMins || current.mins || 25, 10);
-  const BREAK_MIN = parseInt(prefs.breakMins   || 5, 10);
-  const TOTAL_CYC = parseInt(prefs.pomoCycles  || 3, 10);
+  const MODE = prefs.mode || 'simple';
+  const taskMins = window.MVOW_DATA ? MVOW_DATA.parseDurMins(current.dur) : 25;
+  const WORK_MIN  = (MODE === 'pomodoro') ? parseInt(prefs.sessionMins || 25, 10) : taskMins;
+  const BREAK_MIN = parseInt(prefs.breakMins  || 5, 10);
+  const TOTAL_CYC = parseInt(prefs.pomoCycles || 3, 10);
 
   const RING_CIRC = 729;
   const digits = document.getElementById('digits');
