@@ -132,75 +132,7 @@
       <div class="sub"><span class="em" id="streakN">0</span> kun yo'l</div>
     </div>
 
-    <div class="section-lbl" data-i18n="settings.sec_lang">Til</div>
-
-    <div class="row">
-      <div class="lbl" data-i18n="settings.language">Til</div>
-      <select id="langSel">
-        <option value="uz">O'zbekcha</option>
-        <option value="ru">Русский</option>
-        <option value="en">English</option>
-      </select>
-    </div>
-
-    <div class="section-lbl" data-i18n="settings.sec_mentor">Mentor</div>
-
-    <div class="row">
-      <div class="lbl" data-i18n="settings.tone">Mentor ohangi</div>
-      <select data-pref="tone">
-        <option value="warm" data-i18n="settings.tone_warm">Iliq</option>
-        <option value="mid" selected data-i18n="settings.tone_mid">O'rta</option>
-        <option value="strict" data-i18n="settings.tone_strict">Qattiq</option>
-      </select>
-    </div>
-
-    <div class="row">
-      <div class="lbl">Aralashish darajasi</div>
-      <select data-pref="meddle">
-        <option value="quiet" selected>Kamtar</option>
-        <option value="mid">O'rta</option>
-        <option value="active">Faol</option>
-      </select>
-    </div>
-
-    <div class="section-lbl">Ish</div>
-
-    <div class="row">
-      <div class="lbl">Rejim</div>
-      <select data-pref="mode">
-        <option value="simple" selected>Oddiy</option>
-        <option value="pomodoro">Pomodoro</option>
-      </select>
-    </div>
-
-    <div class="row">
-      <div class="lbl">Ish davomiyligi</div>
-      <select data-pref="sessionMins">
-        <option value="25">25 daq</option>
-        <option value="45" selected>45 daq</option>
-        <option value="60">60 daq</option>
-        <option value="90">90 daq</option>
-      </select>
-    </div>
-
-    <div class="row">
-      <div class="lbl">Pomodoro sikllari</div>
-      <select data-pref="pomoCycles">
-        <option value="2">2 sikl</option>
-        <option value="3" selected>3 sikl</option>
-        <option value="4">4 sikl</option>
-        <option value="5">5 sikl</option>
-      </select>
-    </div>
-
-    <div class="row">
-      <div class="lbl">Dam vaqti</div>
-      <select data-pref="breakMins">
-        <option value="5" selected>5 daq</option>
-        <option value="10">10 daq</option>
-        <option value="15">15 daq</option>
-      </select>
-    </div>
+    <div class="section-lbl">Uyg'onish</div>
 
     <div class="row">
       <div class="lbl">Uyg'onish vaqti</div>
@@ -248,17 +180,6 @@
 <script src="nav-overlay.js" defer></script>
 <script>
   document.addEventListener('DOMContentLoaded', () => {
-    // Til tanlash
-    const langSel = document.getElementById('langSel');
-    if (langSel && window.I18N) {
-      langSel.value = I18N.lang;
-      langSel.addEventListener('change', () => {
-        I18N.set(langSel.value);
-        // Sahifani qayta yuklab — barcha dinamik matnlar yangilansin
-        setTimeout(() => location.reload(), 200);
-      });
-    }
-
     // Ism
     const userName = (localStorage.getItem('mvow.userName') || '').trim();
     document.getElementById('userName').textContent = userName || '—';
