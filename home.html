@@ -136,8 +136,15 @@
     <p class="bio" id="bioLine"></p>
 
     <div class="actions">
-      <a class="cta" id="primaryCta" href="routine.html" data-i18n="home.cta_plan">Rejani tuz</a>
-      <a class="ghost" href="today-plan.html" data-i18n="home.view_plan">Bugungi reja</a>
+      <a class="cta" id="primaryCta" href="routine.html">Rejani tuz</a>
+
+      <!-- Tanlovlar — istalganini bos -->
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:6px;">
+        <a class="ghost" href="today-plan.html" style="margin:0;">Bugungi reja</a>
+        <a class="ghost" href="maqsadlar.html" style="margin:0;">Maqsadlar</a>
+        <a class="ghost" href="calendar.html" style="margin:0;">Kalendar</a>
+        <a class="ghost" href="kechqurun.html" style="margin:0;">Kun yakuni</a>
+      </div>
     </div>
 
   </div>
@@ -157,14 +164,7 @@
     document.getElementById('dateStamp').textContent =
       `${String(d.getDate()).padStart(2,'0')}-${monNames[d.getMonth()]} · ${dayNames[d.getDay()]} · ${hh}:${mm}`;
 
-    // Salom — vaqtga qarab
-    const hourForGreet = d.getHours();
-    let greet = 'Salom';
-    if (hourForGreet >= 5 && hourForGreet < 12) greet = 'Xayrli tong';
-    else if (hourForGreet >= 12 && hourForGreet < 17) greet = 'Xayrli kun';
-    else if (hourForGreet >= 17 && hourForGreet < 22) greet = 'Xayrli kech';
-    else greet = 'Xayrli tun';
-    document.getElementById('greetWord').textContent = greet;
+    // Salom — keyinroq plan'ga qarab to'g'irlanadi (pastda)
 
     // Foydalanuvchi
     const userName = (localStorage.getItem('mvow.userName') || '').trim();
@@ -195,9 +195,60 @@
     }
     plan.sort((a,b) => tKey(a.time) - tKey(b.time));
 
-    // Joriy vaqt
+    // Joriy vaqt va aqlli salom (plan saralangach)
     const nowMin = d.getHours() * 60 + d.getMinutes();
     const hourNow = d.getHours();
+
+    // ── AQLLI SALOM — foydalanuvchining haqiqiy jadvaliga qaraydi ──
+    function tKeyFromStr(t) {
+      const m = /^(\d{1,2}):?(\d{2})?$/.exec((t || '').trim());
+      if (!m) return null;
+      return (+m[1]) * 60 + (+(m[2] || 0));
+    }
+    function smartGreeting() {
+      // Wake time — settings'dan yoki rejaning birinchi task'idan
+      let wakeMin = null;
+      try {
+        const wakeStr = localStorage.getItem('mvow.wakeTime');
+        if (wakeStr) {
+          const m = wakeStr.match(/^(\d{1,2}):(\d{2})$/);
+          if (m) wakeMin = (+m[1]) * 60 + (+m[2]);
+        }
+      } catch {}
+
+      let firstMin = null, lastMin = null;
+      if (plan.length) {
+        const sorted = [...plan].sort((a,b) => (tKeyFromStr(a.time) ?? 0) - (tKeyFromStr(b.time) ?? 0));
+        firstMin = tKeyFromStr(sorted[0].time);
+        lastMin = tKeyFromStr(sorted[sorted.length-1].time);
+        if (wakeMin == null && firstMin != null) wakeMin = Math.max(0, firstMin - 30);
+      }
+      // Default wake — sozlama bo'lmasa
+      if (wakeMin == null) wakeMin = 360; // 06:00
+
+      // Bedtime — taxminan 6 soat oldin wake
+      const bedMin = ((wakeMin + 24 * 60 - 6 * 60) % (24 * 60));
+
+      // Fazalar:
+      // 1) bedtime'dan wake'gacha — tun
+      // 2) wake'dan +4 soat — tong
+      // 3) +4 dan +9 soatgacha — kunduz
+      // 4) +9 dan bedtime'gacha — kech
+      const noonMin = (wakeMin + 4 * 60) % (24 * 60);
+      const eveningMin = (wakeMin + 9 * 60) % (24 * 60);
+
+      function inRange(now, start, end) {
+        if (start <= end) return now >= start && now < end;
+        // O'rab qoluvchi (masalan 22:00 → 02:00)
+        return now >= start || now < end;
+      }
+
+      if (inRange(nowMin, bedMin, wakeMin)) return 'Xayrli tun';
+      if (inRange(nowMin, wakeMin, noonMin)) return 'Xayrli tong';
+      if (inRange(nowMin, noonMin, eveningMin)) return 'Xayrli kun';
+      return 'Xayrli kech';
+    }
+    document.getElementById('greetWord').textContent = smartGreeting();
 
     // KEYINGI — faqat BUGUNGI kelajakdagi task'lar
     const upcoming = plan.find(p => tKey(p.time) >= nowMin);
@@ -231,14 +282,11 @@
     document.getElementById('focusH').textContent = totalH || 0;
     document.getElementById('sessN').textContent = plan.length;
 
-    // CTA — vaqtga qarab moslashadi
+    // CTA — foydalanuvchining kun tartibiga moslashadi
     const cta = document.getElementById('primaryCta');
-    if (hourNow >= 20 || hourNow < 5) {
-      // Kech yoki tun — kun yakuni
-      cta.textContent = 'Kun yakuni';
-      cta.href = 'kechqurun.html';
-    } else if (!upcoming && plan.length) {
-      // Bugungilar tugadi
+    const greet = smartGreeting();
+    if (greet === 'Xayrli kech' || greet === 'Xayrli tun' || (!upcoming && plan.length)) {
+      // Kech, tun yoki bugungilar tugadi → kun yakuni
       cta.textContent = 'Kun yakuni';
       cta.href = 'kechqurun.html';
     } else if (plan.length) {
