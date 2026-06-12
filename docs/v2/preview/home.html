@@ -260,7 +260,18 @@
     const isEvening = (greet === 'Xayrli kech' || greet === 'Xayrli tun');
     const allDone = plan.length && !upcoming && !activeTask;
 
-    if (allDone || isEvening) {
+    // Maqsadlar bormi?
+    let hasGoals = false;
+    try {
+      const g = JSON.parse(localStorage.getItem('mvow.goals') || '[]');
+      hasGoals = Array.isArray(g) && g.length > 0;
+    } catch {}
+
+    if (!hasGoals) {
+      // Eng yuqori prioritet — maqsad qo'ydirish (boshqa hech narsa boshlanmaydi)
+      cta.textContent = 'Maqsad qo\'shing';
+      cta.href = 'maqsadlar.html';
+    } else if (allDone || isEvening) {
       // Tun/kech yoki hammasi bajarilgan → kun yakuni
       cta.textContent = 'Kun yakuni';
       cta.href = 'kechqurun.html';
@@ -269,8 +280,7 @@
       cta.textContent = 'Boshlayman';
       cta.href = 'hard-lock.html';
     } else {
-      // Reja bor yoki yo'q — bari bir 'Bugungi reja'ga olib boradi
-      // (today-plan'da foydalanuvchi qo'lda ish qo'shishi yoki maqsad orqali avtomatik kelishi mumkin)
+      // Maqsad bor, reja bor yoki yo'q — today-plan'ga
       cta.textContent = 'Bugungi reja';
       cta.href = 'today-plan.html';
     }
