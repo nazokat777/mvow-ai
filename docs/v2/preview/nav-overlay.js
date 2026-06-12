@@ -190,7 +190,7 @@
     'intro.html',             // 1. Do'st o'zini tanishtiradi
     'anketa.html',            // 2. 8 qadamli savol-javob (ism + profil)
     'vada.html',              // 3. Va'da
-    'maqsad.html',            // 4. Maqsad muddati + tarqatish
+    'maqsadlar.html',         // 4. Maqsadlar ro'yhati
     'permissions.html',       // 5. Ruxsatlar
     'settings.html',          // 6. Sozlamalar
     // Kun (6-10) — alarm SEQ'dan olindi, faqat bildirishnoma orqali ochiladi
