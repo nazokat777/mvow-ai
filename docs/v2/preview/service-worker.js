@@ -3,7 +3,7 @@
  * after first load. Caches all preview HTML files + the logo.
  */
 
-const CACHE_NAME = 'mvow-v15.2.0';
+const CACHE_NAME = 'mvow-v15.3.0';
 const ASSETS = [
   './',
   // Asosiy infratuzilma
@@ -29,16 +29,12 @@ const ASSETS = [
   './home.html',              // 7
   './routine.html',           // 8
   './today-plan.html',        // 9
-  './rejalar.html',           // 10 (hafta/oy/yil)
-  './calendar.html',          // 11
-  './day-flow.html',          // 11
-  './hard-lock.html',         // 12
-  './negotiation.html',       // 13
-  './session-reflection.html',// 14
-  './kechqurun.html',         // 15 (kechki sharh)
-  './notifications.html',     // 16
-  './weekly-review.html',     // 16
-  './celebrate.html'          // 17
+  './calendar.html',          // 10
+  './hard-lock.html',         // 11 (taymer)
+  './session-reflection.html',// 12 (bajardim)
+  './kechqurun.html',         // 13 (kechki sharh)
+  './weekly-review.html',     // 14 (natijalar)
+  './celebrate.html'          // 15 (bayram)
 ];
 
 // Install — pre-cache all app assets

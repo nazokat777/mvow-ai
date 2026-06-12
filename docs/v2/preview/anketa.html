@@ -336,26 +336,6 @@
         { v: 'mixed',   label: 'Hammasi' }
       ]
     },
-    {
-      id: 'session',
-      type: 'choice',
-      title: 'Bitta sessiya qancha bo\'lsin?',
-      options: [
-        { v: '25', label: '25 daqiqa' },
-        { v: '45', label: '45 daqiqa' },
-        { v: '60', label: '60 daqiqa' },
-        { v: '90', label: '90 daqiqa' }
-      ]
-    },
-    {
-      id: 'aim',
-      type: 'text',
-      title: 'Bir jumlada — niyatingiz?',
-      placeholder: "masalan, intizomli bo'lish",
-      maxlen: 80,
-      validate: v => true,  // ixtiyoriy
-      optional: true
-    }
   ];
 
   // ── State ──
@@ -490,8 +470,8 @@
       job:    answers.job || '',
       focusTime: answers.focus_time || '',
       distract:  answers.distract || '',
-      sessionMins: answers.session || '45',
-      aim: answers.aim || ''
+      sessionMins: '45',
+      aim: ''
     };
     localStorage.setItem(PROFILE_KEY, JSON.stringify(profile));
     if (profile.name) localStorage.setItem('mvow.userName', profile.name);

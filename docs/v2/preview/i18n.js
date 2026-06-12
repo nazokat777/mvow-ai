@@ -114,13 +114,13 @@
         screen_time: 'Ekran vaqti',
         screen_time_why: "Fokus paytida chalg'ituvchi ilovalarni fokus rejimi uchun.",
         notif: 'Bildirishnomalar',
-        notif_why: "Sessiya boshlanishi va eslatma uchun. Spam yo'q.",
+        notif_why: "Ish boshlanishi va eslatma uchun. Spam yo'q.",
         cta: 'Davom'
       },
       settings: {
         sub: 'kun yo\'l',
         sec_mentor: 'Mentor',
-        sec_session: 'Sessiya',
+        sec_session: 'Ish',
         sec_notif: 'Bildirishnomalar',
         sec_lang: 'Til',
         tone: 'Mentor ohangi',
@@ -131,7 +131,7 @@
         meddle_quiet: 'Kamtar',
         meddle_mid: "O'rta",
         meddle_active: 'Faol',
-        session_mins: 'Sessiya davomiyligi',
+        session_mins: 'Ish davomiyligi',
         wake_time: 'Uyg\'onish vaqti',
         auto_next: 'Auto-davom',
         voice_remind: 'Ovozli eslatma',
@@ -162,7 +162,7 @@
         cta_plan: 'Rejani tuzing',
         cta_start: 'Boshlayman',
         view_plan: 'Bugungi reja',
-        streak_warn1: "Streak yo'qoladi — bugun bitta sessiya qoldi.",
+        streak_warn1: "Streak yo'qoladi — bugun bitta ish qoldi.",
         streak_warn2_a: 'soat qoldi.'
       },
       routine: {
@@ -232,11 +232,11 @@
         title: 'Xabarlar',
         clear: 'Tozalash',
         empty_a: "Bugun hech qanday xabar yo'q.",
-        empty_b: 'Reja tuz, sessiyani bajar — bu yerda chiqadi.'
+        empty_b: 'Reja tuzing, ishni bajaring — bu yerda chiqadi.'
       },
       weekly: {
         focus_hours: 'Soat fokus',
-        session_count: 'Sessiya',
+        session_count: 'Ish',
         streak_lbl: 'Streak',
         change_lbl: "O'zgarish",
         day: 'Kun',
@@ -386,7 +386,7 @@
       settings: {
         sub: 'дней пути',
         sec_mentor: 'Наставник',
-        sec_session: 'Сессия',
+        sec_session: 'Дело',
         sec_notif: 'Уведомления',
         sec_lang: 'Язык',
         tone: 'Тон наставника',
@@ -397,7 +397,7 @@
         meddle_quiet: 'Сдержанный',
         meddle_mid: 'Средний',
         meddle_active: 'Активный',
-        session_mins: 'Длительность сессии',
+        session_mins: 'Длительность дела',
         wake_time: 'Время пробуждения',
         auto_next: 'Авто-продолжение',
         voice_remind: 'Голосовое напоминание',
@@ -502,7 +502,7 @@
       },
       weekly: {
         focus_hours: 'Часов фокуса',
-        session_count: 'Сессий',
+        session_count: 'Дел',
         streak_lbl: 'Стрик',
         change_lbl: 'Изменение',
         day: 'День',

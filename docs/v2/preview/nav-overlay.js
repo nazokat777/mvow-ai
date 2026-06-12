@@ -183,31 +183,29 @@
     replaceUserName();
   }
 
-  // MVP scope (2026-05-24, qayta) — 14 ta zarur ekran.
-  // today-plan.html qo'shildi: AI tuzgan kun tartibi ro'yxati — boshlashdan oldin.
+  // MVP scope (2026-06-12) — sodda oqim. rejalar.html, notifications.html, day-flow.html
+  // bosh oqimdan olindi (faylda qoladi, lekin SEQ'da yo'q).
   const SEQ = [
-    // Onboarding (1-3)
-    'intro.html',             // 1. Do'st o'zini tanishtiradi
-    'anketa.html',            // 2. 8 qadamli savol-javob (ism + profil)
+    // Tanishuv (1-3)
+    'intro.html',             // 1. Tanishuv
+    'anketa.html',            // 2. 6 qadamli savol-javob
     'vada.html',              // 3. Va'da
     'maqsadlar.html',         // 4. Maqsadlar ro'yhati
+    // Sozlama (5-6)
     'permissions.html',       // 5. Ruxsatlar
     'settings.html',          // 6. Sozlamalar
-    // Kun (6-10) — alarm SEQ'dan olindi, faqat bildirishnoma orqali ochiladi
-    'home.html',              // 6. Bosh sahifa
-    'routine.html',           // 7. Reja
-    'today-plan.html',        // 8. Bugungi reja
-    'rejalar.html',           // 9. Hafta · Oy · Yil rejalari
+    // Kun (7-10)
+    'home.html',              // 7. Bosh sahifa
+    'routine.html',           // 8. Reja
+    'today-plan.html',        // 9. Bugungi reja
     'calendar.html',          // 10. Kalendar
-    // Bajarish (11-14)
-    'day-flow.html',          // 11. Taymer
-    'hard-lock.html',         // 12. Fokus rejimi
-    'session-reflection.html',// 13. Sessiya bahosi
-    'kechqurun.html',         // 15. Kechki sharh (bugun + ertaga + uyg'onish)
-    // Natija (16-18)
-    'notifications.html',     // 16. Xabarlar
-    'weekly-review.html',     // 17. Natijalar
-    'celebrate.html'          // 18. Bayram
+    // Bajarish (11-13)
+    'hard-lock.html',         // 11. Fokus taymeri
+    'session-reflection.html',// 12. Bajardim
+    'kechqurun.html',         // 13. Kechki sharh
+    // Natija (14)
+    'weekly-review.html',     // 14. Natijalar
+    'celebrate.html'          // 15. Bayram
   ];
 
   const file = (location.pathname.split('/').pop() || 'welcome.html').toLowerCase();
@@ -217,13 +215,13 @@
   const prev = idx > 0 ? SEQ[idx - 1] : null;
   const next = idx < SEQ.length - 1 ? SEQ[idx + 1] : null;
 
-  // 5 ta bo'lim
+  // 5 ta bo'lim — yangi 15 ekran (rejalar/notifications/day-flow olindi)
   const SECTIONS = [
     { name: 'Tanishuv',  range: [0, 4] },   // 1-4
     { name: 'Sozlama',   range: [4, 6] },   // 5-6
-    { name: 'Kun',       range: [6, 11] },  // 7-11
-    { name: 'Bajarish',  range: [11, 15] }, // 12-15 (day-flow, hard-lock, session-reflection, kechqurun)
-    { name: 'Natija',    range: [15, 18] }  // 16-18
+    { name: 'Kun',       range: [6, 10] },  // 7-10
+    { name: 'Bajarish',  range: [10, 13] }, // 11-13
+    { name: 'Natija',    range: [13, 15] }  // 14-15
   ];
   const currentSection = SECTIONS.find(s => idx >= s.range[0] && idx < s.range[1]) || SECTIONS[0];
   const sectionIdx = idx - currentSection.range[0] + 1;
@@ -366,7 +364,7 @@
   // ──────────────────────────────────────────────────────────────
   // GLOBUS — til tanlash (taymer sahifalardan tashqari hammada)
   // ──────────────────────────────────────────────────────────────
-  const TIMER_PAGES = ['day-flow.html', 'hard-lock.html', 'alarm.html'];
+  const TIMER_PAGES = ['hard-lock.html', 'alarm.html'];
   if (!TIMER_PAGES.includes(file)) {
     const langStyle = document.createElement('style');
     langStyle.textContent = `
