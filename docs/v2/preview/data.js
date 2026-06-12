@@ -180,6 +180,93 @@
     );
   };
 
+  // ── TASK STATE — har bir ish uchun: askCount, snoozeUntil, status ──
+  // status: 'pending' | 'done' | 'missed'
+  DATA.getTaskState = function (taskKey) {
+    try {
+      const all = JSON.parse(localStorage.getItem('mvow.taskState') || '{}');
+      return all[taskKey] || { askCount: 0, snoozeUntil: 0, status: 'pending' };
+    } catch { return { askCount: 0, snoozeUntil: 0, status: 'pending' }; }
+  };
+  DATA.setTaskState = function (taskKey, partial) {
+    let all = {};
+    try { all = JSON.parse(localStorage.getItem('mvow.taskState') || '{}'); } catch {}
+    const prev = all[taskKey] || { askCount: 0, snoozeUntil: 0, status: 'pending' };
+    all[taskKey] = Object.assign({}, prev, partial);
+    localStorage.setItem('mvow.taskState', JSON.stringify(all));
+    return all[taskKey];
+  };
+
+  // So'rash uchun navbatdagi ishlar — vaqti o'tgan, bajarilmagan, snooze tugagan
+  // opts.final = true → kun yakunida hammasini ko'rsatadi (askCount cheklovsiz)
+  DATA.getPendingAsks = function (opts) {
+    opts = opts || {};
+    const plan = DATA.getTodayPlan();
+    const completed = DATA.getCompletedKeysToday();
+    const todayIso = DATA.today.iso;
+    const now = new Date();
+    const nowMin = now.getHours() * 60 + now.getMinutes();
+    const nowTs = Date.now();
+    const result = [];
+    for (const t of plan) {
+      const m = (t.time || '').match(/^(\d{1,2}):(\d{2})$/);
+      if (!m) continue;
+      const startMin = (+m[1]) * 60 + (+m[2]);
+      const durMin = DATA.parseDurMins(t.dur);
+      if (nowMin < startMin + durMin) continue; // vaqti o'tmagan
+      const key = DATA.taskKey(todayIso, t.time, t.name);
+      if (completed.has(key)) continue;
+      const state = DATA.getTaskState(key);
+      if (state.status === 'done' || state.status === 'missed') continue;
+      if (!opts.final) {
+        if (state.askCount >= 3) continue;
+        if (state.snoozeUntil && state.snoozeUntil > nowTs) continue;
+      }
+      result.push({ task: t, key, state });
+    }
+    return result;
+  };
+
+  // Tashqaridan chaqirish uchun: Ha (done) — history'ga ham qo'shiladi
+  DATA.markTaskDone = function (task, taskKey) {
+    DATA.setTaskState(taskKey, { status: 'done' });
+    const m = (task.time || '').match(/^(\d{1,2}):(\d{2})$/);
+    let startedAt = Date.now();
+    if (m) {
+      const d = new Date();
+      d.setHours(+m[1], +m[2], 0, 0);
+      startedAt = d.getTime();
+    }
+    const durMin = DATA.parseDurMins(task.dur);
+    DATA.addHistory({
+      name: task.name || 'Ish',
+      plannedTime: task.time || '',
+      plannedDur: task.dur || '',
+      dateIso: DATA.today.iso,
+      startedAt,
+      completedAt: Date.now(),
+      actualMins: durMin,
+      withTimer: false
+    });
+    const todayKey = 'mvow.done.' + DATA.today.iso;
+    const cur = parseInt(localStorage.getItem(todayKey) || '0', 10);
+    localStorage.setItem(todayKey, String(cur + 1));
+  };
+  DATA.markTaskMissed = function (taskKey) {
+    DATA.setTaskState(taskKey, { status: 'missed' });
+  };
+  DATA.snoozeTask = function (taskKey, minutes) {
+    const state = DATA.getTaskState(taskKey);
+    DATA.setTaskState(taskKey, {
+      askCount: (state.askCount || 0) + 1,
+      snoozeUntil: Date.now() + minutes * 60000
+    });
+  };
+  DATA.bumpAskCount = function (taskKey) {
+    const state = DATA.getTaskState(taskKey);
+    DATA.setTaskState(taskKey, { askCount: (state.askCount || 0) + 1 });
+  };
+
   // Joriy task — foydalanuvchining saqlangan rejasidan
   DATA.currentTaskFromPlan = function () {
     const plan = DATA.getTodayPlan();

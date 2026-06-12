@@ -259,21 +259,12 @@
       return;
     }
     const completedKeys = (window.MVOW_DATA ? MVOW_DATA.getCompletedKeysToday() : new Set());
-    const now = new Date();
-    const nowMin = now.getHours() * 60 + now.getMinutes();
-    function isMissed(t) {
-      if (!t.time) return false;
-      const m = String(t.time).match(/^(\d{1,2}):(\d{2})$/);
-      if (!m) return false;
-      const startMin = (+m[1]) * 60 + (+m[2]);
-      const durMin = window.MVOW_DATA ? MVOW_DATA.parseDurMins(t.dur) : 60;
-      return nowMin > startMin + durMin;
-    }
     tasks.forEach((t, idx) => {
       const row = document.createElement('div');
       const key = window.MVOW_DATA ? MVOW_DATA.taskKey(MVOW_DATA.today.iso, t.time, t.name) : '';
-      const isDone = completedKeys.has(key);
-      const isMiss = !isDone && isMissed(t);
+      const state = window.MVOW_DATA ? MVOW_DATA.getTaskState(key) : { status: 'pending' };
+      const isDone = completedKeys.has(key) || state.status === 'done';
+      const isMiss = !isDone && state.status === 'missed';
       row.className = 'task' + (isDone ? ' done' : (isMiss ? ' missed' : ''));
       row.dataset.idx = idx;
       row.innerHTML = `

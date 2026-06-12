@@ -504,4 +504,204 @@
       });
     });
   }
+
+  // ──────────────────────────────────────────────────────────────
+  // "BAJARDINGIZMI?" SO'ROVI — vaqti o'tgan ishlar uchun (taymer + boshqa sahifalarda)
+  // 3 marta so'raydi: 1) vaqt o'tganda 2) snooze tugaganda 3) kun yakuni
+  // ──────────────────────────────────────────────────────────────
+  // Taymer sahifalarida so'rov ko'rsatilmaydi (uning o'z modali bor)
+  const ASK_SUPPRESSED = ['hard-lock.html', 'alarm.html'];
+  if (!ASK_SUPPRESSED.includes(file)) {
+    const askStyle = document.createElement('style');
+    askStyle.textContent = `
+      .ask-q-overlay {
+        position: fixed; inset: 0;
+        background: rgba(4,6,11,.92);
+        backdrop-filter: blur(10px);
+        z-index: 100000;
+        display: none;
+        align-items: center; justify-content: center;
+        padding: 24px;
+      }
+      .ask-q-overlay.show { display: flex; }
+      .ask-q-card {
+        width: 100%; max-width: 340px;
+        background: #11151E;
+        border: 1px solid rgba(0,229,212,.2);
+        border-radius: 16px;
+        padding: 26px 22px;
+        text-align: center;
+        animation: askIn .35s cubic-bezier(.16,.84,.32,1);
+      }
+      @keyframes askIn { from { opacity: 0; transform: translateY(20px) scale(.96); } to { opacity: 1; transform: scale(1); } }
+      .ask-q-title { font-family: 'Cormorant Garamond', serif; font-style: italic; font-size: 22px; line-height: 1.3; color: #F5F2EC; margin-bottom: 6px; }
+      .ask-q-task { font-size: 14px; color: #00E5D4; font-weight: 500; margin-bottom: 4px; }
+      .ask-q-meta { font-size: 11px; color: #9CA0A8; letter-spacing: 1px; text-transform: uppercase; margin-bottom: 18px; }
+      .ask-q-round { font-size: 10px; color: #9CA0A8; letter-spacing: 2px; margin-bottom: 14px; }
+      .ask-q-btns { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+      .ask-q-btns.three { grid-template-columns: 1fr 1fr 1fr; }
+      .ask-q-btn {
+        padding: 14px 8px;
+        border: none; border-radius: 999px;
+        font-family: 'Inter', sans-serif;
+        font-size: 11px; font-weight: 600;
+        letter-spacing: 1px; text-transform: uppercase;
+        cursor: pointer; min-height: 46px;
+      }
+      .ask-q-btn.yes { background: linear-gradient(180deg, #00E5D4, #00B5A8); color: #04060B; }
+      .ask-q-btn.no { background: transparent; color: #FF8E97; border: 1px solid rgba(255,71,87,.4); }
+      .ask-q-btn.later { background: transparent; color: #B8BBC2; border: 1px solid rgba(255,255,255,.12); }
+      .ask-snooze {
+        display: none; flex-direction: column; gap: 8px; margin-top: 14px;
+        padding-top: 14px; border-top: 1px solid rgba(255,255,255,.06);
+      }
+      .ask-snooze.show { display: flex; }
+      .ask-snooze .lbl { font-size: 10px; color: #9CA0A8; letter-spacing: 2px; text-transform: uppercase; margin-bottom: 4px; }
+      .ask-snooze-row { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 6px; }
+      .ask-snooze-opt {
+        padding: 10px 4px;
+        background: rgba(0,229,212,.06);
+        border: 1px solid rgba(0,229,212,.25);
+        border-radius: 8px;
+        color: #7AF5EC;
+        font-size: 12px;
+        cursor: pointer;
+      }
+      .ask-custom-time {
+        margin-top: 6px;
+        display: flex; gap: 6px; align-items: center;
+      }
+      .ask-custom-time input {
+        flex: 1;
+        background: #0C0F16;
+        border: 1px solid rgba(255,255,255,.1);
+        border-radius: 8px;
+        padding: 10px;
+        color: #F5F2EC;
+        font-family: 'Inter', sans-serif;
+        font-size: 13px;
+        outline: none;
+      }
+      .ask-custom-time button {
+        padding: 10px 14px;
+        background: #00E5D4; color: #04060B;
+        border: none; border-radius: 8px;
+        font-size: 11px; font-weight: 600;
+        cursor: pointer; letter-spacing: 1px;
+        text-transform: uppercase;
+      }
+    `;
+    document.head.appendChild(askStyle);
+
+    const askOv = document.createElement('div');
+    askOv.className = 'ask-q-overlay';
+    askOv.innerHTML = `
+      <div class="ask-q-card">
+        <div class="ask-q-round" id="askRound">1 / 3</div>
+        <div class="ask-q-title">Bajardingizmi?</div>
+        <div class="ask-q-task" id="askTask">—</div>
+        <div class="ask-q-meta" id="askMeta">07:00 · 1 soat</div>
+        <div class="ask-q-btns three" id="askBtns">
+          <button class="ask-q-btn no" id="askNo">Yo'q</button>
+          <button class="ask-q-btn later" id="askLater">Keyinroq</button>
+          <button class="ask-q-btn yes" id="askYes">Ha</button>
+        </div>
+        <div class="ask-snooze" id="askSnooze">
+          <div class="lbl">Qachon eslataylik?</div>
+          <div class="ask-snooze-row">
+            <button class="ask-snooze-opt" data-min="15">15 daq</button>
+            <button class="ask-snooze-opt" data-min="30">30 daq</button>
+            <button class="ask-snooze-opt" data-min="60">1 soat</button>
+          </div>
+          <div class="ask-custom-time">
+            <input type="time" id="askCustomTime">
+            <button id="askCustomSave">Belgila</button>
+          </div>
+        </div>
+      </div>
+    `;
+    document.body.appendChild(askOv);
+
+    let queue = [];
+    let currentAsk = null;
+    let isFinalMode = (file === 'kechqurun.html');
+
+    function processQueue() {
+      if (!queue.length) { askOv.classList.remove('show'); return; }
+      currentAsk = queue.shift();
+      const { task, key, state } = currentAsk;
+      document.getElementById('askTask').textContent = task.name || 'Ish';
+      document.getElementById('askMeta').textContent = (task.time || '') + ' · ' + (task.dur || '');
+      const round = Math.min(3, (state.askCount || 0) + 1);
+      document.getElementById('askRound').textContent = (isFinalMode ? 'Kun yakuni' : round + ' / 3');
+      const btnsEl = document.getElementById('askBtns');
+      const laterBtn = document.getElementById('askLater');
+      // Kun yakuni yoki 3-marta → "Keyinroq" yo'q
+      if (isFinalMode || round >= 3) {
+        laterBtn.style.display = 'none';
+        btnsEl.classList.remove('three');
+      } else {
+        laterBtn.style.display = '';
+        btnsEl.classList.add('three');
+      }
+      document.getElementById('askSnooze').classList.remove('show');
+      askOv.classList.add('show');
+    }
+
+    document.getElementById('askYes').addEventListener('click', () => {
+      if (!currentAsk || !window.MVOW_DATA) return;
+      MVOW_DATA.markTaskDone(currentAsk.task, currentAsk.key);
+      if (MVOW_DATA.fxSuccess) MVOW_DATA.fxSuccess();
+      processQueue();
+    });
+    document.getElementById('askNo').addEventListener('click', () => {
+      if (!currentAsk || !window.MVOW_DATA) return;
+      const state = MVOW_DATA.getTaskState(currentAsk.key);
+      // Final yoki 3-urinish → ✗
+      if (isFinalMode || (state.askCount || 0) >= 2) {
+        MVOW_DATA.markTaskMissed(currentAsk.key);
+      } else {
+        MVOW_DATA.bumpAskCount(currentAsk.key);
+      }
+      processQueue();
+    });
+    document.getElementById('askLater').addEventListener('click', () => {
+      document.getElementById('askSnooze').classList.toggle('show');
+    });
+    document.querySelectorAll('.ask-snooze-opt').forEach(b => {
+      b.addEventListener('click', () => {
+        if (!currentAsk || !window.MVOW_DATA) return;
+        MVOW_DATA.snoozeTask(currentAsk.key, parseInt(b.dataset.min, 10));
+        processQueue();
+      });
+    });
+    document.getElementById('askCustomSave').addEventListener('click', () => {
+      if (!currentAsk || !window.MVOW_DATA) return;
+      const t = document.getElementById('askCustomTime').value;
+      const m = (t || '').match(/^(\d{1,2}):(\d{2})$/);
+      if (!m) return;
+      const now = new Date();
+      const target = new Date(now);
+      target.setHours(+m[1], +m[2], 0, 0);
+      // O'tgan vaqt bo'lsa, ertasiga emas — bugungi qoldiq vaqtga qarab
+      let diffMin = Math.round((target - now) / 60000);
+      if (diffMin <= 0) diffMin = 30; // default 30 daq
+      MVOW_DATA.snoozeTask(currentAsk.key, diffMin);
+      processQueue();
+    });
+
+    // Sahifa yuklanganda navbatdagi ishlarni ko'rsatish
+    function startAsk() {
+      if (!window.MVOW_DATA) return;
+      const pending = MVOW_DATA.getPendingAsks({ final: isFinalMode });
+      if (!pending.length) return;
+      queue = pending.slice();
+      processQueue();
+    }
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', () => setTimeout(startAsk, 600));
+    } else {
+      setTimeout(startAsk, 600);
+    }
+  }
 })();

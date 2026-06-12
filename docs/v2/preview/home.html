@@ -139,11 +139,11 @@
       <a class="cta" id="primaryCta" href="routine.html">Rejani tuzing</a>
 
       <!-- Tanlovlar — istalganini bos -->
-      <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:6px;">
-        <a class="ghost" href="today-plan.html" style="margin:0;">Bugungi reja</a>
+      <div id="tileGrid" style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:6px;">
+        <a class="ghost" id="tilePlan" href="today-plan.html" style="margin:0;">Bugungi reja</a>
         <a class="ghost" href="maqsadlar.html" style="margin:0;">Maqsadlar</a>
         <a class="ghost" href="calendar.html" style="margin:0;">Kalendar</a>
-        <a class="ghost" href="kechqurun.html" style="margin:0;">Kun yakuni</a>
+        <a class="ghost" id="tileEvening" href="kechqurun.html" style="margin:0;">Kun yakuni</a>
       </div>
     </div>
 
@@ -285,10 +285,14 @@
     // CTA — foydalanuvchining kun tartibiga moslashadi
     const cta = document.getElementById('primaryCta');
     const greet = smartGreeting();
-    if (greet === 'Xayrli kech' || greet === 'Xayrli tun' || (!upcoming && plan.length)) {
+    const isEvening = (greet === 'Xayrli kech' || greet === 'Xayrli tun' || (!upcoming && plan.length));
+    if (isEvening) {
       // Kech, tun yoki bugungilar tugadi → kun yakuni
       cta.textContent = 'Kun yakuni';
       cta.href = 'kechqurun.html';
+      // "Bugungi reja" tile yashiriladi — kun yakunida kerakmas
+      const tilePlan = document.getElementById('tilePlan');
+      if (tilePlan) tilePlan.style.display = 'none';
     } else if (plan.length) {
       cta.textContent = 'Boshlayman';
       cta.href = 'hard-lock.html';
