@@ -192,13 +192,12 @@
     'vada.html',              // 3. Va'da
     'permissions.html',       // 4. Ruxsatlar
     'settings.html',          // 5. Sozlamalar
-    // Kun (6-10)
-    'alarm.html',             // 6. Uyg'on
-    'home.html',              // 7. Bosh sahifa
-    'routine.html',           // 8. Reja
-    'today-plan.html',        // 9. Bugungi reja
-    'rejalar.html',           // 10. Hafta · Oy · Yil rejalari
-    'calendar.html',          // 11. Kalendar
+    // Kun (6-10) — alarm SEQ'dan olindi, faqat bildirishnoma orqali ochiladi
+    'home.html',              // 6. Bosh sahifa
+    'routine.html',           // 7. Reja
+    'today-plan.html',        // 8. Bugungi reja
+    'rejalar.html',           // 9. Hafta · Oy · Yil rejalari
+    'calendar.html',          // 10. Kalendar
     // Bajarish (11-14)
     'day-flow.html',          // 11. Taymer
     'hard-lock.html',         // 12. Qulflash
@@ -222,9 +221,9 @@
   const SECTIONS = [
     { name: 'Tanishuv',  range: [0, 3] },   // 1-3 (intro, anketa, vada)
     { name: 'Sozlama',   range: [3, 5] },   // 4-5 (permissions, settings)
-    { name: 'Kun',       range: [5, 11] },  // 6-11 (alarm, home, routine, today-plan, rejalar, calendar)
-    { name: 'Bajarish',  range: [11, 16] }, // 12-16
-    { name: 'Natija',    range: [16, 19] }  // 17-19
+    { name: 'Kun',       range: [5, 10] },  // 6-10 (home, routine, today-plan, rejalar, calendar)
+    { name: 'Bajarish',  range: [10, 15] }, // 11-15
+    { name: 'Natija',    range: [15, 18] }  // 16-18
   ];
   const currentSection = SECTIONS.find(s => idx >= s.range[0] && idx < s.range[1]) || SECTIONS[0];
   const sectionIdx = idx - currentSection.range[0] + 1;

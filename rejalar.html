@@ -193,9 +193,11 @@
   <h1 class="title">Uzoq yo'l</h1>
   <p class="sub">Hafta, oy va yil rejalari</p>
 
-  <div class="range-tabs" id="rangeTabs">
+  <div class="range-tabs" id="rangeTabs" style="grid-template-columns: repeat(5, 1fr);">
     <button class="range-tab on" data-range="week"  type="button">Hafta</button>
     <button class="range-tab"    data-range="month" type="button">Oy</button>
+    <button class="range-tab"    data-range="3mo"   type="button">3 oy</button>
+    <button class="range-tab"    data-range="6mo"   type="button">6 oy</button>
     <button class="range-tab"    data-range="year"  type="button">Yil</button>
   </div>
 
@@ -220,6 +222,30 @@
     <div class="input-block">
       <label class="input-lbl">Bu oy nima qilasan?</label>
       <textarea id="monthGoal" rows="5" placeholder="masalan:&#10;• Til o'qishni 2 daraja oshirish&#10;• Sport — 16 sessiya&#10;• Loyiha — birinchi versiya tayyor" maxlength="500"></textarea>
+    </div>
+  </div>
+
+  <!-- 3 oylik -->
+  <div class="panel" id="panel-3mo">
+    <div class="period-meta">
+      <div class="when" id="threeMoWhen">Iyun — Avgust</div>
+      <div class="hint">3 oy uchun katta maqsad</div>
+    </div>
+    <div class="input-block">
+      <label class="input-lbl">3 oyda nimaga erishasan?</label>
+      <textarea id="threeMoGoal" rows="5" placeholder="masalan: yangi mahorat o'rganish, sport 50 sessiya, 5 kitob" maxlength="600"></textarea>
+    </div>
+  </div>
+
+  <!-- 6 oylik -->
+  <div class="panel" id="panel-6mo">
+    <div class="period-meta">
+      <div class="when" id="sixMoWhen">Iyun — Noyabr</div>
+      <div class="hint">Yarim yillik niyat</div>
+    </div>
+    <div class="input-block">
+      <label class="input-lbl">6 oyda nimaga erishasan?</label>
+      <textarea id="sixMoGoal" rows="6" placeholder="masalan: yangi til daraja oshirish, loyiha ishga tushirish, sog'lik darajasini ko'tarish" maxlength="700"></textarea>
     </div>
   </div>
 
@@ -251,13 +277,25 @@
     const KEY = {
       week:  'mvow.weekGoal',
       month: 'mvow.monthGoal',
+      '3mo': 'mvow.threeMoGoal',
+      '6mo': 'mvow.sixMoGoal',
       year:  'mvow.yearGoal'
     };
 
     // Saqlangan ma'lumotni tiklash
-    document.getElementById('weekGoal').value  = localStorage.getItem(KEY.week)  || '';
-    document.getElementById('monthGoal').value = localStorage.getItem(KEY.month) || '';
-    document.getElementById('yearGoal').value  = localStorage.getItem(KEY.year)  || '';
+    document.getElementById('weekGoal').value     = localStorage.getItem(KEY.week)     || '';
+    document.getElementById('monthGoal').value    = localStorage.getItem(KEY.month)    || '';
+    document.getElementById('threeMoGoal').value  = localStorage.getItem(KEY['3mo'])   || '';
+    document.getElementById('sixMoGoal').value    = localStorage.getItem(KEY['6mo'])   || '';
+    document.getElementById('yearGoal').value     = localStorage.getItem(KEY.year)     || '';
+
+    // 3 oy va 6 oy meta
+    const oyShort = ['yan','fev','mar','apr','may','iyn','iyl','avg','sen','okt','noy','dek'];
+    const m1 = now.getMonth();
+    const m3 = (m1 + 2) % 12;
+    const m6 = (m1 + 5) % 12;
+    document.getElementById('threeMoWhen').textContent = oyShort[m1].charAt(0).toUpperCase()+oyShort[m1].slice(1) + ' — ' + oyShort[m3].charAt(0).toUpperCase()+oyShort[m3].slice(1);
+    document.getElementById('sixMoWhen').textContent   = oyShort[m1].charAt(0).toUpperCase()+oyShort[m1].slice(1) + ' — ' + oyShort[m6].charAt(0).toUpperCase()+oyShort[m6].slice(1);
 
     // Tabs
     document.querySelectorAll('.range-tab').forEach(t => {
@@ -295,9 +333,11 @@
     // Saqlash
     const banner = document.getElementById('savedBanner');
     function saveAll() {
-      localStorage.setItem(KEY.week,  document.getElementById('weekGoal').value.trim());
-      localStorage.setItem(KEY.month, document.getElementById('monthGoal').value.trim());
-      localStorage.setItem(KEY.year,  document.getElementById('yearGoal').value.trim());
+      localStorage.setItem(KEY.week,    document.getElementById('weekGoal').value.trim());
+      localStorage.setItem(KEY.month,   document.getElementById('monthGoal').value.trim());
+      localStorage.setItem(KEY['3mo'],  document.getElementById('threeMoGoal').value.trim());
+      localStorage.setItem(KEY['6mo'],  document.getElementById('sixMoGoal').value.trim());
+      localStorage.setItem(KEY.year,    document.getElementById('yearGoal').value.trim());
       if (window.MVOW_DATA) MVOW_DATA.fxSuccess();
       banner.classList.add('show');
       setTimeout(() => banner.classList.remove('show'), 2000);
