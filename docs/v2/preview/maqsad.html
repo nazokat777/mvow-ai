@@ -250,10 +250,10 @@
 
     <div class="examples">
       <div class="lbl" data-i18n="maqsad.examples_lbl">Misollar</div>
-      <div class="ex" data-fill="Dasturlash darsi" data-i18n="maqsad.ex_coding">· Dasturlash darsini o'rganaman</div>
-      <div class="ex" data-fill="Sport mashqi" data-i18n="maqsad.ex_sport">· Sport mashqi har kuni</div>
-      <div class="ex" data-fill="Kitob o'qish" data-i18n="maqsad.ex_reading">· Kitob o'qish (har kuni 30 daq)</div>
-      <div class="ex" data-fill="Til o'rganish" data-i18n="maqsad.ex_lang">· Til o'rganish</div>
+      <div class="ex" data-fill="Dasturlash darsi" data-fill-key="maqsad.ex_coding_fill" data-i18n="maqsad.ex_coding">· Dasturlash darsini o'rganaman</div>
+      <div class="ex" data-fill="Sport mashqi" data-fill-key="maqsad.ex_sport_fill" data-i18n="maqsad.ex_sport">· Sport mashqi har kuni</div>
+      <div class="ex" data-fill="Kitob o'qish" data-fill-key="maqsad.ex_reading_fill" data-i18n="maqsad.ex_reading">· Kitob o'qish (har kuni 30 daq)</div>
+      <div class="ex" data-fill="Til o'rganish" data-fill-key="maqsad.ex_lang_fill" data-i18n="maqsad.ex_lang">· Til o'rganish</div>
     </div>
 
     <!-- Band vaqtlar (boshqa maqsadlardan) -->
@@ -319,7 +319,9 @@
     document.querySelectorAll('.ex').forEach(e => {
       e.style.cursor = 'pointer';
       e.addEventListener('click', () => {
-        goalText.value = e.dataset.fill;
+        const fallback = e.dataset.fill;
+        const key = e.dataset.fillKey;
+        goalText.value = (key && window.I18N) ? I18N.t(key, fallback) : fallback;
         checkStep2();
         goalText.focus();
       });

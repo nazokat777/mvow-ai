@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-<title>{brand} — Bosh sahifa</title>
+<title data-i18n="home.page_title">{brand} — Bosh sahifa</title>
 <link rel="manifest" href="manifest.webmanifest">
 <meta name="theme-color" content="#04060B">
 <meta name="apple-mobile-web-app-capable" content="yes">
@@ -179,35 +179,35 @@
       <div style="font-family:'Cormorant Garamond',serif;font-style:italic;font-size:15px;color:#FF8E97;margin-bottom:8px;line-height:1.4;" id="recoveryText"></div>
       <!-- Oddiy recovery (3-6 kun) -->
       <div id="recoverySimple" style="display:none;">
-        <button id="recoveryBtn" type="button" style="margin-top:6px;padding:10px 20px;background:#FF4757;color:#fff;border:none;border-radius:999px;font-family:'Inter',sans-serif;font-size:11px;font-weight:600;letter-spacing:1.5px;text-transform:uppercase;cursor:pointer;">Rejani qayta tuzish</button>
+        <button id="recoveryBtn" type="button" style="margin-top:6px;padding:10px 20px;background:#FF4757;color:#fff;border:none;border-radius:999px;font-family:'Inter',sans-serif;font-size:11px;font-weight:600;letter-spacing:1.5px;text-transform:uppercase;cursor:pointer;" data-i18n="home.recovery_btn_simple">Rejani qayta tuzish</button>
       </div>
       <!-- Diagnostika (7+ kun) -->
       <div id="diagnosticBox" style="display:none;margin-top:10px;">
-        <div style="font-size:12px;color:#9CA0A8;margin-bottom:10px;letter-spacing:0.5px;">Sabab nima edi?</div>
+        <div style="font-size:12px;color:#9CA0A8;margin-bottom:10px;letter-spacing:0.5px;" data-i18n="home.recovery_diag_q">Sabab nima edi?</div>
         <div id="diagOpts" style="display:flex;flex-direction:column;gap:8px;">
           <button class="diag-opt" data-fix="reduce" type="button" style="padding:11px 14px;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.12);border-radius:10px;color:#F5F2EC;font-family:'Inter',sans-serif;font-size:12px;text-align:left;cursor:pointer;">
-            <span style="display:block;font-weight:500;margin-bottom:2px;">Vazifa hajmi katta edi</span>
-            <span style="font-size:10px;color:#9CA0A8;letter-spacing:0.5px;">Davomiylikni qisqartirish — siz % tanlaysiz</span>
+            <span style="display:block;font-weight:500;margin-bottom:2px;" data-i18n="home.recovery_opt_reduce">Vazifa hajmi katta edi</span>
+            <span style="font-size:10px;color:#9CA0A8;letter-spacing:0.5px;" data-i18n="home.recovery_opt_reduce_desc">Davomiylikni qisqartirish — siz % tanlaysiz</span>
           </button>
           <button class="diag-opt" data-fix="time" type="button" style="padding:11px 14px;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.12);border-radius:10px;color:#F5F2EC;font-family:'Inter',sans-serif;font-size:12px;text-align:left;cursor:pointer;">
-            <span style="display:block;font-weight:500;margin-bottom:2px;">Vaqt to'g'ri kelmadi</span>
-            <span style="font-size:10px;color:#9CA0A8;letter-spacing:0.5px;">Maqsadlarni tahrirlash — vaqtni o'zgartiring</span>
+            <span style="display:block;font-weight:500;margin-bottom:2px;" data-i18n="home.recovery_opt_time">Vaqt to'g'ri kelmadi</span>
+            <span style="font-size:10px;color:#9CA0A8;letter-spacing:0.5px;" data-i18n="home.recovery_opt_time_desc">Maqsadlarni tahrirlash — vaqtni o'zgartiring</span>
           </button>
           <button class="diag-opt" data-fix="other" type="button" style="padding:11px 14px;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.12);border-radius:10px;color:#F5F2EC;font-family:'Inter',sans-serif;font-size:12px;text-align:left;cursor:pointer;">
-            <span style="display:block;font-weight:500;margin-bottom:2px;">Boshqa sabab</span>
-            <span style="font-size:10px;color:#9CA0A8;letter-spacing:0.5px;">Rejani qolgan kunlarga qayta tarqatish</span>
+            <span style="display:block;font-weight:500;margin-bottom:2px;" data-i18n="home.recovery_opt_other">Boshqa sabab</span>
+            <span style="font-size:10px;color:#9CA0A8;letter-spacing:0.5px;" data-i18n="home.recovery_opt_other_desc">Rejani qolgan kunlarga qayta tarqatish</span>
           </button>
         </div>
         <!-- Foiz tanlash (Vazifa katta tanlangach chiqadi) -->
         <div id="reducePctBox" style="display:none;margin-top:12px;padding-top:12px;border-top:1px solid rgba(255,255,255,.08);">
-          <div style="font-size:11px;color:#9CA0A8;margin-bottom:8px;letter-spacing:1px;text-transform:uppercase;text-align:center;">Necha foiz qisqartiramiz?</div>
+          <div style="font-size:11px;color:#9CA0A8;margin-bottom:8px;letter-spacing:1px;text-transform:uppercase;text-align:center;" data-i18n="home.recovery_pct_q">Necha foiz qisqartiramiz?</div>
           <div style="display:flex;gap:6px;justify-content:center;flex-wrap:wrap;margin-bottom:8px;">
             <button class="red-pct" data-pct="15" type="button" style="padding:10px 14px;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.1);border-radius:10px;color:#F5F2EC;font-family:'Inter',sans-serif;font-size:13px;font-weight:600;cursor:pointer;">15%</button>
             <button class="red-pct" data-pct="30" type="button" style="padding:10px 14px;background:rgba(245,194,107,.18);border:1px solid rgba(245,194,107,.5);border-radius:10px;color:#F5F2EC;font-family:'Inter',sans-serif;font-size:13px;font-weight:600;cursor:pointer;">30% ★</button>
             <button class="red-pct" data-pct="50" type="button" style="padding:10px 14px;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.1);border-radius:10px;color:#F5F2EC;font-family:'Inter',sans-serif;font-size:13px;font-weight:600;cursor:pointer;">50%</button>
           </div>
           <div style="display:flex;gap:6px;align-items:center;">
-            <input type="number" id="reducePctCustom" min="5" max="80" placeholder="Boshqa" style="flex:1;background:#0C0F16;border:1px solid rgba(255,255,255,.1);border-radius:8px;padding:9px;color:#F5F2EC;font-family:'Inter',sans-serif;font-size:13px;outline:none;">
+            <input type="number" id="reducePctCustom" min="5" max="80" placeholder="Boshqa" data-i18n-placeholder="home.recovery_pct_other" style="flex:1;background:#0C0F16;border:1px solid rgba(255,255,255,.1);border-radius:8px;padding:9px;color:#F5F2EC;font-family:'Inter',sans-serif;font-size:13px;outline:none;">
             <button id="reducePctCustomBtn" type="button" style="padding:9px 12px;background:transparent;border:1px solid rgba(255,255,255,.15);color:var(--text-mid);border-radius:8px;font-family:'Inter',sans-serif;font-size:11px;cursor:pointer;letter-spacing:1px;">%</button>
           </div>
         </div>
@@ -229,14 +229,14 @@
     <!-- VAQT NAQSHI: ma'lum vaqtda muntazam bajarmaslik aniqlanganida -->
     <div id="patternBox" style="display:none;background:rgba(245,194,107,.08);border:1px solid rgba(245,194,107,.3);border-radius:12px;padding:14px 16px;">
       <div style="font-family:'Cormorant Garamond',serif;font-style:italic;font-size:14px;color:var(--text);line-height:1.55;margin-bottom:10px;" id="patternText"></div>
-      <div style="font-size:11px;color:var(--text-dim);letter-spacing:1px;text-transform:uppercase;margin-bottom:10px;text-align:center;">Qaysi vaqtga ko'chiramiz?</div>
+      <div style="font-size:11px;color:var(--text-dim);letter-spacing:1px;text-transform:uppercase;margin-bottom:10px;text-align:center;" data-i18n="home.pattern_choose">Qaysi vaqtga ko'chiramiz?</div>
       <div id="patternTimeOpts" style="display:flex;flex-wrap:wrap;gap:6px;justify-content:center;margin-bottom:10px;"></div>
       <div style="display:flex;gap:6px;margin-bottom:10px;align-items:center;">
         <input type="time" id="patternCustomTime" style="flex:1;background:#0C0F16;border:1px solid rgba(255,255,255,.1);border-radius:8px;padding:10px;color:#F5F2EC;font-family:'Inter',sans-serif;font-size:13px;outline:none;">
-        <button id="patternCustomBtn" type="button" style="padding:10px 14px;background:#F5C26B;color:#04060B;border:none;border-radius:8px;font-family:'Inter',sans-serif;font-size:11px;font-weight:600;letter-spacing:1px;text-transform:uppercase;cursor:pointer;">Belgila</button>
+        <button id="patternCustomBtn" type="button" style="padding:10px 14px;background:#F5C26B;color:#04060B;border:none;border-radius:8px;font-family:'Inter',sans-serif;font-size:11px;font-weight:600;letter-spacing:1px;text-transform:uppercase;cursor:pointer;" data-i18n="home.pattern_custom_label">Belgila</button>
       </div>
       <div style="text-align:center;">
-        <button id="patternRejectBtn" type="button" style="padding:8px 14px;background:transparent;border:none;color:var(--text-dim);font-family:'Inter',sans-serif;font-size:11px;letter-spacing:1px;cursor:pointer;text-decoration:underline;">Hozircha yo'q</button>
+        <button id="patternRejectBtn" type="button" style="padding:8px 14px;background:transparent;border:none;color:var(--text-dim);font-family:'Inter',sans-serif;font-size:11px;letter-spacing:1px;cursor:pointer;text-decoration:underline;" data-i18n="home.pattern_reject">Hozircha yo'q</button>
       </div>
     </div>
 
@@ -270,7 +270,7 @@
     <p class="bio" id="bioLine"></p>
 
     <div class="actions">
-      <a class="cta" id="primaryCta" href="routine.html">Rejani tuzing</a>
+      <a class="cta" id="primaryCta" href="routine.html" data-i18n="home.cta_plan">Rejani tuzing</a>
 
       <!-- Tanlovlar — istalganini bos -->
       <div id="tileGrid" style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:6px;">
@@ -509,7 +509,7 @@
       // Asosiy xabar — bajarish holatiga qarab
       let main;
       if (todayRemaining === 0 && plan.length > 0) {
-        main = tw('home.murabbiy_all_done', {}) || 'Bugun hammasi bajarildi.';
+        main = tw('home.murabbiy_all_done', {});
       } else if (yPct !== null) {
         if (yPct >= 80)      main = tw('home.murabbiy_high', { n: emN, pct: emPct });
         else if (yPct >= 50) main = tw('home.murabbiy_mid',  { n: emN, pct: emPct });
@@ -525,12 +525,13 @@
         const profile = JSON.parse(localStorage.getItem('mvow.profile') || '{}');
         const wd = d.getDay(); // 0=Yak ... 6=Sh
         const isWeekend = wd === 0 || wd === 6;
+        const hT = (k, def) => (window.I18N ? I18N.t(k, def) : def);
         const situationHints = {
-          student: { weekday: 'Talaba — darslar oralig\'idagi vaqtni topib oling.', weekend: 'Bo\'sh kun — bir blokga ko\'proq vaqt ajrating.' },
-          parent:  { weekday: 'Bola maktabga ketganda 30 daqiqani yutib oling.',     weekend: 'Bola uxlatilganda 30 daq topishga harakat qiling.' },
-          worker:  { weekday: 'Ish kuni — ertalab yoki kechqurun qisqa blok yetadi.', weekend: 'Bo\'sh kun — bir blokga ko\'proq vaqt ajrating.' },
-          freelancer: { weekday: 'Erkin vaqt — energiya cho\'qqisida boshlang.', weekend: 'Bugun ham bir qadam — uzilish bo\'lmasin.' },
-          searching: { weekday: 'Yo\'lda — bitta qadam ham yetadi.', weekend: 'Bo\'sh kun — bitta blokni puxta bajaring.' }
+          student:    { weekday: hT('home.hint_student_weekday',    'Talaba — darslar oralig\'idagi vaqtni topib oling.'),  weekend: hT('home.hint_student_weekend',    'Bo\'sh kun — bir blokga ko\'proq vaqt ajrating.') },
+          parent:     { weekday: hT('home.hint_parent_weekday',     'Bola maktabga ketganda 30 daqiqani yutib oling.'),     weekend: hT('home.hint_parent_weekend',     'Bola uxlatilganda 30 daq topishga harakat qiling.') },
+          worker:     { weekday: hT('home.hint_worker_weekday',     'Ish kuni — ertalab yoki kechqurun qisqa blok yetadi.'), weekend: hT('home.hint_worker_weekend',     'Bo\'sh kun — bir blokga ko\'proq vaqt ajrating.') },
+          freelancer: { weekday: hT('home.hint_freelancer_weekday', 'Erkin vaqt — energiya cho\'qqisida boshlang.'),         weekend: hT('home.hint_freelancer_weekend', 'Bugun ham bir qadam — uzilish bo\'lmasin.') },
+          searching:  { weekday: hT('home.hint_searching_weekday',  'Yo\'lda — bitta qadam ham yetadi.'),                    weekend: hT('home.hint_searching_weekend',  'Bo\'sh kun — bitta blokni puxta bajaring.') }
         };
         if (profile.situation && situationHints[profile.situation]) {
           ctx = situationHints[profile.situation][isWeekend ? 'weekend' : 'weekday'];
@@ -777,16 +778,17 @@
         ? I18N.tWith('home.pattern_text', { time: emTime, goal: pattern.goal.text, n: emMisses })
         : ('Siz ' + emTime + ' da «' + pattern.goal.text + '» rejasini ' + emMisses + ' kun ketma-ket bajarmadingiz.');
       // Taklif tugmalari — energiya cho'qqisi + standart vaqtlar
+      const pT = (k, def) => (window.I18N ? I18N.t(k, def) : def);
       const standardOptions = [
-        { time: '05:00', label: '05:00 erta tong' },
-        { time: '07:00', label: '07:00 tong' },
-        { time: '12:00', label: '12:00 tushda' },
-        { time: '19:00', label: '19:00 kech' }
+        { time: '05:00', label: '05:00 ' + pT('home.pattern_time_dawn', 'erta tong') },
+        { time: '07:00', label: '07:00 ' + pT('home.pattern_time_morning', 'tong') },
+        { time: '12:00', label: '12:00 ' + pT('home.pattern_time_noon', 'tushda') },
+        { time: '19:00', label: '19:00 ' + pT('home.pattern_time_evening', 'kech') }
       ];
       // Tavsiya qilingan vaqtni birinchi qatorga olib chiqish
       const opts = [...standardOptions];
       if (!opts.find(o => o.time === peakTime)) {
-        opts.unshift({ time: peakTime, label: peakTime + ' tavsiya', recommended: true });
+        opts.unshift({ time: peakTime, label: peakTime + ' ' + pT('home.pattern_recommended_tag', 'tavsiya'), recommended: true });
       } else {
         opts.forEach(o => { if (o.time === peakTime) o.recommended = true; });
       }

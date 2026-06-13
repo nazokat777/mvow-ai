@@ -33,7 +33,9 @@
         ok: 'OK',
         loading: 'Yuklanmoqda...',
         error: 'Xato',
-        and: 'va'
+        and: 'va',
+        months_short: "['YAN','FEV','MAR','APR','MAY','IYUN','IYUL','AVG','SEN','OKT','NOY','DEK']",
+        weekdays_long: "['YAKSHANBA','DUSHANBA','SESHANBA','CHORSHANBA','PAYSHANBA','JUMA','SHANBA']"
       },
       brand: {
         tagline: "sizning intizom do'stingiz"
@@ -121,10 +123,12 @@
         stamp: 'Tasdiqlandi',
         quote_a: 'Tartibga amal qilish —',
         quote_em: "o'zini hurmat qilish",
-        quote_b: 'likdir.'
+        quote_b: 'likdir.',
+        page_title: "{brand} — Va'da"
       },
       anketa: {
         section_lbl: 'Tanishuv',
+        page_title: '{brand} — Tanishuv',
         done_title: 'Tayyor',
         q_name_title: 'Ismingiz nima?',
         q_name_ph: 'Ism',
@@ -197,6 +201,10 @@
         ex_sport: '· Sport mashqi har kuni',
         ex_reading: "· Kitob o'qish (har kuni 30 daq)",
         ex_lang: "· Til o'rganish",
+        ex_coding_fill: 'Dasturlash darsi',
+        ex_sport_fill: 'Sport mashqi',
+        ex_reading_fill: "Kitob o'qish",
+        ex_lang_fill: "Til o'rganish",
         occupied_lbl: 'Band vaqtlar',
         daily_time_lbl: 'Har kun qaysi vaqtda?',
         daily_dur_lbl: 'Davomiylik (daqiqa)',
@@ -217,6 +225,7 @@
         tagline_em: "bo'laklarga bo'lib",
         tagline_b: ', reja va muntazamlik bilan unga yetasiz.',
         count: '{n} ta maqsad',
+        count_zero_fallback: '0 ta maqsad',
         empty_head: "Birinchi maqsadni qo'shing",
         empty_desc_a: 'Ilov uni kalendaringizga',
         empty_desc_b: 'har kunga tarqatadi',
@@ -239,6 +248,8 @@
       },
       kechqurun: {
         title: 'Kun yakuni',
+        page_title: '{brand} — Kun yakuni',
+        date_stamp_fallback: '11-iyun · payshanba',
         stat_done: 'Bajardim',
         stat_focus: 'Soat fokus',
         stat_streak: 'Streak',
@@ -266,6 +277,8 @@
       },
       'weekly-review': {
         title: 'Tarix',
+        page_title: '{brand} — Tarix',
+        months_short: "['yan','fev','mar','apr','may','iyun','iyul','avg','sen','okt','noy','dek']",
         subtitle: 'Bajarilgan ishlar',
         tab_day: 'Bugun',
         tab_week: 'Hafta',
@@ -417,10 +430,26 @@
         pattern_time_evening: 'kech',
         pattern_recommended_tag: 'tavsiya',
         pattern_custom_label: 'Belgila',
-        pattern_reject: "Hozircha yo'q"
+        pattern_reject: "Hozircha yo'q",
+        page_title: 'Bosh sahifa',
+        hint_student_weekday: "Talaba — darslar oralig'idagi vaqtni topib oling.",
+        hint_student_weekend: "Bo'sh kun — bir blokga ko'proq vaqt ajrating.",
+        hint_parent_weekday: 'Bola maktabga ketganda 30 daqiqani yutib oling.',
+        hint_parent_weekend: "Bola uxlatilganda 30 daq topishga harakat qiling.",
+        hint_worker_weekday: 'Ish kuni — ertalab yoki kechqurun qisqa blok yetadi.',
+        hint_worker_weekend: "Bo'sh kun — bir blokga ko'proq vaqt ajrating.",
+        hint_freelancer_weekday: "Erkin vaqt — energiya cho'qqisida boshlang.",
+        hint_freelancer_weekend: "Bugun ham bir qadam — uzilish bo'lmasin.",
+        hint_searching_weekday: "Yo'lda — bitta qadam ham yetadi.",
+        hint_searching_weekend: "Bo'sh kun — bitta blokni puxta bajaring.",
+        pattern_time_dawn_label: 'erta tong',
+        pattern_time_morning_label: 'tong',
+        pattern_time_noon_label: 'tushda',
+        pattern_time_evening_label: 'kech'
       },
       routine: {
         title: 'Rejani tuzing',
+        page_title: 'Rejalashtir',
         sub_a: 'Yozing yoki',
         sub_em: 'ovozda',
         sub_b: "ayting — shunga ko'ra kun tartibini tuzaman.",
@@ -434,6 +463,11 @@
         title: 'Bugungi reja',
         focus_lbl: 'fokus',
         ish_lbl: 'reja',
+        focus_initial: '7 soat 15 daq',
+        fmt_zero_min: '0 daq',
+        fmt_units_hm: '{h} soat {m} daq',
+        fmt_units_h: '{h} soat',
+        fmt_units_m: '{m} daq',
         add: "+ reja qo'shish",
         empty_a: "Bugun bo'sh.",
         empty_b: "Maqsadlardan reja chiqmadi — pastdan qo'shing.",
@@ -465,6 +499,8 @@
       calendar: {
         prev: 'Oldingi hafta',
         next: 'Keyingi hafta',
+        month_placeholder: 'Iyun 2026',
+        day_placeholder: 'Du · 4-may',
         add: "+ reja qo'sh",
         empty: "Bu kuni hech narsa rejalashtirilmagan.",
         title: 'Kalendar',
@@ -509,6 +545,7 @@
         ans_no: "Yo'q",
         ans_yes: 'Ha',
         dur_fallback: '25 daq',
+        page_title: 'Fokus rejimi',
         sub_break: 'dam',
         sub_no_timer: 'taymersiz'
       },
@@ -558,7 +595,8 @@
         sub: 'oldingi sizdan kuchliroqsiz',
         cta: 'Keyingi hafta',
         stamp: '7 kun · tugadi',
-        days_unit: 'kun'
+        days_unit: 'kun',
+        page_title: '{brand} — Bayram'
       },
       about: {
         what_lbl: 'Nima bu?',
@@ -636,7 +674,9 @@
         ok: 'OK',
         loading: 'Загрузка...',
         error: 'Ошибка',
-        and: 'и'
+        and: 'и',
+        months_short: "['ЯНВ','ФЕВ','МАР','АПР','МАЙ','ИЮН','ИЮЛ','АВГ','СЕН','ОКТ','НОЯ','ДЕК']",
+        weekdays_long: "['ВОСКРЕСЕНЬЕ','ПОНЕДЕЛЬНИК','ВТОРНИК','СРЕДА','ЧЕТВЕРГ','ПЯТНИЦА','СУББОТА']"
       },
       brand: {
         tagline: 'ваш друг по дисциплине'
@@ -724,10 +764,12 @@
         stamp: 'Подтверждено',
         quote_a: 'Следовать порядку —',
         quote_em: 'уважение к себе',
-        quote_b: '.'
+        quote_b: '.',
+        page_title: '{brand} — Обет'
       },
       anketa: {
         section_lbl: 'Знакомство',
+        page_title: '{brand} — Знакомство',
         done_title: 'Готово',
         q_name_title: 'Как Вас зовут?',
         q_name_ph: 'Имя',
@@ -800,6 +842,10 @@
         ex_sport: '· Спорт каждый день',
         ex_reading: '· Чтение книги (30 мин в день)',
         ex_lang: '· Изучение языка',
+        ex_coding_fill: 'Урок программирования',
+        ex_sport_fill: 'Спортивная тренировка',
+        ex_reading_fill: 'Чтение книги',
+        ex_lang_fill: 'Изучение языка',
         occupied_lbl: 'Занятые часы',
         daily_time_lbl: 'В какое время ежедневно?',
         daily_dur_lbl: 'Длительность (минуты)',
@@ -820,6 +866,7 @@
         tagline_em: 'разделим на части',
         tagline_b: ', с планом и постоянством вы дойдёте до них.',
         count: '{n} целей',
+        count_zero_fallback: '0 целей',
         empty_head: 'Добавьте первую цель',
         empty_desc_a: 'Приложение распределит её',
         empty_desc_b: 'по вашему календарю на каждый день',
@@ -842,6 +889,8 @@
       },
       kechqurun: {
         title: 'Итог дня',
+        page_title: '{brand} — Итог дня',
+        date_stamp_fallback: '11 июня · четверг',
         stat_done: 'Сделано',
         stat_focus: 'Часов фокуса',
         stat_streak: 'Стрик',
@@ -869,6 +918,8 @@
       },
       'weekly-review': {
         title: 'История',
+        page_title: '{brand} — История',
+        months_short: "['янв','фев','мар','апр','май','июн','июл','авг','сен','окт','ноя','дек']",
         subtitle: 'Выполненные дела',
         tab_day: 'День',
         tab_week: 'Неделя',
@@ -1012,10 +1063,26 @@
         pattern_time_evening: 'вечер',
         pattern_recommended_tag: 'рекомендуем',
         pattern_custom_label: 'Установить',
-        pattern_reject: 'Пока нет'
+        pattern_reject: 'Пока нет',
+        page_title: 'Главная',
+        hint_student_weekday: 'Студент — найдите время между парами.',
+        hint_student_weekend: 'Свободный день — выделите блоку больше времени.',
+        hint_parent_weekday: 'Когда ребёнок ушёл в школу — выкройте 30 минут.',
+        hint_parent_weekend: 'Когда ребёнок уснул — постарайтесь найти 30 мин.',
+        hint_worker_weekday: 'Рабочий день — утром или вечером короткого блока достаточно.',
+        hint_worker_weekend: 'Свободный день — выделите блоку больше времени.',
+        hint_freelancer_weekday: 'Свободное время — начинайте на пике энергии.',
+        hint_freelancer_weekend: 'Сегодня тоже один шаг — без перерыва.',
+        hint_searching_weekday: 'В пути — даже один шаг достаточен.',
+        hint_searching_weekend: 'Свободный день — выполните один блок основательно.',
+        pattern_time_dawn_label: 'раннее утро',
+        pattern_time_morning_label: 'утро',
+        pattern_time_noon_label: 'полдень',
+        pattern_time_evening_label: 'вечер'
       },
       routine: {
         title: 'Составьте план',
+        page_title: 'Составьте план',
         sub_a: 'Напишите или скажите',
         sub_em: 'голосом',
         sub_b: '— я составлю расписание.',
@@ -1029,6 +1096,11 @@
         title: 'План на сегодня',
         focus_lbl: 'фокус',
         ish_lbl: 'дел',
+        focus_initial: '7 часов 15 мин',
+        fmt_zero_min: '0 мин',
+        fmt_units_hm: '{h} ч {m} мин',
+        fmt_units_h: '{h} ч',
+        fmt_units_m: '{m} мин',
         add: '+ добавить дело',
         empty_a: 'Сегодня пусто.',
         empty_b: 'Начните с одного дела — добавьте снизу.',
@@ -1055,6 +1127,8 @@
       calendar: {
         prev: 'Предыдущая неделя',
         next: 'Следующая неделя',
+        month_placeholder: 'Июнь 2026',
+        day_placeholder: 'Пн · 4 мая',
         add: '+ добавить дело',
         empty: 'На этот день ничего не запланировано.',
         title: 'Календарь',
@@ -1099,6 +1173,7 @@
         ans_no: 'Нет',
         ans_yes: 'Да',
         dur_fallback: '25 мин',
+        page_title: 'Режим фокуса',
         sub_break: 'отдых',
         sub_no_timer: 'без таймера'
       },
@@ -1148,7 +1223,8 @@
         sub: 'сильнее, чем были раньше',
         cta: 'Следующая неделя',
         stamp: '7 дней · завершено',
-        days_unit: 'дней'
+        days_unit: 'дней',
+        page_title: '{brand} — Праздник'
       },
       about: {
         what_lbl: 'Что это?',
@@ -1226,7 +1302,9 @@
         ok: 'OK',
         loading: 'Loading...',
         error: 'Error',
-        and: 'and'
+        and: 'and',
+        months_short: "['JAN','FEB','MAR','APR','MAY','JUN','JUL','AUG','SEP','OCT','NOV','DEC']",
+        weekdays_long: "['SUNDAY','MONDAY','TUESDAY','WEDNESDAY','THURSDAY','FRIDAY','SATURDAY']"
       },
       brand: {
         tagline: 'your discipline companion'
@@ -1314,10 +1392,12 @@
         stamp: 'Confirmed',
         quote_a: 'Following order —',
         quote_em: 'is self-respect',
-        quote_b: '.'
+        quote_b: '.',
+        page_title: '{brand} — Vow'
       },
       anketa: {
         section_lbl: 'Getting to know',
+        page_title: '{brand} — Getting to know you',
         done_title: 'Ready',
         q_name_title: 'What is your name?',
         q_name_ph: 'Name',
@@ -1390,6 +1470,10 @@
         ex_sport: '· Sport practice every day',
         ex_reading: '· Book reading (30 min daily)',
         ex_lang: '· Language learning',
+        ex_coding_fill: 'Programming lesson',
+        ex_sport_fill: 'Sports workout',
+        ex_reading_fill: 'Reading books',
+        ex_lang_fill: 'Learning a language',
         occupied_lbl: 'Occupied times',
         daily_time_lbl: 'At what time each day?',
         daily_dur_lbl: 'Duration (minutes)',
@@ -1410,6 +1494,7 @@
         tagline_em: 'breaking them into pieces',
         tagline_b: ', plan and regularity will get you there.',
         count: '{n} goal(s)',
+        count_zero_fallback: '0 goals',
         empty_head: 'Add your first goal',
         empty_desc_a: 'The app will distribute it',
         empty_desc_b: 'across each day of your calendar',
@@ -1432,6 +1517,8 @@
       },
       kechqurun: {
         title: 'Day summary',
+        page_title: '{brand} — End of day',
+        date_stamp_fallback: '11 Jun · Thursday',
         stat_done: 'Done',
         stat_focus: 'Focus hours',
         stat_streak: 'Streak',
@@ -1459,6 +1546,8 @@
       },
       'weekly-review': {
         title: 'History',
+        page_title: '{brand} — History',
+        months_short: "['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec']",
         subtitle: 'Completed tasks',
         tab_day: 'Day',
         tab_week: 'Week',
@@ -1602,10 +1691,26 @@
         pattern_time_evening: 'evening',
         pattern_recommended_tag: 'recommended',
         pattern_custom_label: 'Set',
-        pattern_reject: 'Not now'
+        pattern_reject: 'Not now',
+        page_title: 'Home',
+        hint_student_weekday: 'Student — find time between classes.',
+        hint_student_weekend: 'Free day — give a block more time.',
+        hint_parent_weekday: 'When the child is at school — grab 30 minutes.',
+        hint_parent_weekend: 'When the child is asleep — try to find 30 min.',
+        hint_worker_weekday: 'Workday — a short block in the morning or evening is enough.',
+        hint_worker_weekend: 'Free day — give a block more time.',
+        hint_freelancer_weekday: 'Free time — start at your energy peak.',
+        hint_freelancer_weekend: 'One step today too — no break.',
+        hint_searching_weekday: 'On the way — even one step is enough.',
+        hint_searching_weekend: 'Free day — do one block thoroughly.',
+        pattern_time_dawn_label: 'early dawn',
+        pattern_time_morning_label: 'morning',
+        pattern_time_noon_label: 'noon',
+        pattern_time_evening_label: 'evening'
       },
       routine: {
         title: 'Build your plan',
+        page_title: 'Plan',
         sub_a: 'Type or say it by',
         sub_em: 'voice',
         sub_b: '— I\'ll arrange the day.',
@@ -1619,6 +1724,11 @@
         title: 'Today\'s plan',
         focus_lbl: 'focus',
         ish_lbl: 'tasks',
+        focus_initial: '7 h 15 min',
+        fmt_zero_min: '0 min',
+        fmt_units_hm: '{h} h {m} min',
+        fmt_units_h: '{h} h',
+        fmt_units_m: '{m} min',
         add: '+ add task',
         empty_a: 'Today is empty.',
         empty_b: 'Start with one task — add below.',
@@ -1645,6 +1755,8 @@
       calendar: {
         prev: 'Previous week',
         next: 'Next week',
+        month_placeholder: 'June 2026',
+        day_placeholder: 'Mon · May 4',
         add: '+ add task',
         empty: 'Nothing planned for this day.',
         title: 'Calendar',
@@ -1689,6 +1801,7 @@
         ans_no: 'No',
         ans_yes: 'Yes',
         dur_fallback: '25 min',
+        page_title: 'Focus mode',
         sub_break: 'break',
         sub_no_timer: 'no timer'
       },
@@ -1738,7 +1851,8 @@
         sub: 'stronger than before',
         cta: 'Next week',
         stamp: '7 days · complete',
-        days_unit: 'days'
+        days_unit: 'days',
+        page_title: '{brand} — Celebration'
       },
       about: {
         what_lbl: 'What is this?',

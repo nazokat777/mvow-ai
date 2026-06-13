@@ -175,8 +175,8 @@
     <h1 class="title" data-i18n="today.title">Bugungi reja</h1>
 
     <p class="subtitle">
-      <span class="em" id="focusLbl">7 soat 15 daq</span>
-      fokus  ·  <span class="em" id="countLbl">5</span> reja
+      <span class="em" id="focusLbl" data-i18n="today.focus_initial">7 soat 15 daq</span>
+      <span data-i18n="today.focus_lbl">fokus</span>  ·  <span class="em" id="countLbl">5</span> <span data-i18n="today.ish_lbl">reja</span>
     </p>
 
     <!-- Maqsadlardan tuzilgan eslatma -->
@@ -241,12 +241,23 @@
   }
 
   function fmtMins(mins) {
-    if (mins <= 0) return '0 daq';
+    const Tfm = (k, def) => (window.I18N ? I18N.t(k, def) : def);
+    if (mins <= 0) return Tfm('today.fmt_zero_min', '0 daq');
     const h = Math.floor(mins / 60);
     const m = mins % 60;
-    if (h && m) return h + ' soat ' + m + ' daq';
-    if (h)      return h + ' soat';
-    return m + ' daq';
+    if (h && m) {
+      return window.I18N
+        ? I18N.tWith('today.fmt_units_hm', { h: h, m: m })
+        : (h + ' soat ' + m + ' daq');
+    }
+    if (h) {
+      return window.I18N
+        ? I18N.tWith('today.fmt_units_h', { h: h })
+        : (h + ' soat');
+    }
+    return window.I18N
+      ? I18N.tWith('today.fmt_units_m', { m: m })
+      : (m + ' daq');
   }
 
   function updateTotals() {

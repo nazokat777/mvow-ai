@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-<title>{brand} — Tarix</title>
+<title data-i18n="weekly-review.page_title">{brand} — Tarix</title>
 <link rel="manifest" href="manifest.webmanifest">
 <meta name="theme-color" content="#04060B">
 <link rel="apple-touch-icon" href="assets/mnsm-logo.png">
@@ -249,7 +249,14 @@
 <script src="data.js" defer></script>
 <script src="nav-overlay.js" defer></script>
 <script>
-  const MONTHS = ['yan','fev','mar','apr','may','iyun','iyul','avg','sen','okt','noy','dek'];
+  const MONTHS_FALLBACK = ['yan','fev','mar','apr','may','iyun','iyul','avg','sen','okt','noy','dek'];
+  function getMonths() {
+    if (window.I18N) {
+      const v = I18N.t('weekly-review.months_short', null);
+      if (Array.isArray(v) && v.length === 12) return v;
+    }
+    return MONTHS_FALLBACK;
+  }
 
   function escapeHtml(s) {
     return String(s).replace(/[<>"&]/g, c => ({'<':'&lt;','>':'&gt;','"':'&quot;','&':'&amp;'}[c]));
@@ -266,7 +273,8 @@
   }
   function fmtShortDate(iso) {
     const d = new Date(iso);
-    return d.getDate() + '-' + MONTHS[d.getMonth()];
+    const months = getMonths();
+    return d.getDate() + '-' + months[d.getMonth()];
   }
 
   function inRange(iso, range) {

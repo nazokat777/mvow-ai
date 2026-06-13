@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-<title>{brand} — Kun yakuni</title>
+<title data-i18n="kechqurun.page_title">{brand} — Kun yakuni</title>
 <link rel="manifest" href="manifest.webmanifest">
 <meta name="theme-color" content="#04060B">
 <link rel="apple-touch-icon" href="assets/mnsm-logo.png">
@@ -251,7 +251,7 @@
 
 <div class="wrap">
 
-  <div class="top-stamp" id="dateStamp">11-iyun · payshanba</div>
+  <div class="top-stamp" id="dateStamp" data-i18n="kechqurun.date_stamp_fallback">11-iyun · payshanba</div>
   <h1 class="title" data-i18n="kechqurun.title">Kun yakuni</h1>
 
   <!-- Stats -->
@@ -327,8 +327,12 @@
   document.addEventListener('DOMContentLoaded', () => {
     // ── Sana ──
     const d = new Date();
-    const months = ['YAN','FEV','MAR','APR','MAY','IYUN','IYUL','AVG','SEN','OKT','NOY','DEK'];
-    const days = ['YAKSHANBA','DUSHANBA','SESHANBA','CHORSHANBA','PAYSHANBA','JUMA','SHANBA'];
+    const monthsFallback = ['YAN','FEV','MAR','APR','MAY','IYUN','IYUL','AVG','SEN','OKT','NOY','DEK'];
+    const daysFallback = ['YAKSHANBA','DUSHANBA','SESHANBA','CHORSHANBA','PAYSHANBA','JUMA','SHANBA'];
+    const monthsI18n = window.I18N ? I18N.t('common.months_short', null) : null;
+    const daysI18n = window.I18N ? I18N.t('common.weekdays_long', null) : null;
+    const months = Array.isArray(monthsI18n) ? monthsI18n : monthsFallback;
+    const days = Array.isArray(daysI18n) ? daysI18n : daysFallback;
     document.getElementById('dateStamp').textContent =
       `${String(d.getDate()).padStart(2,'0')}-${months[d.getMonth()]} · ${days[d.getDay()]}`;
 
