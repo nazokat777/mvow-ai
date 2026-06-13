@@ -273,7 +273,11 @@
         notif_denied: "Bildirishnoma ruxsati berilmadi. Telefon Sozlamalaridan brauzerga bildirishnoma ruxsatini bering.",
         toast_main: 'Xayrli tun',
         toast_tomorrow: 'ertaga {n} reja',
-        toast_alarm: 'budilnik {time}'
+        toast_alarm: 'budilnik {time}',
+        report_head: 'Bugungi hisobot',
+        report_completion: 'Bajarish foizi',
+        missed_head: 'Bajarilmagan',
+        insight_lead: 'Sermahsul vaqt:'
       },
       'weekly-review': {
         title: 'Tarix',
@@ -574,7 +578,15 @@
         page_title: '{brand} — Bajardingiz',
         task_demo_name: "Til o'rganish",
         task_demo_time: '1 soat fokus',
-        fokus_suffix: ' fokus'
+        fokus_suffix: ' fokus',
+        next_task_label: 'Keyingi vazifa',
+        next_ask: 'Keyingi rejani boshlaymizmi?',
+        btn_start_next: 'Ha, boshlayman',
+        btn_later: "Hozircha yo'q",
+        all_done_title: 'Bugun hammasi bajarildi.',
+        all_done_sub: 'Tabriklayman.',
+        btn_day_summary: 'Kun yakuni',
+        btn_home: 'Bosh sahifa'
       },
       notif: {
         title: 'Xabarlar',
@@ -914,7 +926,11 @@
         notif_denied: 'Разрешение на уведомления не дано. Откройте Настройки телефона и разрешите уведомления для браузера.',
         toast_main: 'Доброй ночи',
         toast_tomorrow: 'на завтра {n} дел',
-        toast_alarm: 'будильник {time}'
+        toast_alarm: 'будильник {time}',
+        report_head: 'Итог дня',
+        report_completion: 'Процент выполнения',
+        missed_head: 'Не выполнено',
+        insight_lead: 'Продуктивное время:'
       },
       'weekly-review': {
         title: 'История',
@@ -1202,7 +1218,15 @@
         page_title: '{brand} — Готово',
         task_demo_name: 'Изучение языка',
         task_demo_time: '1 час фокуса',
-        fokus_suffix: ' фокуса'
+        fokus_suffix: ' фокуса',
+        next_task_label: 'Следующая задача',
+        next_ask: 'Начнём следующий план?',
+        btn_start_next: 'Да, начну',
+        btn_later: 'Пока нет',
+        all_done_title: 'Сегодня всё сделано.',
+        all_done_sub: 'Поздравляю.',
+        btn_day_summary: 'Итог дня',
+        btn_home: 'Главная'
       },
       notif: {
         title: 'Уведомления',
@@ -1542,7 +1566,11 @@
         notif_denied: 'Notification permission not granted. Allow notifications in your phone\'s settings.',
         toast_main: 'Good night',
         toast_tomorrow: 'tomorrow {n} tasks',
-        toast_alarm: 'alarm {time}'
+        toast_alarm: 'alarm {time}',
+        report_head: 'Today\'s report',
+        report_completion: 'Completion rate',
+        missed_head: 'Missed',
+        insight_lead: 'Productive time:'
       },
       'weekly-review': {
         title: 'History',
@@ -1830,7 +1858,15 @@
         page_title: '{brand} — Done',
         task_demo_name: 'Language study',
         task_demo_time: '1 hour of focus',
-        fokus_suffix: ' of focus'
+        fokus_suffix: ' of focus',
+        next_task_label: 'Next task',
+        next_ask: 'Shall we start the next plan?',
+        btn_start_next: 'Yes, start',
+        btn_later: 'Not now',
+        all_done_title: 'Everything is done today.',
+        all_done_sub: 'Well done.',
+        btn_day_summary: 'Day summary',
+        btn_home: 'Home'
       },
       notif: {
         title: 'Notifications',

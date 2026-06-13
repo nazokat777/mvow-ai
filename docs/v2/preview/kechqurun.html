@@ -270,32 +270,41 @@
     </div>
   </div>
 
-  <!-- Today's wins -->
+  <!-- Bugungi hisobot — to'liq -->
   <div class="section">
-    <div class="section-head" data-i18n="kechqurun.wins_head">Bugungi muvaffaqiyatlar</div>
-    <div class="wins" id="winsList">
-      <div class="no-wins">—</div>
-    </div>
-  </div>
+    <div class="section-head" data-i18n="kechqurun.report_head">Bugungi hisobot</div>
 
-  <!-- Tomorrow's plan -->
-  <div class="section">
-    <div class="section-head" id="tomHead" data-i18n="kechqurun.tom_head">Ertangi reja</div>
-
-    <!-- Auto-generated tasks list (from maqsadlar) -->
-    <div id="tomList" style="display:flex;flex-direction:column;gap:8px;"></div>
-
-    <!-- Empty state -->
-    <div id="tomEmpty" style="display:none;text-align:center;padding:24px 16px;background:var(--card);border:1px dashed rgba(0,229,212,.25);border-radius:12px;">
-      <div style="font-family:'Cormorant Garamond',serif;font-style:italic;font-size:16px;color:var(--text-mid);margin-bottom:14px;" data-i18n="kechqurun.tom_empty">Ertangi reja yo'q</div>
-      <a href="routine.html" style="display:inline-block;padding:12px 20px;background:rgba(0,229,212,.08);border:1px solid rgba(0,229,212,.35);border-radius:999px;color:var(--accent);font-family:'Inter',sans-serif;font-size:13px;font-weight:500;letter-spacing:1px;text-decoration:none;" data-i18n="kechqurun.tom_build">+ Kun tartibini tuz</a>
+    <!-- Completion progress -->
+    <div id="reportProgress" style="background:var(--card);border-radius:12px;padding:16px 18px;margin-bottom:14px;">
+      <div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:10px;">
+        <span style="font-family:'Cormorant Garamond',serif;font-style:italic;font-size:15px;color:var(--text-mid);" data-i18n="kechqurun.report_completion">Bajarish foizi</span>
+        <span style="font-family:'Cormorant Garamond',serif;font-size:24px;font-weight:500;" id="reportPct">0%</span>
+      </div>
+      <div style="height:6px;background:rgba(255,255,255,.06);border-radius:3px;overflow:hidden;">
+        <div id="reportBar" style="height:100%;background:linear-gradient(90deg,var(--accent),var(--accent-soft));border-radius:3px;width:0;transition:width .8s ease;"></div>
+      </div>
+      <div id="reportSummary" style="font-size:11px;color:var(--text-dim);margin-top:8px;letter-spacing:0.5px;"></div>
     </div>
 
-    <!-- Add new task -->
-    <button id="tomAddBtn" type="button" style="display:flex;align-items:center;justify-content:center;gap:8px;width:100%;margin-top:10px;padding:14px;background:transparent;border:1px dashed rgba(0,229,212,.25);border-radius:10px;color:var(--accent);font-family:'Inter',sans-serif;font-size:13px;cursor:pointer;">
-      <span style="font-size:18px;">+</span>
-      <span data-i18n="kechqurun.tom_add">Yana reja qo'shish</span>
-    </button>
+    <!-- Bajarilgan ishlar (wins) -->
+    <div id="winsBlock">
+      <div style="font-size:10px;letter-spacing:2px;color:var(--accent);text-transform:uppercase;margin-bottom:8px;padding-left:4px;" data-i18n="kechqurun.wins_head">Bugungi muvaffaqiyatlar</div>
+      <div class="wins" id="winsList">
+        <div class="no-wins">—</div>
+      </div>
+    </div>
+
+    <!-- Bajarilmagan ishlar (missed) — agar bo'lsa -->
+    <div id="missedBlock" style="display:none;margin-top:16px;">
+      <div style="font-size:10px;letter-spacing:2px;color:#FF8E97;text-transform:uppercase;margin-bottom:8px;padding-left:4px;" data-i18n="kechqurun.missed_head">Bajarilmagan</div>
+      <div id="missedList" style="display:flex;flex-direction:column;gap:6px;"></div>
+    </div>
+
+    <!-- Sermahsul vaqt -->
+    <div id="insightBlock" style="display:none;margin-top:14px;padding:12px 14px;background:var(--card);border-radius:10px;font-size:12px;color:var(--text-mid);text-align:center;">
+      <span data-i18n="kechqurun.insight_lead">Sermahsul vaqt:</span>
+      <span id="insightTime" style="color:var(--accent);font-weight:500;letter-spacing:0.5px;">—</span>
+    </div>
   </div>
 
   <!-- Wake time + alarm -->
@@ -350,162 +359,94 @@
 
     // Greeting matni olib tashlandi — sokin interfeys
 
-    // ── Bugungi muvaffaqiyatlar ──
+    // ── Bugungi to'liq hisobot ──
     let plan = [];
     if (window.MVOW_DATA) plan = MVOW_DATA.getTodayPlan();
-    const winsEl = document.getElementById('winsList');
-    if (done > 0 && plan.length) {
-      // Birinchi N ta sessiya bajarilgan deb hisoblaymiz
-      const wins = plan.slice(0, done);
-      winsEl.innerHTML = wins.map(w => `
-        <div class="win">
-          <div class="check"><svg viewBox="0 0 24 24" fill="none" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="5 12 10 17 19 8"/></svg></div>
-          <div class="name">${escapeHtml(w.name || (window.I18N ? I18N.t('kechqurun.fallback_task_cap', 'Ish') : 'Ish'))}</div>
-          <div class="dur">${escapeHtml(w.dur || '')}</div>
-        </div>
-      `).join('');
-    }
-
-    // ── Ertangi reja — weekPlan'dan o'qiydi (auto-generated from maqsadlar) ──
-    const tomList = document.getElementById('tomList');
-    const tomEmpty = document.getElementById('tomEmpty');
-    const tomHead = document.getElementById('tomHead');
-    const tomAddBtn = document.getElementById('tomAddBtn');
-
-    function tomorrowKey() {
-      const tom = new Date(Date.now() + 86400000);
-      return 'd' + (window.MVOW_DATA ? MVOW_DATA.localDateIso(tom) : tom.toISOString().slice(0, 10));
-    }
-
-    function loadTomPlan() {
-      if (!window.MVOW_DATA) return [];
-      const w = MVOW_DATA.getWeekPlan();
-      const k = tomorrowKey();
-      return Array.isArray(w[k]) ? w[k] : [];
-    }
-
-    function saveTomPlan(arr) {
-      if (!window.MVOW_DATA) return;
-      const w = MVOW_DATA.getWeekPlan();
-      w[tomorrowKey()] = arr;
-      MVOW_DATA.setWeekPlan(w);
-    }
 
     function escapeHtml(s) {
       return String(s).replace(/[<>"&]/g, c => ({'<':'&lt;','>':'&gt;','"':'&quot;','&':'&amp;'}[c]));
     }
+    const Tk = (k, def) => (window.I18N ? I18N.t(k, def) : def);
 
-    function timeKey(t) {
-      const m = /^(\d{1,2}):?(\d{2})?$/.exec((t || '').trim());
-      if (!m) return 99999;
-      return (+m[1]) * 60 + (+(m[2] || 0));
+    // History (bugungi) — bajarilgan ishlar uchun
+    const history = window.MVOW_DATA
+      ? MVOW_DATA.getHistory().filter(h => h.dateIso === MVOW_DATA.today.iso)
+      : [];
+    const completedKeys = window.MVOW_DATA ? MVOW_DATA.getCompletedKeysToday() : new Set();
+
+    // Bajarish foizi
+    const totalPlanned = plan.length;
+    const totalDone = history.length;
+    const pct = totalPlanned > 0 ? Math.round((totalDone / totalPlanned) * 100) : 0;
+    const pctEl = document.getElementById('reportPct');
+    const barEl = document.getElementById('reportBar');
+    const sumEl = document.getElementById('reportSummary');
+    if (pctEl) {
+      pctEl.textContent = pct + '%';
+      const color = pct >= 80 ? '#00E5D4' : (pct >= 50 ? '#F5C26B' : '#FF8E97');
+      pctEl.style.color = color;
+    }
+    if (barEl) setTimeout(() => { barEl.style.width = pct + '%'; }, 100);
+    if (sumEl) {
+      const totalMins = history.reduce((s, h) => s + (h.actualMins || 0), 0);
+      const totalH = Math.round(totalMins / 60 * 10) / 10;
+      sumEl.textContent = totalDone + ' / ' + totalPlanned + ' · ' + totalH + ' ' + Tk('kechqurun.stat_focus', 'soat fokus').toLowerCase();
     }
 
-    function renderTomPlan() {
-      const tasks = loadTomPlan().sort((a,b) => timeKey(a.time) - timeKey(b.time));
-      tomList.innerHTML = '';
-      if (!tasks.length) {
-        tomEmpty.style.display = 'block';
-        tomAddBtn.style.display = 'none';
-        tomHead.textContent = (window.I18N ? I18N.t('kechqurun.tom_head', 'Ertangi reja') : 'Ertangi reja');
-        return;
-      }
-      tomEmpty.style.display = 'none';
-      tomAddBtn.style.display = 'flex';
-      tomHead.textContent = (window.I18N ? I18N.tWith('kechqurun.tom_head_count', { n: tasks.length }) : ('Ertangi reja · ' + tasks.length + ' qadam'));
-
-      tasks.forEach((t, idx) => {
-        const row = document.createElement('div');
-        row.style.cssText = 'display:grid;grid-template-columns:60px 1fr auto;align-items:center;gap:12px;padding:12px 14px;background:var(--card);border:1px solid rgba(255,255,255,.05);border-radius:10px;';
-        row.innerHTML = `
-          <span class="tap-edit time" style="color:var(--accent);font-size:14px;font-weight:500;cursor:pointer;">${escapeHtml(t.time || '—')}</span>
-          <div class="tap-edit name-block" style="cursor:pointer;">
-            <div style="font-size:15px;color:var(--text);line-height:1.3;">${escapeHtml(t.name || (window.I18N ? I18N.t('kechqurun.fallback_task', 'ish') : 'ish'))}</div>
-            <div style="font-size:11px;color:var(--text-dim);margin-top:2px;letter-spacing:.5px;">${escapeHtml(t.dur || '')}</div>
+    // Bajarilgan ishlar (wins) — history asosida
+    const winsEl = document.getElementById('winsList');
+    if (winsEl) {
+      if (history.length) {
+        winsEl.innerHTML = history.map(h => `
+          <div class="win">
+            <div class="check"><svg viewBox="0 0 24 24" fill="none" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="5 12 10 17 19 8"/></svg></div>
+            <div class="name">${escapeHtml(h.name || Tk('kechqurun.fallback_task_cap', 'Ish'))}</div>
+            <div class="dur">${escapeHtml((h.actualMins ? (h.actualMins + ' ' + Tk('today.fmt_units_m', 'daq').split(' ')[1]) : ''))}</div>
           </div>
-          <button class="tom-del" type="button" style="background:transparent;border:none;color:var(--text-dim);font-size:20px;width:32px;height:32px;cursor:pointer;border-radius:50%;">×</button>
-        `;
-        tomList.appendChild(row);
-
-        const delBtn = row.querySelector('.tom-del');
-        delBtn.addEventListener('click', () => {
-          const arr = loadTomPlan();
-          arr.splice(arr.indexOf(t), 1);
-          // index by name+time to be safe
-          const filtered = arr.filter(x => !(x.time === t.time && x.name === t.name));
-          saveTomPlan(filtered);
-          renderTomPlan();
-          if (window.MVOW_DATA) MVOW_DATA.fxTap();
-        });
-
-        // Tap to edit
-        row.querySelectorAll('.tap-edit').forEach(el => {
-          el.addEventListener('click', () => enterEdit(row, t));
-        });
-      });
+        `).join('');
+      }
     }
 
-    function enterEdit(row, task) {
-      const arr = loadTomPlan();
-      const idx = arr.findIndex(x => x.time === task.time && x.name === task.name);
-      if (idx < 0) return;
-      row.innerHTML = `
-        <div style="display:grid;grid-template-columns:60px 1fr 60px;gap:8px;grid-column:1/-1;">
-          <input class="ed-time" type="text" value="${escapeHtml(task.time)}" maxlength="5" style="background:var(--void-soft);border:1px solid var(--accent);border-radius:6px;padding:8px;color:var(--text);font-size:13px;outline:none;">
-          <input class="ed-name" type="text" value="${escapeHtml(task.name)}" maxlength="48" style="background:var(--void-soft);border:1px solid var(--accent);border-radius:6px;padding:8px;color:var(--text);font-size:13px;outline:none;">
-          <input class="ed-dur" type="text" value="${escapeHtml(task.dur)}" maxlength="20" style="background:var(--void-soft);border:1px solid var(--accent);border-radius:6px;padding:8px;color:var(--text);font-size:13px;outline:none;">
-        </div>
-        <div style="grid-column:1/-1;display:flex;gap:8px;justify-content:flex-end;margin-top:8px;">
-          <button class="ed-cancel" type="button" style="padding:8px 14px;background:transparent;color:var(--text-mid);border:1px solid rgba(255,255,255,.1);border-radius:6px;font-size:11px;letter-spacing:1px;text-transform:uppercase;cursor:pointer;">${window.I18N ? I18N.t('common.cancel', 'Bekor') : 'Bekor'}</button>
-          <button class="ed-save" type="button" style="padding:8px 14px;background:var(--accent);color:var(--void);border:none;border-radius:6px;font-size:11px;font-weight:600;letter-spacing:1px;text-transform:uppercase;cursor:pointer;">${window.I18N ? I18N.t('common.save', 'Saqla') : 'Saqla'}</button>
-        </div>
-      `;
-      const timeIn = row.querySelector('.ed-time');
-      const nameIn = row.querySelector('.ed-name');
-      const durIn  = row.querySelector('.ed-dur');
-      row.querySelector('.ed-save').addEventListener('click', () => {
-        const arr2 = loadTomPlan();
-        arr2[idx] = {
-          time: timeIn.value.trim(),
-          name: nameIn.value.trim() || (window.I18N ? I18N.t('kechqurun.fallback_task', 'ish') : 'ish'),
-          dur:  durIn.value.trim() || (window.I18N ? I18N.t('kechqurun.fallback_dur', '1 soat') : '1 soat')
-        };
-        saveTomPlan(arr2);
-        renderTomPlan();
+    // Bajarilmagan ishlar (missed) — plan'da bor, lekin history'da yo'q
+    const missedBlock = document.getElementById('missedBlock');
+    const missedList = document.getElementById('missedList');
+    if (missedBlock && missedList && plan.length) {
+      const missed = plan.filter(t => {
+        if (!window.MVOW_DATA) return false;
+        const key = MVOW_DATA.taskKey(MVOW_DATA.today.iso, t.time, t.name);
+        return !completedKeys.has(key);
       });
-      row.querySelector('.ed-cancel').addEventListener('click', renderTomPlan);
-      setTimeout(() => timeIn.focus(), 50);
+      if (missed.length) {
+        missedList.innerHTML = missed.map(t => `
+          <div style="display:grid;grid-template-columns:60px 1fr auto;gap:10px;align-items:center;padding:8px 12px;background:rgba(255,71,87,0.05);border:1px solid rgba(255,71,87,0.18);border-radius:8px;font-size:12px;">
+            <span style="color:#FF8E97;font-weight:500;">${escapeHtml(t.time || '—')}</span>
+            <span style="color:var(--text-mid);">${escapeHtml(t.name || '—')}</span>
+            <span style="color:var(--text-dim);font-size:11px;">${escapeHtml(t.dur || '')}</span>
+          </div>
+        `).join('');
+        missedBlock.style.display = 'block';
+      }
     }
 
-    tomAddBtn.addEventListener('click', () => {
-      const row = document.createElement('div');
-      row.style.cssText = 'background:var(--card);border:1px solid rgba(0,229,212,.3);border-radius:10px;padding:12px 14px;';
-      row.innerHTML = `
-        <div style="display:grid;grid-template-columns:60px 1fr 60px;gap:8px;">
-          <input class="new-time" type="text" placeholder="07:00" maxlength="5" style="background:var(--void-soft);border:1px solid var(--accent);border-radius:6px;padding:8px;color:var(--text);font-size:13px;outline:none;">
-          <input class="new-name" type="text" placeholder="${window.I18N ? I18N.t('kechqurun.task_name_ph', 'ish nomi') : 'ish nomi'}" maxlength="48" style="background:var(--void-soft);border:1px solid var(--accent);border-radius:6px;padding:8px;color:var(--text);font-size:13px;outline:none;">
-          <input class="new-dur" type="text" placeholder="${window.I18N ? I18N.t('kechqurun.task_dur_ph', '1 soat') : '1 soat'}" maxlength="20" style="background:var(--void-soft);border:1px solid var(--accent);border-radius:6px;padding:8px;color:var(--text);font-size:13px;outline:none;">
-        </div>
-        <div style="display:flex;gap:8px;justify-content:flex-end;margin-top:8px;">
-          <button class="new-cancel" type="button" style="padding:8px 14px;background:transparent;color:var(--text-mid);border:1px solid rgba(255,255,255,.1);border-radius:6px;font-size:11px;letter-spacing:1px;text-transform:uppercase;cursor:pointer;">${window.I18N ? I18N.t('common.cancel', 'Bekor') : 'Bekor'}</button>
-          <button class="new-save" type="button" style="padding:8px 14px;background:var(--accent);color:var(--void);border:none;border-radius:6px;font-size:11px;font-weight:600;letter-spacing:1px;text-transform:uppercase;cursor:pointer;">${window.I18N ? I18N.t('kechqurun.add_btn', "Qo'sh") : "Qo'sh"}</button>
-        </div>
-      `;
-      tomList.appendChild(row);
-      const t = row.querySelector('.new-time');
-      const n = row.querySelector('.new-name');
-      const dr = row.querySelector('.new-dur');
-      setTimeout(() => t.focus(), 50);
-      row.querySelector('.new-save').addEventListener('click', () => {
-        const arr = loadTomPlan();
-        arr.push({ time: t.value.trim() || '07:00', name: n.value.trim() || (window.I18N ? I18N.t('kechqurun.fallback_task', 'ish') : 'ish'), dur: dr.value.trim() || (window.I18N ? I18N.t('kechqurun.fallback_dur', '1 soat') : '1 soat') });
-        saveTomPlan(arr);
-        renderTomPlan();
+    // Sermahsul vaqt (peak hour) — history'dagi eng ko'p bajarilgan soatdan
+    const insightBlock = document.getElementById('insightBlock');
+    const insightTime = document.getElementById('insightTime');
+    if (insightBlock && insightTime && history.length) {
+      const byHour = {};
+      history.forEach(h => {
+        const t = (h.plannedTime || '').match(/^(\d{1,2}):/);
+        if (t) {
+          const hr = +t[1];
+          byHour[hr] = (byHour[hr] || 0) + 1;
+        }
       });
-      row.querySelector('.new-cancel').addEventListener('click', () => row.remove());
-    });
-
-    renderTomPlan();
+      const hours = Object.keys(byHour);
+      if (hours.length) {
+        const peak = hours.reduce((a, b) => byHour[a] > byHour[b] ? a : b);
+        insightTime.textContent = String(peak).padStart(2, '0') + ':00 – ' + String((+peak + 2) % 24).padStart(2, '0') + ':00';
+        insightBlock.style.display = 'block';
+      }
+    }
 
     // ── Uyg'onish ──
     const wakeInput = document.getElementById('wakeTime');
@@ -546,17 +487,14 @@
     document.getElementById('saveBtn').addEventListener('click', (e) => {
       e.preventDefault();
       localStorage.setItem('mvow.wakeTime', wakeInput.value);
-      const tomCount = loadTomPlan().length;
       if (window.MVOW_DATA) MVOW_DATA.fxSuccess();
 
       // Tasdiq toast
       const toast = document.createElement('div');
       toast.style.cssText = 'position:fixed;left:50%;top:30%;transform:translate(-50%,-50%);background:#11151E;border:1px solid rgba(0,229,212,.4);border-radius:14px;padding:24px 28px;color:#7AF5EC;font-family:Inter,sans-serif;font-size:16px;text-align:center;z-index:9999;box-shadow:0 20px 60px rgba(0,0,0,.6);';
       const toastMain = window.I18N ? I18N.t('kechqurun.toast_main', 'Xayrli tun') : 'Xayrli tun';
-      const toastTom = tomCount ? (window.I18N ? I18N.tWith('kechqurun.toast_tomorrow', { n: tomCount }) : ('ertaga ' + tomCount + ' reja')) : '';
       const toastAlarm = window.I18N ? I18N.tWith('kechqurun.toast_alarm', { time: wakeInput.value }) : ('budilnik ' + wakeInput.value);
-      const toastSub = (toastTom ? toastTom + ' · ' : '') + toastAlarm;
-      toast.innerHTML = '✓ ' + toastMain + '<br><span style="font-size:12px;color:#9CA0A8;letter-spacing:1px;text-transform:uppercase;margin-top:8px;display:block;">' + toastSub + '</span>';
+      toast.innerHTML = '✓ ' + toastMain + '<br><span style="font-size:12px;color:#9CA0A8;letter-spacing:1px;text-transform:uppercase;margin-top:8px;display:block;">' + toastAlarm + '</span>';
       document.body.appendChild(toast);
 
       setTimeout(() => { window.location.href = 'home.html'; }, 1500);
