@@ -108,7 +108,7 @@
 
     <div class="stamp" id="dateStamp">10-JUN · CHORSHANBA</div>
 
-    <h1 class="greet"><span id="greetWord">Assalomu alaykum</span>, <span class="em" id="userName">do'stim</span>.</h1>
+    <h1 class="greet"><span id="greetWord">Assalomu alaykum</span>, <span class="em" id="userName" data-i18n="home.addressee">do'stim</span>.</h1>
 
     <!-- AI Murabbiy — kontekstli xabar (kerakli holatda chiqadi) -->
     <div id="murabbiyBox" style="display:none;background:rgba(0,229,212,.06);border:1px solid rgba(0,229,212,.18);border-radius:12px;padding:14px 16px;font-family:'Cormorant Garamond',serif;font-style:italic;font-size:14px;line-height:1.5;color:var(--text);text-align:center;">
@@ -211,10 +211,10 @@
 
       <!-- Tanlovlar — istalganini bos -->
       <div id="tileGrid" style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:6px;">
-        <a class="ghost" id="tilePlan" href="today-plan.html" style="margin:0;">Bugungi reja</a>
-        <a class="ghost" href="maqsadlar.html" style="margin:0;">Maqsadlar</a>
-        <a class="ghost" href="calendar.html" style="margin:0;">Kalendar</a>
-        <a class="ghost" id="tileEvening" href="kechqurun.html" style="margin:0;">Kun yakuni</a>
+        <a class="ghost" id="tilePlan" href="today-plan.html" style="margin:0;" data-i18n="home.tile_plan">Bugungi reja</a>
+        <a class="ghost" href="maqsadlar.html" style="margin:0;" data-i18n="home.tile_goals">Maqsadlar</a>
+        <a class="ghost" href="calendar.html" style="margin:0;" data-i18n="home.tile_calendar">Kalendar</a>
+        <a class="ghost" id="tileEvening" href="kechqurun.html" style="margin:0;" data-i18n="home.tile_evening">Kun yakuni</a>
       </div>
     </div>
 
@@ -273,23 +273,24 @@
     // ── SALOM — universal vaqt asosida (4-11 tong · 11-17 kun · 17-22 kech · 22-4 tun) ──
     function smartGreeting() {
       const h = nowMin / 60;
-      if (h >= 4 && h < 11)  return 'Xayrli tong';
-      if (h >= 11 && h < 17) return 'Assalomu alaykum';
-      if (h >= 17 && h < 22) return 'Xayrli kech';
-      return 'Xayrli tun';
+      const T = (k, def) => (window.I18N ? I18N.t(k, def) : def);
+      if (h >= 4 && h < 11)  return T('home.greet_morning', 'Xayrli tong');
+      if (h >= 11 && h < 17) return T('home.greet_day', 'Assalomu alaykum');
+      if (h >= 17 && h < 22) return T('home.greet_evening', 'Xayrli kech');
+      return T('home.greet_night', 'Xayrli tun');
     }
     document.getElementById('greetWord').textContent = smartGreeting();
 
     // KEYINGI — faqat BUGUNGI kelajakdagi task'lar
     const upcoming = plan.find(p => tKey(p.time) >= nowMin);
     const nextRow = document.getElementById('nextRow');
+    const T = (k, def) => (window.I18N ? I18N.t(k, def) : def);
     if (upcoming) {
-      nextRow.innerHTML = `<span class="time">${upcoming.time || '—'}</span><span class="name">${upcoming.name || 'ish'}</span>`;
+      nextRow.innerHTML = `<span class="time">${upcoming.time || '—'}</span><span class="name">${upcoming.name || T('today.ish_lbl', 'ish')}</span>`;
     } else if (plan.length) {
-      // Bugungilar tugadi
-      nextRow.innerHTML = '<span class="none">bugungi rejalar tugadi</span>';
+      nextRow.innerHTML = '<span class="none">' + T('home.no_upcoming', 'bugungi rejalar tugadi') + '</span>';
     } else {
-      nextRow.innerHTML = '<span class="none">reja yo\'q</span>';
+      nextRow.innerHTML = '<span class="none">' + T('home.no_plan_short', "reja yo'q") + '</span>';
     }
 
     // Stats — bajarilgan va qolgan
@@ -338,21 +339,18 @@
       hasGoals = Array.isArray(g) && g.length > 0;
     } catch {}
 
+    const Ti = (k, def) => (window.I18N ? I18N.t(k, def) : def);
     if (!hasGoals) {
-      // Eng yuqori prioritet — maqsad qo'ydirish (boshqa hech narsa boshlanmaydi)
-      cta.textContent = 'Maqsad qo\'shing';
+      cta.textContent = Ti('home.cta_add_goal', "Maqsad qo'shing");
       cta.href = 'maqsadlar.html';
     } else if (allDone || isEvening) {
-      // Tun/kech yoki hammasi bajarilgan → kun yakuni
-      cta.textContent = 'Kun yakuni';
+      cta.textContent = Ti('home.cta_evening', 'Kun yakuni');
       cta.href = 'kechqurun.html';
     } else if (activeTask || upcomingSoon) {
-      // Hozir vaqti yoki 30 daq ichida boshlash kerak
-      cta.textContent = 'Boshlayman';
+      cta.textContent = Ti('home.cta_start', 'Boshlayman');
       cta.href = 'hard-lock.html';
     } else {
-      // Maqsad bor, reja bor yoki yo'q — today-plan'ga
-      cta.textContent = 'Bugungi reja';
+      cta.textContent = Ti('home.cta_today_plan', 'Bugungi reja');
       cta.href = 'today-plan.html';
     }
 
@@ -401,18 +399,21 @@
     function murabbiyMessage() {
       if (!hasGoals) return null;
       if (!plan.length) return null;
+      const tw = (k, params) => (window.I18N ? I18N.tWith(k, params) : '');
+      const emN = '<span class="em">' + todayRemaining + '</span>';
+      const emPct = '<span class="em">' + (yPct || 0) + '%</span>';
 
       // Asosiy xabar — bajarish holatiga qarab
       let main;
       if (todayRemaining === 0 && plan.length > 0) {
-        main = 'Bugun hammasi bajarildi. Tabriklayman.';
+        main = tw('home.murabbiy_all_done', {}) || 'Bugun hammasi bajarildi.';
       } else if (yPct !== null) {
-        if (yPct >= 80) main = 'Bugun <span class="em">' + todayRemaining + '</span> reja qoldi. Kecha <span class="em">' + yPct + '%</span> bajardingiz. Davom eting.';
-        else if (yPct >= 50) main = 'Bugun <span class="em">' + todayRemaining + '</span> reja qoldi. Kecha <span class="em">' + yPct + '%</span> — bugun yaxshilang.';
-        else if (yPct > 0) main = 'Bugun <span class="em">' + todayRemaining + '</span> reja qoldi. Kecha <span class="em">' + yPct + '%</span> — bugun qaytib keling.';
-        else main = 'Bugun <span class="em">' + todayRemaining + '</span> reja kutmoqda. Boshlang.';
+        if (yPct >= 80)      main = tw('home.murabbiy_high', { n: emN, pct: emPct });
+        else if (yPct >= 50) main = tw('home.murabbiy_mid',  { n: emN, pct: emPct });
+        else if (yPct > 0)   main = tw('home.murabbiy_low',  { n: emN, pct: emPct });
+        else                 main = tw('home.murabbiy_zero', { n: emN, pct: emPct });
       } else {
-        main = 'Bugun <span class="em">' + todayRemaining + '</span> reja kutmoqda.';
+        main = tw('home.murabbiy_plain', { n: emN });
       }
 
       // Kontekstli qo'shimcha — situation / weekday / energy peak
@@ -433,7 +434,8 @@
         }
         // Streak ogohlantirishi (yo'qotish xavfi)
         if (!ctx && streak > 0 && todayRemaining > 0 && hourNow >= 18) {
-          ctx = '<span style="color:#F5C26B;">' + streak + ' kunlik streak xatarda — vaqt bor.</span>';
+          const riskTxt = window.I18N ? I18N.tWith('home.streak_at_risk', { n: streak }) : (streak + ' kunlik streak xatarda — vaqt bor.');
+          ctx = '<span style="color:#F5C26B;">' + riskTxt + '</span>';
         }
       } catch {}
 
@@ -549,7 +551,8 @@
       recBox.style.display = 'block';
       if (recoveryDays >= 7) {
         // Diagnostika — sabab so'rash
-        recText.innerHTML = '<strong>' + recoveryDays + ' kun</strong> reja bajarilmadi.';
+        const leadTxt = window.I18N ? I18N.tWith('home.recovery_lead', { n: '<strong>' + recoveryDays + '</strong>' }) : (recoveryDays + ' kun reja bajarilmadi.');
+        recText.innerHTML = leadTxt;
         diagBox.style.display = 'block';
         const reducePctBox = document.getElementById('reducePctBox');
         const diagOpts = document.getElementById('diagOpts');
@@ -574,7 +577,11 @@
         });
       } else {
         // Oddiy recovery (3-6 kun)
-        recText.innerHTML = '<strong>' + recoveryDays + ' kun</strong> reja bajarilmagan.<br>Qolgan kunlarga qayta tarqataymizmi?';
+        const lead = window.I18N ? I18N.tWith('home.recovery_lead', { n: '<strong>' + recoveryDays + '</strong>' }) : (recoveryDays + ' kun reja bajarilmagan.');
+        const q = window.I18N ? I18N.t('home.recovery_simple_q', '') : 'Qolgan kunlarga qayta tarqataymizmi?';
+        const btnTxt = window.I18N ? I18N.t('home.recovery_btn_simple', '') : 'Rejani qayta tuzish';
+        recText.innerHTML = lead + '<br>' + q;
+        document.getElementById('recoveryBtn').textContent = btnTxt;
         simpleBox.style.display = 'block';
         document.getElementById('recoveryBtn').addEventListener('click', regenOnly);
       }
@@ -707,11 +714,15 @@
         const goalText = (goals[0] && goals[0].text) ? goals[0].text : null;
         const idBox = document.getElementById('identityBox');
         const idText = document.getElementById('identityText');
+        const streakSpan = '<span style="color:var(--accent);font-style:normal;font-weight:600;">' + streak + '</span>';
+        const subTxt = window.I18N ? I18N.t('home.identity_sub', "Bu — sizning yangi shaxsingizdir.") : "Bu — sizning yangi shaxsingizdir.";
+        let mainTxt;
         if (goalText) {
-          idText.innerHTML = 'Siz <span style="color:var(--accent);font-style:normal;font-weight:600;">' + streak + ' kun</span> davomida<br>«' + goalText + '» yo\'lidasiz.<br><span style="font-size:12px;color:var(--text-mid);">Bu — sizning yangi shaxsingizdir.</span>';
+          mainTxt = window.I18N ? I18N.tWith('home.identity_with_goal', { streak: streakSpan + ' ' + (I18N.t('home.streak_lbl', '')||''), goal: goalText }) : ('Siz ' + streakSpan + ' kun davomida «' + goalText + '» yo\'lidasiz.');
         } else {
-          idText.innerHTML = 'Siz <span style="color:var(--accent);font-style:normal;font-weight:600;">' + streak + ' kun</span> davomida<br>intizom yo\'lidasiz.<br><span style="font-size:12px;color:var(--text-mid);">Bu — sizning yangi shaxsingizdir.</span>';
+          mainTxt = window.I18N ? I18N.tWith('home.identity_plain', { streak: streakSpan + ' ' + (I18N.t('home.streak_lbl', '')||'') }) : ('Siz ' + streakSpan + ' kun davomida intizom yo\'lidasiz.');
         }
+        idText.innerHTML = mainTxt + '<br><span style="font-size:12px;color:var(--text-mid);">' + subTxt + '</span>';
         idBox.style.display = 'block';
       } catch {}
     }
