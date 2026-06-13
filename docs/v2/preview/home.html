@@ -154,6 +154,15 @@
       </div>
     </div>
 
+    <!-- VAQT NAQSHI: ma'lum vaqtda muntazam bajarmaslik aniqlanganida -->
+    <div id="patternBox" style="display:none;background:rgba(245,194,107,.08);border:1px solid rgba(245,194,107,.3);border-radius:12px;padding:14px 16px;">
+      <div style="font-family:'Cormorant Garamond',serif;font-style:italic;font-size:14px;color:var(--text);line-height:1.55;margin-bottom:12px;" id="patternText"></div>
+      <div style="display:flex;gap:8px;justify-content:center;">
+        <button id="patternAcceptBtn" type="button" style="padding:10px 18px;background:#F5C26B;color:#04060B;border:none;border-radius:999px;font-family:'Inter',sans-serif;font-size:11px;font-weight:600;letter-spacing:1.5px;text-transform:uppercase;cursor:pointer;">Ko'chirish</button>
+        <button id="patternRejectBtn" type="button" style="padding:10px 18px;background:transparent;border:1px solid rgba(255,255,255,.15);color:var(--text-mid);border-radius:999px;font-family:'Inter',sans-serif;font-size:11px;font-weight:600;letter-spacing:1.5px;text-transform:uppercase;cursor:pointer;">Hozircha yo'q</button>
+      </div>
+    </div>
+
     <!-- BAJARGANDA: Identity (shaxs shakllanmoqda) — streak >= 7 -->
     <div id="identityBox" style="display:none;background:rgba(0,229,212,.04);border-radius:12px;padding:14px 18px;text-align:center;">
       <div style="font-family:'Cormorant Garamond',serif;font-style:italic;font-size:15px;line-height:1.55;color:var(--text);" id="identityText"></div>
@@ -510,6 +519,105 @@
         recText.innerHTML = '<strong>' + recoveryDays + ' kun</strong> reja bajarilmagan.<br>Qolgan kunlarga qayta tarqataymizmi?';
         simpleBox.style.display = 'block';
         document.getElementById('recoveryBtn').addEventListener('click', regenOnly);
+      }
+    }
+
+    // ── VAQT NAQSHI: ma'lum vaqtda 10+ ketma-ket bajarmaslik ──
+    function getConsecutiveMissesForGoal(goal) {
+      if (!window.MVOW_DATA) return 0;
+      const history = MVOW_DATA.getHistory();
+      const w = MVOW_DATA.getWeekPlan();
+      let misses = 0;
+      const d = new Date();
+      d.setHours(0,0,0,0);
+      d.setDate(d.getDate() - 1); // kechagi kundan
+      const goalStart = new Date(goal.startDate);
+      for (let i = 0; i < 60; i++) {
+        if (d < goalStart) break;
+        const iso = d.toISOString().slice(0, 10);
+        const planForDay = w['d' + iso] || [];
+        const hasTaskForGoal = planForDay.some(t =>
+          (t.goalId === goal.id) || (t.name === goal.text && t.time === goal.time)
+        );
+        if (hasTaskForGoal) {
+          const done = history.some(h => h.dateIso === iso && h.name === goal.text);
+          if (done) break;
+          misses++;
+        }
+        d.setDate(d.getDate() - 1);
+      }
+      return misses;
+    }
+
+    function findPatternFailure() {
+      try {
+        const goals = JSON.parse(localStorage.getItem('mvow.goals') || '[]');
+        if (!Array.isArray(goals)) return null;
+        // Rad etilgan takliflarni o'tkazib yuborish
+        const rejected = JSON.parse(localStorage.getItem('mvow.patternRejected') || '{}');
+        for (const g of goals) {
+          if (rejected[g.id]) continue;
+          const misses = getConsecutiveMissesForGoal(g);
+          if (misses >= 10) {
+            return { goal: g, misses };
+          }
+        }
+      } catch {}
+      return null;
+    }
+
+    function suggestedPeakTime() {
+      try {
+        const profile = JSON.parse(localStorage.getItem('mvow.profile') || '{}');
+        const map = { dawn: '05:00', morning: '09:00', noon: '14:00', evening: '19:00', night: '22:00' };
+        return map[profile.energyPeak] || '06:30';
+      } catch { return '06:30'; }
+    }
+
+    function changeGoalTime(goalId, newTime) {
+      try {
+        const goals = JSON.parse(localStorage.getItem('mvow.goals') || '[]');
+        const g = goals.find(x => x.id === goalId);
+        if (!g || !window.MVOW_DATA) return;
+        g.time = newTime;
+        localStorage.setItem('mvow.goals', JSON.stringify(goals));
+        // Bugundan keyingi kunlarda task time yangilanadi
+        const w = MVOW_DATA.getWeekPlan();
+        const todayIso = MVOW_DATA.today.iso;
+        for (const key of Object.keys(w)) {
+          const iso = key.slice(1);
+          if (iso < todayIso) continue;
+          if (!Array.isArray(w[key])) continue;
+          w[key].forEach(t => {
+            if (t.goalId === goalId) t.time = newTime;
+          });
+        }
+        MVOW_DATA.setWeekPlan(w);
+        if (MVOW_DATA.fxSuccess) MVOW_DATA.fxSuccess();
+        location.reload();
+      } catch (err) { console.error('Change time failed:', err); }
+    }
+
+    const pattern = (recoveryDays === null) ? findPatternFailure() : null;
+    if (pattern) {
+      const peakTime = suggestedPeakTime();
+      // Agar joriy vaqt allaqachon peak'ga teng bo'lsa, taklif kerakmas
+      if (pattern.goal.time !== peakTime) {
+        const pBox = document.getElementById('patternBox');
+        const pText = document.getElementById('patternText');
+        const pAccept = document.getElementById('patternAcceptBtn');
+        pText.innerHTML = 'Siz <span style="color:var(--accent);font-style:normal;font-weight:600;">' + pattern.goal.time + '</span> da «' + pattern.goal.text + '» rejasini <span style="color:#FF8E97;font-style:normal;">' + pattern.misses + ' kun</span> ketma-ket bajarmadingiz.<br><span style="font-size:13px;color:var(--text-mid);">Rejani <strong style="color:#F5C26B;">' + peakTime + '</strong> ga ko\'chirishni tavsiya qilaman.</span>';
+        pAccept.textContent = peakTime + ' ga ko\'chirish';
+        pBox.style.display = 'block';
+        pAccept.addEventListener('click', () => changeGoalTime(pattern.goal.id, peakTime));
+        document.getElementById('patternRejectBtn').addEventListener('click', () => {
+          try {
+            const rejected = JSON.parse(localStorage.getItem('mvow.patternRejected') || '{}');
+            rejected[pattern.goal.id] = Date.now();
+            localStorage.setItem('mvow.patternRejected', JSON.stringify(rejected));
+            pBox.style.display = 'none';
+          } catch {}
+        });
       }
     }
 

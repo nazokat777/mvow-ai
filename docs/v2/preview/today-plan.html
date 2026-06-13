@@ -184,6 +184,16 @@
       Maqsadlaringizdan tuzildi
     </div>
 
+    <!-- Bugungi kun uchun moslashtirish so'rovi (kunda bir marta) -->
+    <div id="adjustPrompt" style="display:none;background:rgba(0,229,212,.05);border:1px solid rgba(0,229,212,.2);border-radius:12px;padding:14px 16px;margin-bottom:16px;text-align:center;">
+      <div style="font-family:'Cormorant Garamond',serif;font-style:italic;font-size:14px;color:var(--text);line-height:1.5;margin-bottom:12px;">Bugungi kuningizga moslab<br>kun tartibingizni o'zgartirasizmi?</div>
+      <div style="font-size:11px;color:var(--text-dim);margin-bottom:14px;letter-spacing:0.3px;">Vaqt yoki davomiylikni har vazifani bosib tahrirlang</div>
+      <div style="display:flex;gap:8px;justify-content:center;">
+        <button id="adjustYesBtn" type="button" style="padding:10px 18px;background:linear-gradient(180deg,var(--accent),var(--accent-soft));color:var(--void);border:none;border-radius:999px;font-family:'Inter',sans-serif;font-size:11px;font-weight:600;letter-spacing:1.5px;text-transform:uppercase;cursor:pointer;">Ha, tahrirlayman</button>
+        <button id="adjustNoBtn" type="button" style="padding:10px 18px;background:transparent;border:1px solid rgba(255,255,255,.15);color:var(--text-mid);border-radius:999px;font-family:'Inter',sans-serif;font-size:11px;font-weight:600;letter-spacing:1.5px;text-transform:uppercase;cursor:pointer;">Hozircha yo'q</button>
+      </div>
+    </div>
+
     <div class="tasks" id="tasks"></div>
 
     <button class="add-btn" id="addBtn" type="button" data-i18n="today.add">+ reja qo'shish</button>
@@ -430,9 +440,38 @@
 
   document.getElementById('addBtn').addEventListener('click', addNew);
 
+  // ── Bugungi kun uchun moslash so'rovi — kunda bir marta ──
+  function maybeShowAdjustPrompt() {
+    if (!tasks.length) return;
+    const todayIso = (window.MVOW_DATA ? MVOW_DATA.today.iso : new Date().toISOString().slice(0,10));
+    let answered = {};
+    try { answered = JSON.parse(localStorage.getItem('mvow.adjustPrompt') || '{}'); } catch {}
+    if (answered[todayIso]) return; // bugun javob berilgan
+    const promptEl = document.getElementById('adjustPrompt');
+    if (!promptEl) return;
+    promptEl.style.display = 'block';
+    function dismiss() {
+      answered[todayIso] = Date.now();
+      localStorage.setItem('mvow.adjustPrompt', JSON.stringify(answered));
+      promptEl.style.display = 'none';
+    }
+    document.getElementById('adjustYesBtn').addEventListener('click', () => {
+      dismiss();
+      // Birinchi vazifani highlight + edit modaliga olib o'tish
+      const firstTask = document.querySelector('.task');
+      if (firstTask) {
+        firstTask.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        firstTask.style.transition = 'box-shadow .4s';
+        firstTask.style.boxShadow = '0 0 0 2px rgba(0,229,212,.4)';
+        setTimeout(() => { firstTask.style.boxShadow = ''; }, 1800);
+      }
+    });
+    document.getElementById('adjustNoBtn').addEventListener('click', dismiss);
+  }
+
   // Boshlash
-  document.addEventListener('DOMContentLoaded', render);
-  if (document.readyState !== 'loading') render();
+  document.addEventListener('DOMContentLoaded', () => { render(); maybeShowAdjustPrompt(); });
+  if (document.readyState !== 'loading') { render(); maybeShowAdjustPrompt(); }
 </script>
 
 </body>
