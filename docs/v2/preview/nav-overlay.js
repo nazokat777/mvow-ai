@@ -341,11 +341,13 @@
   document.head.appendChild(style);
 
   // ── Top bar: Back + Progress + Close ──
+  // Back tugmasi tabiiy navigatsiya — history.back(), brauzerdan kelgan yo'lga qaytadi.
+  // Agar history bo'sh bo'lsa (mas. PWA bevosita ochilgan), home.html'ga.
   const top = document.createElement('div');
   top.className = 'seq-top-bar';
   top.innerHTML = `
     <div class="seq-top-row">
-      <a class="seq-btn ${prev ? '' : 'disabled'}" href="${prev || '#'}" aria-label="Orqaga" title="Orqaga">‹</a>
+      <button class="seq-btn" id="seqBackBtn" type="button" aria-label="Orqaga" title="Orqaga" style="font-family:inherit;font-size:22px;font-weight:500;">‹</button>
       <div class="seq-progress-wrap">
         <div class="seq-progress-meta">
           <span class="name">${currentSection.name}</span>
@@ -357,6 +359,26 @@
     </div>
   `;
   document.body.appendChild(top);
+
+  // Back tugmasi mantiqi:
+  //   - referrer ichki (shu domendan) bo'lsa → history.back() (tabiiy)
+  //   - aks holda → home.html (xavfsiz fallback)
+  const backBtn = document.getElementById('seqBackBtn');
+  if (backBtn) {
+    backBtn.addEventListener('click', (e) => {
+      e.preventDefault();
+      const ref = document.referrer || '';
+      const sameOrigin = ref && ref.indexOf(location.origin) === 0;
+      if (sameOrigin && window.history.length > 1) {
+        history.back();
+      } else if (idx > 0) {
+        // history bo'sh — SEQ tartibida orqaga
+        location.href = SEQ[idx - 1];
+      } else {
+        location.href = 'home.html';
+      }
+    });
+  }
 
   // Yon strelka tugmalar olib tashlandi — foydalanuvchi sahifa ichidagi CTA bilan davom etadi
 

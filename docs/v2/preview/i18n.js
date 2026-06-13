@@ -158,11 +158,11 @@
         focus_lbl: 'fokus',
         sessions_lbl: 'bugun',
         soat: 'soat',
-        ish: 'ish',
+        ish: 'reja',
         cta_plan: 'Rejani tuzing',
         cta_start: 'Boshlayman',
         view_plan: 'Bugungi reja',
-        streak_warn1: "Streak yo'qoladi — bugun bitta ish qoldi.",
+        streak_warn1: "Streak yo'qoladi — bugun bitta reja qoldi.",
         streak_warn2_a: 'soat qoldi.'
       },
       routine: {
@@ -177,10 +177,10 @@
       today: {
         title: 'Bugungi reja',
         focus_lbl: 'fokus',
-        ish_lbl: 'ish',
-        add: "+ ish qo'shish",
+        ish_lbl: 'reja',
+        add: "+ reja qo'shish",
         empty_a: "Bugun bo'sh.",
-        empty_b: "Bitta ish bilan boshlang — past tomondan qo'shing.",
+        empty_b: "Maqsadlardan reja chiqmadi — pastdan qo'shing.",
         cta: 'Boshlayman',
         time_ph: '07:00',
         name_ph: 'ish nomi',
@@ -189,7 +189,7 @@
       calendar: {
         prev: 'Oldingi hafta',
         next: 'Keyingi hafta',
-        add: "+ ish qo'sh",
+        add: "+ reja qo'sh",
         empty: "Bu kuni hech narsa rejalashtirilmagan."
       },
       dayflow: {
