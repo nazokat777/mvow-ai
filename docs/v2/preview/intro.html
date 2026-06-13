@@ -3,154 +3,844 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-<title>{brand} — Tanishuv</title>
+<title>brend — Tanishuv</title>
 <link rel="manifest" href="manifest.webmanifest">
 <meta name="theme-color" content="#04060B">
 <link rel="apple-touch-icon" href="assets/mnsm-logo.png">
 <link rel="icon" type="image/png" href="assets/mnsm-logo.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;1,500;1,600&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="motion.css">
 <style>
   * { box-sizing: border-box; margin: 0; padding: 0; }
   :root {
-    --void:#04060B; --void-soft:#0C0F16;
-    --text:#F5F2EC; --text-mid:#B8BBC2; --text-dim:#9CA0A8;
-    --accent:#00E5D4; --accent-soft:#00B5A8;
-    --card:#11151E;
+    --void: #04060B;
+    --text: #F5F2EC;
+    --text-dim: #B8BBC2;
+    --gold-base: #D4A55C;
+    --gold-mid: #E8B863;
+    --gold-hi: #F2C879;
   }
   html, body {
-    background: var(--void); color: var(--text);
-    min-height: 100vh;
-    font-family: 'Inter', sans-serif;
+    background: var(--void);
+    color: var(--text);
+    height: 100%;
+    font-family: 'Inter', system-ui, sans-serif;
     -webkit-font-smoothing: antialiased;
+    overflow: hidden;
   }
-  .wrap {
-    max-width: 480px;
-    margin: 0 auto;
-    padding: 60px 28px 140px;
-  }
-
-  .logo {
-    width: 64px; height: 64px;
-    margin: 0 auto 16px;
-    background: url('assets/mnsm-logo.png') center/contain no-repeat;
-    filter: hue-rotate(160deg) saturate(1.4) drop-shadow(0 0 14px rgba(0,229,212,.35));
-  }
-  .brandname {
-    text-align: center;
-    font-family: 'Cormorant Garamond', serif;
-    font-weight: 500;
-    font-size: 22px;
-    letter-spacing: 4px;
-    color: var(--text);
-    margin-bottom: 4px;
-  }
-  .tagline {
-    text-align: center;
-    font-size: 12px;
-    letter-spacing: 2px;
-    color: var(--text-dim);
-    text-transform: uppercase;
-    margin-bottom: 40px;
-  }
-
-  .features { display: flex; flex-direction: column; gap: 14px; margin-bottom: 36px; }
-  .feat {
-    display: grid;
-    grid-template-columns: 36px 1fr;
-    gap: 14px;
-    align-items: center;
-    padding: 14px 16px;
-    background: var(--card);
-    border: 1px solid rgba(255,255,255,.05);
-    border-radius: 12px;
-  }
-  .feat .ic {
-    width: 36px; height: 36px;
-    border-radius: 10px;
-    background: rgba(0,229,212,.08);
-    border: 1px solid rgba(0,229,212,.25);
-    display: flex; align-items: center; justify-content: center;
-    color: var(--accent);
-    font-size: 16px;
-    font-family: 'Cormorant Garamond', serif;
-    font-weight: 500;
-  }
-  .feat .txt {
-    font-size: 14px;
-    color: var(--text);
-    line-height: 1.4;
-  }
-
-  .bottom {
+  body {
     position: fixed;
-    bottom: 0; left: 0; right: 0;
-    padding: 18px 28px env(safe-area-inset-bottom, 22px);
-    background: linear-gradient(180deg, transparent, var(--void) 40%);
+    inset: 0;
+    user-select: none;
+    -webkit-tap-highlight-color: transparent;
   }
-  .cta {
-    display: block;
-    width: 100%;
-    max-width: 440px;
-    margin: 0 auto;
-    padding: 16px;
-    background: linear-gradient(180deg, var(--accent), var(--accent-soft));
-    color: var(--void);
-    font-family: 'Inter', sans-serif;
-    font-size: 14px;
-    font-weight: 600;
-    letter-spacing: 2px;
-    text-transform: uppercase;
-    border: none;
-    border-radius: 999px;
-    text-align: center;
-    text-decoration: none;
+  body::before {
+    content: ''; position: fixed; inset: 0; pointer-events: none; z-index: 1;
+    background:
+      radial-gradient(ellipse at 50% 0%, rgba(242,200,121,0.06), transparent 55%),
+      radial-gradient(ellipse at 50% 110%, rgba(0,0,0,0.6), transparent 60%);
+  }
+  #introCanvas {
+    position: fixed; inset: 0; width: 100vw; height: 100vh; z-index: 0; display: block;
     cursor: pointer;
-    min-height: 52px;
+  }
+  .intro-text {
+    position: absolute;
+    left: 50%;
+    top: 62%;
+    transform: translate(-50%, -50%);
+    max-width: 460px;
+    width: calc(100% - 48px);
+    padding: 24px 16px;
+    text-align: center;
+    color: var(--text);
+    z-index: 3;
+    pointer-events: none;
+  }
+  .intro-line {
+    display: block;
+    font-family: 'Inter', sans-serif;
+    font-weight: 400;
+    font-size: 1.08rem;
+    line-height: 1.5;
+    letter-spacing: 0.01em;
+    opacity: 0;
+    transform: translateY(8px);
+    transition: opacity 700ms cubic-bezier(.22,.61,.36,1), transform 700ms cubic-bezier(.22,.61,.36,1);
+    color: var(--text);
+  }
+  .intro-line.show {
+    opacity: 1;
+    transform: translateY(0);
+  }
+  .intro-line.emphasis {
+    font-family: 'Cormorant Garamond', serif;
+    font-style: italic;
+    font-weight: 500;
+    color: var(--gold-hi);
+    font-size: 1.85rem;
+    line-height: 1.2;
+    margin-top: 10px;
+    letter-spacing: 0.01em;
+    text-shadow: 0 0 18px rgba(242,200,121,0.35), 0 0 32px rgba(212,165,92,0.22);
+  }
+  .intro-line.emphasis::after {
+    content: '';
+    display: block;
+    width: 0;
+    height: 1px;
+    margin: 14px auto 0;
+    background: linear-gradient(90deg, transparent, rgba(242,200,121,0.6), transparent);
+    box-shadow: 0 0 8px rgba(242,200,121,0.5);
+    transition: width 800ms cubic-bezier(.22,.61,.36,1) 200ms;
+  }
+  .intro-line.emphasis.show::after { width: 70%; }
+  .scene-5 .intro-line { font-size: 0.98rem; }
+  .scene-5 .intro-line.emphasis { font-size: 1.6rem; margin-top: 6px; }
+  .step-grid {
+    position: absolute;
+    left: 50%;
+    top: 38%;
+    transform: translate(-50%, -50%);
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 10px;
+    max-width: 420px;
+    width: calc(100% - 32px);
+    padding: 0 8px;
+    z-index: 3;
+    pointer-events: none;
+    opacity: 0;
+    transition: opacity 600ms ease;
+  }
+  .step-grid.show { opacity: 1; }
+  .step-col {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 6px;
+    opacity: 0;
+    transform: translateY(8px) scale(0.96);
+    transition: opacity 700ms cubic-bezier(.22,.61,.36,1), transform 700ms cubic-bezier(.22,.61,.36,1);
+  }
+  .step-col.show {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+  .step-col svg {
+    width: 44px;
+    height: 44px;
+    filter: drop-shadow(0 0 8px rgba(242,200,121,0.4)) drop-shadow(0 0 18px rgba(212,165,92,0.22));
+    animation: iconBreath 4s ease-in-out infinite;
+  }
+  .step-col:nth-child(2) svg { animation-delay: 0.6s; }
+  .step-col:nth-child(3) svg { animation-delay: 1.2s; }
+  .step-col:nth-child(4) svg { animation-delay: 1.8s; }
+  @keyframes iconBreath {
+    0%, 100% { transform: scale(1); filter: drop-shadow(0 0 8px rgba(242,200,121,0.35)) drop-shadow(0 0 18px rgba(212,165,92,0.18)); }
+    50% { transform: scale(1.015); filter: drop-shadow(0 0 12px rgba(242,200,121,0.55)) drop-shadow(0 0 24px rgba(212,165,92,0.3)); }
+  }
+  .step-name {
+    font-family: 'Inter', sans-serif;
+    font-weight: 600;
+    font-size: 0.62rem;
+    letter-spacing: 0.18em;
+    color: var(--gold-base);
+    text-transform: uppercase;
+  }
+  .step-sub {
+    font-family: 'Inter', sans-serif;
+    font-weight: 400;
+    font-size: 0.58rem;
+    line-height: 1.3;
+    color: rgba(245,242,236,0.65);
+    text-align: center;
+    letter-spacing: 0.01em;
+  }
+  .skip-btn {
+    position: fixed;
+    top: max(20px, env(safe-area-inset-top, 20px));
+    right: 20px;
+    padding: 9px 14px;
+    background: rgba(255,255,255,0.04);
+    color: var(--text-dim);
+    font-family: 'Inter', sans-serif;
+    font-size: 10px;
+    font-weight: 500;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    border: 1px solid rgba(255,255,255,0.08);
+    border-radius: 999px;
+    z-index: 10;
+    cursor: pointer;
+    transition: background 200ms ease, color 200ms ease, border-color 200ms ease;
+    -webkit-backdrop-filter: blur(8px);
+    backdrop-filter: blur(8px);
+  }
+  .skip-btn:hover, .skip-btn:active {
+    background: rgba(255,255,255,0.08);
+    color: var(--text);
+    border-color: rgba(242,200,121,0.3);
+  }
+  .logo-wrap {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%) scale(0.92);
+    z-index: 4;
+    opacity: 0;
+    transition: opacity 700ms ease, transform 900ms cubic-bezier(.22,.61,.36,1), filter 700ms ease;
+    pointer-events: none;
+  }
+  .logo-wrap.show {
+    opacity: 1;
+    transform: translate(-50%, -50%) scale(1);
+  }
+  .logo-wrap img {
+    width: 120px;
+    height: auto;
+    display: block;
+    filter:
+      hue-rotate(30deg)
+      drop-shadow(0 0 24px rgba(242,200,121,0.55))
+      drop-shadow(0 0 48px rgba(212,165,92,0.3))
+      brightness(1.1);
+  }
+  .black-veil {
+    position: fixed;
+    inset: 0;
+    background: var(--void);
+    z-index: 20;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 500ms ease;
+  }
+  .black-veil.show {
+    opacity: 1;
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .intro-line { transition: opacity 300ms ease; transform: none; }
+    .step-col { transition: opacity 300ms ease; transform: none; }
+    .intro-line.emphasis::after { transition: none; }
+  }
+  @media (max-width: 380px) {
+    .intro-line { font-size: 0.98rem; }
+    .intro-line.emphasis { font-size: 1.55rem; }
+    .step-col svg { width: 38px; height: 38px; }
+    .step-name { font-size: 0.58rem; }
+    .step-sub { font-size: 0.54rem; }
   }
 </style>
-<link rel="stylesheet" href="motion.css">
-<script src="motion.js" defer></script>
 </head>
 <body>
+<canvas id="introCanvas"></canvas>
 
-<div class="wrap">
-
-  <div class="logo"></div>
-  <div class="brandname" data-brand="name">brend</div>
-  <div class="tagline" data-i18n="intro.tagline">Intizom · fokus · natija</div>
-
-  <div class="features">
-    <div class="feat"><div class="ic">1</div><div class="txt" data-i18n="intro.feat1">Maqsad qo'yasiz — orzu yoziladi</div></div>
-    <div class="feat"><div class="ic">2</div><div class="txt" data-i18n="intro.feat2">Tizim tuziladi — har kun reja avtomatik chiqadi</div></div>
-    <div class="feat"><div class="ic">3</div><div class="txt" data-i18n="intro.feat3">Siz bajarasiz — qadam-qadam yetasiz</div></div>
+<div class="step-grid" id="stepGrid" aria-hidden="true">
+  <div class="step-col" data-i="0">
+    <svg viewBox="0 0 60 60" fill="none" stroke="#F2C879" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round" role="img" aria-label="Maqsad"><circle cx="30" cy="30" r="18"/><circle cx="30" cy="30" r="11"/><circle cx="30" cy="30" r="4"/><path d="M30 30 L46 14"/><path d="M42 14 H46 V18"/></svg>
+    <div class="step-name" data-i18n="intro.scene5_step1_name">MAQSAD</div>
+    <div class="step-sub" data-i18n="intro.scene5_step1_sub">Maqsadni belgilang</div>
   </div>
-
+  <div class="step-col" data-i="1">
+    <svg viewBox="0 0 60 60" fill="none" stroke="#F2C879" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round" role="img" aria-label="Reja"><rect x="10" y="14" width="40" height="36" rx="3"/><path d="M10 24 H50"/><path d="M20 10 V18"/><path d="M40 10 V18"/><circle cx="22" cy="34" r="1.2" fill="#F2C879"/><circle cx="30" cy="34" r="1.2" fill="#F2C879"/><circle cx="38" cy="34" r="1.2" fill="#F2C879"/><circle cx="22" cy="42" r="1.2" fill="#F2C879"/><circle cx="30" cy="42" r="1.2" fill="#F2C879"/></svg>
+    <div class="step-name" data-i18n="intro.scene5_step2_name">REJA</div>
+    <div class="step-sub" data-i18n="intro.scene5_step2_sub">Shaxsiy reja yaratiladi</div>
+  </div>
+  <div class="step-col" data-i="2">
+    <svg viewBox="0 0 60 60" fill="none" stroke="#F2C879" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round" role="img" aria-label="Harakat"><circle cx="30" cy="30" r="20"/><path d="M20 30 L27 37 L41 23"/></svg>
+    <div class="step-name" data-i18n="intro.scene5_step3_name">HARAKAT</div>
+    <div class="step-sub" data-i18n="intro.scene5_step3_sub">Har kuni bajaring</div>
+  </div>
+  <div class="step-col" data-i="3">
+    <svg viewBox="0 0 60 60" fill="none" stroke="#F2C879" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round" role="img" aria-label="Natija"><path d="M10 50 H50"/><path d="M10 50 V12"/><path d="M14 42 L24 32 L32 38 L46 18"/><path d="M40 18 H46 V24"/></svg>
+    <div class="step-name" data-i18n="intro.scene5_step4_name">NATIJA</div>
+    <div class="step-sub" data-i18n="intro.scene5_step4_sub">Rivojlanishni kuzating</div>
+  </div>
 </div>
 
-<div class="bottom">
-  <a class="cta" id="startBtn" href="anketa.html" data-i18n="intro.cta">Boshlaymiz</a>
+<div class="intro-text" id="introText" aria-live="polite">
+  <span class="intro-line" id="line1"></span>
+  <span class="intro-line emphasis" id="line2"></span>
 </div>
 
-<script src="i18n.js" defer></script>
-<script src="data.js" defer></script>
-<script src="nav-overlay.js" defer></script>
+<div class="logo-wrap" id="logoWrap" aria-hidden="true">
+  <img src="assets/mnsm-logo.png" alt="brend">
+</div>
+
+<button class="skip-btn" id="skipBtn" type="button" data-i18n="intro.skip">O'tkazib yuborish ›</button>
+
+<div class="black-veil" id="blackVeil"></div>
+
+<script src="i18n.js"></script>
 <script>
-  document.getElementById('startBtn').addEventListener('click', () => {
-    localStorage.setItem('mvow.introSeen', '1');
+(function(){
+  'use strict';
+
+  // ========= EARLY GUARDS ==================================================
+  var INTRO_SEEN_KEY = 'mvow.motion.introSeen';
+  var MOTION_INTENSITY_KEY = 'mvow.motion.intensity';
+  var LANG_KEY = 'mvow.lang';
+
+  function go(url){ try { location.replace(url); } catch(e){ location.href = url; } }
+  function setSeen(){ try { localStorage.setItem(INTRO_SEEN_KEY, '1'); } catch(e){} }
+
+  // If already seen — skip
+  try {
+    if (localStorage.getItem(INTRO_SEEN_KEY)) { go('anketa.html'); return; }
+  } catch(e){}
+
+  var prefersReduced = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  var intensity = '';
+  try { intensity = localStorage.getItem(MOTION_INTENSITY_KEY) || ''; } catch(e){}
+  if (prefersReduced || intensity === 'minimal') {
+    setSeen();
+    go('anketa.html');
+    return;
+  }
+
+  // ========= COPY ==========================================================
+  var lang = 'uz';
+  try { lang = localStorage.getItem(LANG_KEY) || (window.I18N && window.I18N.getLang && window.I18N.getLang()) || 'uz'; } catch(e){}
+
+  var COPY = {
+    uz: {
+      s1: ['Insonning eng qimmat boyligi —', 'vaqt.'],
+      s2: ['Uni qaytarib', "bo'lmaydi."],
+      s3: ['Lekin uni', 'maqsadga aylantirish mumkin.'],
+      s4: ['Ey inson bolasi,', 'siz vaqtdan iboratsiz.'],
+      s5: ['Maqsadni yozing.', "Qolgan yo'l xaritasini biz yaratamiz."],
+      skip: "O'tkazib yuborish ›",
+      stepNames: ['MAQSAD','REJA','HARAKAT','NATIJA'],
+      stepSubs: ['Maqsadni belgilang','Shaxsiy reja yaratiladi','Har kuni bajaring','Rivojlanishni kuzating']
+    },
+    ru: {
+      s1: ['Самое дорогое богатство человека —','время.'],
+      s2: ['Его','не вернуть.'],
+      s3: ['Но его можно превратить','в цель.'],
+      s4: ['Дитя человеческое,','Вы состоите из времени.'],
+      s5: ['Напишите цель.','Остальную карту пути составим мы.'],
+      skip: 'Пропустить ›',
+      stepNames: ['ЦЕЛЬ','ПЛАН','ДЕЙСТВИЕ','РЕЗУЛЬТАТ'],
+      stepSubs: ['Определите цель','Создаётся личный план','Действуйте каждый день','Следите за ростом']
+    },
+    en: {
+      s1: ['The most precious wealth of a human is','time.'],
+      s2: ['It cannot be','brought back.'],
+      s3: ['But it can be turned','into a goal.'],
+      s4: ['Child of mankind,','you are made of time.'],
+      s5: ['Write the goal.',"We'll draw the rest of the path."],
+      skip: 'Skip ›',
+      stepNames: ['GOAL','PLAN','ACTION','RESULT'],
+      stepSubs: ['Set the goal','Personal plan is generated','Act every day','Track growth']
+    }
+  };
+  var T = COPY[lang] || COPY.uz;
+
+  // Apply skip + step labels (i18n) directly
+  var skipBtn = document.getElementById('skipBtn');
+  skipBtn.textContent = T.skip;
+  var stepCols = document.querySelectorAll('.step-col');
+  for (var i = 0; i < stepCols.length; i++) {
+    var nm = stepCols[i].querySelector('.step-name');
+    var sb = stepCols[i].querySelector('.step-sub');
+    if (nm) nm.textContent = T.stepNames[i];
+    if (sb) sb.textContent = T.stepSubs[i];
+  }
+
+  // ========= CANVAS ========================================================
+  var canvas = document.getElementById('introCanvas');
+  var ctx = canvas.getContext('2d', { alpha: true, desynchronized: true });
+  var W = 0, H = 0, DPR = 1;
+  function resizeCanvas(){
+    DPR = Math.min(window.devicePixelRatio || 1, 2);
+    W = window.innerWidth; H = window.innerHeight;
+    canvas.width = Math.round(W * DPR);
+    canvas.height = Math.round(H * DPR);
+    canvas.style.width = W + 'px'; canvas.style.height = H + 'px';
+    ctx.setTransform(DPR, 0, 0, DPR, 0, 0);
+    ctx.globalCompositeOperation = 'lighter';
+  }
+  window.addEventListener('resize', resizeCanvas, { passive: true });
+  resizeCanvas();
+
+  // ========= PARTICLE POOL =================================================
+  var GOLD = [
+    { r: 212, g: 165, b: 92  },
+    { r: 232, g: 184, b: 99  },
+    { r: 242, g: 200, b: 121 }
+  ];
+  function pickColor(){ var r = Math.random(); if (r < 0.5) return GOLD[0]; if (r < 0.85) return GOLD[1]; return GOLD[2]; }
+
+  // Adaptive particle count for low-end devices
+  var PARTICLE_COUNT = 260;
+  if (W * H < 250000) PARTICLE_COUNT = 200;
+  if (navigator.hardwareConcurrency && navigator.hardwareConcurrency <= 4) PARTICLE_COUNT = Math.min(PARTICLE_COUNT, 220);
+
+  var particles = new Array(PARTICLE_COUNT);
+  function makeParticle(i){
+    var col = pickColor();
+    return {
+      x: Math.random() * W,
+      y: -Math.random() * H * 0.6,
+      vx: (Math.random() - 0.5) * 0.15,
+      vy: 0.35 + Math.random() * 0.65,
+      tx: null, ty: null,
+      mStart: 0, mDur: 0, mFromX: 0, mFromY: 0,
+      baseSize: 0.9 + Math.random() * 1.6,
+      color: col,
+      alpha: 0.55 + Math.random() * 0.35,
+      glow: i % 10 === 0,
+      life: 1
+    };
+  }
+  for (var pi = 0; pi < PARTICLE_COUNT; pi++) particles[pi] = makeParticle(pi);
+
+  var pile = [];
+
+  // ========= HALO CACHE ====================================================
+  var haloCache = GOLD.map(function(c){
+    var off = document.createElement('canvas');
+    off.width = 24; off.height = 24;
+    var octx = off.getContext('2d');
+    var g = octx.createRadialGradient(12, 12, 0, 12, 12, 12);
+    g.addColorStop(0,    'rgba(' + c.r + ',' + c.g + ',' + c.b + ',0.55)');
+    g.addColorStop(0.45, 'rgba(' + c.r + ',' + c.g + ',' + c.b + ',0.18)');
+    g.addColorStop(1,    'rgba(' + c.r + ',' + c.g + ',' + c.b + ',0)');
+    octx.fillStyle = g;
+    octx.fillRect(0, 0, 24, 24);
+    return off;
+  });
+  function haloFor(col){
+    if (col === GOLD[0]) return haloCache[0];
+    if (col === GOLD[1]) return haloCache[1];
+    return haloCache[2];
+  }
+
+  // ========= EASING ========================================================
+  function EASE(t){ return 1 - Math.pow(1 - t, 5); }
+
+  // ========= RENDER LOOP ===================================================
+  var lastT = performance.now();
+  var running = true;
+  var finished = false;
+
+  document.addEventListener('visibilitychange', function(){
+    running = !document.hidden;
+    if (running && !finished) { lastT = performance.now(); requestAnimationFrame(tick); }
   });
 
-  // ── Opening Hourglass (Cinematic) ──
-  // Primitive self-gates on mvow.motion.introSeen flag, intensity=minimal, and reduced-motion.
-  document.addEventListener('DOMContentLoaded', () => {
-    try {
-      if (window.MVOW_MOTION && typeof MVOW_MOTION.openingHourglass === 'function') {
-        MVOW_MOTION.openingHourglass();
+  function tick(now){
+    if (!running || finished) return;
+    var dt = Math.min(now - lastT, 48);
+    lastT = now;
+    var dtScale = dt / 16.67;
+
+    ctx.globalCompositeOperation = 'destination-out';
+    ctx.fillStyle = 'rgba(0,0,0,0.30)';
+    ctx.fillRect(0, 0, W, H);
+    ctx.globalCompositeOperation = 'lighter';
+
+    for (var i = 0; i < PARTICLE_COUNT; i++) {
+      var p = particles[i];
+      if (p.tx !== null) {
+        var t = Math.min(1, (now - p.mStart) / p.mDur);
+        var e = EASE(t);
+        p.x = p.mFromX + (p.tx - p.mFromX) * e;
+        p.y = p.mFromY + (p.ty - p.mFromY) * e;
+        p.x += Math.sin(now * 0.001 + i) * 0.18;
+        p.y += Math.cos(now * 0.0013 + i * 0.7) * 0.18;
+      } else {
+        p.vy += 0.012 * dtScale;
+        if (p.vy > 1.8) p.vy = 1.8;
+        p.x += p.vx * dtScale;
+        p.y += p.vy * dtScale;
+        if (p.y > H + 8) {
+          p.x = Math.random() * W;
+          p.y = -10 - Math.random() * 40;
+          p.vy = 0.35 + Math.random() * 0.65;
+          p.vx = (Math.random() - 0.5) * 0.15;
+        }
+        if (p.x < -10) p.x = W + 10;
+        else if (p.x > W + 10) p.x = -10;
       }
-    } catch (e) { /* cinematic is non-critical */ }
-  });
-</script>
 
+      var c = p.color;
+      if (p.glow) {
+        var s = p.baseSize * 6;
+        ctx.globalAlpha = p.alpha * 0.9;
+        ctx.drawImage(haloFor(c), p.x - s * 0.5, p.y - s * 0.5, s, s);
+      }
+      ctx.globalAlpha = p.alpha;
+      ctx.fillStyle = 'rgb(' + c.r + ',' + c.g + ',' + c.b + ')';
+      ctx.fillRect(p.x - p.baseSize * 0.5, p.y - p.baseSize * 0.5, p.baseSize, p.baseSize);
+    }
+
+    if (pile.length) {
+      for (var j = 0; j < pile.length; j++) {
+        var pg = pile[j];
+        var pc = pg.color;
+        ctx.globalAlpha = pg.alpha;
+        ctx.fillStyle = 'rgb(' + pc.r + ',' + pc.g + ',' + pc.b + ')';
+        ctx.fillRect(pg.x - pg.size * 0.5, pg.y - pg.size * 0.5, pg.size, pg.size);
+      }
+    }
+
+    ctx.globalAlpha = 1;
+    requestAnimationFrame(tick);
+  }
+  requestAnimationFrame(tick);
+
+  function spillToPile(count, baseY){
+    for (var i = 0; i < count; i++) {
+      pile.push({
+        x: W * 0.5 + (Math.random() - 0.5) * W * 0.45,
+        y: baseY - Math.random() * 14,
+        color: pickColor(),
+        alpha: 0.5 + Math.random() * 0.4,
+        size: 1 + Math.random() * 1.8
+      });
+      if (pile.length > 60) pile.shift();
+    }
+  }
+
+  // ========= SHAPE MORPH ==================================================
+  function sceneShapeMorph(targetPoints, durationMs, anchorX, anchorY){
+    durationMs = durationMs || 1000;
+    anchorX = anchorX || 0; anchorY = anchorY || 0;
+    var now = performance.now();
+    var n = particles.length;
+    var m = targetPoints.length;
+    if (m === 0) { releaseMorph(); return; }
+
+    var taken = new Uint8Array(m);
+    var assignedRound = 0;
+    for (var i = 0; i < n; i++) {
+      var p = particles[i];
+      if (assignedRound >= m) { taken.fill(0); assignedRound = 0; }
+      var bestIdx = -1, bestD = Infinity;
+      for (var j = 0; j < m; j++) {
+        if (taken[j]) continue;
+        var dx = targetPoints[j].x + anchorX - p.x;
+        var dy = targetPoints[j].y + anchorY - p.y;
+        var d = dx * dx + dy * dy;
+        if (d < bestD) { bestD = d; bestIdx = j; }
+      }
+      if (bestIdx === -1) bestIdx = i % m;
+      taken[bestIdx] = 1;
+      assignedRound++;
+      p.mFromX = p.x; p.mFromY = p.y;
+      p.tx = targetPoints[bestIdx].x + anchorX;
+      p.ty = targetPoints[bestIdx].y + anchorY;
+      p.mStart = now;
+      p.mDur = durationMs + (Math.random() - 0.5) * 220;
+    }
+  }
+
+  function releaseMorph(){
+    for (var i = 0; i < particles.length; i++) {
+      var p = particles[i];
+      p.tx = null; p.ty = null;
+      p.vx = (Math.random() - 0.5) * 0.4;
+      p.vy = -0.2 + Math.random() * 0.8;
+    }
+  }
+
+  function convergeToPoint(cx, cy, durationMs){
+    var now = performance.now();
+    for (var i = 0; i < particles.length; i++) {
+      var p = particles[i];
+      var ang = Math.random() * Math.PI * 2;
+      var rad = Math.random() * 12;
+      p.mFromX = p.x; p.mFromY = p.y;
+      p.tx = cx + Math.cos(ang) * rad;
+      p.ty = cy + Math.sin(ang) * rad;
+      p.mStart = now;
+      p.mDur = durationMs + (Math.random() - 0.5) * 200;
+    }
+  }
+
+  // ========= SHAPES ========================================================
+  function hourglassShape(){
+    var pts = [];
+    var hw = 70, hh = 110;
+    // Top frame line
+    for (var i = 0; i < 10; i++) { var t = i/9; pts.push({ x: -hw + t * hw * 2, y: -hh }); }
+    // Bottom frame line
+    for (i = 0; i < 10; i++) { t = i/9; pts.push({ x: -hw + t * hw * 2, y: hh }); }
+    // Left curve (hourglass narrowing)
+    for (i = 0; i < 14; i++) {
+      t = i/13;
+      var x = -hw + Math.sin(t * Math.PI) * (hw - 8);
+      pts.push({ x: x, y: -hh + t * hh * 2 });
+    }
+    // Right curve
+    for (i = 0; i < 14; i++) {
+      t = i/13;
+      var x2 = hw - Math.sin(t * Math.PI) * (hw - 8);
+      pts.push({ x: x2, y: -hh + t * hh * 2 });
+    }
+    // Sand stream in middle
+    for (i = 0; i < 8; i++) { t = i/7; pts.push({ x: (Math.random()-0.5) * 4, y: -20 + t * 40 }); }
+    // Lower bulb sand pool
+    for (i = 0; i < 20; i++) {
+      var a = Math.random() * Math.PI;
+      var rr = 28 + Math.random() * 18;
+      pts.push({ x: Math.cos(a) * rr * 0.9, y: hh - 6 - Math.sin(a) * 24 });
+    }
+    return pts;
+  }
+
+  function fallenHourglassShape(){
+    var pts = [];
+    var hw = 110, hh = 60; // rotated 90deg = wider, shorter
+    // Long top edge
+    for (var i = 0; i < 14; i++) { var t = i/13; pts.push({ x: -hw + t * hw * 2, y: -hh }); }
+    // Long bottom edge
+    for (i = 0; i < 14; i++) { t = i/13; pts.push({ x: -hw + t * hw * 2, y: hh }); }
+    // Narrowing curves (now horizontal)
+    for (i = 0; i < 12; i++) {
+      t = i/11;
+      var y = -hh + Math.sin(t * Math.PI) * (hh - 6);
+      pts.push({ x: -hw + t * hw * 2, y: y });
+    }
+    for (i = 0; i < 12; i++) {
+      t = i/11;
+      var y2 = hh - Math.sin(t * Math.PI) * (hh - 6);
+      pts.push({ x: -hw + t * hw * 2, y: y2 });
+    }
+    // Scattered sand spilling out
+    for (i = 0; i < 18; i++) {
+      pts.push({ x: hw + Math.random() * 60, y: -hh + Math.random() * hh * 2 });
+    }
+    return pts;
+  }
+
+  function targetShape(){
+    var pts = [];
+    for (var i = 0; i < 28; i++) { var a = (i / 28) * Math.PI * 2; pts.push({ x: Math.cos(a) * 90, y: Math.sin(a) * 90 }); }
+    for (i = 0; i < 20; i++) { a = (i / 20) * Math.PI * 2; pts.push({ x: Math.cos(a) * 60, y: Math.sin(a) * 60 }); }
+    for (i = 0; i < 14; i++) { a = (i / 14) * Math.PI * 2; pts.push({ x: Math.cos(a) * 30, y: Math.sin(a) * 30 }); }
+    pts.push({ x: 0, y: 0 }); pts.push({ x: 2, y: -1 }); pts.push({ x: -2, y: 1 });
+    var sx = -110, sy = 110, ex = 110, ey = -110;
+    for (i = 0; i < 14; i++) { var t = i / 13; pts.push({ x: sx + (ex - sx) * t, y: sy + (ey - sy) * t }); }
+    for (i = 0; i < 6; i++) { t = i / 5;
+      pts.push({ x: ex - t * 22, y: ey + t * 4 });
+      pts.push({ x: ex - t * 4, y: ey + t * 22 });
+    }
+    return pts;
+  }
+
+  function humanSilhouettePath(){
+    var pts = [];
+    for (var i = 0; i < 12; i++) { var a = (i / 12) * Math.PI * 2; pts.push({ x: Math.cos(a) * 16, y: -94 + Math.sin(a) * 16 }); }
+    pts.push({ x: -4, y: -76 }); pts.push({ x: 4, y: -76 });
+    for (i = 0; i < 6; i++) { var t = i / 5; pts.push({ x: -34 + t * 68, y: -64 }); }
+    for (i = 0; i < 8; i++) { t = i / 7; pts.push({ x: -32 + t * 10, y: -60 + t * 68 }); }
+    for (i = 0; i < 8; i++) { t = i / 7; pts.push({ x: 32 - t * 10, y: -60 + t * 68 }); }
+    pts.push({ x: 0, y: -40 }); pts.push({ x: 0, y: -20 }); pts.push({ x: 0, y: 0 });
+    for (i = 0; i < 8; i++) { t = i / 7; pts.push({ x: -34 - t * 10, y: -60 + t * 84 }); }
+    for (i = 0; i < 8; i++) { t = i / 7; pts.push({ x: 34 + t * 10, y: -60 + t * 84 }); }
+    for (i = 0; i < 4; i++) { t = i / 3; pts.push({ x: -24 + t * 48, y: 12 }); }
+    for (i = 0; i < 9; i++) { t = i / 8; pts.push({ x: -18 - t * 4, y: 16 + t * 94 }); }
+    for (i = 0; i < 9; i++) { t = i / 8; pts.push({ x: 18 + t * 4, y: 16 + t * 94 }); }
+    pts.push({ x: -26, y: 110 }); pts.push({ x: -18, y: 110 });
+    pts.push({ x: 18, y: 110 }); pts.push({ x: 26, y: 110 });
+    return pts;
+  }
+
+  // ========= TEXT HELPERS =================================================
+  var line1 = document.getElementById('line1');
+  var line2 = document.getElementById('line2');
+  var introText = document.getElementById('introText');
+  var stepGrid = document.getElementById('stepGrid');
+  var logoWrap = document.getElementById('logoWrap');
+  var blackVeil = document.getElementById('blackVeil');
+
+  function showText(t1, t2){
+    line1.textContent = t1 || '';
+    line2.textContent = t2 || '';
+    // reset
+    line1.classList.remove('show');
+    line2.classList.remove('show');
+    // force reflow
+    void line1.offsetWidth;
+    setTimeout(function(){ line1.classList.add('show'); }, 50);
+    setTimeout(function(){ line2.classList.add('show'); }, 250);
+  }
+  function hideText(){
+    line1.classList.remove('show');
+    line2.classList.remove('show');
+  }
+
+  // ========= TIMERS ========================================================
+  var timers = [];
+  function delay(ms, fn){ var id = setTimeout(fn, ms); timers.push(id); return id; }
+  function clearAll(){ for (var i = 0; i < timers.length; i++) clearTimeout(timers[i]); timers = []; }
+
+  // ========= SCENE 5 LAYOUT (for particle morph behind icons) ==============
+  function scene5IconLayout(){
+    var cy = H * 0.38;
+    var gap = Math.min(W * 0.22, 95);
+    var startX = W * 0.5 - gap * 1.5;
+    var all = [];
+    function iconTarget(){
+      var pts = []; var i, a;
+      for (i = 0; i < 14; i++) { a = (i / 14) * Math.PI * 2; pts.push({ x: Math.cos(a) * 22, y: Math.sin(a) * 22 }); }
+      for (i = 0; i < 10; i++) { a = (i / 10) * Math.PI * 2; pts.push({ x: Math.cos(a) * 14, y: Math.sin(a) * 14 }); }
+      pts.push({ x: 0, y: 0 }); pts.push({ x: 3, y: 0 }); pts.push({ x: -3, y: 0 });
+      pts.push({ x: 0, y: 3 }); pts.push({ x: 0, y: -3 });
+      return pts;
+    }
+    function iconCalendar(){
+      var pts = []; var i; var w = 36, h = 32;
+      for (i = 0; i < 8; i++) pts.push({ x: -w/2 + (w * i) / 7, y: -h/2 });
+      for (i = 0; i < 8; i++) pts.push({ x: -w/2 + (w * i) / 7, y: h/2 });
+      for (i = 1; i < 5; i++) pts.push({ x: -w/2, y: -h/2 + (h * i) / 5 });
+      for (i = 1; i < 5; i++) pts.push({ x: w/2, y: -h/2 + (h * i) / 5 });
+      pts.push({ x: -10, y: -h/2 - 6 }); pts.push({ x: 10, y: -h/2 - 6 });
+      pts.push({ x: -8, y: -2 }); pts.push({ x: 8, y: -2 });
+      pts.push({ x: -8, y: 8 }); pts.push({ x: 8, y: 8 });
+      return pts;
+    }
+    function iconCheck(){
+      var pts = []; var i, a, t;
+      for (i = 0; i < 18; i++) { a = (i / 18) * Math.PI * 2; pts.push({ x: Math.cos(a) * 22, y: Math.sin(a) * 22 }); }
+      for (i = 0; i < 5; i++) { t = i / 4; pts.push({ x: -12 + t * 8, y: 2 + t * 8 }); }
+      for (i = 0; i < 7; i++) { t = i / 6; pts.push({ x: -4 + t * 16, y: 10 - t * 18 }); }
+      return pts;
+    }
+    function iconChart(){
+      var pts = []; var i, t;
+      for (i = 0; i < 8; i++) pts.push({ x: -20 + (40 * i) / 7, y: 18 });
+      pts.push({ x: -14, y: 12 }); pts.push({ x: -14, y: 6 }); pts.push({ x: -10, y: 6 });
+      pts.push({ x: -2, y: 12 }); pts.push({ x: -2, y: -2 }); pts.push({ x: 2, y: -2 });
+      pts.push({ x: 10, y: 12 }); pts.push({ x: 10, y: -14 }); pts.push({ x: 14, y: -14 });
+      for (i = 0; i < 8; i++) { t = i / 7; pts.push({ x: -16 + t * 32, y: 4 - t * 22 }); }
+      pts.push({ x: 12, y: -18 }); pts.push({ x: 16, y: -14 });
+      return pts;
+    }
+    var sets = [iconTarget(), iconCalendar(), iconCheck(), iconChart()];
+    for (var k = 0; k < 4; k++) {
+      var s = sets[k];
+      for (var i = 0; i < s.length; i++) {
+        all.push({ x: s[i].x + startX + gap * k, y: s[i].y + cy });
+      }
+    }
+    return all;
+  }
+
+  // ========= TIMELINE ======================================================
+  var CX = function(){ return W * 0.5; };
+  var CY = function(){ return H * 0.5; };
+
+  function startCinematic(){
+    // SCENE 1: VAQT (0 - 3500)
+    delay(600, function(){
+      sceneShapeMorph(hourglassShape(), 900, CX(), CY() - 30);
+    });
+    delay(900, function(){ showText(T.s1[0], T.s1[1]); });
+    delay(3000, function(){ hideText(); });
+
+    // SCENE 2: QAYTARIB BO'LMAYDI (3500 - 6700)
+    delay(3500, function(){
+      sceneShapeMorph(fallenHourglassShape(), 900, CX(), CY() + 20);
+    });
+    delay(3800, function(){ spillToPile(40, H * 0.78); });
+    delay(4400, function(){ showText(T.s2[0], T.s2[1]); });
+    delay(5600, function(){ spillToPile(20, H * 0.78); });
+    delay(6200, function(){ hideText(); });
+
+    // SCENE 3: MAQSADGA (6700 - 10200)
+    delay(6700, function(){
+      sceneShapeMorph(targetShape(), 1000, CX(), CY() - 30);
+    });
+    delay(7600, function(){ showText(T.s3[0], T.s3[1]); });
+    delay(9700, function(){ hideText(); });
+
+    // SCENE 4: INSON (10200 - 13900)
+    delay(10200, function(){
+      sceneShapeMorph(humanSilhouettePath(), 1100, CX(), CY() - 30);
+    });
+    delay(11100, function(){ showText(T.s4[0], T.s4[1]); });
+    delay(13400, function(){ hideText(); });
+
+    // SCENE 5: YO'L XARITASI (13900 - 18700)
+    delay(13900, function(){
+      sceneShapeMorph(scene5IconLayout(), 1100, 0, 0);
+    });
+    delay(14400, function(){
+      stepGrid.classList.add('show');
+      var cols = document.querySelectorAll('.step-col');
+      for (var i = 0; i < cols.length; i++) {
+        (function(col, idx){
+          delay(idx * 180, function(){ col.classList.add('show'); });
+        })(cols[i], i);
+      }
+    });
+    delay(16600, function(){ showText(T.s5[0], T.s5[1]); });
+    delay(18100, function(){
+      hideText();
+      stepGrid.classList.remove('show');
+      var cols = document.querySelectorAll('.step-col');
+      for (var i = 0; i < cols.length; i++) cols[i].classList.remove('show');
+    });
+
+    // SCENE 6: TRANSITION (18700 - 20500)
+    delay(18700, function(){
+      convergeToPoint(CX(), CY(), 800);
+    });
+    delay(19000, function(){
+      logoWrap.classList.add('show');
+    });
+    delay(20000, function(){
+      blackVeil.classList.add('show');
+    });
+    delay(20500, function(){
+      finish();
+    });
+  }
+
+  // ========= FINISH / SKIP =================================================
+  function finish(){
+    if (finished) return;
+    finished = true;
+    clearAll();
+    setSeen();
+    // Quick fade if not already
+    blackVeil.classList.add('show');
+    setTimeout(function(){ go('anketa.html'); }, 280);
+  }
+
+  function skip(){
+    if (finished) return;
+    finished = true;
+    clearAll();
+    setSeen();
+    hideText();
+    blackVeil.classList.add('show');
+    setTimeout(function(){ go('anketa.html'); }, 280);
+  }
+
+  skipBtn.addEventListener('click', function(ev){ ev.preventDefault(); ev.stopPropagation(); skip(); });
+  canvas.addEventListener('click', function(){ skip(); });
+  document.addEventListener('keydown', function(ev){
+    if (ev.key === 'Escape' || ev.key === 'Enter' || ev.key === ' ') skip();
+  });
+
+  // Kick off after fonts have a chance to load
+  if (document.fonts && document.fonts.ready) {
+    document.fonts.ready.then(startCinematic).catch(startCinematic);
+  } else {
+    delay(120, startCinematic);
+  }
+
+  // Apply i18n attributes if I18N available
+  if (window.I18N && typeof window.I18N.applyTo === 'function') {
+    try { window.I18N.applyTo(document); } catch(e){}
+  }
+})();
+</script>
 </body>
 </html>
