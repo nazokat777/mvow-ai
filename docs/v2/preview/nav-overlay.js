@@ -196,7 +196,6 @@
     // Kun (6-9)
     'home.html',              // 6. Bosh sahifa
     'routine.html',           // 7. Reja
-    'today-plan.html',        // 8. Bugungi reja
     'calendar.html',          // 9. Kalendar
     // Bajarish (10-12)
     'hard-lock.html',         // 10. Fokus taymeri

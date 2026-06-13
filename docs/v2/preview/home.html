@@ -252,7 +252,7 @@
       <!-- Yana qo'shish / tahrirlash so'rovi -->
       <div id="tasksPrompt" style="display:none;text-align:center;margin-top:12px;font-family:'Cormorant Garamond',serif;font-style:italic;font-size:13px;color:var(--text-dim);">
         <span data-i18n="home.tasks_ask">Yana qo'shasizmi yoki o'zgartirasizmi?</span>
-        <a href="today-plan.html" style="display:inline-block;margin-left:8px;color:var(--accent);text-decoration:none;font-style:normal;font-size:12px;letter-spacing:1px;text-transform:uppercase;font-weight:500;font-family:'Inter',sans-serif;" data-i18n="home.tasks_edit">Tahrirlash →</a>
+        <a href="routine.html" style="display:inline-block;margin-left:8px;color:var(--accent);text-decoration:none;font-style:normal;font-size:12px;letter-spacing:1px;text-transform:uppercase;font-weight:500;font-family:'Inter',sans-serif;" data-i18n="home.tasks_edit">Tahrirlash →</a>
       </div>
     </div>
 
@@ -274,7 +274,7 @@
 
       <!-- Tanlovlar — istalganini bos -->
       <div id="tileGrid" style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:6px;">
-        <a class="ghost" id="tilePlan" href="today-plan.html" style="margin:0;" data-i18n="home.tile_plan">Bugungi reja</a>
+        <a class="ghost" id="tilePlan" href="routine.html" style="margin:0;" data-i18n="home.tile_plan">Bugungi reja</a>
         <a class="ghost" href="maqsadlar.html" style="margin:0;" data-i18n="home.tile_goals">Maqsadlar</a>
         <a class="ghost" href="calendar.html" style="margin:0;" data-i18n="home.tile_calendar">Kalendar</a>
         <a class="ghost" id="tileEvening" href="kechqurun.html" style="margin:0;" data-i18n="home.tile_evening">Kun yakuni</a>
@@ -449,7 +449,7 @@
       cta.href = 'hard-lock.html';
     } else {
       cta.textContent = Ti('home.cta_today_plan', 'Bugungi reja');
-      cta.href = 'today-plan.html';
+      cta.href = 'routine.html';
     }
 
     // Tile takrorlarini yashir — CTA bilan bir xil joyga bormaslik kerak

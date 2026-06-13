@@ -288,7 +288,7 @@
     localStorage.setItem('mvow.history', JSON.stringify(list));
     return entry;
   };
-  // Tugallangan ishlarni today-plan'da belgilash uchun unique key
+  // Tugallangan ishlarni belgilash uchun unique key (home.html va hard-lock.html ishlatadi)
   // Format: "d2026-06-12|07:00|Sport"
   DATA.taskKey = function (dateIso, time, name) {
     return 'd' + dateIso + '|' + (time || '') + '|' + (name || '');
