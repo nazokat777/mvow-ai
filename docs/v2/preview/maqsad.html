@@ -420,14 +420,22 @@
       backLink.style.display = 'block';
       nextBtn.textContent = 'Kalendarga belgila';
       nextBtn.classList.add('disabled');
-      // Band vaqtlarni ko'rsatish + birinchi bo'sh slotni avto-tanlash
+      // Band vaqtlarni ko'rsatish + aqlli vaqt taklifi
       renderOccupied();
       const slots = getOccupiedSlots();
       if (slots.length) {
         // Eng oxirgi tugaydigan slotdan keyingi vaqtni taklif qilish
         const latestEnd = Math.max(...slots.map(s => s.end));
-        const startMin = Math.min(latestEnd, 23*60 + 50); // 23:50'dan oshmasin
+        const startMin = Math.min(latestEnd, 23*60 + 50);
         dailyTime.value = minToTime(startMin);
+      } else {
+        // Bo'sh — anketadagi energiya cho'qqisidan vaqtni taklif qilish
+        try {
+          const profile = JSON.parse(localStorage.getItem('mvow.profile') || '{}');
+          const peak = profile.energyPeak;
+          const peakTimes = { dawn: '05:00', morning: '09:00', noon: '14:00', evening: '19:00', night: '22:00' };
+          if (peak && peakTimes[peak]) dailyTime.value = peakTimes[peak];
+        } catch {}
       }
       checkStep2();
       setTimeout(() => goalText.focus(), 100);

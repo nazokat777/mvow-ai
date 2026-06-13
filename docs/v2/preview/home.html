@@ -115,10 +115,31 @@
       <div id="murabbiyText"></div>
     </div>
 
-    <!-- Failure recovery — 3+ kun bo'shliq bo'lganda -->
+    <!-- BAJARMAGANDA: Failure recovery — 3-6 kun: oddiy · 7+ kun: diagnostika -->
     <div id="recoveryBox" style="display:none;background:rgba(255,71,87,.08);border:1px solid rgba(255,71,87,.3);border-radius:12px;padding:14px 16px;text-align:center;">
       <div style="font-family:'Cormorant Garamond',serif;font-style:italic;font-size:15px;color:#FF8E97;margin-bottom:8px;line-height:1.4;" id="recoveryText"></div>
-      <button id="recoveryBtn" type="button" style="margin-top:6px;padding:10px 20px;background:#FF4757;color:#fff;border:none;border-radius:999px;font-family:'Inter',sans-serif;font-size:11px;font-weight:600;letter-spacing:1.5px;text-transform:uppercase;cursor:pointer;">Rejani qayta tuzish</button>
+      <!-- Oddiy recovery (3-6 kun) -->
+      <div id="recoverySimple" style="display:none;">
+        <button id="recoveryBtn" type="button" style="margin-top:6px;padding:10px 20px;background:#FF4757;color:#fff;border:none;border-radius:999px;font-family:'Inter',sans-serif;font-size:11px;font-weight:600;letter-spacing:1.5px;text-transform:uppercase;cursor:pointer;">Rejani qayta tuzish</button>
+      </div>
+      <!-- Diagnostika (7+ kun) -->
+      <div id="diagnosticBox" style="display:none;margin-top:10px;">
+        <div style="font-size:12px;color:#9CA0A8;margin-bottom:10px;letter-spacing:0.5px;">Sabab nima edi?</div>
+        <div style="display:flex;flex-direction:column;gap:8px;">
+          <button class="diag-opt" data-fix="reduce" type="button" style="padding:11px 14px;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.12);border-radius:10px;color:#F5F2EC;font-family:'Inter',sans-serif;font-size:12px;text-align:left;cursor:pointer;">
+            <span style="display:block;font-weight:500;margin-bottom:2px;">Vazifa hajmi katta edi</span>
+            <span style="font-size:10px;color:#9CA0A8;letter-spacing:0.5px;">Har kungi davomiylik 30% qisqaradi</span>
+          </button>
+          <button class="diag-opt" data-fix="time" type="button" style="padding:11px 14px;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.12);border-radius:10px;color:#F5F2EC;font-family:'Inter',sans-serif;font-size:12px;text-align:left;cursor:pointer;">
+            <span style="display:block;font-weight:500;margin-bottom:2px;">Vaqt to'g'ri kelmadi</span>
+            <span style="font-size:10px;color:#9CA0A8;letter-spacing:0.5px;">Maqsadlarni tahrirlash — vaqtni o'zgartiring</span>
+          </button>
+          <button class="diag-opt" data-fix="other" type="button" style="padding:11px 14px;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.12);border-radius:10px;color:#F5F2EC;font-family:'Inter',sans-serif;font-size:12px;text-align:left;cursor:pointer;">
+            <span style="display:block;font-weight:500;margin-bottom:2px;">Boshqa sabab</span>
+            <span style="font-size:10px;color:#9CA0A8;letter-spacing:0.5px;">Rejani qolgan kunlarga qayta tarqatish</span>
+          </button>
+        </div>
+      </div>
     </div>
 
     <div class="streak">
@@ -131,6 +152,11 @@
           <div id="milestoneBar" style="height:100%;background:linear-gradient(90deg,var(--accent),var(--accent-soft));border-radius:2px;width:0;transition:width .6s ease;"></div>
         </div>
       </div>
+    </div>
+
+    <!-- BAJARGANDA: Identity (shaxs shakllanmoqda) — streak >= 7 -->
+    <div id="identityBox" style="display:none;background:rgba(0,229,212,.04);border-radius:12px;padding:14px 18px;text-align:center;">
+      <div style="font-family:'Cormorant Garamond',serif;font-style:italic;font-size:15px;line-height:1.55;color:var(--text);" id="identityText"></div>
     </div>
 
     <div class="next">
@@ -371,53 +397,136 @@
       box.style.display = 'block';
     }
 
-    // ── FAILURE RECOVERY (3+ kun bo'shliq) ──
+    // ── FAILURE RECOVERY (faqat user bajarmaganda) ──
     function checkRecovery() {
-      // Oxirgi history yozuvi (eng so'nggi bajarilgan kun)
       const history = window.MVOW_DATA ? MVOW_DATA.getHistory() : [];
-      if (!history.length || !hasGoals) return null;
-      const lastIso = history.map(h => h.dateIso).sort().pop();
-      if (!lastIso) return null;
-      const last = new Date(lastIso);
-      const today = new Date();
-      today.setHours(0,0,0,0);
-      const daysSinceActivity = Math.floor((today - last) / 86400000);
-      if (daysSinceActivity >= 3) {
-        return daysSinceActivity;
+      if (!hasGoals) return null;
+      const lastIso = history.length ? history.map(h => h.dateIso).sort().pop() : null;
+      if (!lastIso) {
+        // History bo'sh va maqsad bor → maqsad qachon qo'yilgan?
+        try {
+          const goals = JSON.parse(localStorage.getItem('mvow.goals') || '[]');
+          if (Array.isArray(goals) && goals.length) {
+            const earliest = goals.map(g => g.startDate).sort()[0];
+            const last = new Date(earliest);
+            const today = new Date(); today.setHours(0,0,0,0);
+            const days = Math.floor((today - last) / 86400000);
+            if (days >= 3) return days;
+          }
+        } catch {}
+        return null;
       }
-      return null;
+      const last = new Date(lastIso);
+      const today = new Date(); today.setHours(0,0,0,0);
+      const days = Math.floor((today - last) / 86400000);
+      return days >= 3 ? days : null;
     }
+
+    // Maqsadlar davomiyligini foiz bilan kamaytirish + qayta tarqatish
+    function reduceAndRegen(pct) {
+      try {
+        const goals = JSON.parse(localStorage.getItem('mvow.goals') || '[]');
+        if (!Array.isArray(goals) || !goals.length || !window.MVOW_DATA) return;
+        for (const g of goals) {
+          const curMins = MVOW_DATA.parseDurMins(g.dur);
+          let newMins = Math.max(10, Math.round(curMins * (1 - pct/100) / 5) * 5);
+          if (newMins >= 60) {
+            g.dur = (newMins % 60 === 0) ? (newMins/60) + ' soat' : Math.floor(newMins/60) + ' soat ' + (newMins%60) + ' daq';
+          } else {
+            g.dur = newMins + ' daq';
+          }
+        }
+        localStorage.setItem('mvow.goals', JSON.stringify(goals));
+        // weekPlan'dagi yozuvlarni ham yangilash
+        const w = MVOW_DATA.getWeekPlan();
+        const todayDate = new Date();
+        for (const g of goals) {
+          const elapsedDays = Math.floor((todayDate - new Date(g.startDate)) / 86400000);
+          const remainingDays = Math.max(0, g.days - elapsedDays);
+          for (let i = 0; i < remainingDays; i++) {
+            const d = new Date(todayDate);
+            d.setDate(todayDate.getDate() + i);
+            const key = 'd' + d.toISOString().slice(0, 10);
+            if (!Array.isArray(w[key])) w[key] = [];
+            const existing = w[key].find(s => s.goalId === g.id);
+            if (existing) {
+              existing.dur = g.dur;
+            } else {
+              w[key].push({ time: g.time, name: g.text, dur: g.dur, goalId: g.id });
+            }
+          }
+        }
+        MVOW_DATA.setWeekPlan(w);
+        if (MVOW_DATA.fxSuccess) MVOW_DATA.fxSuccess();
+        location.reload();
+      } catch (err) { console.error('Reduce failed:', err); }
+    }
+
+    function regenOnly() {
+      try {
+        const goals = JSON.parse(localStorage.getItem('mvow.goals') || '[]');
+        if (!Array.isArray(goals) || !goals.length || !window.MVOW_DATA) return;
+        const w = MVOW_DATA.getWeekPlan();
+        const todayDate = new Date();
+        for (const g of goals) {
+          const elapsedDays = Math.floor((todayDate - new Date(g.startDate)) / 86400000);
+          const remainingDays = Math.max(0, g.days - elapsedDays);
+          for (let i = 0; i < remainingDays; i++) {
+            const d = new Date(todayDate);
+            d.setDate(todayDate.getDate() + i);
+            const key = 'd' + d.toISOString().slice(0, 10);
+            if (!Array.isArray(w[key])) w[key] = [];
+            const exists = w[key].some(s => (s.goalId === g.id) || (s.name === g.text && s.time === g.time));
+            if (!exists) w[key].push({ time: g.time, name: g.text, dur: g.dur, goalId: g.id });
+          }
+        }
+        MVOW_DATA.setWeekPlan(w);
+        if (MVOW_DATA.fxSuccess) MVOW_DATA.fxSuccess();
+        location.reload();
+      } catch (err) { console.error('Regen failed:', err); }
+    }
+
     const recoveryDays = checkRecovery();
     if (recoveryDays !== null) {
       const recBox = document.getElementById('recoveryBox');
       const recText = document.getElementById('recoveryText');
-      recText.innerHTML = '<strong>' + recoveryDays + ' kun</strong> reja bajarilmagan.<br>Maqsadlaringizdan qolgan kunlarga qayta tarqataymizmi?';
+      const simpleBox = document.getElementById('recoverySimple');
+      const diagBox = document.getElementById('diagnosticBox');
       recBox.style.display = 'block';
-      document.getElementById('recoveryBtn').addEventListener('click', () => {
-        // Qayta optimallashtirish — qolgan kunlarga maqsadlarni qayta tarqatish
-        try {
-          const goals = JSON.parse(localStorage.getItem('mvow.goals') || '[]');
-          if (!Array.isArray(goals) || !goals.length || !window.MVOW_DATA) return;
-          const w = MVOW_DATA.getWeekPlan();
-          const todayDate = new Date();
-          for (const g of goals) {
-            const start = new Date(g.startDate);
-            const elapsedDays = Math.floor((todayDate - start) / 86400000);
-            const remainingDays = Math.max(0, g.days - elapsedDays);
-            for (let i = 0; i < remainingDays; i++) {
-              const d = new Date(todayDate);
-              d.setDate(todayDate.getDate() + i);
-              const key = 'd' + d.toISOString().slice(0, 10);
-              if (!Array.isArray(w[key])) w[key] = [];
-              const exists = w[key].some(s => (s.goalId === g.id) || (s.name === g.text && s.time === g.time));
-              if (!exists) w[key].push({ time: g.time, name: g.text, dur: g.dur, goalId: g.id });
-            }
-          }
-          MVOW_DATA.setWeekPlan(w);
-          if (MVOW_DATA.fxSuccess) MVOW_DATA.fxSuccess();
-          location.reload();
-        } catch (err) { console.error('Recovery failed:', err); }
-      });
+      if (recoveryDays >= 7) {
+        // Diagnostika — sabab so'rash
+        recText.innerHTML = '<strong>' + recoveryDays + ' kun</strong> reja bajarilmadi.';
+        diagBox.style.display = 'block';
+        document.querySelectorAll('.diag-opt').forEach(b => {
+          b.addEventListener('click', () => {
+            const fix = b.dataset.fix;
+            if (fix === 'reduce') reduceAndRegen(30);
+            else if (fix === 'time') location.href = 'maqsadlar.html';
+            else regenOnly();
+          });
+        });
+      } else {
+        // Oddiy recovery (3-6 kun)
+        recText.innerHTML = '<strong>' + recoveryDays + ' kun</strong> reja bajarilmagan.<br>Qolgan kunlarga qayta tarqataymizmi?';
+        simpleBox.style.display = 'block';
+        document.getElementById('recoveryBtn').addEventListener('click', regenOnly);
+      }
+    }
+
+    // ── IDENTITY (faqat streak >= 7 va maqsad bo'lganda) ──
+    if (streak >= 7 && hasGoals && recoveryDays === null) {
+      try {
+        const goals = JSON.parse(localStorage.getItem('mvow.goals') || '[]');
+        const goalText = (goals[0] && goals[0].text) ? goals[0].text : null;
+        const idBox = document.getElementById('identityBox');
+        const idText = document.getElementById('identityText');
+        if (goalText) {
+          idText.innerHTML = 'Siz <span style="color:var(--accent);font-style:normal;font-weight:600;">' + streak + ' kun</span> davomida<br>«' + goalText + '» yo\'lidasiz.<br><span style="font-size:12px;color:var(--text-mid);">Bu — sizning yangi shaxsingizdir.</span>';
+        } else {
+          idText.innerHTML = 'Siz <span style="color:var(--accent);font-style:normal;font-weight:600;">' + streak + ' kun</span> davomida<br>intizom yo\'lidasiz.<br><span style="font-size:12px;color:var(--text-mid);">Bu — sizning yangi shaxsingizdir.</span>';
+        }
+        idBox.style.display = 'block';
+      } catch {}
     }
 
     // Streak risk indikatori — gapirmaydi, faqat ko'rsatadi
