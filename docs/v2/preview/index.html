@@ -23,13 +23,6 @@
     -webkit-font-smoothing: antialiased;
     font-family: 'Inter', sans-serif;
   }
-  /* 3D hero canvas — sahna ortida */
-  #hero3d {
-    position: fixed; inset: 0;
-    width: 100vw; height: 100vh;
-    z-index: 0;
-    pointer-events: none;
-  }
   .stage {
     position: fixed; inset: 0;
     display: flex; flex-direction: column;
@@ -130,8 +123,6 @@
 </head>
 <body>
 
-<canvas id="hero3d"></canvas>
-
 <div class="stage">
   <div class="halo"></div>
   <div class="logo"></div>
@@ -151,15 +142,6 @@
 <div class="cta-row">
   <a class="cta" id="goBtn" href="royhat.html">Boshlaymiz</a>
 </div>
-
-<!-- 3D hero scene (Three.js, vanilla, brand mavzusi) -->
-<script type="importmap">
-{ "imports": {
-    "three": "https://cdn.jsdelivr.net/npm/three@0.165.0/build/three.module.js",
-    "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.165.0/examples/jsm/"
-} }
-</script>
-<script type="module" src="hero-3d.js"></script>
 
 <script src="i18n.js" defer></script>
 <script>
