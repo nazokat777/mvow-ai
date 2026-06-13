@@ -159,10 +159,11 @@
       </div>
     </div>
 
-    <!-- Taymersiz ko'rinishi -->
+    <!-- Taymersiz ko'rinishi — faqat Bajardim tugmasi (boshqa hech narsa chiqmasin) -->
     <div class="no-timer-area" id="noTimerArea">
-      <div class="no-timer-elapsed" id="elapsed">00:00</div>
-      <div class="no-timer-lbl" data-i18n="hardlock.elapsed_label">o'tgan vaqt</div>
+      <!-- Elapsed counter va o'tgan vaqt yashirin (visual minimal) — JS uchun saqlangan -->
+      <div class="no-timer-elapsed" id="elapsed" style="display:none;">00:00</div>
+      <div class="no-timer-lbl" data-i18n="hardlock.elapsed_label" style="display:none;">o'tgan vaqt</div>
       <button class="done-btn" id="doneBtn" type="button" data-i18n="hardlock.done_btn">Bajardim</button>
     </div>
 

@@ -56,6 +56,65 @@
   .next {
     text-align: center;
   }
+  /* BUGUNGI VAZIFALAR — har bir vazifa qatori */
+  .t-row {
+    display: grid;
+    grid-template-columns: 18px 56px 1fr 20px;
+    gap: 10px;
+    align-items: center;
+    padding: 10px 12px;
+    background: var(--void-soft);
+    border-radius: 8px;
+    transition: opacity .2s;
+  }
+  .t-row .ord {
+    font-size: 11px;
+    color: var(--text-dim);
+    text-align: center;
+    font-feature-settings: "tnum";
+  }
+  .t-row .ttime {
+    font-size: 12px;
+    color: var(--accent);
+    font-weight: 500;
+    letter-spacing: 0.3px;
+  }
+  .t-row .tname {
+    font-size: 13px;
+    color: var(--text);
+    line-height: 1.3;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+  .t-row .tstat {
+    width: 18px; height: 18px;
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0;
+  }
+  /* ✓ done */
+  .t-row.done { opacity: 0.6; }
+  .t-row.done .tname { text-decoration: line-through; color: var(--text-mid); }
+  .t-row.done .tstat { background: var(--accent); }
+  .t-row.done .tstat::after {
+    content: '';
+    width: 8px; height: 5px;
+    border-left: 2px solid var(--void);
+    border-bottom: 2px solid var(--void);
+    transform: rotate(-45deg) translate(1px, -1px);
+  }
+  /* ✗ missed */
+  .t-row.missed .tname { color: var(--text-mid); }
+  .t-row.missed .ttime { color: #FF8E97; opacity: 0.85; }
+  .t-row.missed .tstat { background: #FF4757; font-size: 12px; color: #fff; line-height: 1; font-weight: 600; }
+  /* . pending */
+  .t-row.pending .tstat { border: 1.5px solid rgba(255,255,255,.18); background: transparent; }
+  /* active — hozir ishlayotgan */
+  .t-row.active { border: 1px solid rgba(0,229,212,.35); background: rgba(0,229,212,.04); }
+  .t-row.active .ttime { color: var(--accent); }
+  .t-row.active .tstat { background: rgba(0,229,212,.4); animation: pulse 1.6s ease-in-out infinite; }
+  @keyframes pulse { 0%,100% { transform: scale(1); } 50% { transform: scale(1.18); } }
   .next .lbl { font-size: 10px; letter-spacing: 4px; color: var(--text-dim); text-transform: uppercase; margin-bottom: 8px; }
   .next .row {
     display: flex; align-items: baseline; justify-content: center; gap: 12px;
@@ -186,10 +245,14 @@
       <div style="font-family:'Cormorant Garamond',serif;font-style:italic;font-size:15px;line-height:1.55;color:var(--text);" id="identityText"></div>
     </div>
 
-    <div class="next">
-      <div class="lbl" data-i18n="home.next">Keyingi</div>
-      <div class="row" id="nextRow">
-        <span class="none" data-i18n="home.no_plan">birinchi qadamingizni qo'ying</span>
+    <!-- BUGUNGI VAZIFALAR — to'liq ketma-ketlik (vaqt + status badge) -->
+    <div id="tasksBlock" style="margin: 8px 0 4px;">
+      <div style="font-size:10px;letter-spacing:3px;color:var(--text-dim);text-transform:uppercase;margin-bottom:10px;text-align:center;" data-i18n="home.tasks_lbl">Bugungi vazifalar</div>
+      <div id="tasksList" style="display:flex;flex-direction:column;gap:6px;"></div>
+      <!-- Yana qo'shish / tahrirlash so'rovi -->
+      <div id="tasksPrompt" style="display:none;text-align:center;margin-top:12px;font-family:'Cormorant Garamond',serif;font-style:italic;font-size:13px;color:var(--text-dim);">
+        <span data-i18n="home.tasks_ask">Yana qo'shasizmi yoki o'zgartirasizmi?</span>
+        <a href="today-plan.html" style="display:inline-block;margin-left:8px;color:var(--accent);text-decoration:none;font-style:normal;font-size:12px;letter-spacing:1px;text-transform:uppercase;font-weight:500;font-family:'Inter',sans-serif;" data-i18n="home.tasks_edit">Tahrirlash →</a>
       </div>
     </div>
 
@@ -281,16 +344,49 @@
     }
     document.getElementById('greetWord').textContent = smartGreeting();
 
-    // KEYINGI — faqat BUGUNGI kelajakdagi task'lar
+    // ── BUGUNGI VAZIFALAR — to'liq ketma-ketlik (vaqt + nom + status) ──
     const upcoming = plan.find(p => tKey(p.time) >= nowMin);
-    const nextRow = document.getElementById('nextRow');
     const T = (k, def) => (window.I18N ? I18N.t(k, def) : def);
-    if (upcoming) {
-      nextRow.innerHTML = `<span class="time">${upcoming.time || '—'}</span><span class="name">${upcoming.name || T('today.ish_lbl', 'ish')}</span>`;
-    } else if (plan.length) {
-      nextRow.innerHTML = '<span class="none">' + T('home.no_upcoming', 'bugungi rejalar tugadi') + '</span>';
+    const tasksList = document.getElementById('tasksList');
+    const tasksPrompt = document.getElementById('tasksPrompt');
+    const tasksBlock = document.getElementById('tasksBlock');
+
+    function escapeHtmlH(s) {
+      return String(s).replace(/[<>"&]/g, c => ({'<':'&lt;','>':'&gt;','"':'&quot;','&':'&amp;'}[c]));
+    }
+
+    if (!plan.length) {
+      // Reja yo'q — qisqa eslatma
+      tasksList.innerHTML = '<div style="text-align:center;padding:14px;font-family:\'Cormorant Garamond\',serif;font-style:italic;font-size:13px;color:var(--text-dim);">'
+        + T('home.no_plan', "birinchi qadamingizni qo'ying") + '</div>';
+      tasksPrompt.style.display = 'none';
     } else {
-      nextRow.innerHTML = '<span class="none">' + T('home.no_plan_short', "reja yo'q") + '</span>';
+      // Bajarilgan ishlar (history) — bugun
+      const completedKeys = (window.MVOW_DATA ? MVOW_DATA.getCompletedKeysToday() : new Set());
+      // Sort plan by time
+      const sorted = [...plan].sort((a,b) => tKey(a.time) - tKey(b.time));
+      tasksList.innerHTML = sorted.map((t, i) => {
+        const taskKey = window.MVOW_DATA && t.time && t.name ? MVOW_DATA.taskKey(MVOW_DATA.today.iso, t.time, t.name) : '';
+        const state = window.MVOW_DATA ? MVOW_DATA.getTaskState(taskKey) : { status: 'pending' };
+        const isDone = completedKeys.has(taskKey) || state.status === 'done';
+        const startMin = tKey(t.time);
+        const durMin = window.MVOW_DATA ? MVOW_DATA.parseDurMins(t.dur) : 60;
+        const endMin = startMin + durMin;
+        const isActive = nowMin >= startMin && nowMin < endMin && !isDone;
+        const isMissed = !isDone && (state.status === 'missed' || nowMin > endMin);
+        let cls = 'pending';
+        let icon = '·';
+        if (isDone) { cls = 'done'; icon = ''; }
+        else if (isMissed) { cls = 'missed'; icon = '✗'; }
+        else if (isActive) { cls = 'active'; icon = '·'; }
+        return `<div class="t-row ${cls}">
+          <span class="ord">${i+1}</span>
+          <span class="ttime">${escapeHtmlH(t.time || '—')}</span>
+          <span class="tname">${escapeHtmlH(t.name || T('today.ish_lbl', 'reja'))}</span>
+          <span class="tstat">${icon === '·' ? '' : icon}</span>
+        </div>`;
+      }).join('');
+      tasksPrompt.style.display = 'block';
     }
 
     // Stats — bajarilgan va qolgan

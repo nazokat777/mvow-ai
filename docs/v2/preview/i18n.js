@@ -1518,7 +1518,18 @@
         reset: 'Clear everything',
         reset_confirm: 'Sure? Tap',
         reset_done: 'Cleared · going back',
-        language: 'Language'
+        language: 'Language',
+        sec_permissions: 'Permissions',
+        sec_wake: 'Wake up',
+        perm_screen_time: 'Screen time',
+        perm_screen_time_aria: 'Screen time permission',
+        perm_notification: 'Notifications',
+        perm_notification_aria: 'Notification permission',
+        test_notif_btn: 'Test notification',
+        test_notif_sent: 'Sent ✓',
+        test_notif_denied: 'Permission denied. Allow it in your browser settings.',
+        test_notif_unsupported: 'Not supported in this browser.',
+        test_notif_status: 'Status:'
       },
       alarm: {
         title: 'Wake up. Solve the problem.',
@@ -1526,7 +1537,8 @@
         correct: 'correct',
         wrong: 'wrong · new one',
         done: 'You\'re awake. Good.',
-        cta: 'Continue'
+        cta: 'Continue',
+        page_title: 'Wake up'
       },
       home: {
         greet: 'Hello',
@@ -1593,13 +1605,15 @@
         pattern_reject: 'Not now'
       },
       routine: {
-        title: 'Tell me your plan',
+        title: 'Build your plan',
         sub_a: 'Type or say it by',
         sub_em: 'voice',
         sub_b: '— I\'ll arrange the day.',
         ph: 'e.g., morning exercise, language study, daytime project, evening reading...',
         suggest_lbl: 'Or quick start:',
-        cta: 'Build the day'
+        cta: 'Build the day',
+        sub_one_per_line: 'One task per line.',
+        ph_example: 'e.g.:\n07:00 Workout (45 min)\n09:00 Study (1 hour)\n14:00 Project (1 hour 30 min)'
       },
       today: {
         title: 'Today\'s plan',
@@ -1632,7 +1646,18 @@
         prev: 'Previous week',
         next: 'Next week',
         add: '+ add task',
-        empty: 'Nothing planned for this day.'
+        empty: 'Nothing planned for this day.',
+        title: 'Calendar',
+        add_plan: '+ add task',
+        default_name: 'task',
+        delete_aria: 'Delete task',
+        name_ph: 'task name',
+        add_month_goal: '+ Add a goal for this month',
+        mon_short: 'Jan,Feb,Mar,Apr,May,Jun,Jul,Aug,Sep,Oct,Nov,Dec',
+        mon_full: 'January,February,March,April,May,June,July,August,September,October,November,December',
+        dow_short: 'MON,TUE,WED,THU,FRI,SAT,SUN',
+        dow_full: 'Monday,Tuesday,Wednesday,Thursday,Friday,Saturday,Sunday',
+        dow_mini: 'Mon,Tue,Wed,Thu,Fri,Sat,Sun'
       },
       dayflow: {
         ready: 'ready',
@@ -1645,7 +1670,27 @@
         ask_open: 'want to open?',
         stay: 'Stay in focus',
         ask_permission: 'Ask permission',
-        end: 'Okay, I\'m back'
+        end: 'Okay, I\'m back',
+        default_task: 'Task',
+        elapsed_label: 'elapsed',
+        done_btn: 'Done',
+        choice_title: 'How shall we start?',
+        opt_notimer: 'No timer',
+        opt_notimer_desc: 'You\'ll tap "Done" when you\'re ready',
+        opt_timer: 'Plain timer',
+        opt_timer_desc: 'For the full task duration',
+        opt_pomo: 'Pomodoro',
+        opt_pomo_desc: '25-min work + 5-min break cycles',
+        timer_full: '{mins} minutes total',
+        pomo_summary: '{cycles} cycles · {total} min total',
+        ask_title: 'Did you complete it?',
+        ask_done_prefix: 'Finished. Time —',
+        note_ph: 'Short note (e.g. speaking)',
+        ans_no: 'No',
+        ans_yes: 'Yes',
+        dur_fallback: '25 min',
+        sub_break: 'break',
+        sub_no_timer: 'no timer'
       },
       negotiation: {
         thinking_stamp: 'Mentor is thinking',
@@ -1668,7 +1713,11 @@
         done_a: 'Done',
         sub_count: 'completed today',
         cta: 'Continue',
-        cta_celebrate: 'Final celebration'
+        cta_celebrate: 'Final celebration',
+        page_title: '{brand} — Done',
+        task_demo_name: 'Language study',
+        task_demo_time: '1 hour of focus',
+        fokus_suffix: ' of focus'
       },
       notif: {
         title: 'Notifications',
@@ -1687,7 +1736,9 @@
       },
       celebrate: {
         sub: 'stronger than before',
-        cta: 'Next week'
+        cta: 'Next week',
+        stamp: '7 days · complete',
+        days_unit: 'days'
       },
       about: {
         what_lbl: 'What is this?',
@@ -1705,7 +1756,15 @@
         privacy_link: 'Privacy policy',
         all_screens: 'All screens',
         creator: 'Creator',
-        footer: 'With shared intention'
+        footer: 'With shared intention',
+        page_title: 'About this app',
+        feat_short1: 'Plan — written or spoken',
+        feat_short2: 'Editable daily schedule',
+        feat_short3: 'Focus timer · Pomodoro',
+        feat_short4: 'Streak counter',
+        feat_short5: 'Alarm — with 3 problems',
+        feat_short6: 'Weekly · monthly results',
+        priv_short: 'Data stays on your phone. Reset clears it.'
       },
       menu: {
         sub_count: 'screens',
@@ -1713,7 +1772,23 @@
         sec_settings: 'Settings',
         sec_day: 'Day',
         sec_do: 'Doing',
-        sec_result: 'Results'
+        sec_result: 'Results',
+        screen_count_num: '15',
+        row_intro: 'Intro',
+        row_anketa: 'Profile',
+        row_vada: 'Vow',
+        row_goals: 'Goals',
+        row_settings: 'Settings',
+        row_home: 'Home',
+        row_routine: 'Tell the plan',
+        row_today: 'Today\'s plan',
+        row_calendar: 'Calendar',
+        row_alarm: 'Alarm',
+        row_hardlock: 'Focus timer',
+        row_session: 'Done',
+        row_evening: 'Day summary',
+        row_history: 'History',
+        row_celebrate: 'Celebration'
       },
       sections: {
         intro: 'Intro',
