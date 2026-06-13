@@ -38,6 +38,8 @@
     align-items: baseline;
     margin-bottom: 14px;
   }
+  /* milestoneMark anchor — ensure transforms/filters from MVOW_MOTION don't get clipped */
+  .hero-num { position: relative; transform-origin: left center; will-change: transform, filter; }
   .hero-num {
     font-family: 'Cormorant Garamond', serif;
     font-weight: 500;
@@ -202,6 +204,8 @@
 
   @media (max-width: 480px) { body { padding: 0; } .phone { width: 100vw; min-height: 100vh; border-radius: 0; box-shadow: none; } }
 </style>
+<link rel="stylesheet" href="motion.css">
+<script src="motion.js" defer></script>
 </head>
 <body>
 
@@ -492,6 +496,26 @@
   document.addEventListener('DOMContentLoaded', () => {
     let cur = 'week';
     render(cur);
+
+    // Milestone celebration — fires once when streak crosses 7 / 30 / 100
+    try {
+      const _streak = parseInt(localStorage.getItem('mvow.streak') || '0', 10);
+      const MILESTONES = [7, 30, 100];
+      const seenKey = 'mvow.milestone.seen';
+      const seen = JSON.parse(localStorage.getItem(seenKey) || '[]');
+      const due = MILESTONES.find(m => _streak >= m && !seen.includes(m));
+      if (due && window.MVOW_MOTION && typeof MVOW_MOTION.milestoneMark === 'function') {
+        const _target = document.getElementById('heroNum');
+        if (_target) {
+          // Defer one frame so chart bar height transition + render() text update settle first
+          requestAnimationFrame(() => {
+            MVOW_MOTION.milestoneMark(_target, { streak: _streak });
+          });
+          seen.push(due);
+          localStorage.setItem(seenKey, JSON.stringify(seen));
+        }
+      }
+    } catch (e) { /* milestone is non-critical — never block render */ }
     document.querySelectorAll('.tab').forEach(t => {
       t.addEventListener('click', () => {
         document.querySelectorAll('.tab').forEach(x => x.classList.remove('on'));

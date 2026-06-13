@@ -246,6 +246,8 @@
     min-height: 52px;
   }
 </style>
+<link rel="stylesheet" href="motion.css">
+<script src="motion.js" defer></script>
 </head>
 <body>
 
@@ -334,6 +336,13 @@
 <script src="nav-overlay.js" defer></script>
 <script>
   document.addEventListener('DOMContentLoaded', () => {
+    // ── Motion: day-close transition (wraps page entrance) ──
+    try {
+      if (window.MVOW_MOTION && typeof MVOW_MOTION.dayClose === 'function') {
+        MVOW_MOTION.dayClose({ target: document.querySelector('.wrap') || document.body });
+      }
+    } catch (_e) { /* motion is decorative — never block page logic */ }
+
     // ── Sana ──
     const d = new Date();
     const monthsFallback = ['YAN','FEV','MAR','APR','MAY','IYUN','IYUL','AVG','SEN','OKT','NOY','DEK'];

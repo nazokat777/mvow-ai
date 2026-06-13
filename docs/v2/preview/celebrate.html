@@ -31,6 +31,9 @@
     margin-bottom: 12px;
   }
   .hero .sub { font-family:'Cormorant Garamond',serif; font-style:italic; font-size: 16px; color: var(--text-mid); }
+  .hero { position: relative; } /* anchor for milestoneMark overlay so injected DOM is contained, not pushed into page flow */
+  .hero .big { position: relative; z-index: 1; } /* keep the +70% numeral above any mark overlay */
+  @media (prefers-reduced-motion: reduce) { .hero [data-milestone-mark] { animation: none !important; opacity: 1 !important; } }
 
   .chains {
     display:flex; flex-direction: column; gap: 0;
@@ -50,6 +53,8 @@
   .cta { display:block; width:100%; padding:16px; background: linear-gradient(180deg, var(--accent), var(--accent-soft)); color: var(--void); font-size:13px; font-weight:600; letter-spacing:2px; text-transform: uppercase; border:none; border-radius:6px; text-align:center; text-decoration:none; }
   @media (max-width: 480px) { body { padding: 0; } .phone { width: 100vw; min-height: 100vh; border-radius: 0; box-shadow: none; } }
 </style>
+<link rel="stylesheet" href="motion.css">
+<script src="motion.js" defer></script>
 </head>
 <body>
 
@@ -86,6 +91,18 @@
         <span class="days"><span class="em">${c.days}</span> ${daysUnit}</span>
       </div>
     `).join('');
+
+    // --- Motion: milestoneMark on the hero number, gated by streak ---
+    try {
+      if (window.MVOW_MOTION && typeof MVOW_MOTION.milestoneMark === 'function') {
+        const _streak = parseInt(localStorage.getItem('mvow.streak') || '0', 10) || 0;
+        const hero = document.querySelector('.hero .big');
+        if (hero && _streak >= 7) {
+          hero.setAttribute('data-milestone-mark', '');
+          MVOW_MOTION.milestoneMark(hero, { streak: _streak });
+        }
+      }
+    } catch (e) { /* motion is non-critical; never block celebrate render */ }
   });
 </script>
 

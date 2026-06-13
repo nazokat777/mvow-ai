@@ -1,0 +1,721 @@
+/*
+ * brend Motion System — v1.0
+ * Neuro-driven motion design for habit formation
+ * See motion-spec.md for behavioral psychology rationale
+ */
+
+:root {
+  --mvw-dur-instant: 80ms;
+  --mvw-dur-quick: 160ms;
+  --mvw-dur-normal: 240ms;
+  --mvw-dur-slow: 400ms;
+  --mvw-dur-celebrate: 700ms;
+  --mvw-dur-cinematic: 2800ms;
+  --mvw-dur-ambient: 6000ms;
+
+  --mvw-ease-enter: cubic-bezier(0.16, 0.84, 0.32, 1);
+  --mvw-ease-exit: cubic-bezier(0.4, 0, 1, 1);
+  --mvw-ease-celebrate: cubic-bezier(0.16, 1.04, 0.32, 1);
+  --mvw-ease-recovery: cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  --mvw-ease-breath: cubic-bezier(0.4, 0, 0.6, 1);
+}
+
+/* --- Primitives --- */
+
+/* --- QuietConfirm (Micro) --- */
+/* QuietConfirm — Micro tier — Task-completion confirmation */
+
+/* Motion tokens (define once at :root, included here for self-contained paste) */
+:root {
+  --mvw-dur-micro: 280ms;
+  --mvw-dur-quiet: 420ms;
+  --mvw-ease-quiet: cubic-bezier(0.22, 0.61, 0.36, 1);
+  --mvw-ease-draw:  cubic-bezier(0.65, 0, 0.35, 1);
+  --mvw-ease-exit:  cubic-bezier(0.4, 0, 1, 1);
+}
+
+/* Host: target element receives this class. We use ::before for glow,
+   ::after for the check container slot. The SVG stroke itself lives in
+   an injected child .mvw-quietconfirm-mark so we can animate stroke-dashoffset. */
+.mvw-quietconfirm-host {
+  position: relative;
+  isolation: isolate;
+}
+
+/* Thin accent breath behind the mark — fades in, holds briefly, fades out */
+.mvw-quietconfirm-host::before {
+  content: "";
+  position: absolute;
+  inset: 50% auto auto 50%;
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  transform: translate3d(-50%, -50%, 0) scale(0.6);
+  background: radial-gradient(
+    circle,
+    rgba(0, 229, 212, 0.32) 0%,
+    rgba(0, 229, 212, 0.10) 45%,
+    rgba(0, 229, 212, 0) 70%
+  );
+  opacity: 0;
+  pointer-events: none;
+  z-index: 0;
+  filter: blur(2px);
+  animation: mvw-quietconfirm-glow var(--mvw-dur-micro) var(--mvw-ease-quiet) forwards;
+}
+
+/* Injected check container — sits centered on host */
+.mvw-quietconfirm-mark {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 18px;
+  height: 18px;
+  transform: translate3d(-50%, -50%, 0);
+  pointer-events: none;
+  z-index: 1;
+  opacity: 0;
+  animation: mvw-quietconfirm-fade var(--mvw-dur-micro) var(--mvw-ease-quiet) forwards;
+}
+
+.mvw-quietconfirm-mark svg {
+  width: 100%;
+  height: 100%;
+  display: block;
+  overflow: visible;
+}
+
+.mvw-quietconfirm-mark path {
+  fill: none;
+  stroke: #00E5D4;
+  stroke-width: 2.2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  stroke-dasharray: 24;
+  stroke-dashoffset: 24;
+  filter: drop-shadow(0 0 2px rgba(0, 229, 212, 0.55));
+  animation: mvw-quietconfirm-draw var(--mvw-dur-micro) var(--mvw-ease-draw) forwards;
+}
+
+@keyframes mvw-quietconfirm-draw {
+  0%   { stroke-dashoffset: 24; opacity: 0.6; }
+  30%  { opacity: 1; }
+  100% { stroke-dashoffset: 0;  opacity: 1; }
+}
+
+@keyframes mvw-quietconfirm-glow {
+  0%   { opacity: 0; transform: translate3d(-50%, -50%, 0) scale(0.6); }
+  35%  { opacity: 0.85; transform: translate3d(-50%, -50%, 0) scale(1.0); }
+  70%  { opacity: 0.45; transform: translate3d(-50%, -50%, 0) scale(1.15); }
+  100% { opacity: 0; transform: translate3d(-50%, -50%, 0) scale(1.25); }
+}
+
+@keyframes mvw-quietconfirm-fade {
+  0%   { opacity: 0; transform: translate3d(-50%, -50%, 0) scale(0.85); }
+  40%  { opacity: 1; transform: translate3d(-50%, -50%, 0) scale(1.0); }
+  100% { opacity: 1; transform: translate3d(-50%, -50%, 0) scale(1.0); }
+}
+
+/* Exit: when host receives the "is-leaving" modifier, mark + glow fade out */
+.mvw-quietconfirm-host.mvw-quietconfirm-leaving::before,
+.mvw-quietconfirm-host.mvw-quietconfirm-leaving .mvw-quietconfirm-mark {
+  animation: mvw-quietconfirm-exit var(--mvw-dur-micro) var(--mvw-ease-exit) forwards;
+}
+
+@keyframes mvw-quietconfirm-exit {
+  0%   { opacity: 1; }
+  100% { opacity: 0; }
+}
+
+/* Reduced motion: skip the draw + glow, show a static dim accent dot for ~120ms
+   so confirmation is still perceptible without animating anything. */
+@media (prefers-reduced-motion: reduce) {
+  .mvw-quietconfirm-host::before {
+    animation: none;
+    opacity: 0.5;
+    transform: translate3d(-50%, -50%, 0) scale(1.0);
+    filter: none;
+  }
+  .mvw-quietconfirm-mark {
+    animation: none;
+    opacity: 1;
+  }
+  .mvw-quietconfirm-mark path {
+    animation: none;
+    stroke-dashoffset: 0;
+    filter: none;
+  }
+}
+
+/* --- MilestoneMark (Notable) --- */
+/* MilestoneMark — Notable tier — Streak milestone reveal (7 / 30 / 100 days hit) */
+
+/* Local fallback tokens — only used if the global motion-token sheet has not yet loaded.
+   The primitive ALWAYS references the global custom properties; these defaults just
+   guarantee a sane curve if the cascade is empty. */
+.mvw-milestonemark-host {
+  --mvw-dur-quick:    var(--mvw-dur-quick, 180ms);
+  --mvw-dur-notable:  var(--mvw-dur-notable, 700ms);
+  --mvw-dur-settle:   var(--mvw-dur-settle, 420ms);
+  --mvw-ease-overshoot: var(--mvw-ease-overshoot, cubic-bezier(.22, 1.36, .36, 1));
+  --mvw-ease-glide:     var(--mvw-ease-glide, cubic-bezier(.22, .61, .36, 1));
+  --mvw-ease-out:       var(--mvw-ease-out, cubic-bezier(.16, 1, .3, 1));
+  position: relative;
+  display: inline-block;
+  isolation: isolate;
+}
+
+/* The number itself — scales 0.92 → 1.06 → 1.0 with an overshoot landing. */
+.mvw-milestonemark-pulse {
+  display: inline-block;
+  transform-origin: 50% 60%;
+  will-change: transform;
+  animation: mvw-milestonemark-pulse var(--mvw-dur-notable) var(--mvw-ease-overshoot) both;
+  backface-visibility: hidden;
+}
+
+@keyframes mvw-milestonemark-pulse {
+  0%   { transform: scale(.92); }
+  55%  { transform: scale(1.06); }
+  100% { transform: scale(1.00); }
+}
+
+/* Halo — radial accent glow behind the number, opacity 0 → 0.4 → 0.25. */
+.mvw-milestonemark-halo {
+  position: absolute;
+  inset: 50% 50% auto auto;
+  width: 220%;
+  height: 220%;
+  transform: translate(50%, -50%);
+  pointer-events: none;
+  border-radius: 50%;
+  background: radial-gradient(
+    circle at 50% 50%,
+    color-mix(in srgb, var(--accent) 55%, transparent) 0%,
+    color-mix(in srgb, var(--accent) 22%, transparent) 38%,
+    transparent 70%
+  );
+  filter: blur(14px);
+  opacity: 0;
+  z-index: -1;
+  will-change: opacity, filter;
+  animation: mvw-milestonemark-halo var(--mvw-dur-notable) var(--mvw-ease-glide) both;
+}
+
+@keyframes mvw-milestonemark-halo {
+  0%   { opacity: 0;    filter: blur(22px); }
+  55%  { opacity: .40;  filter: blur(14px); }
+  100% { opacity: .25;  filter: blur(16px); }
+}
+
+/* Restraint multiplier — at higher streaks the halo intentionally dims so the
+   moment never inflates into spectacle. Set via inline style by JS:
+     --mvw-mm-restraint: 1 | .75 | .5 | .35
+   30-day → .75, 100-day → .5, 365-day → .35. */
+.mvw-milestonemark-halo {
+  --mvw-mm-restraint: 1;
+}
+.mvw-milestonemark-halo[data-restraint] {
+  animation-name: mvw-milestonemark-halo-restrained;
+}
+@keyframes mvw-milestonemark-halo-restrained {
+  0%   { opacity: 0; filter: blur(22px); }
+  55%  { opacity: calc(.40 * var(--mvw-mm-restraint, 1)); filter: blur(14px); }
+  100% { opacity: calc(.25 * var(--mvw-mm-restraint, 1)); filter: blur(16px); }
+}
+
+/* Identity copy line — fades in below the number AFTER the pulse settles. */
+.mvw-milestonemark-identity {
+  opacity: 0;
+  transform: translateY(6px);
+  will-change: opacity, transform;
+  font-family: 'Cormorant Garamond', Georgia, serif;
+  font-style: italic;
+  font-size: 14px;
+  letter-spacing: .2px;
+  color: var(--text-mid);
+  margin-top: 10px;
+  animation: mvw-milestonemark-identity-in var(--mvw-dur-settle) var(--mvw-ease-out) both;
+  animation-delay: 360ms; /* lands as the pulse returns to 1.0 */
+}
+
+@keyframes mvw-milestonemark-identity-in {
+  0%   { opacity: 0; transform: translateY(6px); }
+  100% { opacity: 1; transform: translateY(0); }
+}
+
+/* Reduced motion — no scale, no blur shift. Hold the end state as a static reveal
+   so the user still sees they hit a milestone. */
+@media (prefers-reduced-motion: reduce) {
+  .mvw-milestonemark-pulse,
+  .mvw-milestonemark-halo,
+  .mvw-milestonemark-halo[data-restraint],
+  .mvw-milestonemark-identity {
+    animation: none !important;
+    transition: none !important;
+  }
+  .mvw-milestonemark-pulse    { transform: scale(1); }
+  .mvw-milestonemark-halo     { opacity: .22; filter: blur(16px); }
+  .mvw-milestonemark-halo[data-restraint] {
+    opacity: calc(.22 * var(--mvw-mm-restraint, 1));
+  }
+  .mvw-milestonemark-identity { opacity: 1; transform: none; }
+}
+
+/* --- DayClose (Quiet) --- */
+/* DayClose — Quiet tier — Evening "kun yakuni" transition */
+
+@keyframes mvw-dayclose-exhale {
+  0%   { opacity: 0; transform: translate3d(0, 16px, 0); }
+  100% { opacity: 1; transform: translate3d(0, 0, 0); }
+}
+
+@keyframes mvw-dayclose-horizon {
+  0%   { opacity: 0; transform: translate3d(-50%, 0, 0) scaleX(0); }
+  18%  { opacity: 0.15; transform: translate3d(-50%, 0, 0) scaleX(0.6); }
+  55%  { opacity: 0.15; transform: translate3d(-50%, 0, 0) scaleX(1); }
+  100% { opacity: 0; transform: translate3d(-50%, 0, 0) scaleX(1); }
+}
+
+.mvw-dayclose-viewport {
+  will-change: opacity, transform;
+  animation: mvw-dayclose-exhale var(--mvw-dur-slow, 400ms) var(--mvw-ease-exhale, cubic-bezier(0.22, 0.61, 0.36, 1)) both;
+}
+
+.mvw-dayclose-horizon {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  width: 100vw;
+  height: 1px;
+  transform: translate3d(-50%, 0, 0) scaleX(0);
+  transform-origin: 50% 50%;
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    var(--accent, #00E5D4) 20%,
+    var(--accent, #00E5D4) 80%,
+    transparent 100%
+  );
+  opacity: 0;
+  pointer-events: none;
+  z-index: 9999;
+  will-change: opacity, transform;
+  filter: blur(0.3px);
+  animation: mvw-dayclose-horizon var(--mvw-dur-xslow, 1200ms) var(--mvw-ease-horizon, cubic-bezier(0.4, 0, 0.2, 1)) both;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .mvw-dayclose-viewport {
+    animation: none;
+    opacity: 1;
+    transform: none;
+  }
+  .mvw-dayclose-horizon {
+    animation: none;
+    opacity: 0.15;
+    transform: translate3d(-50%, 0, 0) scaleX(1);
+    transition: opacity var(--mvw-dur-slow, 400ms) linear;
+  }
+  .mvw-dayclose-horizon.mvw-dayclose-horizon--fade {
+    opacity: 0;
+  }
+}
+
+/* --- AmbientPulse (Ambient) --- */
+/* AmbientPulse — Ambient tier — Background breathing glow on home screen when streak >= 30 */
+:root {
+  /* Fallbacks if motion tokens not yet loaded — real tokens override these */
+  --mvw-dur-ambient: 12000ms;
+  --mvw-ease-breath: cubic-bezier(0.45, 0.05, 0.55, 0.95);
+}
+
+@keyframes mvw-ambientpulse-breathe {
+  0% {
+    opacity: 0.06;
+    transform: translate3d(-50%, 0, 0) scale(1);
+    filter: blur(0px);
+  }
+  50% {
+    opacity: 0.14;
+    transform: translate3d(-50%, 0, 0) scale(1.05);
+    filter: blur(0.5px);
+  }
+  100% {
+    opacity: 0.06;
+    transform: translate3d(-50%, 0, 0) scale(1);
+    filter: blur(0px);
+  }
+}
+
+.mvw-ambientpulse-glow {
+  position: fixed;
+  left: 50%;
+  bottom: -20vh;
+  width: 120vw;
+  height: 80vh;
+  pointer-events: none;
+  z-index: 0;
+  transform: translate3d(-50%, 0, 0) scale(1);
+  opacity: 0.06;
+  background: radial-gradient(
+    ellipse at center,
+    var(--accent, #00E5D4) 0%,
+    rgba(0, 229, 212, 0.5) 25%,
+    rgba(0, 229, 212, 0.15) 55%,
+    transparent 75%
+  );
+  will-change: transform, opacity, filter;
+  mix-blend-mode: screen;
+  contain: layout paint;
+}
+
+.mvw-ambientpulse-glow.is-active {
+  animation: mvw-ambientpulse-breathe var(--mvw-dur-ambient) var(--mvw-ease-breath) infinite;
+}
+
+/* Static fallback — Ambient tier still shows a soft presence at lowest opacity */
+@media (prefers-reduced-motion: reduce) {
+  .mvw-ambientpulse-glow,
+  .mvw-ambientpulse-glow.is-active {
+    animation: none !important;
+    opacity: 0.06;
+    transform: translate3d(-50%, 0, 0) scale(1);
+    filter: none;
+    will-change: auto;
+  }
+}
+
+/* --- RecoveryMoment (Recovery) --- */
+/* RecoveryMoment — Recovery tier — Returning-user welcome */
+.mvw-recoverymoment-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 9000;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  background: radial-gradient(ellipse at center, rgba(12, 15, 22, 0.96) 0%, rgba(4, 6, 11, 0.99) 70%);
+  opacity: 0;
+  pointer-events: auto;
+  cursor: pointer;
+  will-change: opacity;
+  animation: mvw-recoverymoment-overlay-fade var(--mvw-dur-slow, 700ms) var(--mvw-ease-out, cubic-bezier(0.22, 1, 0.36, 1)) forwards;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.mvw-recoverymoment-overlay.mvw-recoverymoment-exit {
+  animation: mvw-recoverymoment-overlay-exit var(--mvw-dur-med, 450ms) var(--mvw-ease-in, cubic-bezier(0.55, 0, 0.68, 0.2)) forwards;
+}
+
+.mvw-recoverymoment-line {
+  width: 0;
+  height: 1px;
+  margin-bottom: 32px;
+  background: linear-gradient(90deg, transparent 0%, var(--accent, #00E5D4) 50%, transparent 100%);
+  opacity: 0;
+  transform: translateZ(0);
+  will-change: width, opacity;
+  animation: mvw-recoverymoment-line-draw var(--mvw-dur-xslow, 1400ms) var(--mvw-ease-out, cubic-bezier(0.22, 1, 0.36, 1)) 200ms forwards;
+}
+
+.mvw-recoverymoment-title {
+  font-family: 'Cormorant Garamond', serif;
+  font-style: italic;
+  font-weight: 400;
+  font-size: clamp(28px, 6vw, 42px);
+  line-height: 1.25;
+  letter-spacing: 0.01em;
+  color: var(--text, #F5F2EC);
+  text-align: center;
+  padding: 0 24px;
+  margin: 0 0 18px 0;
+  opacity: 0;
+  transform: translate3d(0, 8px, 0);
+  filter: blur(4px);
+  will-change: opacity, transform, filter;
+  animation: mvw-recoverymoment-fade-rise var(--mvw-dur-xslow, 1400ms) var(--mvw-ease-out, cubic-bezier(0.22, 1, 0.36, 1)) 600ms forwards;
+}
+
+.mvw-recoverymoment-sub {
+  font-family: 'Inter', sans-serif;
+  font-weight: 300;
+  font-size: 14px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--text-dim, #9CA0A8);
+  text-align: center;
+  padding: 0 24px;
+  margin: 0;
+  opacity: 0;
+  transform: translate3d(0, 6px, 0);
+  will-change: opacity, transform;
+  animation: mvw-recoverymoment-fade-rise var(--mvw-dur-slow, 700ms) var(--mvw-ease-out, cubic-bezier(0.22, 1, 0.36, 1)) 1400ms forwards;
+}
+
+.mvw-recoverymoment-hint {
+  position: absolute;
+  bottom: 48px;
+  left: 50%;
+  transform: translate3d(-50%, 0, 0);
+  font-family: 'Inter', sans-serif;
+  font-size: 12px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--text-dim, #9CA0A8);
+  opacity: 0;
+  will-change: opacity;
+  animation: mvw-recoverymoment-hint-pulse var(--mvw-dur-slow, 700ms) var(--mvw-ease-out, cubic-bezier(0.22, 1, 0.36, 1)) 2400ms forwards;
+}
+
+@keyframes mvw-recoverymoment-overlay-fade {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
+@keyframes mvw-recoverymoment-overlay-exit {
+  from { opacity: 1; }
+  to   { opacity: 0; }
+}
+
+@keyframes mvw-recoverymoment-line-draw {
+  0%   { width: 0;     opacity: 0; }
+  40%  {                opacity: 0.9; }
+  100% { width: 220px; opacity: 0.55; }
+}
+
+@keyframes mvw-recoverymoment-fade-rise {
+  0%   { opacity: 0; transform: translate3d(0, 8px, 0); filter: blur(4px); }
+  100% { opacity: 1; transform: translate3d(0, 0, 0);   filter: blur(0);   }
+}
+
+@keyframes mvw-recoverymoment-hint-pulse {
+  0%   { opacity: 0; }
+  100% { opacity: 0.5; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .mvw-recoverymoment-overlay {
+    animation: none;
+    opacity: 1;
+  }
+  .mvw-recoverymoment-overlay.mvw-recoverymoment-exit {
+    animation: none;
+    opacity: 0;
+    transition: opacity var(--mvw-dur-fast, 200ms) linear;
+  }
+  .mvw-recoverymoment-line {
+    animation: none;
+    width: 220px;
+    opacity: 0.55;
+  }
+  .mvw-recoverymoment-title,
+  .mvw-recoverymoment-sub,
+  .mvw-recoverymoment-hint {
+    animation: none;
+    opacity: 1;
+    transform: none;
+    filter: none;
+  }
+  .mvw-recoverymoment-hint { opacity: 0.5; }
+}
+
+/* --- OpeningHourglass (Cinematic) --- */
+/* OpeningHourglass — Cinematic tier — First-launch identity cinematic */
+
+/* Motion tokens fallback — uses --mvw-dur-* / --mvw-ease-* if defined upstream */
+:root {
+  --mvw-dur-xs: 120ms;
+  --mvw-dur-s: 240ms;
+  --mvw-dur-m: 500ms;
+  --mvw-dur-l: 800ms;
+  --mvw-dur-xl: 1200ms;
+  --mvw-ease-out: cubic-bezier(0.22, 1, 0.36, 1);
+  --mvw-ease-in-out: cubic-bezier(0.65, 0, 0.35, 1);
+  --mvw-ease-fall: cubic-bezier(0.55, 0.05, 0.55, 1);
+}
+
+.mvw-openinghourglass-stage {
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+  background: var(--void, #04060B);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  opacity: 0;
+  animation: mvw-openinghourglass-stage-in var(--mvw-dur-s) var(--mvw-ease-out) forwards;
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.mvw-openinghourglass-stage[data-fading="1"] {
+  animation: mvw-openinghourglass-stage-out var(--mvw-dur-m) var(--mvw-ease-in-out) forwards;
+}
+
+@keyframes mvw-openinghourglass-stage-in {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+@keyframes mvw-openinghourglass-stage-out {
+  from { opacity: 1; }
+  to   { opacity: 0; }
+}
+
+.mvw-openinghourglass-frame {
+  position: relative;
+  width: 220px;
+  height: 320px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.mvw-openinghourglass-glow {
+  position: absolute;
+  inset: 0;
+  margin: auto;
+  width: 160px;
+  height: 200px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  transform: scale(0.78);
+  filter: drop-shadow(0 0 14px rgba(0, 229, 212, 0.55))
+          drop-shadow(0 0 32px rgba(0, 229, 212, 0.22));
+  animation: mvw-openinghourglass-glow-in var(--mvw-dur-l) var(--mvw-ease-out) 200ms forwards;
+}
+
+.mvw-openinghourglass-glow svg {
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+
+@keyframes mvw-openinghourglass-glow-in {
+  0%   { opacity: 0; transform: scale(0.78); }
+  60%  { opacity: 1; transform: scale(1.04); }
+  100% { opacity: 1; transform: scale(1.00); }
+}
+
+.mvw-openinghourglass-sand {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--accent, #00E5D4);
+  box-shadow: 0 0 6px rgba(0, 229, 212, 0.7),
+              0 0 14px rgba(0, 229, 212, 0.35);
+  opacity: 0;
+  transform: translate(-50%, -60px) scale(0.6);
+  will-change: transform, opacity;
+}
+
+.mvw-openinghourglass-sand[data-i="0"] { animation: mvw-openinghourglass-fall var(--mvw-dur-xl) var(--mvw-ease-fall) 900ms forwards; }
+.mvw-openinghourglass-sand[data-i="1"] { animation: mvw-openinghourglass-fall var(--mvw-dur-xl) var(--mvw-ease-fall) 1020ms forwards; }
+.mvw-openinghourglass-sand[data-i="2"] { animation: mvw-openinghourglass-fall var(--mvw-dur-xl) var(--mvw-ease-fall) 1140ms forwards; }
+.mvw-openinghourglass-sand[data-i="3"] { animation: mvw-openinghourglass-fall var(--mvw-dur-xl) var(--mvw-ease-fall) 1260ms forwards; }
+.mvw-openinghourglass-sand[data-i="4"] { animation: mvw-openinghourglass-fall var(--mvw-dur-xl) var(--mvw-ease-fall) 1380ms forwards; }
+.mvw-openinghourglass-sand[data-i="5"] { animation: mvw-openinghourglass-fall var(--mvw-dur-xl) var(--mvw-ease-fall) 1500ms forwards; }
+.mvw-openinghourglass-sand[data-i="6"] { animation: mvw-openinghourglass-fall var(--mvw-dur-xl) var(--mvw-ease-fall) 1620ms forwards; }
+
+@keyframes mvw-openinghourglass-fall {
+  0%   { opacity: 0; transform: translate(-50%, -60px) scale(0.6); }
+  10%  { opacity: 1; transform: translate(-50%, -54px) scale(1); }
+  70%  { opacity: 1; transform: translate(-50%, 40px) scale(1); }
+  100% { opacity: 0; transform: translate(-50%, 70px) scale(0.4); }
+}
+
+.mvw-openinghourglass-ghosts {
+  position: absolute;
+  top: calc(50% + 80px);
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  gap: 28px;
+  align-items: center;
+  justify-content: center;
+}
+
+.mvw-openinghourglass-ghost {
+  width: 28px;
+  height: 28px;
+  opacity: 0;
+  transform: translateY(8px) scale(0.8);
+  filter: drop-shadow(0 0 6px rgba(0, 229, 212, 0.5));
+  color: var(--accent, #00E5D4);
+  will-change: transform, opacity;
+}
+
+.mvw-openinghourglass-ghost svg { width: 100%; height: 100%; display: block; }
+
+.mvw-openinghourglass-ghost[data-i="0"] { animation: mvw-openinghourglass-ghost-rise var(--mvw-dur-l) var(--mvw-ease-out) 1900ms forwards; }
+.mvw-openinghourglass-ghost[data-i="1"] { animation: mvw-openinghourglass-ghost-rise var(--mvw-dur-l) var(--mvw-ease-out) 2020ms forwards; }
+.mvw-openinghourglass-ghost[data-i="2"] { animation: mvw-openinghourglass-ghost-rise var(--mvw-dur-l) var(--mvw-ease-out) 2140ms forwards; }
+
+@keyframes mvw-openinghourglass-ghost-rise {
+  0%   { opacity: 0; transform: translateY(8px) scale(0.8); }
+  60%  { opacity: 1; transform: translateY(-2px) scale(1.04); }
+  100% { opacity: 0.85; transform: translateY(0) scale(1); }
+}
+
+.mvw-openinghourglass-wordmark {
+  position: absolute;
+  top: calc(50% + 130px);
+  left: 50%;
+  transform: translateX(-50%) translateY(6px);
+  font-family: 'Cormorant Garamond', Georgia, serif;
+  font-style: italic;
+  font-weight: 500;
+  font-size: 34px;
+  letter-spacing: 0.04em;
+  color: var(--text, #F5F2EC);
+  opacity: 0;
+  text-shadow: 0 0 18px rgba(0, 229, 212, 0.25);
+  animation: mvw-openinghourglass-wordmark-in var(--mvw-dur-m) var(--mvw-ease-out) 2500ms forwards;
+}
+
+@keyframes mvw-openinghourglass-wordmark-in {
+  0%   { opacity: 0; transform: translateX(-50%) translateY(6px); }
+  100% { opacity: 1; transform: translateX(-50%) translateY(0); }
+}
+
+/* Reduced motion: hold a single static identity frame, no falls/scales */
+@media (prefers-reduced-motion: reduce) {
+  .mvw-openinghourglass-stage,
+  .mvw-openinghourglass-stage[data-fading="1"] {
+    animation: none;
+    opacity: 1;
+  }
+  .mvw-openinghourglass-glow {
+    animation: none;
+    opacity: 1;
+    transform: none;
+  }
+  .mvw-openinghourglass-sand,
+  .mvw-openinghourglass-ghost {
+    animation: none;
+    opacity: 0;
+  }
+  .mvw-openinghourglass-wordmark {
+    animation: none;
+    opacity: 1;
+    transform: translateX(-50%);
+  }
+}
+
+
+/* --- Global reduced-motion safety net --- */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}

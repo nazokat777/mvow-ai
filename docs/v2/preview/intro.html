@@ -110,6 +110,8 @@
     min-height: 52px;
   }
 </style>
+<link rel="stylesheet" href="motion.css">
+<script src="motion.js" defer></script>
 </head>
 <body>
 
@@ -137,6 +139,16 @@
 <script>
   document.getElementById('startBtn').addEventListener('click', () => {
     localStorage.setItem('mvow.introSeen', '1');
+  });
+
+  // ── Opening Hourglass (Cinematic) ──
+  // Primitive self-gates on mvow.motion.introSeen flag, intensity=minimal, and reduced-motion.
+  document.addEventListener('DOMContentLoaded', () => {
+    try {
+      if (window.MVOW_MOTION && typeof MVOW_MOTION.openingHourglass === 'function') {
+        MVOW_MOTION.openingHourglass();
+      }
+    } catch (e) { /* cinematic is non-critical */ }
   });
 </script>
 

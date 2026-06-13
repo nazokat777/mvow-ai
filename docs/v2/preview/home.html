@@ -159,6 +159,8 @@
     .phone { width: 100vw; min-height: 100vh; border-radius: 0; box-shadow: none; }
   }
 </style>
+<link rel="stylesheet" href="motion.css">
+<script src="motion.js" defer></script>
 </head>
 <body>
 
@@ -314,6 +316,15 @@
     // Streak — saqlangan bo'lsa o'sha, yo'q bo'lsa 0 (soxta default yo'q)
     const streak = parseInt(localStorage.getItem('mvow.streak') || '0', 10);
     document.getElementById('streakN').textContent = streak;
+    // Mark streak block as ambient-pulse target so motion.js can scope its halo to it
+    // (data attribute is additive — no existing CSS selector matches it)
+    const _streakBlock = document.querySelector('.streak');
+    if (_streakBlock) {
+      _streakBlock.dataset.ambientTarget = 'streak';
+      // streakN itself gets the inner glow anchor — keeps milestoneBar transition untouched
+      const _streakN = document.getElementById('streakN');
+      if (_streakN) _streakN.dataset.ambientGlow = 'true';
+    }
 
     // Bugungi reja — faqat foydalanuvchi tuzgan reja (namuna ko'rsatilmaydi)
     let plan = [];
@@ -767,6 +778,29 @@
       } catch (err) { console.error('Change time failed:', err); }
     }
 
+    // ── RECOVERY MOMENT (motion primitive) — 2+ kun tanaffus ──
+    // Bir sessiyada faqat bir marta ishga tushadi. Overlay'ni primitive o'zi quradi.
+    try {
+      if (window.MVOW_MOTION && typeof MVOW_MOTION.recoveryMoment === 'function'
+          && !sessionStorage.getItem('mvow.recoveryShown')) {
+        // lastStreakDate — saqlangan signaldan yoki history'ning oxirgi sanasidan
+        let lastIso = localStorage.getItem('mvow.lastStreakDate') || null;
+        if (!lastIso && window.MVOW_DATA) {
+          const h = MVOW_DATA.getHistory();
+          if (h.length) lastIso = h.map(x => x.dateIso).sort().pop();
+        }
+        if (lastIso) {
+          const last = new Date(lastIso); last.setHours(0,0,0,0);
+          const t0 = new Date(); t0.setHours(0,0,0,0);
+          const gap = Math.floor((t0 - last) / 86400000);
+          if (gap >= 2) {
+            const _lang = (document.documentElement.lang || 'uz').toLowerCase().slice(0, 2);
+            MVOW_MOTION.recoveryMoment({ lang: _lang });
+          }
+        }
+      }
+    } catch (err) { console.warn('recoveryMoment skipped:', err); }
+
     const pattern = (recoveryDays === null) ? findPatternFailure() : null;
     if (pattern) {
       const peakTime = suggestedPeakTime();
@@ -848,6 +882,26 @@
         if (lbl) lbl.textContent = (window.I18N ? I18N.t('home.streak_xatarda', 'xatarda') : 'xatarda');
       }
     }
+
+    // ── AMBIENT PULSE (streak >= 30, no recovery state, no at-risk recolor) ──
+    // Run AFTER streak risk indicator so we can skip pulse when streak is in danger
+    // (red color signals warning, not celebration). The primitive internally
+    // guards on streak threshold (30+), intensity, and reduced-motion.
+    try {
+      const _streakRecolored = (streak > 0 && todayDone === 0 && hour >= 18 && hour < 22);
+      const _shouldPulse = recoveryDays === null
+        && !_streakRecolored
+        && window.MVOW_MOTION
+        && MVOW_MOTION.AmbientPulse
+        && typeof MVOW_MOTION.AmbientPulse.run === 'function';
+      if (_shouldPulse) {
+        MVOW_MOTION.AmbientPulse.run({ persistent: true });
+        // Cleanup on navigation away (PWA single-page feel) so injected DOM/listeners don't leak
+        window.addEventListener('pagehide', () => {
+          if (MVOW_MOTION.AmbientPulse._cleanup) MVOW_MOTION.AmbientPulse._cleanup();
+        }, { once: true });
+      }
+    } catch (err) { console.warn('ambientPulse skipped:', err); }
   });
 </script>
 

@@ -133,6 +133,8 @@
 
   @media (max-width: 480px) { body { padding: 0; } .phone { width: 100vw; min-height: 100vh; border-radius: 0; box-shadow: none; } }
 </style>
+<link rel="stylesheet" href="motion.css">
+<script src="motion.js" defer></script>
 </head>
 <body>
 
@@ -311,6 +313,13 @@
         const cur = parseInt(localStorage.getItem(todayKey) || '0', 10);
         localStorage.setItem(todayKey, String(cur + 1));
         if (MVOW_DATA.fxSuccess) MVOW_DATA.fxSuccess();
+        // Quiet confirm pulse — fires only on successful Bajardim path, just before navigation.
+        try {
+          if (typeof MVOW_MOTION !== 'undefined' && MVOW_MOTION && typeof MVOW_MOTION.quietConfirm === 'function') {
+            const anchor = document.getElementById('askYes') || document.getElementById('doneBtn');
+            if (anchor) MVOW_MOTION.quietConfirm(anchor);
+          }
+        } catch (e) { /* never block navigation on motion failure */ }
       }
     }
     setTimeout(() => { location.href = 'session-reflection.html'; }, 600);
