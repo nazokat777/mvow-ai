@@ -331,9 +331,9 @@
         <span class="check-badge"><svg viewBox="0 0 24 24" fill="none" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="5 12 10 17 19 8"/></svg></span>
         <span class="miss-badge"><svg viewBox="0 0 24 24" fill="none" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><line x1="6" y1="6" x2="18" y2="18"/><line x1="6" y1="18" x2="18" y2="6"/></svg></span>
         <span class="time">${escapeHtml(t.time || '—')}</span>
-        <span class="name">${escapeHtml(t.name || 'ish')}</span>
+        <span class="name">${escapeHtml(t.name || (window.I18N ? I18N.t('today.ish_lbl', 'reja') : 'reja'))}</span>
         <span class="dur">${escapeHtml(t.dur || '')}</span>
-        <span class="x" role="button" tabindex="0" aria-label="Ishni o'chirish" title="O'chirish">×</span>
+        <span class="x" role="button" tabindex="0" aria-label="${window.I18N ? I18N.t('today.edit_delete', "O'chir") : "O'chir"}" title="${window.I18N ? I18N.t('today.edit_delete', "O'chir") : "O'chir"}">×</span>
       `;
       // Tap to edit (except × button)
       row.querySelectorAll('.time, .name, .dur').forEach(el => {
@@ -366,15 +366,16 @@
     if (row.classList.contains('edit')) return;
     const t = tasks[idx];
     row.classList.add('edit');
+    const T2 = (k, def) => (window.I18N ? I18N.t(k, def) : def);
     row.innerHTML = `
       <div class="row">
         <input class="t time" type="text" placeholder="07:00" value="${escapeHtml(t.time || '')}" maxlength="5">
-        <input class="t name" type="text" placeholder="ish nomi" value="${escapeHtml(t.name || '')}" maxlength="48">
-        <input class="t dur"  type="text" placeholder="45 daq" value="${escapeHtml(t.dur || '')}" maxlength="20">
+        <input class="t name" type="text" placeholder="${T2('today.name_ph', 'reja nomi')}" value="${escapeHtml(t.name || '')}" maxlength="48">
+        <input class="t dur"  type="text" placeholder="${T2('today.dur_ph', '45 daq')}" value="${escapeHtml(t.dur || '')}" maxlength="20">
       </div>
       <div class="actions">
-        <button class="cancel" type="button">Bekor</button>
-        <button class="save" type="button">Saqla</button>
+        <button class="cancel" type="button">${T2('today.edit_cancel', 'Bekor')}</button>
+        <button class="save" type="button">${T2('today.edit_save', 'Saqla')}</button>
       </div>
     `;
     const [timeIn, nameIn, durIn] = row.querySelectorAll('input');
@@ -383,7 +384,7 @@
     row.querySelector('.save').addEventListener('click', () => {
       tasks[idx] = {
         time: timeIn.value.trim(),
-        name: nameIn.value.trim() || 'ish',
+        name: nameIn.value.trim() || T2('today.ish_lbl', 'reja'),
         dur: durIn.value.trim()
       };
       saveTasks();
@@ -407,15 +408,16 @@
     const row = document.createElement('div');
     row.className = 'task edit';
     row.dataset.draft = '1';
+    const T3 = (k, def) => (window.I18N ? I18N.t(k, def) : def);
     row.innerHTML = `
       <div class="row">
         <input class="t time" type="text" placeholder="07:00" value="" maxlength="5">
-        <input class="t name" type="text" placeholder="ish nomi" value="" maxlength="48">
-        <input class="t dur"  type="text" placeholder="45 daq" value="" maxlength="20">
+        <input class="t name" type="text" placeholder="${T3('today.name_ph', 'reja nomi')}" value="" maxlength="48">
+        <input class="t dur"  type="text" placeholder="${T3('today.dur_ph', '45 daq')}" value="" maxlength="20">
       </div>
       <div class="actions">
-        <button class="cancel" type="button">Bekor</button>
-        <button class="save" type="button">Saqla</button>
+        <button class="cancel" type="button">${T3('today.edit_cancel', 'Bekor')}</button>
+        <button class="save" type="button">${T3('today.edit_save', 'Saqla')}</button>
       </div>
     `;
     list2.appendChild(row);
@@ -425,7 +427,7 @@
     row.querySelector('.save').addEventListener('click', () => {
       tasks.push({
         time: timeIn.value.trim(),
-        name: nameIn.value.trim() || 'ish',
+        name: nameIn.value.trim() || T3('today.ish_lbl', 'reja'),
         dur:  durIn.value.trim()
       });
       saveTasks();
