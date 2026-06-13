@@ -425,7 +425,9 @@
       if (nowMin >= startMin && nowMin < startMin + durMin) { activeTask = t; break; }
     }
     const upcomingSoon = upcoming && ((tKey(upcoming.time) - nowMin) <= 30);
-    const isEvening = (greet === 'Xayrli kech' || greet === 'Xayrli tun');
+    // isEvening: vaqtga asoslangan, matn taqqoslamaymiz (i18n bezdiruvchi bug edi)
+    const hForEvening = nowMin / 60;
+    const isEvening = hForEvening >= 17 || hForEvening < 4;
     const allDone = plan.length && !upcoming && !activeTask;
 
     // Maqsadlar bormi?
