@@ -268,6 +268,56 @@
     DATA.setTaskState(taskKey, { askCount: (state.askCount || 0) + 1 });
   };
 
+  // ── XULQ-ATVOR MODELI: kun, soat, naqshlar tahlili ──
+  DATA.getBehaviorStats = function () {
+    const history = DATA.getHistory();
+    const w = DATA.getWeekPlan();
+    const weekdays = ['Yakshanba','Dushanba','Seshanba','Chorshanba','Payshanba','Juma','Shanba'];
+    const byDay = Array(7).fill(0).map(() => ({ done: 0, planned: 0 }));
+    const byHour = Array(24).fill(0); // bajarilgan ishlar soati bo'yicha
+    const todayDate = new Date(); todayDate.setHours(0,0,0,0);
+
+    for (const key of Object.keys(w)) {
+      if (!Array.isArray(w[key])) continue;
+      const iso = key.slice(1);
+      const d = new Date(iso); if (isNaN(d)) continue;
+      if (d > todayDate) continue; // kelajak emas
+      const wd = d.getDay();
+      byDay[wd].planned += w[key].length;
+      const dayHistory = history.filter(h => h.dateIso === iso);
+      byDay[wd].done += dayHistory.length;
+    }
+    for (const h of history) {
+      const t = (h.plannedTime || '').match(/^(\d{1,2}):/);
+      if (t) byHour[+t[1]]++;
+    }
+
+    const dayStats = byDay.map((s, i) => ({
+      day: weekdays[i],
+      shortDay: ['Yak','Du','Se','Ch','Pa','Ju','Sh'][i],
+      completion: s.planned > 0 ? Math.round((s.done / s.planned) * 100) : null,
+      planned: s.planned,
+      done: s.done
+    })).filter(s => s.completion !== null);
+
+    if (!dayStats.length) return null;
+    const sorted = [...dayStats].sort((a,b) => b.completion - a.completion);
+    const best = sorted[0];
+    const worst = sorted[sorted.length - 1];
+    const avg = Math.round(dayStats.reduce((s,x) => s + x.completion, 0) / dayStats.length);
+
+    // Eng sermahsul vaqt oralig'i
+    let peakHour = -1, peakCount = 0;
+    for (let i = 0; i < 24; i++) {
+      if (byHour[i] > peakCount) { peakCount = byHour[i]; peakHour = i; }
+    }
+    const peakRange = peakHour >= 0
+      ? (String(peakHour).padStart(2,'0') + ':00–' + String((peakHour + 2) % 24).padStart(2,'0') + ':00')
+      : null;
+
+    return { best, worst, avg, peakRange, dayStats, totalDone: history.length };
+  };
+
   // Joriy task — foydalanuvchining saqlangan rejasidan
   DATA.currentTaskFromPlan = function () {
     const plan = DATA.getTodayPlan();

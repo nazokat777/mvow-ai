@@ -200,6 +200,12 @@
       <div class="chart-labels" id="chartLabels"></div>
     </div>
 
+    <!-- Xulq-atvor tahlili -->
+    <div id="insightsBox" style="display:none;background:var(--card);border-radius:14px;padding:18px 16px;margin-bottom:22px;">
+      <div style="font-size:11px;letter-spacing:3px;color:var(--accent);text-transform:uppercase;font-weight:500;margin-bottom:14px;">Xulq-atvor tahlili</div>
+      <div id="insightsContent" style="display:flex;flex-direction:column;gap:10px;font-size:13px;line-height:1.5;"></div>
+    </div>
+
     <!-- Per-task grouped list -->
     <div id="historyList"></div>
 
@@ -331,6 +337,31 @@
 
     // Diagramma
     buildChart(range, allHistory);
+
+    // Xulq-atvor tahlili (faqat hafta yoki oy ko'rinishida)
+    const insBox = document.getElementById('insightsBox');
+    const insContent = document.getElementById('insightsContent');
+    if (range !== 'day' && window.MVOW_DATA) {
+      const b = MVOW_DATA.getBehaviorStats();
+      if (b && b.dayStats.length >= 2) {
+        const gradeColor = (pct) => pct >= 80 ? '#00E5D4' : pct >= 50 ? '#F5C26B' : '#FF8E97';
+        let html = '';
+        html += `<div style="display:flex;justify-content:space-between;align-items:baseline;"><span style="color:var(--text-mid);">Eng yaxshi kuningiz</span><span style="color:#00E5D4;font-weight:600;"><span style="font-family:'Cormorant Garamond',serif;font-size:16px;font-style:italic;">${b.best.day}</span> · ${b.best.completion}%</span></div>`;
+        if (b.worst.day !== b.best.day) {
+          html += `<div style="display:flex;justify-content:space-between;align-items:baseline;"><span style="color:var(--text-mid);">Eng yomon</span><span style="color:#FF8E97;font-weight:600;"><span style="font-family:'Cormorant Garamond',serif;font-size:16px;font-style:italic;">${b.worst.day}</span> · ${b.worst.completion}%</span></div>`;
+        }
+        html += `<div style="display:flex;justify-content:space-between;align-items:baseline;"><span style="color:var(--text-mid);">O'rtacha bajarish</span><span style="color:${gradeColor(b.avg)};font-weight:600;">${b.avg}%</span></div>`;
+        if (b.peakRange) {
+          html += `<div style="display:flex;justify-content:space-between;align-items:baseline;"><span style="color:var(--text-mid);">Sermahsul vaqt</span><span style="color:var(--accent);font-weight:600;">${b.peakRange}</span></div>`;
+        }
+        insContent.innerHTML = html;
+        insBox.style.display = 'block';
+      } else {
+        insBox.style.display = 'none';
+      }
+    } else {
+      insBox.style.display = 'none';
+    }
 
     // Vazifa bo'yicha guruhlash
     const list = document.getElementById('historyList');

@@ -383,16 +383,43 @@
     function murabbiyMessage() {
       if (!hasGoals) return null;
       if (!plan.length) return null;
+
+      // Asosiy xabar — bajarish holatiga qarab
+      let main;
       if (todayRemaining === 0 && plan.length > 0) {
-        return 'Bugun hammasi bajarildi. Tabriklayman.';
+        main = 'Bugun hammasi bajarildi. Tabriklayman.';
+      } else if (yPct !== null) {
+        if (yPct >= 80) main = 'Bugun <span class="em">' + todayRemaining + '</span> reja qoldi. Kecha <span class="em">' + yPct + '%</span> bajardingiz. Davom eting.';
+        else if (yPct >= 50) main = 'Bugun <span class="em">' + todayRemaining + '</span> reja qoldi. Kecha <span class="em">' + yPct + '%</span> — bugun yaxshilang.';
+        else if (yPct > 0) main = 'Bugun <span class="em">' + todayRemaining + '</span> reja qoldi. Kecha <span class="em">' + yPct + '%</span> — bugun qaytib keling.';
+        else main = 'Bugun <span class="em">' + todayRemaining + '</span> reja kutmoqda. Boshlang.';
+      } else {
+        main = 'Bugun <span class="em">' + todayRemaining + '</span> reja kutmoqda.';
       }
-      if (yPct !== null) {
-        if (yPct >= 80) return 'Bugun <span class="em">' + todayRemaining + '</span> reja qoldi. Kecha <span class="em">' + yPct + '%</span> bajardingiz. Davom eting.';
-        if (yPct >= 50) return 'Bugun <span class="em">' + todayRemaining + '</span> reja qoldi. Kecha <span class="em">' + yPct + '%</span> — bugun yaxshilang.';
-        if (yPct > 0)   return 'Bugun <span class="em">' + todayRemaining + '</span> reja qoldi. Kecha <span class="em">' + yPct + '%</span> — bugun qaytib keling.';
-        return 'Bugun <span class="em">' + todayRemaining + '</span> reja kutmoqda. Boshlang.';
-      }
-      return 'Bugun <span class="em">' + todayRemaining + '</span> reja kutmoqda.';
+
+      // Kontekstli qo'shimcha — situation / weekday / energy peak
+      let ctx = null;
+      try {
+        const profile = JSON.parse(localStorage.getItem('mvow.profile') || '{}');
+        const wd = d.getDay(); // 0=Yak ... 6=Sh
+        const isWeekend = wd === 0 || wd === 6;
+        const situationHints = {
+          student: { weekday: 'Talaba — darslar oralig\'idagi vaqtni topib oling.', weekend: 'Bo\'sh kun — bir blokga ko\'proq vaqt ajrating.' },
+          parent:  { weekday: 'Bola maktabga ketganda 30 daqiqani yutib oling.',     weekend: 'Bola uxlatilganda 30 daq topishga harakat qiling.' },
+          worker:  { weekday: 'Ish kuni — ertalab yoki kechqurun qisqa blok yetadi.', weekend: 'Bo\'sh kun — bir blokga ko\'proq vaqt ajrating.' },
+          freelancer: { weekday: 'Erkin vaqt — energiya cho\'qqisida boshlang.', weekend: 'Bugun ham bir qadam — uzilish bo\'lmasin.' },
+          searching: { weekday: 'Yo\'lda — bitta qadam ham yetadi.', weekend: 'Bo\'sh kun — bitta blokni puxta bajaring.' }
+        };
+        if (profile.situation && situationHints[profile.situation]) {
+          ctx = situationHints[profile.situation][isWeekend ? 'weekend' : 'weekday'];
+        }
+        // Streak ogohlantirishi (yo'qotish xavfi)
+        if (!ctx && streak > 0 && todayRemaining > 0 && hourNow >= 18) {
+          ctx = '<span style="color:#F5C26B;">' + streak + ' kunlik streak xatarda — vaqt bor.</span>';
+        }
+      } catch {}
+
+      return main + (ctx ? '<br><span style="font-size:12px;color:var(--text-mid);font-style:normal;font-family:Inter,sans-serif;letter-spacing:0.2px;">' + ctx + '</span>' : '');
     }
     const mMsg = murabbiyMessage();
     if (mMsg) {
