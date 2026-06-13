@@ -175,7 +175,7 @@
           MVOW_DATA.setTodayPlan(sessions);
         } else {
           // Fallback — to'g'ridan-to'g'ri weekPlan'ga yozish
-          const todayKey = 'd' + new Date().toISOString().slice(0,10);
+          const todayKey = 'd' + (window.MVOW_DATA ? MVOW_DATA.today.iso : new Date().toISOString().slice(0,10));
           let w = {};
           try { w = JSON.parse(localStorage.getItem('mvow.weekPlan') || '{}'); } catch {}
           w[todayKey] = sessions;

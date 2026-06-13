@@ -232,7 +232,7 @@
       const d = new Date(monday);
       d.setDate(monday.getDate() + i);
       DAYS.push({
-        key: 'd' + d.toISOString().slice(0,10),
+        key: 'd' + MVOW_DATA.localDateIso(d),
         d: labels[i],
         n: d.getDate(),
         full: full[i],
@@ -344,7 +344,7 @@
     const first = new Date(year, mo, 1);
     const startDow = (first.getDay() + 6) % 7; // Du=0
     const daysInMonth = new Date(year, mo + 1, 0).getDate();
-    const todayIso = new Date().toISOString().slice(0, 10);
+    const todayIso = window.MVOW_DATA ? MVOW_DATA.today.iso : new Date().toISOString().slice(0, 10);
 
     const grid = document.getElementById('monthGrid');
     let html = '<div style="display:grid;grid-template-columns:repeat(7,1fr);gap:2px;text-align:center;margin-bottom:6px;">';
@@ -361,7 +361,7 @@
     }
     for (let day = 1; day <= daysInMonth; day++) {
       const d = new Date(year, mo, day);
-      const iso = d.toISOString().slice(0,10);
+      const iso = MVOW_DATA.localDateIso(d);
       const key = 'd' + iso;
       const hasPlan = (weekData[key] && weekData[key].length) ? true : false;
       const isToday = iso === todayIso;

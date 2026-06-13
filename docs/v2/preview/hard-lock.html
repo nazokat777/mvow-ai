@@ -173,15 +173,25 @@
   </div>
 </div>
 
-<!-- 1) Boshlash tanlovi: Taymer bilan / Taymersiz -->
+<!-- 1) Boshlash tanlovi: Taymersiz / Oddiy taymer / Pomodoro -->
 <div class="choice-overlay" id="choiceOverlay">
   <div class="choice-card">
     <div class="ctitle">Qanday boshlaymiz?</div>
     <div class="ctask" id="cTaskName">Ish</div>
-    <div class="csub">Taymer bilan — vaqtni ushlab turamiz.<br>Taymersiz — siz tayyor bo'lganda "Bajardim" deysiz.</div>
-    <div class="choice-grid">
-      <button class="choice-btn secondary" id="chNoTimer" type="button">Taymersiz</button>
-      <button class="choice-btn primary" id="chTimer" type="button">Taymer bilan</button>
+    <div id="cTaskMeta" style="font-size:11px;color:#9CA0A8;letter-spacing:1px;text-transform:uppercase;margin-bottom:14px;">— · —</div>
+    <div style="display:flex;flex-direction:column;gap:8px;">
+      <button class="choice-btn secondary" id="chNoTimer" type="button" style="text-align:left;padding:14px 16px;">
+        <span style="display:block;font-weight:600;margin-bottom:2px;">Taymersiz</span>
+        <span style="display:block;font-size:10px;color:#9CA0A8;letter-spacing:0.5px;text-transform:none;font-weight:400;">Siz tayyor bo'lganda "Bajardim" deysiz</span>
+      </button>
+      <button class="choice-btn secondary" id="chTimer" type="button" style="text-align:left;padding:14px 16px;border-color:rgba(0,229,212,.35);">
+        <span style="display:block;font-weight:600;margin-bottom:2px;color:#7AF5EC;">Oddiy taymer</span>
+        <span style="display:block;font-size:10px;color:#9CA0A8;letter-spacing:0.5px;text-transform:none;font-weight:400;" id="chTimerDur">Vazifa davomiyligi bo'yicha</span>
+      </button>
+      <button class="choice-btn primary" id="chPomo" type="button" style="text-align:left;padding:14px 16px;">
+        <span style="display:block;font-weight:600;margin-bottom:2px;">Pomodoro</span>
+        <span style="display:block;font-size:10px;color:#04060B;opacity:0.7;letter-spacing:0.5px;text-transform:none;font-weight:400;" id="chPomoDur">25 daq ish + 5 daq dam sikllari</span>
+      </button>
     </div>
   </div>
 </div>
@@ -220,7 +230,18 @@
   document.getElementById('aDur').textContent = current.dur || '25 daq';
 
   const taskMins = window.MVOW_DATA ? MVOW_DATA.parseDurMins(current.dur) : 25;
-  const WORK_MIN = taskMins;
+  // Tanlov modal'idagi meta
+  document.getElementById('cTaskMeta').textContent = (current.time || '—') + ' · ' + (current.dur || '—');
+  document.getElementById('chTimerDur').textContent = taskMins + ' daqiqa to\'liq';
+  // Pomodoro sikllari soni (vazifa davomiyligini 25 ga bo'lib chiqarish)
+  const POMO_WORK = 25, POMO_BREAK = 5;
+  const pomoCycles = Math.max(1, Math.round(taskMins / POMO_WORK));
+  document.getElementById('chPomoDur').textContent = pomoCycles + ' sikl · ' + (pomoCycles*POMO_WORK + (pomoCycles-1)*POMO_BREAK) + ' daq jami';
+
+  // Standart (oddiy) rejimda — to'liq vazifa davomiyligi
+  let WORK_MIN = taskMins;
+  let BREAK_MIN = 0;
+  let TOTAL_CYC = 1;
   const RING_CIRC = 729;
 
   const digits = document.getElementById('digits');
@@ -277,11 +298,12 @@
           startedAt,
           completedAt: Date.now(),
           actualMins,
-          withTimer: (mode === 'timer'),
+          withTimer: (mode === 'timer' || mode === 'pomodoro'),
+          mode: mode || 'no-timer',
           note
         });
         // Bugungi sanoq oshadi
-        const todayKey = 'mvow.done.' + new Date().toISOString().slice(0,10);
+        const todayKey = 'mvow.done.' + (window.MVOW_DATA ? MVOW_DATA.today.iso : new Date().toISOString().slice(0,10));
         const cur = parseInt(localStorage.getItem(todayKey) || '0', 10);
         localStorage.setItem(todayKey, String(cur + 1));
         if (MVOW_DATA.fxSuccess) MVOW_DATA.fxSuccess();
@@ -295,14 +317,17 @@
     askOverlay.classList.add('show');
   }
 
-  // Boshlash tanlovi
-  document.getElementById('chTimer').addEventListener('click', () => {
-    mode = 'timer';
-    choiceOverlay.style.display = 'none';
+  // Pomodoro phase state (Pomodoro tanlanganda ishlatiladi)
+  let phase = 'work'; // 'work' yoki 'break'
+  let cycle = 1;
+
+  function startSimpleTimer() {
     timerArea.classList.remove('hidden');
     noTimerArea.classList.remove('show');
     tsub.textContent = 'fokusdasiz';
     startedAt = Date.now();
+    remaining = WORK_MIN * 60;
+    totalSec = WORK_MIN * 60;
     paint();
     interval = setInterval(() => {
       remaining = Math.max(0, remaining - 1);
@@ -312,6 +337,76 @@
         showAskModal();
       }
     }, 1000);
+  }
+
+  function startPomodoroTimer() {
+    timerArea.classList.remove('hidden');
+    noTimerArea.classList.remove('show');
+    tsub.textContent = 'fokusdasiz · ' + cycle + '/' + TOTAL_CYC;
+    startedAt = Date.now();
+    remaining = WORK_MIN * 60;
+    totalSec = WORK_MIN * 60;
+    paint();
+    interval = setInterval(() => {
+      remaining = Math.max(0, remaining - 1);
+      paint();
+      if (remaining === 0) {
+        if (window.MVOW_DATA && MVOW_DATA.fxFinish) MVOW_DATA.fxFinish();
+        nextPomodoroPhase();
+      }
+    }, 1000);
+  }
+
+  function nextPomodoroPhase() {
+    if (interval) clearInterval(interval);
+    if (phase === 'work') {
+      if (cycle >= TOTAL_CYC) {
+        // Hamma sikllar tugadi — so'roq
+        showAskModal();
+        return;
+      }
+      // Dam fazasiga o'tish
+      phase = 'break';
+      remaining = BREAK_MIN * 60;
+      totalSec = BREAK_MIN * 60;
+      tsub.textContent = 'dam · ' + cycle + '/' + TOTAL_CYC;
+      ring.style.stroke = '#F5C26B';
+    } else {
+      // Dam tugadi — yangi siklga
+      cycle++;
+      phase = 'work';
+      remaining = WORK_MIN * 60;
+      totalSec = WORK_MIN * 60;
+      tsub.textContent = 'fokusdasiz · ' + cycle + '/' + TOTAL_CYC;
+      ring.style.stroke = '#00E5D4';
+    }
+    paint();
+    interval = setInterval(() => {
+      remaining = Math.max(0, remaining - 1);
+      paint();
+      if (remaining === 0) {
+        if (window.MVOW_DATA && MVOW_DATA.fxFinish) MVOW_DATA.fxFinish();
+        nextPomodoroPhase();
+      }
+    }, 1000);
+  }
+
+  // Tanlovlar
+  document.getElementById('chTimer').addEventListener('click', () => {
+    mode = 'timer';
+    WORK_MIN = taskMins; // to'liq vazifa davomiyligi
+    TOTAL_CYC = 1;
+    choiceOverlay.style.display = 'none';
+    startSimpleTimer();
+  });
+
+  document.getElementById('chPomo').addEventListener('click', () => {
+    mode = 'pomodoro';
+    WORK_MIN = POMO_WORK;
+    BREAK_MIN = POMO_BREAK;
+    TOTAL_CYC = pomoCycles;
+    choiceOverlay.style.display = 'none';
+    startPomodoroTimer();
   });
 
   document.getElementById('chNoTimer').addEventListener('click', () => {

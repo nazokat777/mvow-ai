@@ -238,7 +238,7 @@
     const d = new Date(iso);
     const now = new Date();
     if (range === 'day') {
-      return iso === now.toISOString().slice(0,10);
+      return iso === MVOW_DATA.localDateIso(now);
     }
     if (range === 'week') {
       const dayOfWeek = now.getDay();
@@ -255,7 +255,7 @@
   // Jonli diagramma — vaqt o'qiga qarab bars
   function buildChart(range, history) {
     const now = new Date();
-    const todayIso = now.toISOString().slice(0, 10);
+    const todayIso = MVOW_DATA.localDateIso(now);
     const chartEl = document.getElementById('chart');
     const labelsEl = document.getElementById('chartLabels');
     chartEl.innerHTML = '';
@@ -279,7 +279,7 @@
       const labels = ['Du','Se','Ch','Pa','Ju','Sh','Ya'];
       for (let i = 0; i < 7; i++) {
         const d = new Date(monday); d.setDate(monday.getDate() + i);
-        const iso = d.toISOString().slice(0, 10);
+        const iso = MVOW_DATA.localDateIso(d);
         const sum = history.filter(h => h.dateIso === iso).reduce((s, h) => s + (h.actualMins || 0), 0);
         buckets.push({ label: labels[i], val: Math.round(sum / 60 * 10) / 10, today: iso === todayIso, raw: sum });
       }
@@ -288,7 +288,7 @@
       const days = now.getDate();
       for (let i = days - 1; i >= 0; i--) {
         const d = new Date(now.getFullYear(), now.getMonth(), now.getDate() - i);
-        const iso = d.toISOString().slice(0, 10);
+        const iso = MVOW_DATA.localDateIso(d);
         const sum = history.filter(h => h.dateIso === iso).reduce((s, h) => s + (h.actualMins || 0), 0);
         const label = (d.getDate() % 5 === 0 || i === days - 1) ? String(d.getDate()) : '';
         buckets.push({ label, val: Math.round(sum / 60 * 10) / 10, today: iso === todayIso, raw: sum });

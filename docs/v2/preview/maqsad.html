@@ -479,7 +479,11 @@
         : durMin + ' daq';
 
       const today = new Date();
-      const startIso = today.toISOString().slice(0, 10);
+      // MUHIM: local sanani ishlatamiz (UTC emas) — vaqt zonasi bug'ini oldini olish
+      const localIso = (window.MVOW_DATA && MVOW_DATA.localDateIso)
+        ? MVOW_DATA.localDateIso(today)
+        : (today.getFullYear() + '-' + String(today.getMonth()+1).padStart(2,'0') + '-' + String(today.getDate()).padStart(2,'0'));
+      const startIso = localIso;
 
       // Maqsadlar ro'yhatiga qo'shish (yangi ID)
       let goals = [];
@@ -498,13 +502,13 @@
       goals.push(newGoal);
       localStorage.setItem('mvow.goals', JSON.stringify(goals));
 
-      // Kalendarga tarqatish
+      // Kalendarga tarqatish (local iso bilan)
       if (window.MVOW_DATA) {
         const w = MVOW_DATA.getWeekPlan();
         for (let i = 0; i < selectedDays; i++) {
           const d = new Date(today);
           d.setDate(today.getDate() + i);
-          const key = 'd' + d.toISOString().slice(0, 10);
+          const key = 'd' + MVOW_DATA.localDateIso(d);
           if (!Array.isArray(w[key])) w[key] = [];
           const exists = w[key].some(s => s.name === text && s.time === time);
           if (!exists) {

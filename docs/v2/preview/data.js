@@ -109,8 +109,18 @@
   // ──────────────────────────────────────────────────────────────
   // TODAY KEY + WEEK PLAN STORAGE (yangi API)
   // ──────────────────────────────────────────────────────────────
-  // Joriy kun uchun kalit: 'd2026-06-12'
-  DATA.today.iso = new Date().toISOString().slice(0, 10);
+  // MUHIM: vaqt zonasi bug'i tuzatildi.
+  // Avval new Date().toISOString().slice(0,10) ishlatardik — bu UTC sanani qaytaradi.
+  // UTC+5 (Tashkent)'da local 03:00 = UTC 22:00 oldingi kun → bir kun orqada.
+  // Endi LOCAL sanani ishlatamiz, hamma joyda izchil.
+  DATA.localDateIso = function (d) {
+    d = d || new Date();
+    const y = d.getFullYear();
+    const m = String(d.getMonth() + 1).padStart(2, '0');
+    const dd = String(d.getDate()).padStart(2, '0');
+    return y + '-' + m + '-' + dd;
+  };
+  DATA.today.iso = DATA.localDateIso();
   DATA.today.key = 'd' + DATA.today.iso;
 
   DATA.getWeekPlan = function () {
@@ -124,7 +134,21 @@
   };
   DATA.getTodayPlan = function () {
     const w = DATA.getWeekPlan();
-    return Array.isArray(w[DATA.today.key]) ? w[DATA.today.key] : [];
+    let tasks = Array.isArray(w[DATA.today.key]) ? [...w[DATA.today.key]] : [];
+    // Backward compat: eski versiyalarda UTC sana kalit ostida saqlangan bo'lishi mumkin
+    // Agar UTC iso local iso'dan farq qilsa va u erda ma'lumot bo'lsa, qo'shamiz
+    const utcIso = new Date().toISOString().slice(0, 10);
+    if (utcIso !== DATA.today.iso) {
+      const utcKey = 'd' + utcIso;
+      if (Array.isArray(w[utcKey])) {
+        for (const t of w[utcKey]) {
+          if (!tasks.some(x => x.time === t.time && x.name === t.name)) {
+            tasks.push(t);
+          }
+        }
+      }
+    }
+    return tasks;
   };
   DATA.setTodayPlan = function (arr) {
     const w = DATA.getWeekPlan();
@@ -161,6 +185,8 @@
     } catch { return []; }
   };
   DATA.addHistory = function (entry) {
+    // dateIso ni har doim local sanaga to'g'irlash (entry kelganda noto'g'ri bo'lishi mumkin)
+    if (entry && !entry.dateIso) entry.dateIso = DATA.today.iso;
     const list = DATA.getHistory();
     list.push(entry);
     localStorage.setItem('mvow.history', JSON.stringify(list));
@@ -174,8 +200,10 @@
   // Bugungi tugallangan task'larning unique key'lari (Set)
   DATA.getCompletedKeysToday = function () {
     const today = DATA.today.iso;
+    const utcIso = new Date().toISOString().slice(0, 10);
+    const acceptedDates = (utcIso === today) ? [today] : [today, utcIso];
     return new Set(DATA.getHistory()
-      .filter(h => h.dateIso === today)
+      .filter(h => acceptedDates.includes(h.dateIso))
       .map(h => DATA.taskKey(today, h.plannedTime, h.name))
     );
   };

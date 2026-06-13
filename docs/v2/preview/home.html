@@ -391,7 +391,7 @@
     // Kechagi ko'rsatkichlar
     const yesterday = new Date();
     yesterday.setDate(yesterday.getDate() - 1);
-    const yIso = yesterday.toISOString().slice(0,10);
+    const yIso = MVOW_DATA.localDateIso(yesterday);
     const yPlanKey = 'd' + yIso;
     let yPlan = [];
     if (window.MVOW_DATA) yPlan = MVOW_DATA.getWeekPlan()[yPlanKey] || [];
@@ -500,7 +500,7 @@
           for (let i = 0; i < remainingDays; i++) {
             const d = new Date(todayDate);
             d.setDate(todayDate.getDate() + i);
-            const key = 'd' + d.toISOString().slice(0, 10);
+            const key = 'd' + MVOW_DATA.localDateIso(d);
             if (!Array.isArray(w[key])) w[key] = [];
             const existing = w[key].find(s => s.goalId === g.id);
             if (existing) {
@@ -528,7 +528,7 @@
           for (let i = 0; i < remainingDays; i++) {
             const d = new Date(todayDate);
             d.setDate(todayDate.getDate() + i);
-            const key = 'd' + d.toISOString().slice(0, 10);
+            const key = 'd' + MVOW_DATA.localDateIso(d);
             if (!Array.isArray(w[key])) w[key] = [];
             const exists = w[key].some(s => (s.goalId === g.id) || (s.name === g.text && s.time === g.time));
             if (!exists) w[key].push({ time: g.time, name: g.text, dur: g.dur, goalId: g.id });
@@ -592,7 +592,7 @@
       const goalStart = new Date(goal.startDate);
       for (let i = 0; i < 60; i++) {
         if (d < goalStart) break;
-        const iso = d.toISOString().slice(0, 10);
+        const iso = MVOW_DATA.localDateIso(d);
         const planForDay = w['d' + iso] || [];
         const hasTaskForGoal = planForDay.some(t =>
           (t.goalId === goal.id) || (t.name === goal.text && t.time === goal.time)
@@ -717,7 +717,7 @@
     }
 
     // Streak risk indikatori — gapirmaydi, faqat ko'rsatadi
-    const todayKey = 'mvow.done.' + new Date().toISOString().slice(0,10);
+    const todayKey = 'mvow.done.' + MVOW_DATA.today.iso;
     const todayDone = parseInt(localStorage.getItem(todayKey) || '0', 10);
     const hour = hourNow;
     if (streak > 0 && todayDone === 0 && hour >= 18 && hour < 22) {

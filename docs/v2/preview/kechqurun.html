@@ -333,7 +333,7 @@
       `${String(d.getDate()).padStart(2,'0')}-${months[d.getMonth()]} · ${days[d.getDay()]}`;
 
     // ── Stats ──
-    const todayKey = 'mvow.done.' + d.toISOString().slice(0,10);
+    const todayKey = 'mvow.done.' + (window.MVOW_DATA ? MVOW_DATA.localDateIso(d) : d.toISOString().slice(0,10));
     const done = parseInt(localStorage.getItem(todayKey) || '0', 10);
     document.getElementById('doneN').textContent = done;
 
@@ -370,7 +370,7 @@
 
     function tomorrowKey() {
       const tom = new Date(Date.now() + 86400000);
-      return 'd' + tom.toISOString().slice(0, 10);
+      return 'd' + (window.MVOW_DATA ? MVOW_DATA.localDateIso(tom) : tom.toISOString().slice(0, 10));
     }
 
     function loadTomPlan() {

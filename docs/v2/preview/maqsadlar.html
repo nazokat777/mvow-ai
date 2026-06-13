@@ -374,7 +374,7 @@
       for (let i = 0; i < info.days; i++) {
         const d = new Date(start);
         d.setDate(start.getDate() + i);
-        const key = 'd' + d.toISOString().slice(0, 10);
+        const key = 'd' + (window.MVOW_DATA ? MVOW_DATA.localDateIso(d) : d.toISOString().slice(0, 10));
         if (Array.isArray(w[key])) {
           w[key] = w[key].filter(s => !(s.name === goal.text && s.time === goal.time));
         }

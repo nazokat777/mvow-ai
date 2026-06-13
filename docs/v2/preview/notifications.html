@@ -134,7 +134,7 @@
     }
 
     // Bajarilgan
-    const todayKey = 'mvow.done.' + new Date().toISOString().slice(0,10);
+    const todayKey = 'mvow.done.' + (window.MVOW_DATA ? MVOW_DATA.today.iso : new Date().toISOString().slice(0,10));
     const done = parseInt(localStorage.getItem(todayKey) || '0', 10);
     if (done > 0 && !out.some(e => e.type === 'done' && e.day === todayDateStr() && e.count === done)) {
       out.push({ ts: now - 60000 * 5, type: 'done', text: `${done} ta ish bajarildi.`, day: todayDateStr(), count: done });
