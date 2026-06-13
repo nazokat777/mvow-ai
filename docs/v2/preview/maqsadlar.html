@@ -307,11 +307,26 @@
     list.style.display = 'flex';
     sub.textContent = goals.length + ' ta maqsad';
 
+    // History — har maqsad uchun bajarilgan kunlar sonini hisoblash uchun
+    const history = (window.MVOW_DATA ? MVOW_DATA.getHistory() : []);
+
     list.innerHTML = goals.map(g => {
       const info = DURATION_INFO[g.duration] || DURATION_INFO.month;
       const passed = daysSince(g.startDate);
       const remaining = Math.max(0, info.days - passed);
-      const percent = Math.min(100, Math.round((passed / info.days) * 100));
+      // Vaqt bo'yicha o'tgan % (yo'lda qancha)
+      const timePct = Math.min(100, Math.round((passed / info.days) * 100));
+      // Bajarilganlik % (history bo'yicha — shu maqsad nomi)
+      const expectedSoFar = Math.min(passed + 1, info.days);
+      const completedDays = history.filter(h =>
+        h.name === g.text && h.dateIso >= g.startDate
+      ).length;
+      const donePct = expectedSoFar > 0
+        ? Math.min(100, Math.round((completedDays / expectedSoFar) * 100))
+        : 0;
+      // Yaxshi / o'rta / yomon rang
+      const grade = donePct >= 80 ? 'good' : (donePct >= 50 ? 'mid' : 'low');
+      const gradeColor = donePct >= 80 ? '#00E5D4' : (donePct >= 50 ? '#F5C26B' : '#FF8E97');
       return `
         <div class="goal" data-id="${g.id}">
           <button class="goal-del" data-del="${g.id}" type="button" aria-label="O'chir">×</button>
@@ -322,10 +337,14 @@
           <div class="goal-meta">
             Har kuni <span class="em">${escapeHtml(g.time)}</span> · ${escapeHtml(g.dur)}
           </div>
-          <div class="progress-bar"><div class="progress-fill" style="width:${percent}%"></div></div>
+          <div class="progress-bar"><div class="progress-fill" style="width:${timePct}%"></div></div>
           <div class="progress-text">
             <span class="left">${passed} / ${info.days} kun</span>
-            <span class="right">${remaining} ${info.short === 'yil' ? 'kun' : 'kun'} qoldi</span>
+            <span class="right">${remaining} kun qoldi</span>
+          </div>
+          <div style="margin-top:10px;padding-top:10px;border-top:1px solid rgba(255,255,255,.04);display:flex;justify-content:space-between;align-items:center;font-size:11px;letter-spacing:0.5px;">
+            <span style="color:var(--text-dim);">Bajarildi</span>
+            <span style="color:${gradeColor};font-weight:600;font-size:14px;">${donePct}%</span>
           </div>
         </div>
       `;
