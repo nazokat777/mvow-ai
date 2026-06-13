@@ -125,10 +125,10 @@
       <!-- Diagnostika (7+ kun) -->
       <div id="diagnosticBox" style="display:none;margin-top:10px;">
         <div style="font-size:12px;color:#9CA0A8;margin-bottom:10px;letter-spacing:0.5px;">Sabab nima edi?</div>
-        <div style="display:flex;flex-direction:column;gap:8px;">
+        <div id="diagOpts" style="display:flex;flex-direction:column;gap:8px;">
           <button class="diag-opt" data-fix="reduce" type="button" style="padding:11px 14px;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.12);border-radius:10px;color:#F5F2EC;font-family:'Inter',sans-serif;font-size:12px;text-align:left;cursor:pointer;">
             <span style="display:block;font-weight:500;margin-bottom:2px;">Vazifa hajmi katta edi</span>
-            <span style="font-size:10px;color:#9CA0A8;letter-spacing:0.5px;">Har kungi davomiylik 30% qisqaradi</span>
+            <span style="font-size:10px;color:#9CA0A8;letter-spacing:0.5px;">Davomiylikni qisqartirish — siz % tanlaysiz</span>
           </button>
           <button class="diag-opt" data-fix="time" type="button" style="padding:11px 14px;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.12);border-radius:10px;color:#F5F2EC;font-family:'Inter',sans-serif;font-size:12px;text-align:left;cursor:pointer;">
             <span style="display:block;font-weight:500;margin-bottom:2px;">Vaqt to'g'ri kelmadi</span>
@@ -138,6 +138,19 @@
             <span style="display:block;font-weight:500;margin-bottom:2px;">Boshqa sabab</span>
             <span style="font-size:10px;color:#9CA0A8;letter-spacing:0.5px;">Rejani qolgan kunlarga qayta tarqatish</span>
           </button>
+        </div>
+        <!-- Foiz tanlash (Vazifa katta tanlangach chiqadi) -->
+        <div id="reducePctBox" style="display:none;margin-top:12px;padding-top:12px;border-top:1px solid rgba(255,255,255,.08);">
+          <div style="font-size:11px;color:#9CA0A8;margin-bottom:8px;letter-spacing:1px;text-transform:uppercase;text-align:center;">Necha foiz qisqartiramiz?</div>
+          <div style="display:flex;gap:6px;justify-content:center;flex-wrap:wrap;margin-bottom:8px;">
+            <button class="red-pct" data-pct="15" type="button" style="padding:10px 14px;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.1);border-radius:10px;color:#F5F2EC;font-family:'Inter',sans-serif;font-size:13px;font-weight:600;cursor:pointer;">15%</button>
+            <button class="red-pct" data-pct="30" type="button" style="padding:10px 14px;background:rgba(245,194,107,.18);border:1px solid rgba(245,194,107,.5);border-radius:10px;color:#F5F2EC;font-family:'Inter',sans-serif;font-size:13px;font-weight:600;cursor:pointer;">30% ★</button>
+            <button class="red-pct" data-pct="50" type="button" style="padding:10px 14px;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.1);border-radius:10px;color:#F5F2EC;font-family:'Inter',sans-serif;font-size:13px;font-weight:600;cursor:pointer;">50%</button>
+          </div>
+          <div style="display:flex;gap:6px;align-items:center;">
+            <input type="number" id="reducePctCustom" min="5" max="80" placeholder="Boshqa" style="flex:1;background:#0C0F16;border:1px solid rgba(255,255,255,.1);border-radius:8px;padding:9px;color:#F5F2EC;font-family:'Inter',sans-serif;font-size:13px;outline:none;">
+            <button id="reducePctCustomBtn" type="button" style="padding:9px 12px;background:transparent;border:1px solid rgba(255,255,255,.15);color:var(--text-mid);border-radius:8px;font-family:'Inter',sans-serif;font-size:11px;cursor:pointer;letter-spacing:1px;">%</button>
+          </div>
         </div>
       </div>
     </div>
@@ -156,10 +169,15 @@
 
     <!-- VAQT NAQSHI: ma'lum vaqtda muntazam bajarmaslik aniqlanganida -->
     <div id="patternBox" style="display:none;background:rgba(245,194,107,.08);border:1px solid rgba(245,194,107,.3);border-radius:12px;padding:14px 16px;">
-      <div style="font-family:'Cormorant Garamond',serif;font-style:italic;font-size:14px;color:var(--text);line-height:1.55;margin-bottom:12px;" id="patternText"></div>
-      <div style="display:flex;gap:8px;justify-content:center;">
-        <button id="patternAcceptBtn" type="button" style="padding:10px 18px;background:#F5C26B;color:#04060B;border:none;border-radius:999px;font-family:'Inter',sans-serif;font-size:11px;font-weight:600;letter-spacing:1.5px;text-transform:uppercase;cursor:pointer;">Ko'chirish</button>
-        <button id="patternRejectBtn" type="button" style="padding:10px 18px;background:transparent;border:1px solid rgba(255,255,255,.15);color:var(--text-mid);border-radius:999px;font-family:'Inter',sans-serif;font-size:11px;font-weight:600;letter-spacing:1.5px;text-transform:uppercase;cursor:pointer;">Hozircha yo'q</button>
+      <div style="font-family:'Cormorant Garamond',serif;font-style:italic;font-size:14px;color:var(--text);line-height:1.55;margin-bottom:10px;" id="patternText"></div>
+      <div style="font-size:11px;color:var(--text-dim);letter-spacing:1px;text-transform:uppercase;margin-bottom:10px;text-align:center;">Qaysi vaqtga ko'chiramiz?</div>
+      <div id="patternTimeOpts" style="display:flex;flex-wrap:wrap;gap:6px;justify-content:center;margin-bottom:10px;"></div>
+      <div style="display:flex;gap:6px;margin-bottom:10px;align-items:center;">
+        <input type="time" id="patternCustomTime" style="flex:1;background:#0C0F16;border:1px solid rgba(255,255,255,.1);border-radius:8px;padding:10px;color:#F5F2EC;font-family:'Inter',sans-serif;font-size:13px;outline:none;">
+        <button id="patternCustomBtn" type="button" style="padding:10px 14px;background:#F5C26B;color:#04060B;border:none;border-radius:8px;font-family:'Inter',sans-serif;font-size:11px;font-weight:600;letter-spacing:1px;text-transform:uppercase;cursor:pointer;">Belgila</button>
+      </div>
+      <div style="text-align:center;">
+        <button id="patternRejectBtn" type="button" style="padding:8px 14px;background:transparent;border:none;color:var(--text-dim);font-family:'Inter',sans-serif;font-size:11px;letter-spacing:1px;cursor:pointer;text-decoration:underline;">Hozircha yo'q</button>
       </div>
     </div>
 
@@ -533,13 +551,26 @@
         // Diagnostika — sabab so'rash
         recText.innerHTML = '<strong>' + recoveryDays + ' kun</strong> reja bajarilmadi.';
         diagBox.style.display = 'block';
+        const reducePctBox = document.getElementById('reducePctBox');
+        const diagOpts = document.getElementById('diagOpts');
         document.querySelectorAll('.diag-opt').forEach(b => {
           b.addEventListener('click', () => {
             const fix = b.dataset.fix;
-            if (fix === 'reduce') reduceAndRegen(30);
+            if (fix === 'reduce') {
+              // User'dan % so'raymiz
+              diagOpts.style.display = 'none';
+              reducePctBox.style.display = 'block';
+            }
             else if (fix === 'time') location.href = 'maqsadlar.html';
             else regenOnly();
           });
+        });
+        document.querySelectorAll('.red-pct').forEach(b => {
+          b.addEventListener('click', () => reduceAndRegen(parseInt(b.dataset.pct, 10)));
+        });
+        document.getElementById('reducePctCustomBtn').addEventListener('click', () => {
+          const v = parseInt(document.getElementById('reducePctCustom').value, 10);
+          if (!isNaN(v) && v >= 5 && v <= 80) reduceAndRegen(v);
         });
       } else {
         // Oddiy recovery (3-6 kun)
@@ -628,24 +659,45 @@
     const pattern = (recoveryDays === null) ? findPatternFailure() : null;
     if (pattern) {
       const peakTime = suggestedPeakTime();
-      // Agar joriy vaqt allaqachon peak'ga teng bo'lsa, taklif kerakmas
-      if (pattern.goal.time !== peakTime) {
-        const pBox = document.getElementById('patternBox');
-        const pText = document.getElementById('patternText');
-        const pAccept = document.getElementById('patternAcceptBtn');
-        pText.innerHTML = 'Siz <span style="color:var(--accent);font-style:normal;font-weight:600;">' + pattern.goal.time + '</span> da «' + pattern.goal.text + '» rejasini <span style="color:#FF8E97;font-style:normal;">' + pattern.misses + ' kun</span> ketma-ket bajarmadingiz.<br><span style="font-size:13px;color:var(--text-mid);">Rejani <strong style="color:#F5C26B;">' + peakTime + '</strong> ga ko\'chirishni tavsiya qilaman.</span>';
-        pAccept.textContent = peakTime + ' ga ko\'chirish';
-        pBox.style.display = 'block';
-        pAccept.addEventListener('click', () => changeGoalTime(pattern.goal.id, peakTime));
-        document.getElementById('patternRejectBtn').addEventListener('click', () => {
-          try {
-            const rejected = JSON.parse(localStorage.getItem('mvow.patternRejected') || '{}');
-            rejected[pattern.goal.id] = Date.now();
-            localStorage.setItem('mvow.patternRejected', JSON.stringify(rejected));
-            pBox.style.display = 'none';
-          } catch {}
-        });
+      const pBox = document.getElementById('patternBox');
+      const pText = document.getElementById('patternText');
+      pText.innerHTML = 'Siz <span style="color:var(--accent);font-style:normal;font-weight:600;">' + pattern.goal.time + '</span> da «' + pattern.goal.text + '» rejasini <span style="color:#FF8E97;font-style:normal;">' + pattern.misses + ' kun</span> ketma-ket bajarmadingiz.';
+      // Taklif tugmalari — energiya cho'qqisi + standart vaqtlar
+      const standardOptions = [
+        { time: '05:00', label: '05:00 erta tong' },
+        { time: '07:00', label: '07:00 tong' },
+        { time: '12:00', label: '12:00 tushda' },
+        { time: '19:00', label: '19:00 kech' }
+      ];
+      // Tavsiya qilingan vaqtni birinchi qatorga olib chiqish
+      const opts = [...standardOptions];
+      if (!opts.find(o => o.time === peakTime)) {
+        opts.unshift({ time: peakTime, label: peakTime + ' tavsiya', recommended: true });
+      } else {
+        opts.forEach(o => { if (o.time === peakTime) o.recommended = true; });
       }
+      // Joriy vaqtni o'tkazib yuborish
+      const filtered = opts.filter(o => o.time !== pattern.goal.time);
+      const optsEl = document.getElementById('patternTimeOpts');
+      optsEl.innerHTML = filtered.map(o => `
+        <button class="pat-time-opt" data-time="${o.time}" type="button" style="padding:10px 14px;background:${o.recommended ? 'rgba(245,194,107,.18)' : 'rgba(255,255,255,.04)'};border:1px solid ${o.recommended ? 'rgba(245,194,107,.5)' : 'rgba(255,255,255,.1)'};border-radius:10px;color:#F5F2EC;font-family:'Inter',sans-serif;font-size:12px;cursor:pointer;">${o.label}${o.recommended ? ' ★' : ''}</button>
+      `).join('');
+      pBox.style.display = 'block';
+      pBox.querySelectorAll('.pat-time-opt').forEach(b => {
+        b.addEventListener('click', () => changeGoalTime(pattern.goal.id, b.dataset.time));
+      });
+      document.getElementById('patternCustomBtn').addEventListener('click', () => {
+        const t = document.getElementById('patternCustomTime').value;
+        if (/^\d{1,2}:\d{2}$/.test(t)) changeGoalTime(pattern.goal.id, t);
+      });
+      document.getElementById('patternRejectBtn').addEventListener('click', () => {
+        try {
+          const rejected = JSON.parse(localStorage.getItem('mvow.patternRejected') || '{}');
+          rejected[pattern.goal.id] = Date.now();
+          localStorage.setItem('mvow.patternRejected', JSON.stringify(rejected));
+          pBox.style.display = 'none';
+        } catch {}
+      });
     }
 
     // ── IDENTITY (faqat streak >= 7 va maqsad bo'lganda) ──
