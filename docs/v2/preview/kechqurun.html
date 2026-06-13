@@ -252,27 +252,27 @@
 <div class="wrap">
 
   <div class="top-stamp" id="dateStamp">11-iyun · payshanba</div>
-  <h1 class="title">Kun yakuni</h1>
+  <h1 class="title" data-i18n="kechqurun.title">Kun yakuni</h1>
 
   <!-- Stats -->
   <div class="stats">
     <div class="stat">
       <div class="v" id="doneN">0</div>
-      <div class="l">Bajardim</div>
+      <div class="l" data-i18n="kechqurun.stat_done">Bajardim</div>
     </div>
     <div class="stat">
       <div class="v" id="focusH">0</div>
-      <div class="l">Soat fokus</div>
+      <div class="l" data-i18n="kechqurun.stat_focus">Soat fokus</div>
     </div>
     <div class="stat">
       <div class="v" id="streakN">0</div>
-      <div class="l">Streak</div>
+      <div class="l" data-i18n="kechqurun.stat_streak">Streak</div>
     </div>
   </div>
 
   <!-- Today's wins -->
   <div class="section">
-    <div class="section-head">Bugungi muvaffaqiyatlar</div>
+    <div class="section-head" data-i18n="kechqurun.wins_head">Bugungi muvaffaqiyatlar</div>
     <div class="wins" id="winsList">
       <div class="no-wins">—</div>
     </div>
@@ -280,35 +280,35 @@
 
   <!-- Tomorrow's plan -->
   <div class="section">
-    <div class="section-head" id="tomHead">Ertangi reja</div>
+    <div class="section-head" id="tomHead" data-i18n="kechqurun.tom_head">Ertangi reja</div>
 
     <!-- Auto-generated tasks list (from maqsadlar) -->
     <div id="tomList" style="display:flex;flex-direction:column;gap:8px;"></div>
 
     <!-- Empty state -->
     <div id="tomEmpty" style="display:none;text-align:center;padding:24px 16px;background:var(--card);border:1px dashed rgba(0,229,212,.25);border-radius:12px;">
-      <div style="font-family:'Cormorant Garamond',serif;font-style:italic;font-size:16px;color:var(--text-mid);margin-bottom:14px;">Ertangi reja yo'q</div>
-      <a href="routine.html" style="display:inline-block;padding:12px 20px;background:rgba(0,229,212,.08);border:1px solid rgba(0,229,212,.35);border-radius:999px;color:var(--accent);font-family:'Inter',sans-serif;font-size:13px;font-weight:500;letter-spacing:1px;text-decoration:none;">+ Kun tartibini tuz</a>
+      <div style="font-family:'Cormorant Garamond',serif;font-style:italic;font-size:16px;color:var(--text-mid);margin-bottom:14px;" data-i18n="kechqurun.tom_empty">Ertangi reja yo'q</div>
+      <a href="routine.html" style="display:inline-block;padding:12px 20px;background:rgba(0,229,212,.08);border:1px solid rgba(0,229,212,.35);border-radius:999px;color:var(--accent);font-family:'Inter',sans-serif;font-size:13px;font-weight:500;letter-spacing:1px;text-decoration:none;" data-i18n="kechqurun.tom_build">+ Kun tartibini tuz</a>
     </div>
 
     <!-- Add new task -->
     <button id="tomAddBtn" type="button" style="display:flex;align-items:center;justify-content:center;gap:8px;width:100%;margin-top:10px;padding:14px;background:transparent;border:1px dashed rgba(0,229,212,.25);border-radius:10px;color:var(--accent);font-family:'Inter',sans-serif;font-size:13px;cursor:pointer;">
       <span style="font-size:18px;">+</span>
-      <span>Yana reja qo'shish</span>
+      <span data-i18n="kechqurun.tom_add">Yana reja qo'shish</span>
     </button>
   </div>
 
   <!-- Wake time + alarm -->
   <div class="section">
-    <div class="section-head">Uyg'onish</div>
+    <div class="section-head" data-i18n="kechqurun.wake_head">Uyg'onish</div>
     <div class="wake-row">
-      <label for="wakeTime">Uyg'onish vaqti</label>
+      <label for="wakeTime" data-i18n="kechqurun.wake_time_lbl">Uyg'onish vaqti</label>
       <input id="wakeTime" type="time" value="07:00">
     </div>
     <div class="alarm-toggle">
       <div>
-        <div class="lbl">Budilnik yoq</div>
-        <div class="why">Vaqt kelganda 3 misol bilan uyg'otamiz</div>
+        <div class="lbl" data-i18n="kechqurun.alarm_on_lbl">Budilnik yoq</div>
+        <div class="why" data-i18n="kechqurun.alarm_on_why">Vaqt kelganda 3 misol bilan uyg'otamiz</div>
       </div>
       <div class="toggle on" id="alarmToggle" role="switch" tabindex="0" aria-checked="true"></div>
     </div>
@@ -317,7 +317,7 @@
 </div>
 
 <div class="bottom">
-  <a class="cta" id="saveBtn" href="home.html">Xayrli tun</a>
+  <a class="cta" id="saveBtn" href="home.html" data-i18n="kechqurun.cta_save">Xayrli tun</a>
 </div>
 
 <script src="i18n.js" defer></script>
@@ -356,7 +356,7 @@
       winsEl.innerHTML = wins.map(w => `
         <div class="win">
           <div class="check"><svg viewBox="0 0 24 24" fill="none" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="5 12 10 17 19 8"/></svg></div>
-          <div class="name">${escapeHtml(w.name || 'Ish')}</div>
+          <div class="name">${escapeHtml(w.name || (window.I18N ? I18N.t('kechqurun.fallback_task_cap', 'Ish') : 'Ish'))}</div>
           <div class="dur">${escapeHtml(w.dur || '')}</div>
         </div>
       `).join('');
@@ -403,12 +403,12 @@
       if (!tasks.length) {
         tomEmpty.style.display = 'block';
         tomAddBtn.style.display = 'none';
-        tomHead.textContent = 'Ertangi reja';
+        tomHead.textContent = (window.I18N ? I18N.t('kechqurun.tom_head', 'Ertangi reja') : 'Ertangi reja');
         return;
       }
       tomEmpty.style.display = 'none';
       tomAddBtn.style.display = 'flex';
-      tomHead.textContent = 'Ertangi reja · ' + tasks.length + ' qadam';
+      tomHead.textContent = (window.I18N ? I18N.tWith('kechqurun.tom_head_count', { n: tasks.length }) : ('Ertangi reja · ' + tasks.length + ' qadam'));
 
       tasks.forEach((t, idx) => {
         const row = document.createElement('div');
@@ -416,7 +416,7 @@
         row.innerHTML = `
           <span class="tap-edit time" style="color:var(--accent);font-size:14px;font-weight:500;cursor:pointer;">${escapeHtml(t.time || '—')}</span>
           <div class="tap-edit name-block" style="cursor:pointer;">
-            <div style="font-size:15px;color:var(--text);line-height:1.3;">${escapeHtml(t.name || 'ish')}</div>
+            <div style="font-size:15px;color:var(--text);line-height:1.3;">${escapeHtml(t.name || (window.I18N ? I18N.t('kechqurun.fallback_task', 'ish') : 'ish'))}</div>
             <div style="font-size:11px;color:var(--text-dim);margin-top:2px;letter-spacing:.5px;">${escapeHtml(t.dur || '')}</div>
           </div>
           <button class="tom-del" type="button" style="background:transparent;border:none;color:var(--text-dim);font-size:20px;width:32px;height:32px;cursor:pointer;border-radius:50%;">×</button>
@@ -452,8 +452,8 @@
           <input class="ed-dur" type="text" value="${escapeHtml(task.dur)}" maxlength="20" style="background:var(--void-soft);border:1px solid var(--accent);border-radius:6px;padding:8px;color:var(--text);font-size:13px;outline:none;">
         </div>
         <div style="grid-column:1/-1;display:flex;gap:8px;justify-content:flex-end;margin-top:8px;">
-          <button class="ed-cancel" type="button" style="padding:8px 14px;background:transparent;color:var(--text-mid);border:1px solid rgba(255,255,255,.1);border-radius:6px;font-size:11px;letter-spacing:1px;text-transform:uppercase;cursor:pointer;">Bekor</button>
-          <button class="ed-save" type="button" style="padding:8px 14px;background:var(--accent);color:var(--void);border:none;border-radius:6px;font-size:11px;font-weight:600;letter-spacing:1px;text-transform:uppercase;cursor:pointer;">Saqla</button>
+          <button class="ed-cancel" type="button" style="padding:8px 14px;background:transparent;color:var(--text-mid);border:1px solid rgba(255,255,255,.1);border-radius:6px;font-size:11px;letter-spacing:1px;text-transform:uppercase;cursor:pointer;">${window.I18N ? I18N.t('common.cancel', 'Bekor') : 'Bekor'}</button>
+          <button class="ed-save" type="button" style="padding:8px 14px;background:var(--accent);color:var(--void);border:none;border-radius:6px;font-size:11px;font-weight:600;letter-spacing:1px;text-transform:uppercase;cursor:pointer;">${window.I18N ? I18N.t('common.save', 'Saqla') : 'Saqla'}</button>
         </div>
       `;
       const timeIn = row.querySelector('.ed-time');
@@ -463,8 +463,8 @@
         const arr2 = loadTomPlan();
         arr2[idx] = {
           time: timeIn.value.trim(),
-          name: nameIn.value.trim() || 'ish',
-          dur:  durIn.value.trim() || '1 soat'
+          name: nameIn.value.trim() || (window.I18N ? I18N.t('kechqurun.fallback_task', 'ish') : 'ish'),
+          dur:  durIn.value.trim() || (window.I18N ? I18N.t('kechqurun.fallback_dur', '1 soat') : '1 soat')
         };
         saveTomPlan(arr2);
         renderTomPlan();
@@ -479,12 +479,12 @@
       row.innerHTML = `
         <div style="display:grid;grid-template-columns:60px 1fr 60px;gap:8px;">
           <input class="new-time" type="text" placeholder="07:00" maxlength="5" style="background:var(--void-soft);border:1px solid var(--accent);border-radius:6px;padding:8px;color:var(--text);font-size:13px;outline:none;">
-          <input class="new-name" type="text" placeholder="ish nomi" maxlength="48" style="background:var(--void-soft);border:1px solid var(--accent);border-radius:6px;padding:8px;color:var(--text);font-size:13px;outline:none;">
-          <input class="new-dur" type="text" placeholder="1 soat" maxlength="20" style="background:var(--void-soft);border:1px solid var(--accent);border-radius:6px;padding:8px;color:var(--text);font-size:13px;outline:none;">
+          <input class="new-name" type="text" placeholder="${window.I18N ? I18N.t('kechqurun.task_name_ph', 'ish nomi') : 'ish nomi'}" maxlength="48" style="background:var(--void-soft);border:1px solid var(--accent);border-radius:6px;padding:8px;color:var(--text);font-size:13px;outline:none;">
+          <input class="new-dur" type="text" placeholder="${window.I18N ? I18N.t('kechqurun.task_dur_ph', '1 soat') : '1 soat'}" maxlength="20" style="background:var(--void-soft);border:1px solid var(--accent);border-radius:6px;padding:8px;color:var(--text);font-size:13px;outline:none;">
         </div>
         <div style="display:flex;gap:8px;justify-content:flex-end;margin-top:8px;">
-          <button class="new-cancel" type="button" style="padding:8px 14px;background:transparent;color:var(--text-mid);border:1px solid rgba(255,255,255,.1);border-radius:6px;font-size:11px;letter-spacing:1px;text-transform:uppercase;cursor:pointer;">Bekor</button>
-          <button class="new-save" type="button" style="padding:8px 14px;background:var(--accent);color:var(--void);border:none;border-radius:6px;font-size:11px;font-weight:600;letter-spacing:1px;text-transform:uppercase;cursor:pointer;">Qo'sh</button>
+          <button class="new-cancel" type="button" style="padding:8px 14px;background:transparent;color:var(--text-mid);border:1px solid rgba(255,255,255,.1);border-radius:6px;font-size:11px;letter-spacing:1px;text-transform:uppercase;cursor:pointer;">${window.I18N ? I18N.t('common.cancel', 'Bekor') : 'Bekor'}</button>
+          <button class="new-save" type="button" style="padding:8px 14px;background:var(--accent);color:var(--void);border:none;border-radius:6px;font-size:11px;font-weight:600;letter-spacing:1px;text-transform:uppercase;cursor:pointer;">${window.I18N ? I18N.t('kechqurun.add_btn', "Qo'sh") : "Qo'sh"}</button>
         </div>
       `;
       tomList.appendChild(row);
@@ -494,7 +494,7 @@
       setTimeout(() => t.focus(), 50);
       row.querySelector('.new-save').addEventListener('click', () => {
         const arr = loadTomPlan();
-        arr.push({ time: t.value.trim() || '07:00', name: n.value.trim() || 'ish', dur: dr.value.trim() || '1 soat' });
+        arr.push({ time: t.value.trim() || '07:00', name: n.value.trim() || (window.I18N ? I18N.t('kechqurun.fallback_task', 'ish') : 'ish'), dur: dr.value.trim() || (window.I18N ? I18N.t('kechqurun.fallback_dur', '1 soat') : '1 soat') });
         saveTomPlan(arr);
         renderTomPlan();
       });
@@ -522,7 +522,7 @@
       if (willTurnOn && window.MVOW_DATA) {
         const perm = await MVOW_DATA.requestNotifPermission();
         if (perm !== 'granted') {
-          alert("Bildirishnoma ruxsati berilmadi. Telefon Sozlamalaridan brauzerga bildirishnoma ruxsatini bering.");
+          alert(window.I18N ? I18N.t('kechqurun.notif_denied', "Bildirishnoma ruxsati berilmadi. Telefon Sozlamalaridan brauzerga bildirishnoma ruxsatini bering.") : "Bildirishnoma ruxsati berilmadi. Telefon Sozlamalaridan brauzerga bildirishnoma ruxsatini bering.");
           return;
         }
       }
@@ -548,7 +548,11 @@
       // Tasdiq toast
       const toast = document.createElement('div');
       toast.style.cssText = 'position:fixed;left:50%;top:30%;transform:translate(-50%,-50%);background:#11151E;border:1px solid rgba(0,229,212,.4);border-radius:14px;padding:24px 28px;color:#7AF5EC;font-family:Inter,sans-serif;font-size:16px;text-align:center;z-index:9999;box-shadow:0 20px 60px rgba(0,0,0,.6);';
-      toast.innerHTML = '✓ Xayrli tun<br><span style="font-size:12px;color:#9CA0A8;letter-spacing:1px;text-transform:uppercase;margin-top:8px;display:block;">' + (tomCount ? 'ertaga ' + tomCount + ' reja · ' : '') + 'budilnik ' + wakeInput.value + '</span>';
+      const toastMain = window.I18N ? I18N.t('kechqurun.toast_main', 'Xayrli tun') : 'Xayrli tun';
+      const toastTom = tomCount ? (window.I18N ? I18N.tWith('kechqurun.toast_tomorrow', { n: tomCount }) : ('ertaga ' + tomCount + ' reja')) : '';
+      const toastAlarm = window.I18N ? I18N.tWith('kechqurun.toast_alarm', { time: wakeInput.value }) : ('budilnik ' + wakeInput.value);
+      const toastSub = (toastTom ? toastTom + ' · ' : '') + toastAlarm;
+      toast.innerHTML = '✓ ' + toastMain + '<br><span style="font-size:12px;color:#9CA0A8;letter-spacing:1px;text-transform:uppercase;margin-top:8px;display:block;">' + toastSub + '</span>';
       document.body.appendChild(toast);
 
       setTimeout(() => { window.location.href = 'home.html'; }, 1500);

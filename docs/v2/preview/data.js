@@ -135,21 +135,117 @@
   DATA.getTodayPlan = function () {
     const w = DATA.getWeekPlan();
     let tasks = Array.isArray(w[DATA.today.key]) ? [...w[DATA.today.key]] : [];
-    // Backward compat: eski versiyalarda UTC sana kalit ostida saqlangan bo'lishi mumkin
-    // Agar UTC iso local iso'dan farq qilsa va u erda ma'lumot bo'lsa, qo'shamiz
-    const utcIso = new Date().toISOString().slice(0, 10);
-    if (utcIso !== DATA.today.iso) {
-      const utcKey = 'd' + utcIso;
-      if (Array.isArray(w[utcKey])) {
-        for (const t of w[utcKey]) {
-          if (!tasks.some(x => x.time === t.time && x.name === t.name)) {
-            tasks.push(t);
-          }
+
+    // Backward compat 1: eski UTC-ostidagi yozuvlar
+    if (tasks.length === 0) {
+      const utcIso = new Date().toISOString().slice(0, 10);
+      if (utcIso !== DATA.today.iso) {
+        const utcKey = 'd' + utcIso;
+        if (Array.isArray(w[utcKey])) {
+          for (const t of w[utcKey]) tasks.push(t);
         }
       }
     }
+
+    // Backward compat 2: kechagi local kun (UTC offset bug saqlash paytida)
+    if (tasks.length === 0) {
+      const yesterday = new Date();
+      yesterday.setDate(yesterday.getDate() - 1);
+      const yKey = 'd' + DATA.localDateIso(yesterday);
+      if (Array.isArray(w[yKey])) {
+        for (const t of w[yKey]) {
+          if (t.goalId) tasks.push(t);
+        }
+      }
+    }
+
+    // ENG MUHIM FALLBACK: hech narsa topilmasa, MAQSADLARDAN to'g'ridan-to'g'ri hosil qilish
+    // — agar maqsadning startDate'i bugundan oldin va davom etayotgan davrida
+    if (tasks.length === 0) {
+      try {
+        const goals = JSON.parse(localStorage.getItem('mvow.goals') || '[]');
+        if (Array.isArray(goals) && goals.length) {
+          const today = new Date();
+          today.setHours(0, 0, 0, 0);
+          for (const g of goals) {
+            if (!g || !g.startDate) continue;
+            const start = new Date(g.startDate);
+            if (isNaN(start.getTime())) continue;
+            start.setHours(0, 0, 0, 0);
+            const daysSince = Math.floor((today - start) / 86400000);
+            const totalDays = g.days || 30;
+            if (daysSince >= 0 && daysSince < totalDays) {
+              // Bu maqsad bugun ham davom etmoqda — qo'shish
+              tasks.push({
+                time: g.time || '07:00',
+                name: g.text || 'Reja',
+                dur: g.dur || '60 daq',
+                goalId: g.id
+              });
+            }
+          }
+          // Agar maqsadlardan reja qo'shildi bo'lsa — weekPlan'ga ham saqlab qo'yish
+          // (keyingi safar getTodayPlan tez topish uchun)
+          if (tasks.length > 0) {
+            w[DATA.today.key] = [...tasks];
+            DATA.setWeekPlan(w);
+          }
+        }
+      } catch (err) {
+        // sukut
+      }
+    }
+
     return tasks;
   };
+
+  // ── ONE-TIME MIGRATION: eski UTC-asosli weekPlan kalit'larini local'ga ko'chirish ──
+  // Foydalanuvchi maqsad qo'ygan, lekin yozuvlar bir kun siljishi sababli ko'rinmaslik mumkin.
+  // Migratsiya: maqsadlar bo'yicha weekPlan'ni qayta hosil qilish (faqat goalId bor yozuvlar).
+  DATA.migrateGoalsToLocalDates = function () {
+    if (localStorage.getItem('mvow.localDateMigration_v2') === 'done') return;
+    try {
+      const goals = JSON.parse(localStorage.getItem('mvow.goals') || '[]');
+      if (Array.isArray(goals) && goals.length > 0) {
+        const w = DATA.getWeekPlan();
+        // Eski goalId yozuvlarini olib tashlash (manual qo'shilgan ad-hoc reja'lar saqlab qolinadi)
+        for (const key of Object.keys(w)) {
+          if (!Array.isArray(w[key])) continue;
+          w[key] = w[key].filter(t => !t.goalId);
+          if (w[key].length === 0) delete w[key];
+        }
+        // Maqsadlardan yangi tarqatish (local sanalar bilan)
+        for (const g of goals) {
+          if (!g || !g.startDate) continue;
+          const start = new Date(g.startDate);
+          if (isNaN(start.getTime())) continue;
+          const totalDays = g.days || 30;
+          for (let i = 0; i < totalDays; i++) {
+            const d = new Date(start);
+            d.setDate(start.getDate() + i);
+            const key = 'd' + DATA.localDateIso(d);
+            if (!Array.isArray(w[key])) w[key] = [];
+            // Dublikat yo'q
+            const exists = w[key].some(t => t.goalId === g.id);
+            if (!exists) {
+              w[key].push({
+                time: g.time || '07:00',
+                name: g.text || 'Reja',
+                dur: g.dur || '60 daq',
+                goalId: g.id
+              });
+            }
+          }
+        }
+        DATA.setWeekPlan(w);
+      }
+      localStorage.setItem('mvow.localDateMigration_v2', 'done');
+    } catch (err) {
+      // sukut — fallback bor (getTodayPlan ichida)
+    }
+  };
+  // Init paytida ishga tushadi
+  DATA.migrateGoalsToLocalDates();
   DATA.setTodayPlan = function (arr) {
     const w = DATA.getWeekPlan();
     w[DATA.today.key] = arr;

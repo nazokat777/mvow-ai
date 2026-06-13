@@ -213,28 +213,28 @@
   <!-- STEP 1: Duration -->
   <div class="panel show" id="step1">
     <div class="step-lbl">1 / 2</div>
-    <h1 class="title">Maqsad muddati</h1>
-    <p class="sub">Qancha vaqt ichida erishasiz?</p>
+    <h1 class="title" data-i18n="maqsad.step1_title">Maqsad muddati</h1>
+    <p class="sub" data-i18n="maqsad.step1_sub">Qancha vaqt ichida erishasiz?</p>
 
     <div class="options" id="durationList">
       <div class="opt" data-d="week" data-days="7">
-        <div class="lbl"><div class="lbl-main">1 hafta</div><div class="lbl-sub">Yaqin natija</div></div>
+        <div class="lbl"><div class="lbl-main" data-i18n="maqsad.dur_week">1 hafta</div><div class="lbl-sub" data-i18n="maqsad.dur_week_sub">Yaqin natija</div></div>
         <div class="radio"></div>
       </div>
       <div class="opt" data-d="month" data-days="30">
-        <div class="lbl"><div class="lbl-main">1 oy</div><div class="lbl-sub">30 kunlik intizom</div></div>
+        <div class="lbl"><div class="lbl-main" data-i18n="maqsad.dur_month">1 oy</div><div class="lbl-sub" data-i18n="maqsad.dur_month_sub">30 kunlik intizom</div></div>
         <div class="radio"></div>
       </div>
       <div class="opt" data-d="3mo" data-days="90">
-        <div class="lbl"><div class="lbl-main">3 oy</div><div class="lbl-sub">Chuqur o'rganish</div></div>
+        <div class="lbl"><div class="lbl-main" data-i18n="maqsad.dur_3mo">3 oy</div><div class="lbl-sub" data-i18n="maqsad.dur_3mo_sub">Chuqur o'rganish</div></div>
         <div class="radio"></div>
       </div>
       <div class="opt" data-d="6mo" data-days="180">
-        <div class="lbl"><div class="lbl-main">6 oy</div><div class="lbl-sub">Katta o'sish</div></div>
+        <div class="lbl"><div class="lbl-main" data-i18n="maqsad.dur_6mo">6 oy</div><div class="lbl-sub" data-i18n="maqsad.dur_6mo_sub">Katta o'sish</div></div>
         <div class="radio"></div>
       </div>
       <div class="opt" data-d="year" data-days="365">
-        <div class="lbl"><div class="lbl-main">1 yil</div><div class="lbl-sub">Hayot o'zgarishi</div></div>
+        <div class="lbl"><div class="lbl-main" data-i18n="maqsad.dur_year">1 yil</div><div class="lbl-sub" data-i18n="maqsad.dur_year_sub">Hayot o'zgarishi</div></div>
         <div class="radio"></div>
       </div>
     </div>
@@ -243,46 +243,46 @@
   <!-- STEP 2: Goal text + time -->
   <div class="panel" id="step2">
     <div class="step-lbl">2 / 2</div>
-    <h1 class="title" id="step2Title">1 oyda nimaga erishasiz?</h1>
-    <p class="sub" id="step2Sub">Aniq yozing — har kuni kalendaringizga belgilanadi</p>
+    <h1 class="title" id="step2Title" data-i18n="maqsad.step2_title_month">1 oyda nimaga erishasiz?</h1>
+    <p class="sub" id="step2Sub" data-i18n="maqsad.step2_sub">Aniq yozing — har kuni kalendaringizga belgilanadi</p>
 
-    <textarea id="goalText" placeholder="masalan: Dasturlash darsini o'rganaman" maxlength="200" rows="3"></textarea>
+    <textarea id="goalText" placeholder="masalan: Dasturlash darsini o'rganaman" data-i18n-placeholder="maqsad.goal_ph" maxlength="200" rows="3"></textarea>
 
     <div class="examples">
-      <div class="lbl">Misollar</div>
-      <div class="ex" data-fill="Dasturlash darsi">· Dasturlash darsini o'rganaman</div>
-      <div class="ex" data-fill="Sport mashqi">· Sport mashqi har kuni</div>
-      <div class="ex" data-fill="Kitob o'qish">· Kitob o'qish (har kuni 30 daq)</div>
-      <div class="ex" data-fill="Til o'rganish">· Til o'rganish</div>
+      <div class="lbl" data-i18n="maqsad.examples_lbl">Misollar</div>
+      <div class="ex" data-fill="Dasturlash darsi" data-i18n="maqsad.ex_coding">· Dasturlash darsini o'rganaman</div>
+      <div class="ex" data-fill="Sport mashqi" data-i18n="maqsad.ex_sport">· Sport mashqi har kuni</div>
+      <div class="ex" data-fill="Kitob o'qish" data-i18n="maqsad.ex_reading">· Kitob o'qish (har kuni 30 daq)</div>
+      <div class="ex" data-fill="Til o'rganish" data-i18n="maqsad.ex_lang">· Til o'rganish</div>
     </div>
 
     <!-- Band vaqtlar (boshqa maqsadlardan) -->
     <div id="occupiedHint" style="display:none;background:rgba(0,229,212,.05);border:1px solid rgba(0,229,212,.18);border-radius:10px;padding:10px 14px;margin:8px 0 4px;">
-      <div style="font-size:10px;color:var(--text-dim);letter-spacing:2px;text-transform:uppercase;margin-bottom:6px;">Band vaqtlar</div>
+      <div style="font-size:10px;color:var(--text-dim);letter-spacing:2px;text-transform:uppercase;margin-bottom:6px;" data-i18n="maqsad.occupied_lbl">Band vaqtlar</div>
       <div id="occupiedList" style="font-size:12px;color:var(--text-mid);line-height:1.6;"></div>
     </div>
 
     <div class="time-input">
-      <label for="dailyTime">Har kun qaysi vaqtda?</label>
+      <label for="dailyTime" data-i18n="maqsad.daily_time_lbl">Har kun qaysi vaqtda?</label>
       <input id="dailyTime" type="time" value="07:00">
     </div>
 
     <div class="time-input">
-      <label for="dailyDur">Davomiylik (daqiqa)</label>
+      <label for="dailyDur" data-i18n="maqsad.daily_dur_lbl">Davomiylik (daqiqa)</label>
       <input id="dailyDur" type="number" min="10" max="240" value="60" style="text-align:right;">
     </div>
 
     <!-- Konflikt xabari -->
     <div id="conflictMsg" style="display:none;background:rgba(255,71,87,.08);border:1px solid rgba(255,71,87,.35);border-radius:10px;padding:12px 14px;margin-top:10px;font-size:12px;color:#FF8E97;line-height:1.5;">
-      <span id="conflictText">Bu vaqt allaqachon band.</span>
+      <span id="conflictText" data-i18n="maqsad.conflict_default">Bu vaqt allaqachon band.</span>
     </div>
   </div>
 
 </div>
 
 <div class="bottom">
-  <button class="cta disabled" id="nextBtn" type="button">Keyingi</button>
-  <a class="back-link" id="backLink" href="#" style="display:none;">← Orqaga</a>
+  <button class="cta disabled" id="nextBtn" type="button" data-i18n="common.next">Keyingi</button>
+  <a class="back-link" id="backLink" href="#" style="display:none;" data-i18n="maqsad.back">← Orqaga</a>
 </div>
 
 <script src="i18n.js" defer></script>
@@ -392,7 +392,9 @@
       const conflictText = document.getElementById('conflictText');
       if (conflict) {
         const endStr = minToTime(conflict.end);
-        conflictText.innerHTML = 'Bu vaqt band: <strong style="color:#F5F2EC;">' + escapeHtmlMaqsad(conflict.text) + '</strong> ' + conflict.time + '–' + endStr + '. <span style="color:#9CA0A8;">' + endStr + '\'dan keyin tanlang.</span>';
+        const prefix = (window.I18N ? I18N.t('maqsad.conflict_prefix', 'Bu vaqt band:') : 'Bu vaqt band:');
+        const afterTxt = (window.I18N ? I18N.tWith('maqsad.conflict_after', { time: endStr }) : (endStr + '\'dan keyin tanlang.'));
+        conflictText.innerHTML = prefix + ' <strong style="color:#F5F2EC;">' + escapeHtmlMaqsad(conflict.text) + '</strong> ' + conflict.time + '–' + endStr + '. <span style="color:#9CA0A8;">' + afterTxt + '</span>';
         conflictMsg.style.display = 'block';
       } else {
         conflictMsg.style.display = 'none';
@@ -408,17 +410,17 @@
     function gotoStep2() {
       currentStep = 2;
       const titles = {
-        'week':  '1 haftada nimaga erishasiz?',
-        'month': '1 oyda nimaga erishasiz?',
-        '3mo':   '3 oyda nimaga erishasiz?',
-        '6mo':   '6 oyda nimaga erishasiz?',
-        'year':  '1 yilda nimaga erishasiz?'
+        'week':  (window.I18N ? I18N.t('maqsad.step2_title_week',  '1 haftada nimaga erishasiz?') : '1 haftada nimaga erishasiz?'),
+        'month': (window.I18N ? I18N.t('maqsad.step2_title_month', '1 oyda nimaga erishasiz?')    : '1 oyda nimaga erishasiz?'),
+        '3mo':   (window.I18N ? I18N.t('maqsad.step2_title_3mo',   '3 oyda nimaga erishasiz?')    : '3 oyda nimaga erishasiz?'),
+        '6mo':   (window.I18N ? I18N.t('maqsad.step2_title_6mo',   '6 oyda nimaga erishasiz?')    : '6 oyda nimaga erishasiz?'),
+        'year':  (window.I18N ? I18N.t('maqsad.step2_title_year',  '1 yilda nimaga erishasiz?')   : '1 yilda nimaga erishasiz?')
       };
-      step2Title.textContent = titles[selectedDuration] || 'Nimaga erishasiz?';
+      step2Title.textContent = titles[selectedDuration] || (window.I18N ? I18N.t('maqsad.step2_title_default', 'Nimaga erishasiz?') : 'Nimaga erishasiz?');
       step1.classList.remove('show');
       step2.classList.add('show');
       backLink.style.display = 'block';
-      nextBtn.textContent = 'Kalendarga belgila';
+      nextBtn.textContent = (window.I18N ? I18N.t('maqsad.cta_mark_calendar', 'Kalendarga belgila') : 'Kalendarga belgila');
       nextBtn.classList.add('disabled');
       // Band vaqtlarni ko'rsatish + aqlli vaqt taklifi
       renderOccupied();
@@ -446,7 +448,7 @@
       step2.classList.remove('show');
       step1.classList.add('show');
       backLink.style.display = 'none';
-      nextBtn.textContent = 'Keyingi';
+      nextBtn.textContent = (window.I18N ? I18N.t('common.next', 'Keyingi') : 'Keyingi');
       nextBtn.classList.toggle('disabled', !selectedDuration);
     }
 
@@ -474,9 +476,11 @@
       const text = goalText.value.trim();
       const time = dailyTime.value || '07:00';
       const durMin = parseInt(dailyDur.value, 10) || 60;
+      const hourLbl = (window.I18N ? I18N.t('maqsad.unit_hour', 'soat') : 'soat');
+      const minLbl  = (window.I18N ? I18N.t('maqsad.unit_min',  'daq')  : 'daq');
       const dur = durMin >= 60
-        ? (durMin % 60 === 0 ? (durMin/60) + ' soat' : Math.floor(durMin/60) + ' soat ' + (durMin%60) + ' daq')
-        : durMin + ' daq';
+        ? (durMin % 60 === 0 ? (durMin/60) + ' ' + hourLbl : Math.floor(durMin/60) + ' ' + hourLbl + ' ' + (durMin%60) + ' ' + minLbl)
+        : durMin + ' ' + minLbl;
 
       const today = new Date();
       // MUHIM: local sanani ishlatamiz (UTC emas) — vaqt zonasi bug'ini oldini olish
@@ -522,7 +526,10 @@
       // Tasdiq toast — falsafiy aniqlik
       const toast = document.createElement('div');
       toast.style.cssText = 'position:fixed;left:50%;top:30%;transform:translate(-50%,-50%);background:#11151E;border:1px solid rgba(0,229,212,.4);border-radius:14px;padding:26px 30px;color:#7AF5EC;font-family:Inter,sans-serif;font-size:15px;text-align:center;z-index:9999;box-shadow:0 20px 60px rgba(0,0,0,.6);max-width:300px;';
-      toast.innerHTML = '<div style="font-family:\'Cormorant Garamond\',serif;font-style:italic;font-size:18px;color:#F5F2EC;margin-bottom:10px;line-height:1.3;">Maqsad tizimga<br>aylantirildi</div><div style="font-size:11px;color:#9CA0A8;letter-spacing:1.5px;text-transform:uppercase;margin-bottom:4px;">' + selectedDays + ' kun · har kuni ' + time + '</div><div style="font-size:11px;color:#7AF5EC;letter-spacing:1px;">har kungi reja avtomatik chiqadi</div>';
+      const toastHead = (window.I18N ? I18N.t('maqsad.toast_head', 'Maqsad tizimga<br>aylantirildi') : 'Maqsad tizimga<br>aylantirildi');
+      const toastMeta = (window.I18N ? I18N.tWith('maqsad.toast_meta', { days: selectedDays, time: time }) : (selectedDays + ' kun · har kuni ' + time));
+      const toastFoot = (window.I18N ? I18N.t('maqsad.toast_foot', 'har kungi reja avtomatik chiqadi') : 'har kungi reja avtomatik chiqadi');
+      toast.innerHTML = '<div style="font-family:\'Cormorant Garamond\',serif;font-style:italic;font-size:18px;color:#F5F2EC;margin-bottom:10px;line-height:1.3;">' + toastHead + '</div><div style="font-size:11px;color:#9CA0A8;letter-spacing:1.5px;text-transform:uppercase;margin-bottom:4px;">' + toastMeta + '</div><div style="font-size:11px;color:#7AF5EC;letter-spacing:1px;">' + toastFoot + '</div>';
       document.body.appendChild(toast);
 
       setTimeout(() => { window.location.href = 'maqsadlar.html'; }, 1400);

@@ -56,11 +56,11 @@
 <div class="phone">
   <div class="container">
 
-    <div class="stamp">7 kun · tugadi</div>
+    <div class="stamp" data-i18n="celebrate.stamp">7 kun · tugadi</div>
 
     <div class="hero">
       <div class="big">+70%</div>
-      <div class="sub">oldingi sizdan kuchliroqsiz</div>
+      <div class="sub" data-i18n="celebrate.sub">oldingi sizdan kuchliroqsiz</div>
     </div>
 
     <div class="chains" id="chains"></div>
@@ -68,7 +68,7 @@
   </div>
 
   <div class="bottom-bar">
-    <a class="cta" href="home.html">Keyingi hafta</a>
+    <a class="cta" href="home.html" data-i18n="celebrate.cta">Keyingi hafta</a>
   </div>
 </div>
 
@@ -79,10 +79,11 @@
   document.addEventListener('DOMContentLoaded', () => {
     if (!window.MVOW_DATA) return;
     const list = document.getElementById('chains');
+    const daysUnit = (window.I18N ? I18N.t('celebrate.days_unit', 'kun') : 'kun');
     list.innerHTML = MVOW_DATA.chains.map(c => `
       <div class="chain">
         <span class="name">${c.name}</span>
-        <span class="days"><span class="em">${c.days}</span> kun</span>
+        <span class="days"><span class="em">${c.days}</span> ${daysUnit}</span>
       </div>
     `).join('');
   });

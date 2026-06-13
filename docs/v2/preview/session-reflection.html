@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-<title>{brand} — Bajardim</title>
+<title data-i18n="session.page_title">{brand} — Bajardim</title>
 <link rel="manifest" href="manifest.webmanifest">
 <meta name="theme-color" content="#04060B">
 <link rel="apple-touch-icon" href="assets/mnsm-logo.png">
@@ -72,11 +72,11 @@
       </svg>
     </div>
 
-    <h1 class="big" id="big">Bajardim</h1>
+    <h1 class="big" id="big" data-i18n="session.done_a">Bajardingiz</h1>
 
     <div class="what">
-      <div class="name" id="taskName">Til o'rganish</div>
-      <div class="time" id="taskTime">1 soat fokus</div>
+      <div class="name" id="taskName" data-i18n="session.task_demo_name">Til o'rganish</div>
+      <div class="time" id="taskTime" data-i18n="session.task_demo_time">1 soat fokus</div>
     </div>
 
     <div class="progress">
@@ -112,7 +112,8 @@
     }
     if (cur) {
       document.getElementById('taskName').textContent = cur.name;
-      document.getElementById('taskTime').textContent = (cur.dur || '') + ' fokus';
+      const fokusSuffix = (window.I18N ? I18N.t('session.fokus_suffix', ' fokus') : ' fokus');
+      document.getElementById('taskTime').textContent = (cur.dur || '') + fokusSuffix;
     }
 
     // Hisoblagich — tarixdan bevosita (hard-lock bajarilgan ishni addHistory qiladi)
@@ -128,7 +129,7 @@
     // Hammasi bajarilgan bo'lsa, CTA'ni bayramga yo'naltirish
     if (plan.length && done >= plan.length) {
       const cta = document.getElementById('cta');
-      cta.textContent = 'Yakuniy bayram';
+      cta.textContent = (window.I18N ? I18N.t('session.cta_celebrate', 'Yakuniy bayram') : 'Yakuniy bayram');
       cta.href = 'celebrate.html';
 
       // Streak ham oshadi (kunda bir marta)

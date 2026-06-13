@@ -233,42 +233,43 @@
 
 <div class="wrap">
   <div class="header">
-    <h1 class="title">Maqsadlar</h1>
+    <h1 class="title" data-i18n="maqsadlar.title">Maqsadlar</h1>
     <p class="tagline" style="font-family:'Cormorant Garamond',serif;font-style:italic;font-size:15px;line-height:1.5;color:var(--text-mid);text-align:center;margin:10px 18px 6px;max-width:340px;margin-left:auto;margin-right:auto;">
-      Maqsadlaringizni yozing —<br>
-      <span style="color:var(--accent);">bo'laklarga bo'lib</span>, reja va muntazamlik bilan unga yetasiz.
+      <span data-i18n="maqsadlar.tagline_a">Maqsadlaringizni yozing —</span><br>
+      <span style="color:var(--accent);" data-i18n="maqsadlar.tagline_em">bo'laklarga bo'lib</span><span data-i18n="maqsadlar.tagline_b">, reja va muntazamlik bilan unga yetasiz.</span>
     </p>
     <p class="sub" id="countSub">0 ta maqsad</p>
   </div>
 
   <div id="emptyState" class="empty">
     <div class="ic">+</div>
-    <div class="head">Birinchi maqsadni qo'shing</div>
-    <div class="desc">Ilov uni kalendaringizga<br>har kunga tarqatadi</div>
+    <div class="head" data-i18n="maqsadlar.empty_head">Birinchi maqsadni qo'shing</div>
+    <div class="desc"><span data-i18n="maqsadlar.empty_desc_a">Ilov uni kalendaringizga</span><br><span data-i18n="maqsadlar.empty_desc_b">har kunga tarqatadi</span></div>
   </div>
 
   <div class="goals" id="goalsList"></div>
 
   <button class="add-goal" id="addBtn" type="button">
     <span style="font-size:18px;">+</span>
-    <span>Yangi maqsad</span>
+    <span data-i18n="maqsadlar.add_btn">Yangi maqsad</span>
   </button>
 </div>
 
 <div class="bottom">
-  <a class="cta" href="settings.html">Davom</a>
+  <a class="cta" href="settings.html" data-i18n="common.continue">Davom</a>
 </div>
 
 <script src="i18n.js" defer></script>
 <script src="data.js" defer></script>
 <script src="nav-overlay.js" defer></script>
 <script>
+  function _t(key, fb) { return (window.I18N ? I18N.t(key, fb) : fb); }
   const DURATION_INFO = {
-    'week':  { label: '1 HAFTA', cls: 'badge-week',  days: 7,   short: 'hafta' },
-    'month': { label: '1 OY',    cls: 'badge-month', days: 30,  short: 'oy' },
-    '3mo':   { label: '3 OY',    cls: 'badge-3mo',   days: 90,  short: '3 oy' },
-    '6mo':   { label: '6 OY',    cls: 'badge-6mo',   days: 180, short: '6 oy' },
-    'year':  { label: '1 YIL',   cls: 'badge-year',  days: 365, short: 'yil' }
+    'week':  { get label(){ return _t('maqsadlar.dur_week_lbl', '1 HAFTA'); }, cls: 'badge-week',  days: 7,   get short(){ return _t('maqsadlar.dur_week_short', 'hafta'); } },
+    'month': { get label(){ return _t('maqsadlar.dur_month_lbl', '1 OY'); },    cls: 'badge-month', days: 30,  get short(){ return _t('maqsadlar.dur_month_short', 'oy'); } },
+    '3mo':   { get label(){ return _t('maqsadlar.dur_3mo_lbl', '3 OY'); },     cls: 'badge-3mo',   days: 90,  get short(){ return _t('maqsadlar.dur_3mo_short', '3 oy'); } },
+    '6mo':   { get label(){ return _t('maqsadlar.dur_6mo_lbl', '6 OY'); },     cls: 'badge-6mo',   days: 180, get short(){ return _t('maqsadlar.dur_6mo_short', '6 oy'); } },
+    'year':  { get label(){ return _t('maqsadlar.dur_year_lbl', '1 YIL'); },   cls: 'badge-year',  days: 365, get short(){ return _t('maqsadlar.dur_year_short', 'yil'); } }
   };
 
   function loadGoals() {
@@ -300,12 +301,12 @@
     if (!goals.length) {
       list.style.display = 'none';
       empty.style.display = 'block';
-      sub.textContent = '0 ta maqsad';
+      sub.textContent = (window.I18N ? I18N.tWith('maqsadlar.count', { n: 0 }) : '0 ta maqsad');
       return;
     }
     empty.style.display = 'none';
     list.style.display = 'flex';
-    sub.textContent = goals.length + ' ta maqsad';
+    sub.textContent = (window.I18N ? I18N.tWith('maqsadlar.count', { n: goals.length }) : goals.length + ' ta maqsad');
 
     // History — har maqsad uchun bajarilgan kunlar sonini hisoblash uchun
     const history = (window.MVOW_DATA ? MVOW_DATA.getHistory() : []);
@@ -327,23 +328,28 @@
       // Yaxshi / o'rta / yomon rang
       const grade = donePct >= 80 ? 'good' : (donePct >= 50 ? 'mid' : 'low');
       const gradeColor = donePct >= 80 ? '#00E5D4' : (donePct >= 50 ? '#F5C26B' : '#FF8E97');
+      const lblEveryDay = _t('maqsadlar.every_day', 'Har kuni');
+      const lblDelAria = _t('common.delete', "O'chir");
+      const lblDays = _t('maqsadlar.days_unit', 'kun');
+      const lblDaysLeft = _t('maqsadlar.days_left', 'kun qoldi');
+      const lblDone = _t('maqsadlar.done_lbl', 'Bajarildi');
       return `
         <div class="goal" data-id="${g.id}">
-          <button class="goal-del" data-del="${g.id}" type="button" aria-label="O'chir">×</button>
+          <button class="goal-del" data-del="${g.id}" type="button" aria-label="${escapeHtml(lblDelAria)}">×</button>
           <div class="goal-row">
             <div class="goal-name">${escapeHtml(g.text)}</div>
             <div class="goal-badge ${info.cls}">${info.label}</div>
           </div>
           <div class="goal-meta">
-            Har kuni <span class="em">${escapeHtml(g.time)}</span> · ${escapeHtml(g.dur)}
+            ${escapeHtml(lblEveryDay)} <span class="em">${escapeHtml(g.time)}</span> · ${escapeHtml(g.dur)}
           </div>
           <div class="progress-bar"><div class="progress-fill" style="width:${timePct}%"></div></div>
           <div class="progress-text">
-            <span class="left">${passed} / ${info.days} kun</span>
-            <span class="right">${remaining} kun qoldi</span>
+            <span class="left">${passed} / ${info.days} ${escapeHtml(lblDays)}</span>
+            <span class="right">${remaining} ${escapeHtml(lblDaysLeft)}</span>
           </div>
           <div style="margin-top:10px;padding-top:10px;border-top:1px solid rgba(255,255,255,.04);display:flex;justify-content:space-between;align-items:center;font-size:11px;letter-spacing:0.5px;">
-            <span style="color:var(--text-dim);">Bajarildi</span>
+            <span style="color:var(--text-dim);">${escapeHtml(lblDone)}</span>
             <span style="color:${gradeColor};font-weight:600;font-size:14px;">${donePct}%</span>
           </div>
         </div>
@@ -355,7 +361,7 @@
       b.addEventListener('click', (e) => {
         e.stopPropagation();
         const id = parseInt(b.dataset.del, 10);
-        if (!confirm("Bu maqsadni o'chirasizmi? Kalendaringizdan ham olib tashlanadi.")) return;
+        if (!confirm(_t('maqsadlar.del_confirm', "Bu maqsadni o'chirasizmi? Kalendaringizdan ham olib tashlanadi."))) return;
         removeGoal(id);
       });
     });

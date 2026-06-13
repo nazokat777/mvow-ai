@@ -4,6 +4,15 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <title>{brand} — Kalendar</title>
+<!-- title set dynamically below; static fallback above -->
+<script>
+  // Lightweight pre-i18n title sync (i18n.js loads later)
+  document.addEventListener('DOMContentLoaded', function () {
+    try {
+      if (window.I18N) document.title = '{brand} — ' + I18N.t('calendar.title', 'Kalendar');
+    } catch (e) {}
+  });
+</script>
 <link rel="manifest" href="manifest.webmanifest">
 <meta name="theme-color" content="#04060B">
 <link rel="apple-touch-icon" href="assets/mnsm-logo.png">
@@ -181,9 +190,9 @@
   <div class="container">
 
     <div class="h" style="display:flex;align-items:center;justify-content:center;gap:18px;margin-bottom:16px;">
-      <button id="prevW" type="button" aria-label="Oldingi" style="background:transparent;border:none;color:var(--text-mid);font-size:22px;width:44px;height:44px;cursor:pointer;border-radius:50%;">‹</button>
+      <button id="prevW" type="button" aria-label="Oldingi" data-i18n-aria="common.prev" style="background:transparent;border:none;color:var(--text-mid);font-size:22px;width:44px;height:44px;cursor:pointer;border-radius:50%;">‹</button>
       <div class="month" id="monthLbl">Iyun 2026</div>
-      <button id="nextW" type="button" aria-label="Keyingi" style="background:transparent;border:none;color:var(--text-mid);font-size:22px;width:44px;height:44px;cursor:pointer;border-radius:50%;">›</button>
+      <button id="nextW" type="button" aria-label="Keyingi" data-i18n-aria="common.next" style="background:transparent;border:none;color:var(--text-mid);font-size:22px;width:44px;height:44px;cursor:pointer;border-radius:50%;">›</button>
     </div>
 
     <!-- Maqsad banner — rejalar'dan joriy oyga -->
@@ -191,8 +200,8 @@
 
     <!-- View tabs: Hafta / Oy -->
     <div id="viewTabs" style="display:flex;gap:4px;padding:4px;background:rgba(255,255,255,.04);border-radius:8px;margin-bottom:20px;">
-      <button class="vt" data-view="week" type="button" style="flex:1;padding:10px;background:transparent;color:var(--text-mid);border:none;border-radius:6px;font-family:Inter;font-size:11px;letter-spacing:2px;text-transform:uppercase;cursor:pointer;">Hafta</button>
-      <button class="vt on" data-view="month" type="button" style="flex:1;padding:10px;background:var(--accent);color:var(--void);border:none;border-radius:6px;font-family:Inter;font-size:11px;letter-spacing:2px;text-transform:uppercase;font-weight:600;cursor:pointer;">Oy</button>
+      <button class="vt" data-view="week" type="button" data-i18n="weekly.week" style="flex:1;padding:10px;background:transparent;color:var(--text-mid);border:none;border-radius:6px;font-family:Inter;font-size:11px;letter-spacing:2px;text-transform:uppercase;cursor:pointer;">Hafta</button>
+      <button class="vt on" data-view="month" type="button" data-i18n="weekly.month" style="flex:1;padding:10px;background:var(--accent);color:var(--void);border:none;border-radius:6px;font-family:Inter;font-size:11px;letter-spacing:2px;text-transform:uppercase;font-weight:600;cursor:pointer;">Oy</button>
     </div>
 
     <div class="week-row" id="weekRow"></div>
@@ -204,7 +213,7 @@
 
     <div class="tasks" id="tasks"></div>
 
-    <button class="add-btn" id="addBtn" type="button">+ reja qo'shish</button>
+    <button class="add-btn" id="addBtn" type="button" data-i18n="calendar.add_plan">+ reja qo'shish</button>
 
   </div>
 </div>
@@ -215,8 +224,18 @@
 
 <script>
   // Joriy haftaning Dushanbasidan boshlanadigan 7 kun
-  const monShort = ['yan','fev','mar','apr','may','iyn','iyl','avg','sen','okt','noy','dek'];
-  const monFull  = ['Yanvar','Fevral','Mart','Aprel','May','Iyun','Iyul','Avgust','Sentyabr','Oktyabr','Noyabr','Dekabr'];
+  function _monShort() {
+    const v = (window.I18N && I18N.t('calendar.mon_short', '')) || '';
+    if (v && v.indexOf(',') > -1) return v.split(',');
+    return ['yan','fev','mar','apr','may','iyn','iyl','avg','sen','okt','noy','dek'];
+  }
+  function _monFull() {
+    const v = (window.I18N && I18N.t('calendar.mon_full', '')) || '';
+    if (v && v.indexOf(',') > -1) return v.split(',');
+    return ['Yanvar','Fevral','Mart','Aprel','May','Iyun','Iyul','Avgust','Sentyabr','Oktyabr','Noyabr','Dekabr'];
+  }
+  const monShort = _monShort();
+  const monFull  = _monFull();
   let weekOffset = 0; // 0 = bu hafta, -1 = oldingi, +1 = keyingi
   let DAYS = [];
   let TODAY_IDX = -1;
@@ -225,8 +244,10 @@
     const dow = now.getDay();
     const monday = new Date(now);
     monday.setDate(now.getDate() - ((dow + 6) % 7) + weekOffset * 7);
-    const labels = ['DU','SE','CH','PA','JU','SH','YA'];
-    const full   = ['Dushanba','Seshanba','Chorshanba','Payshanba','Juma','Shanba','Yakshanba'];
+    const _lblStr = (window.I18N && I18N.t('calendar.dow_short', '')) || '';
+    const labels = (_lblStr && _lblStr.indexOf(',') > -1) ? _lblStr.split(',') : ['DU','SE','CH','PA','JU','SH','YA'];
+    const _fullStr = (window.I18N && I18N.t('calendar.dow_full', '')) || '';
+    const full = (_fullStr && _fullStr.indexOf(',') > -1) ? _fullStr.split(',') : ['Dushanba','Seshanba','Chorshanba','Payshanba','Juma','Shanba','Yakshanba'];
     DAYS = [];
     for (let i = 0; i < 7; i++) {
       const d = new Date(monday);
@@ -348,7 +369,8 @@
 
     const grid = document.getElementById('monthGrid');
     let html = '<div style="display:grid;grid-template-columns:repeat(7,1fr);gap:2px;text-align:center;margin-bottom:6px;">';
-    const wlabels = ['Du','Se','Ch','Pa','Ju','Sh','Ya'];
+    const _wStr = (window.I18N && I18N.t('calendar.dow_mini', '')) || '';
+    const wlabels = (_wStr && _wStr.indexOf(',') > -1) ? _wStr.split(',') : ['Du','Se','Ch','Pa','Ju','Sh','Ya'];
     for (const w of wlabels) {
       html += `<div style="font-size:9px;letter-spacing:1px;color:var(--text-dim);text-transform:uppercase;padding:6px 0;">${w}</div>`;
     }
@@ -437,19 +459,23 @@
     tasksEl.innerHTML = '';
 
     if (!list.length) {
-      tasksEl.innerHTML = '<p class="empty">Bu kuni hech narsa rejalashtirilmagan.</p>';
+      const _empty = (window.I18N ? I18N.t('calendar.empty', "Bu kuni hech narsa rejalashtirilmagan.") : "Bu kuni hech narsa rejalashtirilmagan.");
+      tasksEl.innerHTML = '<p class="empty">' + escapeHtml(_empty) + '</p>';
       return;
     }
 
+    const _defaultName = (window.I18N ? I18N.t('calendar.default_name', 'ish') : 'ish');
+    const _delAria = (window.I18N ? I18N.t('calendar.delete_aria', "Ishni o'chirish") : "Ishni o'chirish");
+    const _delTitle = (window.I18N ? I18N.t('common.delete', "O'chir") : "O'chir");
     list.forEach((t, idx) => {
       const row = document.createElement('div');
       row.className = 'task';
       row.dataset.idx = idx;
       row.innerHTML = `
         <span class="time">${escapeHtml(t.time || '—')}</span>
-        <span class="name">${escapeHtml(t.name || 'ish')}</span>
+        <span class="name">${escapeHtml(t.name || _defaultName)}</span>
         <span class="dur">${escapeHtml(t.dur || '')}</span>
-        <span class="x" role="button" tabindex="0" aria-label="Ishni o'chirish" title="O'chir">×</span>
+        <span class="x" role="button" tabindex="0" aria-label="${escapeHtml(_delAria)}" title="${escapeHtml(_delTitle)}">×</span>
       `;
       row.querySelectorAll('.time, .name, .dur').forEach(el =>
         el.addEventListener('click', () => enterEdit(row, idx))
@@ -476,24 +502,30 @@
     if (row.classList.contains('edit')) return;
     const t = weekData[selectedKey][idx];
     row.classList.add('edit');
+    const _phTime = (window.I18N ? I18N.t('today.time_ph', '07:00') : '07:00');
+    const _phName = (window.I18N ? I18N.t('calendar.name_ph', 'ish nomi') : 'ish nomi');
+    const _phDur  = (window.I18N ? I18N.t('today.dur_ph', '45 daq') : '45 daq');
+    const _btnCancel = (window.I18N ? I18N.t('common.cancel', 'Bekor') : 'Bekor');
+    const _btnSave   = (window.I18N ? I18N.t('common.save', 'Saqla') : 'Saqla');
     row.innerHTML = `
       <div class="row">
-        <input class="time" type="text" placeholder="07:00" value="${escapeHtml(t.time || '')}" maxlength="5">
-        <input class="name" type="text" placeholder="ish nomi" value="${escapeHtml(t.name || '')}" maxlength="48">
-        <input class="dur" type="text" placeholder="45 daq" value="${escapeHtml(t.dur || '')}" maxlength="20">
+        <input class="time" type="text" placeholder="${escapeHtml(_phTime)}" value="${escapeHtml(t.time || '')}" maxlength="5">
+        <input class="name" type="text" placeholder="${escapeHtml(_phName)}" value="${escapeHtml(t.name || '')}" maxlength="48">
+        <input class="dur" type="text" placeholder="${escapeHtml(_phDur)}" value="${escapeHtml(t.dur || '')}" maxlength="20">
       </div>
       <div class="actions">
-        <button class="cancel" type="button">Bekor</button>
-        <button class="save" type="button">Saqla</button>
+        <button class="cancel" type="button">${escapeHtml(_btnCancel)}</button>
+        <button class="save" type="button">${escapeHtml(_btnSave)}</button>
       </div>
     `;
     const [timeIn, nameIn, durIn] = row.querySelectorAll('input');
     setTimeout(() => timeIn.focus(), 50);
 
     row.querySelector('.save').addEventListener('click', () => {
+      const _fallbackName = (window.I18N ? I18N.t('calendar.default_name', 'ish') : 'ish');
       weekData[selectedKey][idx] = {
         time: timeIn.value.trim(),
-        name: nameIn.value.trim() || 'ish',
+        name: nameIn.value.trim() || _fallbackName,
         dur: durIn.value.trim()
       };
       saveAll();
@@ -530,7 +562,7 @@
       banner.textContent = '“' + firstLine + '”';
       banner.style.display = 'block';
     } else {
-      banner.textContent = '+ Bu oy uchun maqsad qo\'sh';
+      banner.textContent = (window.I18N ? I18N.t('calendar.add_month_goal', "+ Bu oy uchun maqsad qo'sh") : "+ Bu oy uchun maqsad qo'sh");
       banner.style.color = 'var(--text-mid)';
       banner.style.fontStyle = 'normal';
       banner.style.display = 'block';

@@ -175,13 +175,13 @@
 <div class="phone">
   <div class="container">
 
-    <h1 class="title">Tarix</h1>
-    <div class="subtitle">Bajarilgan ishlar</div>
+    <h1 class="title" data-i18n="weekly-review.title">Tarix</h1>
+    <div class="subtitle" data-i18n="weekly-review.subtitle">Bajarilgan ishlar</div>
 
     <div class="tabs">
-      <div class="tab" data-range="day">Bugun</div>
-      <div class="tab on" data-range="week">Hafta</div>
-      <div class="tab" data-range="month">Oy</div>
+      <div class="tab" data-range="day" data-i18n="weekly-review.tab_day">Bugun</div>
+      <div class="tab on" data-range="week" data-i18n="weekly-review.tab_week">Hafta</div>
+      <div class="tab" data-range="month" data-i18n="weekly-review.tab_month">Oy</div>
     </div>
 
     <!-- Hero: jonli diagramma + raqam -->
@@ -189,11 +189,11 @@
       <div class="hero-top">
         <div>
           <span class="hero-num" id="heroNum">0</span>
-          <span class="hero-num-lbl">soat fokus</span>
+          <span class="hero-num-lbl" data-i18n="weekly-review.hero_focus_hours">soat fokus</span>
         </div>
         <div class="hero-meta">
-          <span class="em" id="heroCount">0</span> reja<br>
-          streak · <span class="em" id="heroStreak">0</span>
+          <span class="em" id="heroCount">0</span> <span data-i18n="weekly-review.hero_plans">reja</span><br>
+          <span data-i18n="weekly-review.hero_streak">streak</span> · <span class="em" id="heroStreak">0</span>
         </div>
       </div>
       <div class="chart" id="chart"></div>
@@ -202,7 +202,7 @@
 
     <!-- Xulq-atvor tahlili -->
     <div id="insightsBox" style="display:none;background:var(--card);border-radius:14px;padding:18px 16px;margin-bottom:22px;">
-      <div style="font-size:11px;letter-spacing:3px;color:var(--accent);text-transform:uppercase;font-weight:500;margin-bottom:14px;">Xulq-atvor tahlili</div>
+      <div style="font-size:11px;letter-spacing:3px;color:var(--accent);text-transform:uppercase;font-weight:500;margin-bottom:14px;" data-i18n="weekly-review.insights_title">Xulq-atvor tahlili</div>
       <div id="insightsContent" style="display:flex;flex-direction:column;gap:10px;font-size:13px;line-height:1.5;"></div>
     </div>
 
@@ -225,9 +225,11 @@
     if (!mins || mins <= 0) return '—';
     const h = Math.floor(mins / 60);
     const m = mins % 60;
-    if (h && m) return h + ' soat ' + m + ' daq';
-    if (h) return h + ' soat';
-    return m + ' daq';
+    const soat = (window.I18N ? I18N.t('weekly-review.unit_hour', 'soat') : 'soat');
+    const daq = (window.I18N ? I18N.t('weekly-review.unit_min', 'daq') : 'daq');
+    if (h && m) return h + ' ' + soat + ' ' + m + ' ' + daq;
+    if (h) return h + ' ' + soat;
+    return m + ' ' + daq;
   }
   function fmtShortDate(iso) {
     const d = new Date(iso);
@@ -266,7 +268,8 @@
       // Bugungi top 7 vazifa
       const today = history.filter(h => h.dateIso === todayIso);
       const groups = {};
-      today.forEach(h => { const k = h.name || 'Ish'; groups[k] = (groups[k] || 0) + (h.actualMins || 0); });
+      const defaultName = (window.I18N ? I18N.t('weekly-review.default_task_name', 'Ish') : 'Ish');
+      today.forEach(h => { const k = h.name || defaultName; groups[k] = (groups[k] || 0) + (h.actualMins || 0); });
       buckets = Object.entries(groups)
         .sort((a, b) => b[1] - a[1])
         .slice(0, 7)
@@ -276,7 +279,15 @@
       const dayOfWeek = now.getDay();
       const monday = new Date(now); monday.setHours(0,0,0,0);
       monday.setDate(now.getDate() - ((dayOfWeek + 6) % 7));
-      const labels = ['Du','Se','Ch','Pa','Ju','Sh','Ya'];
+      const labels = [
+        (window.I18N ? I18N.t('weekly-review.weekday_mon', 'Du') : 'Du'),
+        (window.I18N ? I18N.t('weekly-review.weekday_tue', 'Se') : 'Se'),
+        (window.I18N ? I18N.t('weekly-review.weekday_wed', 'Ch') : 'Ch'),
+        (window.I18N ? I18N.t('weekly-review.weekday_thu', 'Pa') : 'Pa'),
+        (window.I18N ? I18N.t('weekly-review.weekday_fri', 'Ju') : 'Ju'),
+        (window.I18N ? I18N.t('weekly-review.weekday_sat', 'Sh') : 'Sh'),
+        (window.I18N ? I18N.t('weekly-review.weekday_sun', 'Ya') : 'Ya')
+      ];
       for (let i = 0; i < 7; i++) {
         const d = new Date(monday); d.setDate(monday.getDate() + i);
         const iso = MVOW_DATA.localDateIso(d);
@@ -309,7 +320,8 @@
       if (b.val > 0) {
         const valEl = document.createElement('div');
         valEl.className = 'chart-bar-val';
-        valEl.textContent = b.val + 's';
+        const hourShort = (window.I18N ? I18N.t('weekly-review.unit_hour_short', 's') : 's');
+        valEl.textContent = b.val + hourShort;
         wrap.appendChild(valEl);
       }
       chartEl.appendChild(wrap);
@@ -345,14 +357,18 @@
       const b = MVOW_DATA.getBehaviorStats();
       if (b && b.dayStats.length >= 2) {
         const gradeColor = (pct) => pct >= 80 ? '#00E5D4' : pct >= 50 ? '#F5C26B' : '#FF8E97';
+        const lblBest = (window.I18N ? I18N.t('weekly-review.insight_best_day', 'Eng yaxshi kuningiz') : 'Eng yaxshi kuningiz');
+        const lblWorst = (window.I18N ? I18N.t('weekly-review.insight_worst_day', 'Eng yomon') : 'Eng yomon');
+        const lblAvg = (window.I18N ? I18N.t('weekly-review.insight_avg_completion', "O'rtacha bajarish") : "O'rtacha bajarish");
+        const lblPeak = (window.I18N ? I18N.t('weekly-review.insight_peak_time', 'Sermahsul vaqt') : 'Sermahsul vaqt');
         let html = '';
-        html += `<div style="display:flex;justify-content:space-between;align-items:baseline;"><span style="color:var(--text-mid);">Eng yaxshi kuningiz</span><span style="color:#00E5D4;font-weight:600;"><span style="font-family:'Cormorant Garamond',serif;font-size:16px;font-style:italic;">${b.best.day}</span> · ${b.best.completion}%</span></div>`;
+        html += `<div style="display:flex;justify-content:space-between;align-items:baseline;"><span style="color:var(--text-mid);">${lblBest}</span><span style="color:#00E5D4;font-weight:600;"><span style="font-family:'Cormorant Garamond',serif;font-size:16px;font-style:italic;">${b.best.day}</span> · ${b.best.completion}%</span></div>`;
         if (b.worst.day !== b.best.day) {
-          html += `<div style="display:flex;justify-content:space-between;align-items:baseline;"><span style="color:var(--text-mid);">Eng yomon</span><span style="color:#FF8E97;font-weight:600;"><span style="font-family:'Cormorant Garamond',serif;font-size:16px;font-style:italic;">${b.worst.day}</span> · ${b.worst.completion}%</span></div>`;
+          html += `<div style="display:flex;justify-content:space-between;align-items:baseline;"><span style="color:var(--text-mid);">${lblWorst}</span><span style="color:#FF8E97;font-weight:600;"><span style="font-family:'Cormorant Garamond',serif;font-size:16px;font-style:italic;">${b.worst.day}</span> · ${b.worst.completion}%</span></div>`;
         }
-        html += `<div style="display:flex;justify-content:space-between;align-items:baseline;"><span style="color:var(--text-mid);">O'rtacha bajarish</span><span style="color:${gradeColor(b.avg)};font-weight:600;">${b.avg}%</span></div>`;
+        html += `<div style="display:flex;justify-content:space-between;align-items:baseline;"><span style="color:var(--text-mid);">${lblAvg}</span><span style="color:${gradeColor(b.avg)};font-weight:600;">${b.avg}%</span></div>`;
         if (b.peakRange) {
-          html += `<div style="display:flex;justify-content:space-between;align-items:baseline;"><span style="color:var(--text-mid);">Sermahsul vaqt</span><span style="color:var(--accent);font-weight:600;">${b.peakRange}</span></div>`;
+          html += `<div style="display:flex;justify-content:space-between;align-items:baseline;"><span style="color:var(--text-mid);">${lblPeak}</span><span style="color:var(--accent);font-weight:600;">${b.peakRange}</span></div>`;
         }
         insContent.innerHTML = html;
         insBox.style.display = 'block';
@@ -366,18 +382,22 @@
     // Vazifa bo'yicha guruhlash
     const list = document.getElementById('historyList');
     if (!history.length) {
+      const emptyLbl = (window.I18N ? I18N.t('weekly-review.empty_title', "Hozircha bo'sh.") : "Hozircha bo'sh.");
+      const emptyHint1 = (window.I18N ? I18N.t('weekly-review.empty_hint1', "Ish bajarilganda bu yerda ko'rinadi —") : "Ish bajarilganda bu yerda ko'rinadi —");
+      const emptyHint2 = (window.I18N ? I18N.t('weekly-review.empty_hint2', 'sana, davomiylik va qisqa izoh bilan.') : 'sana, davomiylik va qisqa izoh bilan.');
       list.innerHTML = `
         <div class="empty">
-          <div class="lbl">Hozircha bo'sh.</div>
-          <div class="hint">Ish bajarilganda bu yerda ko'rinadi —<br>sana, davomiylik va qisqa izoh bilan.</div>
+          <div class="lbl">${emptyLbl}</div>
+          <div class="hint">${emptyHint1}<br>${emptyHint2}</div>
         </div>
       `;
       return;
     }
 
     const groups = {};
+    const defaultNameList = (window.I18N ? I18N.t('weekly-review.default_task_name', 'Ish') : 'Ish');
     for (const h of history) {
-      const k = h.name || 'Ish';
+      const k = h.name || defaultNameList;
       if (!groups[k]) groups[k] = [];
       groups[k].push(h);
     }
@@ -388,6 +408,7 @@
       return bMax - aMax;
     });
 
+    const timesLbl = (window.I18N ? I18N.t('weekly-review.times_label', 'marta') : 'marta');
     list.innerHTML = sortedNames.map(name => {
       const items = groups[name];
       const totalMins = items.reduce((s, h) => s + (h.actualMins || 0), 0);
@@ -402,7 +423,7 @@
         <div class="group">
           <div class="group-head">
             <div class="group-name">${escapeHtml(name)}</div>
-            <div class="group-stats">${fmtDur(totalMins)}<span class="x">·</span>${items.length} marta</div>
+            <div class="group-stats">${fmtDur(totalMins)}<span class="x">·</span>${items.length} ${timesLbl}</div>
           </div>
           ${entriesHtml}
         </div>

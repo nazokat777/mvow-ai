@@ -4,6 +4,11 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <title>{brand} — Bu ilov haqida</title>
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+    if (window.I18N) document.title = '{brand} — ' + I18N.t('about.page_title', 'Bu ilov haqida');
+  });
+</script>
 <link rel="manifest" href="manifest.webmanifest">
 <meta name="theme-color" content="#04060B">
 <link rel="apple-touch-icon" href="assets/mnsm-logo.png">
@@ -83,23 +88,23 @@
 
     <div class="section">
       <div class="lbl" data-i18n="about.feat_lbl">Imkoniyatlar</div>
-      <div class="feat"><span class="dot">·</span> Reja — yozma yoki ovozli</div>
-      <div class="feat"><span class="dot">·</span> Tahrirlanadigan kun tartibi</div>
-      <div class="feat"><span class="dot">·</span> Fokus taymeri · Pomodoro</div>
-      <div class="feat"><span class="dot">·</span> Streak hisobi</div>
-      <div class="feat"><span class="dot">·</span> Budilnik — 3 misol bilan</div>
-      <div class="feat"><span class="dot">·</span> Haftalik · oylik natijalar</div>
+      <div class="feat"><span class="dot">·</span> <span data-i18n="about.feat_short1">Reja — yozma yoki ovozli</span></div>
+      <div class="feat"><span class="dot">·</span> <span data-i18n="about.feat_short2">Tahrirlanadigan kun tartibi</span></div>
+      <div class="feat"><span class="dot">·</span> <span data-i18n="about.feat_short3">Fokus taymeri · Pomodoro</span></div>
+      <div class="feat"><span class="dot">·</span> <span data-i18n="about.feat_short4">Streak hisobi</span></div>
+      <div class="feat"><span class="dot">·</span> <span data-i18n="about.feat_short5">Budilnik — 3 misol bilan</span></div>
+      <div class="feat"><span class="dot">·</span> <span data-i18n="about.feat_short6">Haftalik · oylik natijalar</span></div>
     </div>
 
     <div class="section">
       <div class="lbl" data-i18n="about.priv_lbl">Maxfiylik</div>
-      <p>Ma'lumotlar telefonda. Reset bilan tozalanadi.</p>
+      <p data-i18n="about.priv_short">Ma'lumotlar telefonda. Reset bilan tozalanadi.</p>
     </div>
 
     <div class="links">
-      <a class="link" href="settings.html">Sozlamalar <span class="arr">›</span></a>
-      <a class="link" href="privacy.html">Maxfiylik siyosati <span class="arr">›</span></a>
-      <a class="link" href="menu.html">Barcha ekranlar <span class="arr">›</span></a>
+      <a class="link" href="settings.html"><span data-i18n="about.settings_link">Sozlamalar</span> <span class="arr">›</span></a>
+      <a class="link" href="privacy.html"><span data-i18n="about.privacy_link">Maxfiylik siyosati</span> <span class="arr">›</span></a>
+      <a class="link" href="menu.html"><span data-i18n="about.all_screens">Barcha ekranlar</span> <span class="arr">›</span></a>
     </div>
 
     <div class="footer">
