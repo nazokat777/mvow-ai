@@ -416,7 +416,7 @@ const renderer = new THREE.WebGLRenderer({ canvas, antialias: true, powerPrefere
 renderer.setPixelRatio(Math.min(devicePixelRatio, 2));
 renderer.setSize(innerWidth, innerHeight);
 renderer.toneMapping = THREE.ACESFilmicToneMapping;
-renderer.toneMappingExposure = 1.15;
+renderer.toneMappingExposure = 1.0;
 renderer.outputColorSpace = THREE.SRGBColorSpace;
 
 // ===== Scene =====
@@ -424,8 +424,8 @@ const scene = new THREE.Scene();
 scene.background = new THREE.Color(C.bg);
 scene.fog = new THREE.Fog(C.bg, 6, 18);
 
-const camera = new THREE.PerspectiveCamera(36, innerWidth / innerHeight, 0.1, 100);
-camera.position.set(0, 0.15, 4.4);
+const camera = new THREE.PerspectiveCamera(40, innerWidth / innerHeight, 0.1, 100);
+camera.position.set(0, 0.15, 5.4);
 
 // ===== Lights =====
 const key = new THREE.DirectionalLight(0xffffff, 2.2);
@@ -438,10 +438,7 @@ const rim = new THREE.DirectionalLight(C.accent, 1.5);
 rim.position.set(-2, 3, -4);
 scene.add(rim);
 
-// Gentle fill from below
-const fill = new THREE.DirectionalLight(C.accentBright, 0.4);
-fill.position.set(0, -2, 2);
-scene.add(fill);
+// (removed bottom fill — was over-brightening the scene)
 
 // ===== Toon gradient map =====
 function gradientMap(steps) {
@@ -485,38 +482,35 @@ function hourglassProfile() {
 
 const glassGeom = new THREE.LatheGeometry(hourglassProfile(), 48);
 
-// Glass material — semi-opaque toon for CLEAR HOURGLASS VISIBILITY
+// Glass — DARK material, NO emissive (so it doesn't bloom-out)
+// Only the sand and accent rings should glow
 const glassMat = new THREE.MeshToonMaterial({
-  color: C.accentBright,
+  color: 0x6b5234,             // dark warm bronze
   gradientMap: grad3,
   transparent: true,
-  opacity: 0.55,
+  opacity: 0.42,
   side: THREE.DoubleSide,
+  depthWrite: false,
 });
-glassMat.emissive = new THREE.Color(C.accent);
-glassMat.emissiveIntensity = 0.6;
 
-// CRISP EDGE OUTLINE — actual edges, not wireframe noise
-const edgesGeom = new THREE.EdgesGeometry(glassGeom, 25);
+// Crisp edge outline — bright but THIN, won't bloom much
+const edgesGeom = new THREE.EdgesGeometry(glassGeom, 22);
 const edgesMat = new THREE.LineBasicMaterial({
-  color: C.accentBright,
+  color: 0xc9a868,             // accent (not bright)
   transparent: true,
-  opacity: 0.9,
-  linewidth: 2,
+  opacity: 0.85,
 });
 const edgesMesh = new THREE.LineSegments(edgesGeom, edgesMat);
 
-// Outer halo glow (inverted hull, no wireframe)
-const haloMat = new THREE.MeshBasicMaterial({
-  color: C.accent,
+// Dark outline (inverted hull) — for shape definition against bg
+const outlineMat = new THREE.MeshBasicMaterial({
+  color: 0x1a1626,
   side: THREE.BackSide,
   transparent: true,
-  opacity: 0.18,
-  blending: THREE.AdditiveBlending,
-  depthWrite: false,
+  opacity: 0.6,
 });
-const haloMesh = new THREE.Mesh(glassGeom, haloMat);
-haloMesh.scale.setScalar(1.08);
+const outlineMesh = new THREE.Mesh(glassGeom, outlineMat);
+outlineMesh.scale.setScalar(1.025);
 
 const glassMesh = new THREE.Mesh(glassGeom, glassMat);
 
@@ -531,14 +525,14 @@ topCap.position.y = 1.4 + 0.06;
 const botCap = new THREE.Mesh(capGeom, capMat);
 botCap.position.y = -1.4 - 0.06;
 
-// Cap edge accents
-const capEdgeGeom = new THREE.TorusGeometry(0.78, 0.025, 8, 32);
+// Cap edge accents — ONLY THESE BLOOM (selective)
+const capEdgeGeom = new THREE.TorusGeometry(0.78, 0.022, 8, 32);
 const capEdgeMat = new THREE.MeshToonMaterial({
-  color: C.accent,
+  color: C.accentBright,
   gradientMap: grad3,
 });
-capEdgeMat.emissive = new THREE.Color(C.accent);
-capEdgeMat.emissiveIntensity = 1.2;
+capEdgeMat.emissive = new THREE.Color(C.accentBright);
+capEdgeMat.emissiveIntensity = 1.8;  // > bloom threshold
 const topEdge = new THREE.Mesh(capEdgeGeom, capEdgeMat);
 topEdge.position.y = 1.46;
 topEdge.rotation.x = Math.PI / 2;
@@ -547,7 +541,7 @@ botEdge.position.y = -1.46;
 botEdge.rotation.x = Math.PI / 2;
 
 const hourglass = new THREE.Group();
-hourglass.add(haloMesh, glassMesh, edgesMesh, topCap, botCap, topEdge, botEdge);
+hourglass.add(outlineMesh, glassMesh, edgesMesh, topCap, botCap, topEdge, botEdge);
 scene.add(hourglass);
 
 // ===== SAND PARTICLES INSIDE HOURGLASS =====
@@ -587,9 +581,10 @@ for (let i = 0; i < SAND_COUNT; i++) {
 }
 sandGeom.setAttribute('position', new THREE.BufferAttribute(sandPos, 3));
 
+// Sand — SECOND THING THAT BLOOMS (bright glowing grains)
 const sandMat = new THREE.PointsMaterial({
-  color: C.accentBright,
-  size: 0.06,
+  color: 0xffe8a8,             // bright warm
+  size: 0.045,
   transparent: true,
   opacity: 1.0,
   blending: THREE.AdditiveBlending,
@@ -629,7 +624,8 @@ scene.add(dust);
 // ===== POSTPROCESSING =====
 const composer = new EffectComposer(renderer);
 composer.addPass(new RenderPass(scene, camera));
-const bloom = new UnrealBloomPass(new THREE.Vector2(innerWidth, innerHeight), 1.4, 0.7, 0.55);
+// CONSERVATIVE BLOOM — only the brightest emissive parts (sand + edge rings) glow
+const bloom = new UnrealBloomPass(new THREE.Vector2(innerWidth, innerHeight), 0.7, 0.35, 0.88);
 composer.addPass(bloom);
 composer.addPass(new OutputPass());
 
