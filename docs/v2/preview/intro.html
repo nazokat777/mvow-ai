@@ -222,10 +222,9 @@ body::after {
   text-transform: uppercase;
 }
 
-.skip-btn {
+.skip-btn, .back-btn {
   position: fixed;
   top: max(20px, env(safe-area-inset-top, 20px));
-  right: 20px;
   padding: 11px 17px;
   background: rgba(240, 233, 214, 0.04);
   color: var(--text-dim);
@@ -242,14 +241,20 @@ body::after {
   -webkit-backdrop-filter: blur(14px);
   backdrop-filter: blur(14px);
   transition: all 220ms ease;
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
 }
-.skip-btn:hover, .skip-btn:focus-visible {
+.skip-btn { right: 20px; }
+.back-btn { left: 20px; }
+.skip-btn:hover, .skip-btn:focus-visible,
+.back-btn:hover, .back-btn:focus-visible {
   background: rgba(245, 215, 110, 0.08);
   color: var(--gold-bright);
   border-color: rgba(245, 215, 110, 0.4);
   outline: none;
 }
-.skip-btn:focus-visible { box-shadow: 0 0 0 2px rgba(245, 215, 110, 0.5); }
+.skip-btn:focus-visible, .back-btn:focus-visible { box-shadow: 0 0 0 2px rgba(245, 215, 110, 0.5); }
 
 .veil {
   position: fixed;
@@ -352,6 +357,7 @@ body::after {
   <span class="logo-tagline" data-i18n="brand.tagline">sizning intizom do'stingiz</span>
 </div>
 
+<button class="back-btn" id="backBtn" type="button">‹ Orqaga</button>
 <button class="skip-btn" id="skipBtn" type="button" data-i18n="intro.skip">O'tkazib yuborish ›</button>
 <div class="veil" id="veil"></div>
 
@@ -778,6 +784,17 @@ canvas.addEventListener('pointerdown', (e) => {
 }, { passive: true });
 
 document.getElementById('skipBtn').addEventListener('click', skipCinematic);
+
+// BACK button — clears introSeen so cinematic replays next time (for testing)
+document.getElementById('backBtn').addEventListener('click', () => {
+  try {
+    localStorage.removeItem('mvow.motion.introSeen');
+    sessionStorage.removeItem('mvow.motion.introSeen');
+  } catch(e){}
+  veil.classList.add('show');
+  setTimeout(() => go('gallery.html'), 400);
+});
+
 addEventListener('keydown', (e) => {
   if (e.key === 'Escape' || e.key === 'Enter') skipCinematic();
 });
