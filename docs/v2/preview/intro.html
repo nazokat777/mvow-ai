@@ -3,27 +3,28 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-<title>brend — Tanishuv</title>
+<title>brend</title>
 <link rel="manifest" href="manifest.webmanifest">
-<meta name="theme-color" content="#0a0a0f">
+<meta name="theme-color" content="#04060B">
 <link rel="apple-touch-icon" href="assets/mnsm-logo.png">
 <link rel="icon" type="image/png" href="assets/mnsm-logo.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,600;1,500;1,600&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,500;1,600&family=Inter:wght@200;300;400;500;600&display=swap" rel="stylesheet">
 <style>
 * { box-sizing: border-box; margin: 0; padding: 0; }
 :root {
-  --bg: #0a0a0f;
-  --accent: #d4af37;
-  --accent-bright: #f5d76e;
-  --shadow-tint: #2a2440;
-  --outline: #1a1626;
-  --text: #f0e9d6;
-  --text-dim: rgba(240, 233, 214, 0.55);
+  --void: #04060B;
+  --void-soft: #0A0D14;
+  --accent: #00E5D4;
+  --accent-soft: #00B5A8;
+  --gold: #D4AF37;
+  --text: #F5F2EC;
+  --text-mid: #B8BBC2;
+  --text-dim: rgba(245, 242, 236, 0.45);
 }
 html, body {
-  background: var(--bg);
+  background: var(--void);
   color: var(--text);
   height: 100%;
   overflow: hidden;
@@ -32,231 +33,218 @@ html, body {
   user-select: none;
   -webkit-tap-highlight-color: transparent;
 }
-body { position: fixed; inset: 0; }
-
-#scene {
+body {
   position: fixed;
   inset: 0;
-  width: 100vw;
-  height: 100vh;
-  z-index: 0;
-  display: block;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
-/* Vignette overlay */
+/* Subtle ambient gradient — premium minimal */
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  background:
+    radial-gradient(ellipse 100% 80% at 50% 100%, rgba(0, 229, 212, 0.05), transparent 60%),
+    radial-gradient(ellipse 60% 50% at 50% 0%, rgba(212, 175, 55, 0.04), transparent 65%);
+  pointer-events: none;
+  z-index: 1;
+}
+
+/* Vignette */
 body::after {
   content: '';
   position: fixed;
   inset: 0;
-  background: radial-gradient(ellipse at center, transparent 50%, rgba(0,0,0,0.7) 100%);
+  background: radial-gradient(ellipse at center, transparent 45%, rgba(0,0,0,0.55) 100%);
   pointer-events: none;
-  z-index: 3;
+  z-index: 2;
 }
 
-/* Text overlay */
-.text-overlay {
+#particles {
   position: fixed;
-  left: 50%;
-  bottom: 18%;
-  transform: translateX(-50%);
-  text-align: center;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+}
+
+.stage {
+  position: relative;
   z-index: 5;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: 40px 32px;
   max-width: 480px;
-  width: calc(100% - 48px);
-  padding: 0 16px;
-  pointer-events: none;
-}
-.line {
-  display: block;
-  opacity: 0;
-  transform: translateY(12px);
-  transition: opacity 1000ms cubic-bezier(.22,.61,.36,1), transform 1000ms cubic-bezier(.22,.61,.36,1);
-}
-.line.show { opacity: 1; transform: translateY(0); }
-.line.primary {
-  font-family: 'Inter', sans-serif;
-  font-weight: 300;
-  font-size: 18px;
-  letter-spacing: 0.04em;
-  color: var(--text);
-  line-height: 1.4;
-}
-.line.emphasis {
-  font-family: 'Cormorant Garamond', serif;
-  font-style: italic;
-  font-weight: 500;
-  font-size: 38px;
-  letter-spacing: 0.01em;
-  color: var(--accent-bright);
-  line-height: 1.15;
-  margin-top: 12px;
-  text-shadow: 0 0 26px rgba(245, 215, 110, 0.5), 0 0 50px rgba(212, 175, 55, 0.3);
+  width: 100%;
 }
 
-/* Solo centered text (scene 4) */
-.solo-text {
-  position: fixed;
-  left: 50%;
-  top: 50%;
-  transform: translate(-50%, -50%);
-  z-index: 5;
-  text-align: center;
-  max-width: 520px;
-  width: calc(100% - 48px);
-  padding: 0 16px;
-  pointer-events: none;
-}
-.solo-line {
-  display: block;
-  font-family: 'Cormorant Garamond', serif;
-  font-style: italic;
-  font-weight: 500;
-  font-size: 44px;
-  letter-spacing: 0.01em;
-  color: var(--accent-bright);
-  line-height: 1.2;
-  opacity: 0;
-  transform: translateY(16px) scale(0.97);
-  transition: opacity 1200ms cubic-bezier(.22,.61,.36,1), transform 1200ms cubic-bezier(.22,.61,.36,1);
-  text-shadow: 0 0 30px rgba(245, 215, 110, 0.55), 0 0 60px rgba(212, 175, 55, 0.35);
-}
-.solo-line.show { opacity: 1; transform: translateY(0) scale(1); }
-.solo-line.exit { opacity: 0; transform: translateY(-12px) scale(0.97); }
-
-/* Word ladder (scene 5) */
-.word-list {
-  position: fixed;
-  left: 50%;
-  top: 50%;
-  transform: translate(-50%, -50%);
-  z-index: 5;
-  text-align: center;
-  pointer-events: none;
-}
-.word {
-  display: block;
-  font-family: 'Inter', sans-serif;
-  font-weight: 400;
-  font-size: 23px;
-  letter-spacing: 0.45em;
-  color: var(--accent-bright);
-  text-transform: uppercase;
-  padding: 14px 0;
-  opacity: 0;
-  transform: translateY(16px);
-  transition: opacity 850ms cubic-bezier(.22,.61,.36,1), transform 850ms cubic-bezier(.22,.61,.36,1);
-  text-shadow: 0 0 22px rgba(245, 215, 110, 0.45);
-}
-.word.show { opacity: 1; transform: translateY(0); }
-.word-dot {
-  display: block;
-  width: 4px;
-  height: 4px;
-  margin: 8px auto;
-  background: var(--accent);
+/* Logo mark — clean accent ring */
+.mark {
+  width: 88px;
+  height: 88px;
   border-radius: 50%;
+  border: 1.5px solid rgba(0, 229, 212, 0.35);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 32px;
+  position: relative;
   opacity: 0;
-  transition: opacity 700ms;
-  box-shadow: 0 0 10px rgba(212, 175, 55, 0.7);
+  transform: translateY(8px) scale(0.95);
+  animation: rise 1100ms cubic-bezier(.22,.61,.36,1) 200ms forwards;
 }
-.word-dot.show { opacity: 0.75; }
-.word-sub {
-  display: block;
-  font-family: 'Inter', sans-serif;
-  font-weight: 300;
-  font-size: 15px;
-  letter-spacing: 0.05em;
-  color: var(--text-dim);
-  margin-top: 36px;
-  opacity: 0;
-  transition: opacity 900ms;
+.mark::before {
+  content: '';
+  position: absolute;
+  inset: -6px;
+  border-radius: 50%;
+  border: 1px solid rgba(0, 229, 212, 0.12);
+  animation: ringPulse 4s ease-in-out infinite;
 }
-.word-sub.show { opacity: 1; }
-.word-sub .em {
-  color: var(--accent-bright);
-  font-style: italic;
-  font-family: 'Cormorant Garamond', serif;
-  font-size: 19px;
-}
-
-/* Logo final */
-.logo-final {
-  position: fixed;
-  left: 50%;
-  top: 50%;
-  transform: translate(-50%, -50%) scale(0.85);
-  z-index: 5;
-  opacity: 0;
-  transition: opacity 1000ms cubic-bezier(.22,.61,.36,1), transform 1300ms cubic-bezier(.22,.61,.36,1);
-  text-align: center;
-  pointer-events: none;
-}
-.logo-final.show { opacity: 1; transform: translate(-50%, -50%) scale(1); }
-.logo-final img {
-  width: 108px;
+.mark img {
+  width: 56px;
   height: auto;
-  display: block;
-  margin: 0 auto;
   filter:
-    drop-shadow(0 0 30px rgba(245, 215, 110, 0.7))
-    drop-shadow(0 0 60px rgba(212, 175, 55, 0.4))
-    brightness(1.15);
+    drop-shadow(0 0 14px rgba(0, 229, 212, 0.45))
+    drop-shadow(0 0 28px rgba(0, 229, 212, 0.18));
 }
-.logo-name {
-  display: block;
+
+@keyframes ringPulse {
+  0%, 100% { transform: scale(1); opacity: 0.4; }
+  50% { transform: scale(1.06); opacity: 0.7; }
+}
+
+/* Wordmark */
+.brand {
   font-family: 'Cormorant Garamond', serif;
   font-style: italic;
   font-weight: 500;
-  font-size: 34px;
-  color: var(--accent-bright);
-  margin-top: 20px;
-  letter-spacing: 0.02em;
-  text-shadow: 0 0 18px rgba(245, 215, 110, 0.5);
-}
-.logo-tagline {
-  display: block;
-  font-family: 'Inter', sans-serif;
-  font-weight: 300;
-  font-size: 11px;
-  color: var(--text-dim);
-  margin-top: 12px;
-  letter-spacing: 0.3em;
-  text-transform: uppercase;
+  font-size: 64px;
+  letter-spacing: 0.005em;
+  color: var(--text);
+  line-height: 1;
+  opacity: 0;
+  transform: translateY(10px);
+  animation: rise 1100ms cubic-bezier(.22,.61,.36,1) 500ms forwards;
 }
 
-.skip-btn {
-  position: fixed;
-  top: max(20px, env(safe-area-inset-top, 20px));
-  right: 20px;
-  padding: 11px 17px;
-  background: rgba(240, 233, 214, 0.04);
-  color: var(--text-dim);
-  font-family: 'Inter', sans-serif;
-  font-size: 10px;
-  font-weight: 500;
-  letter-spacing: 0.24em;
-  text-transform: uppercase;
-  border: 1px solid rgba(240, 233, 214, 0.10);
-  border-radius: 999px;
-  z-index: 20;
-  cursor: pointer;
-  min-height: 42px;
-  -webkit-backdrop-filter: blur(14px);
-  backdrop-filter: blur(14px);
-  transition: all 220ms ease;
+.brand .accent-dot {
+  color: var(--accent);
 }
-.skip-btn:hover, .skip-btn:focus-visible {
-  background: rgba(245, 215, 110, 0.08);
-  color: var(--accent-bright);
-  border-color: rgba(245, 215, 110, 0.4);
+
+.tagline {
+  margin-top: 16px;
+  font-family: 'Inter', sans-serif;
+  font-weight: 300;
+  font-size: 13px;
+  letter-spacing: 0.32em;
+  color: var(--text-dim);
+  text-transform: uppercase;
+  opacity: 0;
+  transform: translateY(10px);
+  animation: rise 1100ms cubic-bezier(.22,.61,.36,1) 800ms forwards;
+}
+
+/* Hairline divider */
+.divider {
+  width: 32px;
+  height: 1px;
+  margin: 40px 0 36px;
+  background: linear-gradient(90deg, transparent, rgba(0, 229, 212, 0.4), transparent);
+  opacity: 0;
+  animation: rise 900ms cubic-bezier(.22,.61,.36,1) 1100ms forwards;
+}
+
+/* Quote — single elegant line */
+.quote {
+  font-family: 'Cormorant Garamond', serif;
+  font-style: italic;
+  font-weight: 400;
+  font-size: 19px;
+  line-height: 1.5;
+  color: var(--text-mid);
+  max-width: 320px;
+  opacity: 0;
+  transform: translateY(10px);
+  animation: rise 1100ms cubic-bezier(.22,.61,.36,1) 1300ms forwards;
+}
+.quote .em {
+  color: var(--accent);
+  font-style: italic;
+}
+
+/* CTA */
+.cta {
+  margin-top: 48px;
+  display: inline-block;
+  padding: 16px 36px;
+  background: linear-gradient(180deg, var(--accent), var(--accent-soft));
+  color: var(--void);
+  font-family: 'Inter', sans-serif;
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.28em;
+  text-transform: uppercase;
+  border: none;
+  border-radius: 999px;
+  text-decoration: none;
+  cursor: pointer;
+  min-height: 48px;
+  min-width: 200px;
+  opacity: 0;
+  transform: translateY(10px);
+  animation: rise 1100ms cubic-bezier(.22,.61,.36,1) 1700ms forwards;
+  transition: transform 220ms cubic-bezier(.22,.61,.36,1), box-shadow 220ms;
+  box-shadow: 0 0 0 rgba(0, 229, 212, 0);
+}
+.cta:hover, .cta:focus-visible {
+  transform: translateY(-2px);
+  box-shadow: 0 12px 28px rgba(0, 229, 212, 0.25);
   outline: none;
 }
-.skip-btn:focus-visible { box-shadow: 0 0 0 2px rgba(245, 215, 110, 0.5); }
+.cta:active { transform: translateY(0); }
+
+.skip-link {
+  position: fixed;
+  bottom: max(28px, env(safe-area-inset-bottom, 28px));
+  left: 50%;
+  transform: translateX(-50%);
+  font-family: 'Inter', sans-serif;
+  font-size: 10px;
+  font-weight: 400;
+  letter-spacing: 0.28em;
+  color: var(--text-dim);
+  text-transform: uppercase;
+  text-decoration: none;
+  cursor: pointer;
+  background: transparent;
+  border: none;
+  z-index: 10;
+  opacity: 0;
+  animation: rise 900ms cubic-bezier(.22,.61,.36,1) 2200ms forwards;
+  padding: 10px 16px;
+  min-height: 36px;
+  min-width: 44px;
+  transition: color 200ms;
+}
+.skip-link:hover, .skip-link:focus-visible {
+  color: var(--text);
+  outline: none;
+}
+
+@keyframes rise {
+  to { opacity: 1; transform: translateY(0) scale(1); }
+}
 
 .veil {
   position: fixed;
   inset: 0;
-  background: var(--bg);
+  background: var(--void);
   z-index: 100;
   opacity: 0;
   pointer-events: none;
@@ -264,715 +252,219 @@ body::after {
 }
 .veil.show { opacity: 1; }
 
-#fallback {
-  position: fixed;
-  inset: 0;
-  display: none;
-  align-items: center;
-  justify-content: center;
-  background: var(--bg);
-  color: var(--accent);
-  font-family: 'Cormorant Garamond', serif;
-  font-style: italic;
-  font-size: 18px;
-  text-align: center;
-  padding: 24px;
-  z-index: 50;
+@media (prefers-reduced-motion: reduce) {
+  .mark, .brand, .tagline, .divider, .quote, .cta, .skip-link {
+    animation-duration: 200ms !important;
+  }
+  .mark::before { animation: none; }
 }
 
-@media (prefers-reduced-motion: reduce) {
-  .line, .solo-line, .word, .word-dot, .word-sub, .logo-final {
-    transition-duration: 250ms !important;
-    transform: none !important;
-  }
-}
 @media (max-width: 480px) {
-  .line.primary { font-size: 16px; }
-  .line.emphasis { font-size: 30px; }
-  .solo-line { font-size: 34px; }
-  .word { font-size: 20px; letter-spacing: 0.38em; padding: 12px 0; }
-  .word-sub { font-size: 14px; margin-top: 28px; }
-  .logo-final img { width: 90px; }
-  .logo-name { font-size: 26px; }
-  .text-overlay { bottom: 16%; }
+  .brand { font-size: 52px; }
+  .tagline { font-size: 11px; letter-spacing: 0.28em; }
+  .quote { font-size: 17px; max-width: 280px; }
+  .mark { width: 76px; height: 76px; margin-bottom: 26px; }
+  .mark img { width: 48px; }
+  .divider { margin: 32px 0 28px; }
+  .cta { margin-top: 36px; padding: 15px 32px; font-size: 11px; }
 }
 @media (max-width: 360px) {
-  .line.emphasis { font-size: 26px; }
-  .solo-line { font-size: 28px; }
-  .word { font-size: 18px; letter-spacing: 0.34em; }
+  .brand { font-size: 44px; }
+  .quote { font-size: 15px; }
 }
 </style>
 </head>
 <body>
 
-<canvas id="scene"></canvas>
-<div id="fallback">3D ko'rinish quvvatlanmaydi. Davom etish uchun bosing.</div>
+<canvas id="particles" aria-hidden="true"></canvas>
 
-<div class="text-overlay" id="textOverlay">
-  <span class="line primary" id="line1"></span>
-  <span class="line emphasis" id="line2"></span>
+<div class="stage">
+  <div class="mark">
+    <img src="assets/mnsm-logo.png" alt="brend">
+  </div>
+
+  <h1 class="brand">brend<span class="accent-dot">.</span></h1>
+
+  <div class="tagline" data-i18n="brand.tagline">sizning intizom do'stingiz</div>
+
+  <div class="divider" aria-hidden="true"></div>
+
+  <p class="quote" data-i18n="intro.welcome_quote">
+    Har bir <span class="em">maqsad</span> — kichik kunlik harakatdan boshlanadi.
+  </p>
+
+  <button class="cta" id="goBtn" type="button" data-i18n="intro.cta_start">Boshlaymiz</button>
 </div>
 
-<div class="solo-text" id="soloText" aria-live="polite">
-  <span class="solo-line" id="soloLine"></span>
-</div>
+<button class="skip-link" id="skipLink" type="button" data-i18n="intro.skip_to_app">Keyingi safar</button>
 
-<div class="word-list" id="wordList">
-  <span class="word" id="w1">Maqsad</span>
-  <span class="word-dot" id="d1"></span>
-  <span class="word" id="w2">Reja</span>
-  <span class="word-dot" id="d2"></span>
-  <span class="word" id="w3">Harakat</span>
-  <span class="word-dot" id="d3"></span>
-  <span class="word" id="w4">Natija</span>
-  <span class="word-sub" id="ws"></span>
-</div>
-
-<div class="logo-final" id="logoFinal">
-  <img src="assets/mnsm-logo.png" alt="brend">
-  <span class="logo-name">brend</span>
-  <span class="logo-tagline" data-i18n="brand.tagline">sizning intizom do'stingiz</span>
-</div>
-
-<button class="skip-btn" id="skipBtn" type="button" data-i18n="intro.skip">O'tkazib yuborish ›</button>
 <div class="veil" id="veil"></div>
 
 <script src="i18n.js"></script>
+<script>
+(function(){
+  'use strict';
 
-<script type="importmap">
-{ "imports": {
-    "three": "https://cdn.jsdelivr.net/npm/three@0.165.0/build/three.module.js",
-    "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.165.0/examples/jsm/"
-} }
-</script>
+  // ===== EARLY GUARDS =====
+  var INTRO_SEEN = 'mvow.motion.introSeen';
+  function go(u){ try { location.replace(u); } catch(e){ location.href=u; } }
+  function setSeen(){ try { localStorage.setItem(INTRO_SEEN, '1'); } catch(e){} }
 
-<script type="module">
-'use strict';
+  try { if (localStorage.getItem(INTRO_SEEN)) { go('anketa.html'); return; } } catch(e){}
 
-// ===== EARLY GUARDS =====
-const INTRO_SEEN = 'mvow.motion.introSeen';
-function go(u){ try { location.replace(u); } catch(e){ location.href=u; } }
-function setSeen(){ try { localStorage.setItem(INTRO_SEEN, '1'); } catch(e){} }
-
-try { if (localStorage.getItem(INTRO_SEEN)) { go('anketa.html'); throw new Error('seen'); } } catch(e) { if (e.message === 'seen') throw e; }
-
-const reduced = matchMedia('(prefers-reduced-motion: reduce)').matches;
-let intensity = '';
-try { intensity = localStorage.getItem('mvow.motion.intensity') || ''; } catch(e){}
-if (reduced || intensity === 'minimal') { setSeen(); go('anketa.html'); throw new Error('skip'); }
-
-// ===== i18n helper =====
-function T(key, fallback) {
-  if (window.I18N && I18N.t) {
-    const v = I18N.t(key, fallback);
-    if (v && v !== key) return v;
+  // ===== VEIL TRANSITION =====
+  var veil = document.getElementById('veil');
+  function navigate(target) {
+    veil.classList.add('show');
+    setSeen();
+    setTimeout(function(){ go(target); }, 480);
   }
-  return fallback;
-}
 
-// ===== WebGL2 fallback =====
-const canvas = document.getElementById('scene');
-function webglAvailable() {
-  try { return !!document.createElement('canvas').getContext('webgl2'); }
-  catch { return false; }
-}
-
-const veil = document.getElementById('veil');
-function skipCinematic() {
-  if (skipCinematic._done) return;
-  skipCinematic._done = true;
-  veil.classList.add('show');
-  setSeen();
-  setTimeout(() => go('anketa.html'), 500);
-}
-
-if (!webglAvailable()) {
-  document.getElementById('fallback').style.display = 'flex';
-  document.getElementById('fallback').addEventListener('click', skipCinematic);
-  setTimeout(skipCinematic, 3000);
-  throw new Error('No WebGL2');
-}
-
-// ===== Three.js imports =====
-const THREE = await import('three');
-const { EffectComposer } = await import('three/addons/postprocessing/EffectComposer.js');
-const { RenderPass } = await import('three/addons/postprocessing/RenderPass.js');
-const { UnrealBloomPass } = await import('three/addons/postprocessing/UnrealBloomPass.js');
-const { OutputPass } = await import('three/addons/postprocessing/OutputPass.js');
-
-// ===== Palette (dark-luxury) =====
-const C = {
-  bg: 0x0a0a0f,
-  accent: 0xd4af37,
-  accentBright: 0xf5d76e,
-  shadowTint: 0x2a2440,
-  outline: 0x1a1626,
-  wood: 0x3a2616,
-  woodEdge: 0x5a3d24,
-};
-
-// ===== Renderer =====
-const renderer = new THREE.WebGLRenderer({ canvas, antialias: true, powerPreference: 'high-performance', alpha: false });
-renderer.setPixelRatio(Math.min(devicePixelRatio, 2));
-renderer.setSize(innerWidth, innerHeight);
-renderer.toneMapping = THREE.ACESFilmicToneMapping;
-renderer.toneMappingExposure = 1.0;
-renderer.outputColorSpace = THREE.SRGBColorSpace;
-
-// ===== Scene =====
-const scene = new THREE.Scene();
-scene.background = new THREE.Color(C.bg);
-scene.fog = new THREE.Fog(C.bg, 6, 18);
-
-const camera = new THREE.PerspectiveCamera(40, innerWidth / innerHeight, 0.1, 100);
-camera.position.set(0, 0.15, 5.4);
-
-// ===== Lights =====
-const key = new THREE.DirectionalLight(0xffffff, 2.2);
-key.position.set(3, 5, 4);
-scene.add(key);
-
-scene.add(new THREE.AmbientLight(C.shadowTint, 0.65));
-
-const rim = new THREE.DirectionalLight(C.accent, 1.5);
-rim.position.set(-2, 3, -4);
-scene.add(rim);
-
-// (removed bottom fill — was over-brightening the scene)
-
-// ===== Toon gradient map =====
-function gradientMap(steps) {
-  steps = steps || 3;
-  const data = new Uint8Array(steps);
-  for (let i = 0; i < steps; i++) data[i] = Math.round((i / (steps - 1)) * 255);
-  const tex = new THREE.DataTexture(data, steps, 1, THREE.RedFormat);
-  tex.magFilter = tex.minFilter = THREE.NearestFilter;
-  tex.needsUpdate = true;
-  return tex;
-}
-const grad3 = gradientMap(3);
-const grad4 = gradientMap(4);
-
-// ===== HOURGLASS =====
-// LatheGeometry: rotate a 2D profile (radius vs y) around Y axis.
-// Profile = full hourglass silhouette.
-function hourglassProfile() {
-  const pts = [];
-  const H = 1.4;
-  const W = 0.7;
-  const NECK = 0.06;
-  // Bottom opening → out to bottom bulb → narrow to neck
-  pts.push(new THREE.Vector2(0.01, -H));
-  pts.push(new THREE.Vector2(W * 0.95, -H + 0.02));
-  pts.push(new THREE.Vector2(W * 1.0, -H * 0.9));
-  pts.push(new THREE.Vector2(W * 0.95, -H * 0.75));
-  pts.push(new THREE.Vector2(W * 0.7, -H * 0.5));
-  pts.push(new THREE.Vector2(W * 0.35, -H * 0.25));
-  pts.push(new THREE.Vector2(NECK * 1.5, -H * 0.08));
-  pts.push(new THREE.Vector2(NECK, 0));
-  pts.push(new THREE.Vector2(NECK * 1.5, H * 0.08));
-  pts.push(new THREE.Vector2(W * 0.35, H * 0.25));
-  pts.push(new THREE.Vector2(W * 0.7, H * 0.5));
-  pts.push(new THREE.Vector2(W * 0.95, H * 0.75));
-  pts.push(new THREE.Vector2(W * 1.0, H * 0.9));
-  pts.push(new THREE.Vector2(W * 0.95, H - 0.02));
-  pts.push(new THREE.Vector2(0.01, H));
-  return pts;
-}
-
-const glassGeom = new THREE.LatheGeometry(hourglassProfile(), 48);
-
-// Glass — DARK material, NO emissive (so it doesn't bloom-out)
-// Only the sand and accent rings should glow
-const glassMat = new THREE.MeshToonMaterial({
-  color: 0x6b5234,             // dark warm bronze
-  gradientMap: grad3,
-  transparent: true,
-  opacity: 0.42,
-  side: THREE.DoubleSide,
-  depthWrite: false,
-});
-
-// Crisp edge outline — bright but THIN, won't bloom much
-const edgesGeom = new THREE.EdgesGeometry(glassGeom, 22);
-const edgesMat = new THREE.LineBasicMaterial({
-  color: 0xc9a868,             // accent (not bright)
-  transparent: true,
-  opacity: 0.85,
-});
-const edgesMesh = new THREE.LineSegments(edgesGeom, edgesMat);
-
-// Dark outline (inverted hull) — for shape definition against bg
-const outlineMat = new THREE.MeshBasicMaterial({
-  color: 0x1a1626,
-  side: THREE.BackSide,
-  transparent: true,
-  opacity: 0.6,
-});
-const outlineMesh = new THREE.Mesh(glassGeom, outlineMat);
-outlineMesh.scale.setScalar(1.025);
-
-const glassMesh = new THREE.Mesh(glassGeom, glassMat);
-
-// Wood caps (top + bottom)
-const capGeom = new THREE.CylinderGeometry(0.78, 0.78, 0.12, 32);
-const capMat = new THREE.MeshToonMaterial({
-  color: C.wood,
-  gradientMap: grad3,
-});
-const topCap = new THREE.Mesh(capGeom, capMat);
-topCap.position.y = 1.4 + 0.06;
-const botCap = new THREE.Mesh(capGeom, capMat);
-botCap.position.y = -1.4 - 0.06;
-
-// Cap edge accents — ONLY THESE BLOOM (selective)
-const capEdgeGeom = new THREE.TorusGeometry(0.78, 0.022, 8, 32);
-const capEdgeMat = new THREE.MeshToonMaterial({
-  color: C.accentBright,
-  gradientMap: grad3,
-});
-capEdgeMat.emissive = new THREE.Color(C.accentBright);
-capEdgeMat.emissiveIntensity = 1.8;  // > bloom threshold
-const topEdge = new THREE.Mesh(capEdgeGeom, capEdgeMat);
-topEdge.position.y = 1.46;
-topEdge.rotation.x = Math.PI / 2;
-const botEdge = new THREE.Mesh(capEdgeGeom, capEdgeMat);
-botEdge.position.y = -1.46;
-botEdge.rotation.x = Math.PI / 2;
-
-const hourglass = new THREE.Group();
-hourglass.add(outlineMesh, glassMesh, edgesMesh, topCap, botCap, topEdge, botEdge);
-scene.add(hourglass);
-
-// ===== SAND PARTICLES INSIDE HOURGLASS =====
-const SAND_COUNT = 1200;
-const sandGeom = new THREE.BufferGeometry();
-const sandPos = new Float32Array(SAND_COUNT * 3);
-const sandData = []; // per-particle state
-
-function widthAtY(y) {
-  // Approximate inner profile width at height y
-  const absY = Math.abs(y);
-  const t = absY / 1.4;
-  if (t < 0.08) return 0.05;
-  if (t < 0.25) return THREE.MathUtils.lerp(0.05, 0.32, (t - 0.08) / 0.17);
-  if (t < 0.5) return THREE.MathUtils.lerp(0.32, 0.62, (t - 0.25) / 0.25);
-  if (t < 0.75) return THREE.MathUtils.lerp(0.62, 0.85, (t - 0.5) / 0.25);
-  return 0.85;
-}
-
-for (let i = 0; i < SAND_COUNT; i++) {
-  // Distribute initial positions inside the hourglass volume (mostly top bulb)
-  const yIsTop = Math.random() < 0.85;
-  const y = yIsTop ? (0.1 + Math.random() * 1.25) : (-0.1 - Math.random() * 0.4);
-  const r = Math.random() * widthAtY(y) * 0.85;
-  const theta = Math.random() * Math.PI * 2;
-  const x = Math.cos(theta) * r;
-  const z = Math.sin(theta) * r;
-  sandPos[i * 3] = x;
-  sandPos[i * 3 + 1] = y;
-  sandPos[i * 3 + 2] = z;
-  sandData.push({
-    vy: -(0.4 + Math.random() * 0.3),
-    seed: Math.random() * 100,
-    swirl: (Math.random() - 0.5) * 0.5,
-    inTop: yIsTop,
+  document.getElementById('goBtn').addEventListener('click', function(){
+    navigate('anketa.html');
   });
-}
-sandGeom.setAttribute('position', new THREE.BufferAttribute(sandPos, 3));
-
-// Sand — SECOND THING THAT BLOOMS (bright glowing grains)
-const sandMat = new THREE.PointsMaterial({
-  color: 0xffe8a8,             // bright warm
-  size: 0.045,
-  transparent: true,
-  opacity: 1.0,
-  blending: THREE.AdditiveBlending,
-  depthWrite: false,
-  sizeAttenuation: true,
-});
-const sandPoints = new THREE.Points(sandGeom, sandMat);
-hourglass.add(sandPoints);
-
-// ===== AMBIENT DUST (background particles) =====
-const DUST_COUNT = innerWidth < 480 ? 250 : 450;
-const dustGeom = new THREE.BufferGeometry();
-const dustPos = new Float32Array(DUST_COUNT * 3);
-const dustData = [];
-for (let i = 0; i < DUST_COUNT; i++) {
-  dustPos[i * 3] = (Math.random() - 0.5) * 12;
-  dustPos[i * 3 + 1] = (Math.random() - 0.5) * 10;
-  dustPos[i * 3 + 2] = (Math.random() - 0.5) * 8 - 1;
-  dustData.push({
-    vy: -(0.05 + Math.random() * 0.12),
-    seed: Math.random() * 100,
+  document.getElementById('skipLink').addEventListener('click', function(){
+    navigate('anketa.html');
   });
-}
-dustGeom.setAttribute('position', new THREE.BufferAttribute(dustPos, 3));
-const dustMat = new THREE.PointsMaterial({
-  color: C.accentBright,
-  size: 0.04,
-  transparent: true,
-  opacity: 0.6,
-  blending: THREE.AdditiveBlending,
-  depthWrite: false,
-  sizeAttenuation: true,
-});
-const dust = new THREE.Points(dustGeom, dustMat);
-scene.add(dust);
+  document.addEventListener('keydown', function(e){
+    if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); navigate('anketa.html'); }
+  });
 
-// ===== POSTPROCESSING =====
-const composer = new EffectComposer(renderer);
-composer.addPass(new RenderPass(scene, camera));
-// CONSERVATIVE BLOOM — only the brightest emissive parts (sand + edge rings) glow
-const bloom = new UnrealBloomPass(new THREE.Vector2(innerWidth, innerHeight), 0.7, 0.35, 0.88);
-composer.addPass(bloom);
-composer.addPass(new OutputPass());
+  // ===== AMBIENT PARTICLES (subtle, premium) =====
+  var pref = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  var intensity = '';
+  try { intensity = localStorage.getItem('mvow.motion.intensity') || ''; } catch(e){}
 
-// ===== INTERACTION =====
-const target = { mx: 0, my: 0, touch: 0 };
-const smooth = { mx: 0, my: 0, touch: 0 };
+  if (pref || intensity === 'minimal') return; // no particles for reduced motion
 
-addEventListener('pointermove', (e) => {
-  target.mx = (e.clientX / innerWidth) * 2 - 1;
-  target.my = (e.clientY / innerHeight) * 2 - 1;
-}, { passive: true });
+  var canvas = document.getElementById('particles');
+  var ctx = canvas.getContext('2d');
+  var dpr = Math.min(2, window.devicePixelRatio || 1);
+  var W = 0, H = 0;
 
-// Touch creates a temporary attractor in 3D space for particle burst
-const touchAttractors = [];
-canvas.addEventListener('pointerdown', (e) => {
-  const ndcX = (e.clientX / innerWidth) * 2 - 1;
-  const ndcY = -(e.clientY / innerHeight) * 2 + 1;
-  // Project ray, place attractor at z=0
-  const vec = new THREE.Vector3(ndcX, ndcY, 0.5);
-  vec.unproject(camera);
-  const dir = vec.sub(camera.position).normalize();
-  const dist = -camera.position.z / dir.z;
-  const pos = camera.position.clone().add(dir.multiplyScalar(dist));
-  touchAttractors.push({ pos, life: 1.0 });
-}, { passive: true });
+  function resize(){
+    W = innerWidth; H = innerHeight;
+    canvas.width = Math.floor(W * dpr);
+    canvas.height = Math.floor(H * dpr);
+    canvas.style.width = W + 'px';
+    canvas.style.height = H + 'px';
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+  }
+  resize();
+  var rT; addEventListener('resize', function(){ clearTimeout(rT); rT = setTimeout(resize, 150); });
 
-// ===== SKIP =====
-document.getElementById('skipBtn').addEventListener('click', skipCinematic);
-addEventListener('keydown', (e) => {
-  if (e.key === 'Escape' || e.key === 'Enter') skipCinematic();
-});
+  // Cached glow sprite
+  var sprite = (function(){
+    var c = document.createElement('canvas');
+    c.width = 24; c.height = 24;
+    var x = c.getContext('2d');
+    var g = x.createRadialGradient(12, 12, 0, 12, 12, 12);
+    g.addColorStop(0, 'rgba(0, 229, 212, 0.9)');
+    g.addColorStop(0.35, 'rgba(0, 229, 212, 0.35)');
+    g.addColorStop(1, 'rgba(0, 229, 212, 0)');
+    x.fillStyle = g;
+    x.fillRect(0, 0, 24, 24);
+    return c;
+  })();
 
-// ===== ANIMATION LOOP =====
-const clock = new THREE.Clock();
-let running = true;
-let rafId;
+  var COUNT = innerWidth < 480 ? 50 : 90;
+  var particles = [];
 
-// Hourglass animation state
-const hgState = {
-  rotZ: 0,
-  targetRotZ: 0,
-  rotZVel: 0,
-  scale: 0.01,
-  targetScale: 1.0,
-  scaleVel: 0,
-  sandFillTop: 1.0,   // 1 = sand in top, 0 = sand fully fallen
-  targetSandFill: 1.0,
-  sandVel: 0,
-  visibility: 0,
-  targetVis: 1,
-  visVel: 0,
-};
+  function makeP(initial){
+    return {
+      x: Math.random() * W,
+      y: initial ? Math.random() * H : H + 20,
+      vy: -(0.15 + Math.random() * 0.35),
+      vx: (Math.random() - 0.5) * 0.08,
+      size: 0.7 + Math.random() * 1.8,
+      alpha: 0.08 + Math.random() * 0.32,
+      seed: Math.random() * 100
+    };
+  }
+  for (var i = 0; i < COUNT; i++) particles.push(makeP(true));
 
-function springStep(cur, target, vel, dt, k, d) {
-  const force = (target - cur) * k;
-  const damp = vel * d;
-  const newVel = vel + (force - damp) * dt;
-  return { val: cur + newVel * dt, vel: newVel };
-}
+  // Touch creates tiny burst
+  var bursts = [];
+  document.addEventListener('pointerdown', function(e){
+    if (e.target.closest('.cta, .skip-link, button, a')) return;
+    bursts.push({ x: e.clientX, y: e.clientY, life: 1 });
+  }, { passive: true });
 
-function frame() {
-  if (!running) return;
-  rafId = requestAnimationFrame(frame);
+  var lastT = performance.now();
+  var stopped = false;
 
-  const dt = Math.min(clock.getDelta(), 0.05);
-  const t = clock.elapsedTime;
+  function tick(now){
+    if (stopped) return;
+    var dt = Math.min(50, now - lastT);
+    lastT = now;
+    var time = now / 1000;
 
-  // Pointer smoothing
-  smooth.mx = THREE.MathUtils.damp(smooth.mx, target.mx, 6, dt);
-  smooth.my = THREE.MathUtils.damp(smooth.my, target.my, 6, dt);
+    // Trail fade
+    ctx.globalCompositeOperation = 'source-over';
+    ctx.fillStyle = 'rgba(4, 6, 11, 0.20)';
+    ctx.fillRect(0, 0, W, H);
 
-  // Hourglass springs
-  const rs = springStep(hgState.rotZ, hgState.targetRotZ, hgState.rotZVel, dt, 35, 11);
-  hgState.rotZ = rs.val; hgState.rotZVel = rs.vel;
+    // Particles drift up
+    ctx.globalCompositeOperation = 'lighter';
+    for (var i = 0; i < particles.length; i++) {
+      var p = particles[i];
 
-  const ss = springStep(hgState.scale, hgState.targetScale, hgState.scaleVel, dt, 50, 13);
-  hgState.scale = ss.val; hgState.scaleVel = ss.vel;
-
-  const vs = springStep(hgState.visibility, hgState.targetVis, hgState.visVel, dt, 60, 14);
-  hgState.visibility = vs.val; hgState.visVel = vs.vel;
-
-  const sfs = springStep(hgState.sandFillTop, hgState.targetSandFill, hgState.sandVel, dt, 8, 7);
-  hgState.sandFillTop = sfs.val; hgState.sandVel = sfs.vel;
-
-  // Apply hourglass transforms — GENTLE SWAY, NO FULL ROTATION (keeps shape readable)
-  hourglass.rotation.z = hgState.rotZ;
-  hourglass.rotation.y = Math.sin(t * 0.35) * 0.10 + smooth.mx * 0.10;
-  hourglass.rotation.x = -smooth.my * 0.05 + Math.sin(t * 0.55) * 0.015;
-  hourglass.scale.setScalar(hgState.scale * (hgState.visibility));
-
-  // Sand particle update
-  const sandArr = sandGeom.attributes.position.array;
-  for (let i = 0; i < SAND_COUNT; i++) {
-    const d = sandData[i];
-    let x = sandArr[i * 3];
-    let y = sandArr[i * 3 + 1];
-    let z = sandArr[i * 3 + 2];
-
-    // Gravity
-    y += d.vy * dt;
-
-    // Swirl around Y axis (gentle vortex near neck)
-    if (Math.abs(y) < 0.4) {
-      const a = d.swirl * dt * 4;
-      const cos = Math.cos(a), sin = Math.sin(a);
-      const nx = x * cos - z * sin;
-      const nz = x * sin + z * cos;
-      x = nx; z = nz;
-    }
-
-    // Constrain to hourglass volume
-    const maxR = widthAtY(y) * 0.85;
-    const r = Math.sqrt(x * x + z * z);
-    if (r > maxR) {
-      x = (x / r) * maxR;
-      z = (z / r) * maxR;
-    }
-
-    // Reset particles that fall through bottom — but only at a rate matching sandFillTop
-    if (y < -1.3) {
-      if (Math.random() < hgState.sandFillTop * 0.8) {
-        // Respawn in top bulb
-        y = 0.2 + Math.random() * 1.2;
-        const rr = Math.random() * widthAtY(y) * 0.85;
-        const tt = Math.random() * Math.PI * 2;
-        x = Math.cos(tt) * rr;
-        z = Math.sin(tt) * rr;
-        d.vy = -(0.4 + Math.random() * 0.3);
-      } else {
-        // Stay piled at bottom
-        y = -1.3 + Math.random() * 0.1;
+      // Burst attraction
+      for (var b = 0; b < bursts.length; b++) {
+        var bt = bursts[b];
+        var dx = bt.x - p.x;
+        var dy = bt.y - p.y;
+        var d2 = dx*dx + dy*dy;
+        if (d2 < 10000 && d2 > 1) {
+          var d = Math.sqrt(d2);
+          var f = (1 - d/100) * 0.6 * bt.life;
+          p.vx += (dx/d) * f;
+          p.vy += (dy/d) * f;
+        }
       }
-    }
 
-    sandArr[i * 3] = x;
-    sandArr[i * 3 + 1] = y;
-    sandArr[i * 3 + 2] = z;
-  }
-  sandGeom.attributes.position.needsUpdate = true;
+      // Drift
+      p.vx += Math.sin(time * 0.3 + p.seed) * 0.0015;
+      p.vx *= 0.99;
+      p.vy *= 0.995;
 
-  // Dust particles
-  const dustArr = dustGeom.attributes.position.array;
-  for (let i = 0; i < DUST_COUNT; i++) {
-    const d = dustData[i];
-    let x = dustArr[i * 3];
-    let y = dustArr[i * 3 + 1];
-    let z = dustArr[i * 3 + 2];
+      // Move
+      p.x += p.vx;
+      p.y += p.vy;
 
-    y += d.vy * dt;
-    x += Math.sin(t * 0.3 + d.seed) * 0.002;
-
-    // Touch attractor
-    for (const att of touchAttractors) {
-      const dx = att.pos.x - x;
-      const dy = att.pos.y - y;
-      const dz = att.pos.z - z;
-      const d2 = dx * dx + dy * dy + dz * dz;
-      if (d2 < 4) {
-        const inv = att.life * 0.2 / (d2 + 0.5);
-        x += dx * inv;
-        y += dy * inv;
-        z += dz * inv;
+      // Respawn at bottom when off-screen top
+      if (p.y < -20) {
+        p.y = H + 20;
+        p.x = Math.random() * W;
+        p.vy = -(0.15 + Math.random() * 0.35);
+        p.vx = (Math.random() - 0.5) * 0.08;
       }
+      if (p.x < -20) p.x = W + 20;
+      if (p.x > W + 20) p.x = -20;
+
+      var r = p.size * 3.5;
+      ctx.globalAlpha = p.alpha;
+      ctx.drawImage(sprite, p.x - r, p.y - r, r * 2, r * 2);
+    }
+    ctx.globalAlpha = 1;
+    ctx.globalCompositeOperation = 'source-over';
+
+    // Decay bursts
+    for (var bi = bursts.length - 1; bi >= 0; bi--) {
+      bursts[bi].life -= dt / 800;
+      if (bursts[bi].life <= 0) bursts.splice(bi, 1);
     }
 
-    if (y < -6) {
-      y = 6;
-      x = (Math.random() - 0.5) * 12;
-      z = (Math.random() - 0.5) * 8 - 1;
-    }
-
-    dustArr[i * 3] = x;
-    dustArr[i * 3 + 1] = y;
-    dustArr[i * 3 + 2] = z;
+    requestAnimationFrame(tick);
   }
-  dustGeom.attributes.position.needsUpdate = true;
+  requestAnimationFrame(tick);
 
-  // Decay touch attractors
-  for (let i = touchAttractors.length - 1; i >= 0; i--) {
-    touchAttractors[i].life -= dt * 0.8;
-    if (touchAttractors[i].life <= 0) touchAttractors.splice(i, 1);
-  }
-
-  // Subtle camera breath
-  camera.position.y = 0.2 + Math.sin(t * 0.4) * 0.05;
-  camera.lookAt(0, 0, 0);
-
-  // Render
-  composer.render();
-}
-
-clock.start();
-frame();
-
-// ===== LIFECYCLE =====
-canvas.addEventListener('webglcontextlost', (e) => { e.preventDefault(); running = false; cancelAnimationFrame(rafId); });
-canvas.addEventListener('webglcontextrestored', () => { running = true; frame(); });
-document.addEventListener('visibilitychange', () => {
-  if (document.hidden) { running = false; cancelAnimationFrame(rafId); }
-  else if (!skipCinematic._done) { running = true; clock.getDelta(); frame(); }
-});
-
-let resizeT;
-addEventListener('resize', () => {
-  clearTimeout(resizeT);
-  resizeT = setTimeout(() => {
-    camera.aspect = innerWidth / innerHeight;
-    camera.updateProjectionMatrix();
-    renderer.setSize(innerWidth, innerHeight);
-    composer.setSize(innerWidth, innerHeight);
-  }, 120);
-});
-
-// ===== TEXT OVERLAY HELPERS =====
-const line1El = document.getElementById('line1');
-const line2El = document.getElementById('line2');
-const soloLineEl = document.getElementById('soloLine');
-
-function showLines(l1, l2) {
-  line1El.textContent = l1 || '';
-  line2El.textContent = l2 || '';
-  setTimeout(() => {
-    if (l1) line1El.classList.add('show');
-    if (l2) setTimeout(() => line2El.classList.add('show'), 250);
-  }, 60);
-}
-function hideLines() {
-  line1El.classList.remove('show');
-  line2El.classList.remove('show');
-}
-function showSolo(text) {
-  soloLineEl.textContent = text;
-  soloLineEl.classList.remove('exit');
-  setTimeout(() => soloLineEl.classList.add('show'), 60);
-}
-function hideSolo() {
-  soloLineEl.classList.remove('show');
-  soloLineEl.classList.add('exit');
-}
-
-// ===== SCENE TIMELINE — 23 seconds =====
-const timers = [];
-function sched(fn, ms) {
-  const id = setTimeout(fn, ms);
-  timers.push(id);
-  return id;
-}
-
-// SCENE 1 (0 → 5500ms): Hourglass appears, sand starts flowing
-hgState.targetVis = 1;
-hgState.targetSandFill = 1.0;
-
-sched(() => {
-  showLines(
-    T('intro.scene1_line1', "Insonning eng qimmat boyligi —"),
-    T('intro.scene1_line2', "vaqt.")
-  );
-}, 1400);
-
-sched(() => {
-  hgState.targetSandFill = 0.2; // sand drains
-}, 2600);
-
-sched(hideLines, 4900);
-
-// SCENE 2 (5500 → 9500ms): Hourglass tips
-sched(() => {
-  hgState.targetRotZ = Math.PI * 0.42; // ~75deg
-  showLines(
-    T('intro.scene2_line1', "Uni qaytarib"),
-    T('intro.scene2_line2', "bo'lmaydi.")
-  );
-}, 5500);
-
-sched(hideLines, 9000);
-
-// SCENE 3 (9500 → 13500ms): Right itself + refill — symbolic rewind
-sched(() => {
-  hgState.targetRotZ = 0;
-  hgState.targetSandFill = 1.0;
-  showLines(
-    T('intro.scene3_line1', "Lekin uni"),
-    T('intro.scene3_line2', "maqsadga aylantirish mumkin.")
-  );
-}, 9700);
-
-sched(hideLines, 13100);
-
-// SCENE 4 (13500 → 17000ms): Pure typographic — hourglass dissolves
-sched(() => {
-  hgState.targetVis = 0; // fade hourglass
-  showSolo(T('intro.scene4_line2', "Siz vaqtdan iboratsiz."));
-}, 13800);
-
-sched(hideSolo, 16700);
-
-// SCENE 5 (17000 → 21500ms): 4-word ladder
-sched(() => {
-  document.getElementById('w1').textContent = T('intro.scene5_step1_name', 'Maqsad');
-  document.getElementById('w2').textContent = T('intro.scene5_step2_name', 'Reja');
-  document.getElementById('w3').textContent = T('intro.scene5_step3_name', 'Harakat');
-  document.getElementById('w4').textContent = T('intro.scene5_step4_name', 'Natija');
-
-  const subHtml =
-    T('intro.scene5_headline_line1', 'Maqsadni') +
-    ' <span class="em">' + T('intro.scene5_headline_emphasis', 'yozing') + '.</span>';
-  document.getElementById('ws').innerHTML = subHtml;
-
-  document.getElementById('w1').classList.add('show');
-  sched(() => document.getElementById('d1').classList.add('show'), 380);
-  sched(() => document.getElementById('w2').classList.add('show'), 700);
-  sched(() => document.getElementById('d2').classList.add('show'), 1080);
-  sched(() => document.getElementById('w3').classList.add('show'), 1400);
-  sched(() => document.getElementById('d3').classList.add('show'), 1780);
-  sched(() => document.getElementById('w4').classList.add('show'), 2100);
-  sched(() => document.getElementById('ws').classList.add('show'), 2750);
-}, 17000);
-
-sched(() => {
-  document.querySelectorAll('.word, .word-dot, .word-sub').forEach((el) => el.classList.remove('show'));
-}, 21500);
-
-// SCENE 6 (22000 → 25000ms): Logo
-sched(() => {
-  document.getElementById('logoFinal').classList.add('show');
-}, 22200);
-
-// END
-sched(() => {
-  veil.classList.add('show');
-  setSeen();
-  sched(() => go('anketa.html'), 500);
-}, 25400);
-
-// Override skip to clean timers
-const _origSkip = skipCinematic;
-function skipNow() {
-  timers.forEach(clearTimeout);
-  running = false;
-  cancelAnimationFrame(rafId);
-  _origSkip();
-}
-document.getElementById('skipBtn').onclick = skipNow;
-addEventListener('keydown', (e) => {
-  if (e.key === 'Escape' || e.key === 'Enter') skipNow();
-});
-
+  document.addEventListener('visibilitychange', function(){
+    if (document.hidden) { stopped = true; }
+    else if (!stopped) { /* keep running */ }
+    else { stopped = false; lastT = performance.now(); requestAnimationFrame(tick); }
+  });
+})();
 </script>
 </body>
 </html>
