@@ -442,8 +442,8 @@ const scene = new THREE.Scene();
 scene.background = new THREE.Color(0x04060B);
 scene.fog = new THREE.Fog(0x04060B, 8, 22);
 
-const camera = new THREE.PerspectiveCamera(38, innerWidth / innerHeight, 0.1, 100);
-camera.position.set(0, 0.3, 5.2);
+const camera = new THREE.PerspectiveCamera(36, innerWidth / innerHeight, 0.1, 100);
+camera.position.set(0.4, -0.15, 4.9);
 
 // ===== HDRI ENVIRONMENT (procedural via RoomEnvironment) =====
 // This is what makes PBR materials look real — they need an environment to reflect.
@@ -484,103 +484,169 @@ ground.position.y = -1.6;
 ground.receiveShadow = true;
 scene.add(ground);
 
-// ===== HOURGLASS — LatheGeometry with REAL PBR materials =====
+// ===== HOURGLASS — smooth bell-curve profile + structural frame =====
+// Classical hourglass shape using parametric cosine bell curve.
 function hourglassProfile() {
-  const pts = [];
   const H = 1.35;
-  const W = 0.65;
-  const NECK = 0.05;
-  pts.push(new THREE.Vector2(0.01, -H));
-  pts.push(new THREE.Vector2(W * 0.95, -H + 0.02));
-  pts.push(new THREE.Vector2(W * 1.0, -H * 0.9));
-  pts.push(new THREE.Vector2(W * 0.96, -H * 0.75));
-  pts.push(new THREE.Vector2(W * 0.7, -H * 0.5));
-  pts.push(new THREE.Vector2(W * 0.32, -H * 0.22));
-  pts.push(new THREE.Vector2(NECK * 1.5, -H * 0.07));
-  pts.push(new THREE.Vector2(NECK, 0));
-  pts.push(new THREE.Vector2(NECK * 1.5, H * 0.07));
-  pts.push(new THREE.Vector2(W * 0.32, H * 0.22));
-  pts.push(new THREE.Vector2(W * 0.7, H * 0.5));
-  pts.push(new THREE.Vector2(W * 0.96, H * 0.75));
-  pts.push(new THREE.Vector2(W * 1.0, H * 0.9));
-  pts.push(new THREE.Vector2(W * 0.95, H - 0.02));
-  pts.push(new THREE.Vector2(0.01, H));
+  const R_MAX = 0.62;
+  const NECK = 0.045;
+  const STEPS = 36;
+  const pts = [];
+
+  // Apex (bottom tip, used so LatheGeometry closes nicely with cap on top)
+  pts.push(new THREE.Vector2(0.001, -H - 0.005));
+
+  // Bottom half: y from -H to 0
+  for (let i = 0; i <= STEPS; i++) {
+    const t = i / STEPS;
+    const y = -H + t * H;
+    const tNorm = Math.abs(y) / H;
+    // Smooth bell curve (cosine) — classical hourglass silhouette
+    const r = NECK + (R_MAX - NECK) * (1 - Math.cos(Math.PI * tNorm)) / 2;
+    pts.push(new THREE.Vector2(r, y));
+  }
+
+  // Top half: mirror
+  for (let i = 1; i <= STEPS; i++) {
+    const t = i / STEPS;
+    const y = t * H;
+    const tNorm = Math.abs(y) / H;
+    const r = NECK + (R_MAX - NECK) * (1 - Math.cos(Math.PI * tNorm)) / 2;
+    pts.push(new THREE.Vector2(r, y));
+  }
+
+  pts.push(new THREE.Vector2(0.001, H + 0.005));
   return pts;
 }
 
-const glassGeom = new THREE.LatheGeometry(hourglassProfile(), 64);
+const glassGeom = new THREE.LatheGeometry(hourglassProfile(), 96);
 glassGeom.computeVertexNormals();
 
-// REAL GLASS — MeshPhysicalMaterial with transmission for refraction
+// REAL GLASS — visible but light-passing (not fully transparent — keeps shape)
 const glassMat = new THREE.MeshPhysicalMaterial({
-  color: 0xffffff,
+  color: 0xfff4d6,
   metalness: 0,
-  roughness: 0.05,
-  transmission: 1.0,        // glass refracts light through it
-  thickness: 0.5,           // physical thickness for refraction
-  ior: 1.5,                 // index of refraction (real glass)
-  attenuationColor: new THREE.Color(0xfff4d6),  // warm tint inside
-  attenuationDistance: 1.4,
-  envMapIntensity: 1.6,
+  roughness: 0.08,
+  transmission: 0.85,
+  thickness: 0.45,
+  ior: 1.45,
+  attenuationColor: new THREE.Color(0xffd9a0),
+  attenuationDistance: 1.2,
+  envMapIntensity: 1.4,
   clearcoat: 1.0,
-  clearcoatRoughness: 0.02,
+  clearcoatRoughness: 0.04,
   side: THREE.DoubleSide,
   transparent: true,
 });
 const glassMesh = new THREE.Mesh(glassGeom, glassMat);
 glassMesh.castShadow = true;
-glassMesh.receiveShadow = false;
 
-// ===== WOOD CAPS (with real PBR wood look) =====
-const capGeom = new THREE.CylinderGeometry(0.74, 0.74, 0.13, 48, 1);
+// SILHOUETTE OUTLINE — dark inverted hull, gives shape definition against bg
+const silhouetteMat = new THREE.MeshBasicMaterial({
+  color: 0x1a1626,
+  side: THREE.BackSide,
+  transparent: true,
+  opacity: 0.45,
+});
+const silhouetteMesh = new THREE.Mesh(glassGeom, silhouetteMat);
+silhouetteMesh.scale.setScalar(1.012);
+
+// ===== STRUCTURAL WOOD FRAME =====
+// Top + bottom plates that the glass rests between, with 4 corner posts CONNECTED.
 const woodMat = new THREE.MeshStandardMaterial({
-  color: 0x4a3220,
-  roughness: 0.7,
+  color: 0x3d2916,
+  roughness: 0.78,
+  metalness: 0.05,
+  envMapIntensity: 0.4,
+});
+const woodAccentMat = new THREE.MeshStandardMaterial({
+  color: 0x5a3d24,
+  roughness: 0.65,
   metalness: 0.08,
   envMapIntensity: 0.5,
 });
-const topCap = new THREE.Mesh(capGeom, woodMat);
-topCap.position.y = 1.35 + 0.065;
-topCap.castShadow = true;
-const botCap = new THREE.Mesh(capGeom, woodMat);
-botCap.position.y = -1.35 - 0.065;
-botCap.castShadow = true;
-botCap.receiveShadow = true;
 
-// ===== GOLD ACCENT RINGS (real metal — reflects environment) =====
-const ringGeom = new THREE.TorusGeometry(0.74, 0.018, 12, 64);
+// Plates — slightly wider than glass, with rounded inner ring
+const PLATE_R = 0.78;
+const PLATE_THICK = 0.09;
+const plateGeom = new THREE.CylinderGeometry(PLATE_R, PLATE_R, PLATE_THICK, 64, 1);
+const topPlate = new THREE.Mesh(plateGeom, woodMat);
+topPlate.position.y = 1.35 + PLATE_THICK / 2 + 0.005;
+topPlate.castShadow = true; topPlate.receiveShadow = true;
+const botPlate = new THREE.Mesh(plateGeom, woodMat);
+botPlate.position.y = -1.35 - PLATE_THICK / 2 - 0.005;
+botPlate.castShadow = true; botPlate.receiveShadow = true;
+
+// Inner-rim accent (slightly raised band on each plate)
+const innerRimGeom = new THREE.TorusGeometry(0.66, 0.025, 14, 64);
+const topInnerRim = new THREE.Mesh(innerRimGeom, woodAccentMat);
+topInnerRim.position.y = 1.35;
+topInnerRim.rotation.x = Math.PI / 2;
+topInnerRim.castShadow = true;
+const botInnerRim = new THREE.Mesh(innerRimGeom, woodAccentMat);
+botInnerRim.position.y = -1.35;
+botInnerRim.rotation.x = Math.PI / 2;
+botInnerRim.castShadow = true;
+
+// 4 posts — thicker, with brass end caps so they look STRUCTURAL not floating
+const POST_R = 0.78 - 0.04; // sit on plate edge
+const POST_RADIUS = 0.04;
+const POST_HEIGHT = (1.35 + PLATE_THICK + 0.01) * 2;
+
+function makePost(angle) {
+  const x = Math.cos(angle) * POST_R;
+  const z = Math.sin(angle) * POST_R;
+  const g = new THREE.Group();
+  const main = new THREE.Mesh(
+    new THREE.CylinderGeometry(POST_RADIUS, POST_RADIUS, POST_HEIGHT, 12),
+    woodMat
+  );
+  main.castShadow = true;
+  g.add(main);
+  // Brass end caps (small cylinders at each post end)
+  const brassMat = new THREE.MeshStandardMaterial({
+    color: 0xb8862c,
+    roughness: 0.35,
+    metalness: 0.9,
+    envMapIntensity: 1.4,
+  });
+  const capGeom = new THREE.CylinderGeometry(POST_RADIUS * 1.2, POST_RADIUS * 1.2, 0.05, 12);
+  const topB = new THREE.Mesh(capGeom, brassMat); topB.position.y = POST_HEIGHT / 2 + 0.012; topB.castShadow = true;
+  const botB = new THREE.Mesh(capGeom, brassMat); botB.position.y = -POST_HEIGHT / 2 - 0.012; botB.castShadow = true;
+  g.add(topB, botB);
+  g.position.set(x, 0, z);
+  return g;
+}
+const post1 = makePost(Math.PI / 4);
+const post2 = makePost(3 * Math.PI / 4);
+const post3 = makePost(5 * Math.PI / 4);
+const post4 = makePost(7 * Math.PI / 4);
+
+// Gold accent rings on plate edges (the "luxury" detail)
 const goldMat = new THREE.MeshStandardMaterial({
   color: 0xd4af37,
-  roughness: 0.28,
-  metalness: 0.95,
-  envMapIntensity: 1.6,
+  roughness: 0.32,
+  metalness: 0.92,
+  envMapIntensity: 1.5,
 });
-const topRing = new THREE.Mesh(ringGeom, goldMat);
-topRing.position.y = 1.42;
-topRing.rotation.x = Math.PI / 2;
-topRing.castShadow = true;
-
-const botRing = new THREE.Mesh(ringGeom, goldMat);
-botRing.position.y = -1.42;
-botRing.rotation.x = Math.PI / 2;
-botRing.castShadow = true;
-
-// Four wooden posts connecting the caps (corner pillars)
-function makePost(x, z) {
-  const postGeom = new THREE.CylinderGeometry(0.025, 0.025, 2.7, 8);
-  const m = new THREE.Mesh(postGeom, woodMat);
-  m.position.set(x, 0, z);
-  m.castShadow = true;
-  return m;
-}
-const postOffset = 0.55;
-const post1 = makePost(postOffset, postOffset);
-const post2 = makePost(-postOffset, postOffset);
-const post3 = makePost(postOffset, -postOffset);
-const post4 = makePost(-postOffset, -postOffset);
+const goldRingGeom = new THREE.TorusGeometry(PLATE_R, 0.018, 14, 64);
+const topGoldRing = new THREE.Mesh(goldRingGeom, goldMat);
+topGoldRing.position.y = 1.35 + PLATE_THICK + 0.005;
+topGoldRing.rotation.x = Math.PI / 2;
+topGoldRing.castShadow = true;
+const botGoldRing = new THREE.Mesh(goldRingGeom, goldMat);
+botGoldRing.position.y = -1.35 - PLATE_THICK - 0.005;
+botGoldRing.rotation.x = Math.PI / 2;
+botGoldRing.castShadow = true;
 
 const hourglass = new THREE.Group();
-hourglass.add(glassMesh, topCap, botCap, topRing, botRing, post1, post2, post3, post4);
+hourglass.add(
+  silhouetteMesh, glassMesh,
+  topPlate, botPlate,
+  topInnerRim, botInnerRim,
+  topGoldRing, botGoldRing,
+  post1, post2, post3, post4
+);
 scene.add(hourglass);
 
 // ===== SAND PARTICLES (the glow source — selective bloom target) =====
@@ -590,13 +656,12 @@ const sandPos = new Float32Array(SAND_COUNT * 3);
 const sandData = [];
 
 function widthAtY(y) {
-  const absY = Math.abs(y);
-  const t = absY / 1.35;
-  if (t < 0.07) return 0.04;
-  if (t < 0.22) return THREE.MathUtils.lerp(0.04, 0.28, (t - 0.07) / 0.15);
-  if (t < 0.5) return THREE.MathUtils.lerp(0.28, 0.62, (t - 0.22) / 0.28);
-  if (t < 0.75) return THREE.MathUtils.lerp(0.62, 0.85, (t - 0.5) / 0.25);
-  return 0.85;
+  // Matches the smooth bell curve profile r(y) = NECK + (R_MAX-NECK)*(1-cos(π*|y|/H))/2
+  const H = 1.35;
+  const R_MAX = 0.62;
+  const NECK = 0.045;
+  const tNorm = Math.min(1, Math.abs(y) / H);
+  return NECK + (R_MAX - NECK) * (1 - Math.cos(Math.PI * tNorm)) / 2;
 }
 
 for (let i = 0; i < SAND_COUNT; i++) {
@@ -626,6 +691,36 @@ const sandMat = new THREE.PointsMaterial({
 });
 const sandPoints = new THREE.Points(sandGeom, sandMat);
 hourglass.add(sandPoints);
+
+// ===== TARGET (scene 3 — symbolic: sand transforms into goal) =====
+const targetGroup = new THREE.Group();
+targetGroup.position.set(0, 0.05, 0);
+targetGroup.scale.setScalar(0.01);
+targetGroup.visible = false;
+
+const targetRingGold = new THREE.MeshStandardMaterial({
+  color: 0xf5d76e,
+  roughness: 0.25,
+  metalness: 0.85,
+  envMapIntensity: 1.8,
+  emissive: 0xd4af37,
+  emissiveIntensity: 0.4,
+});
+
+const targetOuter = new THREE.Mesh(new THREE.TorusGeometry(1.05, 0.025, 16, 128), targetRingGold);
+const targetMid = new THREE.Mesh(new THREE.TorusGeometry(0.65, 0.022, 16, 128), targetRingGold);
+const targetInner = new THREE.Mesh(new THREE.TorusGeometry(0.28, 0.02, 14, 96), targetRingGold);
+const targetCenter = new THREE.Mesh(
+  new THREE.SphereGeometry(0.08, 24, 16),
+  new THREE.MeshStandardMaterial({
+    color: 0xffe8a0,
+    roughness: 0.2, metalness: 0.7,
+    emissive: 0xffe8a0, emissiveIntensity: 1.2,
+    envMapIntensity: 1.5,
+  })
+);
+targetGroup.add(targetOuter, targetMid, targetInner, targetCenter);
+scene.add(targetGroup);
 
 // ===== AMBIENT DUST =====
 const DUST_COUNT = innerWidth < 480 ? 180 : 320;
@@ -699,6 +794,12 @@ const hgState = {
   visibility: 0, targetVis: 1, visVel: 0,
 };
 
+const targetState = {
+  scale: 0.01, targetScale: 0.01, scaleVel: 0,
+  visibility: 0, targetVis: 0, visVel: 0,
+  rotY: 0,
+};
+
 function springStep(cur, target, vel, dt, k, d) {
   const force = (target - cur) * k;
   const damp = vel * d;
@@ -736,6 +837,21 @@ function frame() {
   hourglass.rotation.y = Math.sin(t * 0.28) * 0.08 + smooth.mx * 0.10;
   hourglass.rotation.x = -smooth.my * 0.05 + Math.sin(t * 0.55) * 0.01;
   hourglass.scale.setScalar(hgState.scale * hgState.visibility);
+
+  // Target springs (scene 3)
+  const tss = springStep(targetState.scale, targetState.targetScale, targetState.scaleVel, dt, 45, 13);
+  targetState.scale = tss.val; targetState.scaleVel = tss.vel;
+  const tvs = springStep(targetState.visibility, targetState.targetVis, targetState.visVel, dt, 50, 14);
+  targetState.visibility = tvs.val; targetState.visVel = tvs.vel;
+  targetState.rotY += dt * 0.25;
+  if (targetState.visibility > 0.01) {
+    targetGroup.visible = true;
+    targetGroup.scale.setScalar(targetState.scale * targetState.visibility);
+    targetGroup.rotation.y = targetState.rotY + smooth.mx * 0.10;
+    targetGroup.rotation.x = -smooth.my * 0.05;
+  } else {
+    targetGroup.visible = false;
+  }
 
   // Sand particle update
   const sandArr = sandGeom.attributes.position.array;
@@ -819,9 +935,9 @@ function frame() {
     if (touchAttractors[i].life <= 0) touchAttractors.splice(i, 1);
   }
 
-  // Camera breath
-  camera.position.y = 0.3 + Math.sin(t * 0.4) * 0.04;
-  camera.lookAt(0, 0, 0);
+  // Camera breath — slight Y drift + lookAt slightly above center for majestic low angle
+  camera.position.y = -0.15 + Math.sin(t * 0.4) * 0.04;
+  camera.lookAt(0, 0.15, 0);
 
   composer.render();
 }
@@ -903,9 +1019,11 @@ sched(() => {
 
 sched(hideLines, 9100);
 
+// SCENE 3 — LOGICAL FIX: hourglass fades out, sand TRANSFORMS into target
 sched(() => {
-  hgState.targetRotZ = 0;
-  hgState.targetSandFill = 1.0;
+  hgState.targetVis = 0;          // hourglass dissolves
+  targetState.targetScale = 1.0;  // target grows
+  targetState.targetVis = 1;
   showLines(
     T('intro.scene3_line1', "Lekin uni"),
     T('intro.scene3_line2', "maqsadga aylantirish mumkin.")
@@ -914,8 +1032,9 @@ sched(() => {
 
 sched(hideLines, 13200);
 
+// SCENE 4 — target dissolves, pure typography
 sched(() => {
-  hgState.targetVis = 0;
+  targetState.targetVis = 0;
   showSolo(T('intro.scene4_line2', "Siz vaqtdan iboratsiz."));
 }, 13900);
 
