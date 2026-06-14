@@ -6,11 +6,13 @@
 <title>brend — Tanishuv</title>
 <link rel="manifest" href="manifest.webmanifest">
 <meta name="theme-color" content="#04060B">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <link rel="apple-touch-icon" href="assets/mnsm-logo.png">
 <link rel="icon" type="image/png" href="assets/mnsm-logo.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,600;1,500;1,600&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;1,500&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
 <style>
 * { box-sizing: border-box; margin: 0; padding: 0; }
 :root {
@@ -30,198 +32,31 @@ html, body {
   user-select: none;
   -webkit-tap-highlight-color: transparent;
 }
-body { position: fixed; inset: 0; }
+body {
+  position: fixed;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
 
-#scene {
+#cinematic {
   position: fixed;
   inset: 0;
   width: 100vw;
   height: 100vh;
-  z-index: 0;
-  display: block;
+  object-fit: cover;
+  background: var(--void);
+  z-index: 1;
 }
 
-/* Vignette overlay */
-body::after {
-  content: '';
+/* Subtle vignette over video */
+.vignette {
   position: fixed;
   inset: 0;
-  background: radial-gradient(ellipse at center, transparent 50%, rgba(0,0,0,0.75) 100%);
+  background: radial-gradient(ellipse at center, transparent 60%, rgba(0, 0, 0, 0.35) 100%);
   pointer-events: none;
-  z-index: 3;
-}
-
-/* Text overlay */
-.text-overlay {
-  position: fixed;
-  left: 50%;
-  bottom: 8%;
-  transform: translateX(-50%);
-  text-align: center;
-  z-index: 5;
-  max-width: 480px;
-  width: calc(100% - 48px);
-  padding: 0 16px;
-  pointer-events: none;
-  background:
-    radial-gradient(ellipse 130% 90% at 50% 100%, rgba(4, 6, 11, 0.7), transparent 65%);
-}
-.line {
-  display: block;
-  opacity: 0;
-  transform: translateY(14px);
-  transition: opacity 1100ms cubic-bezier(.22,.61,.36,1), transform 1100ms cubic-bezier(.22,.61,.36,1);
-}
-.line.show { opacity: 1; transform: translateY(0); }
-.line.primary {
-  font-family: 'Inter', sans-serif;
-  font-weight: 300;
-  font-size: 18px;
-  letter-spacing: 0.04em;
-  color: var(--text);
-  line-height: 1.4;
-}
-.line.emphasis {
-  font-family: 'Cormorant Garamond', serif;
-  font-style: italic;
-  font-weight: 500;
-  font-size: 38px;
-  letter-spacing: 0.01em;
-  color: var(--gold-bright);
-  line-height: 1.15;
-  margin-top: 12px;
-  text-shadow: 0 0 26px rgba(245, 215, 110, 0.5), 0 0 50px rgba(212, 175, 55, 0.3);
-}
-
-/* Solo (scene 4) */
-.solo-text {
-  position: fixed;
-  left: 50%;
-  top: 50%;
-  transform: translate(-50%, -50%);
-  z-index: 5;
-  text-align: center;
-  max-width: 520px;
-  width: calc(100% - 48px);
-  padding: 0 16px;
-  pointer-events: none;
-}
-.solo-line {
-  display: block;
-  font-family: 'Cormorant Garamond', serif;
-  font-style: italic;
-  font-weight: 500;
-  font-size: 44px;
-  letter-spacing: 0.01em;
-  color: var(--gold-bright);
-  line-height: 1.2;
-  opacity: 0;
-  transform: translateY(16px) scale(0.97);
-  transition: opacity 1200ms cubic-bezier(.22,.61,.36,1), transform 1200ms cubic-bezier(.22,.61,.36,1);
-  text-shadow: 0 0 30px rgba(245, 215, 110, 0.55), 0 0 60px rgba(212, 175, 55, 0.35);
-}
-.solo-line.show { opacity: 1; transform: translateY(0) scale(1); }
-.solo-line.exit { opacity: 0; transform: translateY(-12px) scale(0.97); }
-
-/* Word ladder (scene 5) */
-.word-list {
-  position: fixed;
-  left: 50%;
-  top: 50%;
-  transform: translate(-50%, -50%);
-  z-index: 5;
-  text-align: center;
-  pointer-events: none;
-}
-.word {
-  display: block;
-  font-family: 'Inter', sans-serif;
-  font-weight: 400;
-  font-size: 23px;
-  letter-spacing: 0.45em;
-  color: var(--gold-bright);
-  text-transform: uppercase;
-  padding: 14px 0;
-  opacity: 0;
-  transform: translateY(16px);
-  transition: opacity 850ms cubic-bezier(.22,.61,.36,1), transform 850ms cubic-bezier(.22,.61,.36,1);
-  text-shadow: 0 0 22px rgba(245, 215, 110, 0.45);
-}
-.word.show { opacity: 1; transform: translateY(0); }
-.word-dot {
-  display: block;
-  width: 4px;
-  height: 4px;
-  margin: 8px auto;
-  background: var(--gold);
-  border-radius: 50%;
-  opacity: 0;
-  transition: opacity 700ms;
-  box-shadow: 0 0 10px rgba(212, 175, 55, 0.7);
-}
-.word-dot.show { opacity: 0.75; }
-.word-sub {
-  display: block;
-  font-family: 'Inter', sans-serif;
-  font-weight: 300;
-  font-size: 15px;
-  letter-spacing: 0.05em;
-  color: var(--text-dim);
-  margin-top: 36px;
-  opacity: 0;
-  transition: opacity 900ms;
-}
-.word-sub.show { opacity: 1; }
-.word-sub .em {
-  color: var(--gold-bright);
-  font-style: italic;
-  font-family: 'Cormorant Garamond', serif;
-  font-size: 19px;
-}
-
-/* Logo */
-.logo-final {
-  position: fixed;
-  left: 50%;
-  top: 50%;
-  transform: translate(-50%, -50%) scale(0.85);
-  z-index: 5;
-  opacity: 0;
-  transition: opacity 1000ms cubic-bezier(.22,.61,.36,1), transform 1300ms cubic-bezier(.22,.61,.36,1);
-  text-align: center;
-  pointer-events: none;
-}
-.logo-final.show { opacity: 1; transform: translate(-50%, -50%) scale(1); }
-.logo-final img {
-  width: 108px;
-  height: auto;
-  display: block;
-  margin: 0 auto;
-  filter:
-    drop-shadow(0 0 30px rgba(245, 215, 110, 0.7))
-    drop-shadow(0 0 60px rgba(212, 175, 55, 0.4))
-    brightness(1.15);
-}
-.logo-name {
-  display: block;
-  font-family: 'Cormorant Garamond', serif;
-  font-style: italic;
-  font-weight: 500;
-  font-size: 34px;
-  color: var(--gold-bright);
-  margin-top: 20px;
-  letter-spacing: 0.02em;
-  text-shadow: 0 0 18px rgba(245, 215, 110, 0.5);
-}
-.logo-tagline {
-  display: block;
-  font-family: 'Inter', sans-serif;
-  font-weight: 300;
-  font-size: 11px;
-  color: var(--text-dim);
-  margin-top: 12px;
-  letter-spacing: 0.3em;
-  text-transform: uppercase;
+  z-index: 2;
 }
 
 .skip-btn, .back-btn {
@@ -252,25 +87,14 @@ body::after {
 .back-btn { left: 20px; }
 .skip-btn:hover, .skip-btn:focus-visible,
 .back-btn:hover, .back-btn:focus-visible {
-  background: rgba(245, 215, 110, 0.08);
-  color: var(--gold-bright);
-  border-color: rgba(245, 215, 110, 0.4);
+  background: rgba(245, 215, 110, 0.20);
+  border-color: rgba(245, 215, 110, 0.6);
   outline: none;
 }
-.skip-btn:focus-visible, .back-btn:focus-visible { box-shadow: 0 0 0 2px rgba(245, 215, 110, 0.5); }
-
-.veil {
-  position: fixed;
-  inset: 0;
-  background: var(--void);
-  z-index: 100;
-  opacity: 0;
-  pointer-events: none;
-  transition: opacity 500ms cubic-bezier(.4,0,.2,1);
+.skip-btn:focus-visible, .back-btn:focus-visible {
+  box-shadow: 0 0 0 2px rgba(245, 215, 110, 0.5);
 }
-.veil.show { opacity: 1; }
 
-/* Loading state */
 .loading {
   position: fixed;
   left: 50%;
@@ -279,934 +103,235 @@ body::after {
   z-index: 30;
   font-family: 'Cormorant Garamond', serif;
   font-style: italic;
-  font-size: 16px;
-  color: var(--text-dim);
+  font-size: 18px;
+  color: var(--gold-bright);
   letter-spacing: 0.08em;
-  opacity: 0;
-  animation: fadeInLoading 600ms ease 200ms forwards;
+  pointer-events: none;
+  opacity: 1;
+  transition: opacity 400ms;
 }
-@keyframes fadeInLoading { to { opacity: 1; } }
-.loading.hide { opacity: 0; transition: opacity 400ms; }
+.loading.hide { opacity: 0; pointer-events: none; }
+.loading-dot {
+  display: inline-block;
+  width: 6px;
+  height: 6px;
+  background: var(--gold);
+  border-radius: 50%;
+  margin: 0 3px;
+  animation: dotPulse 1.4s ease-in-out infinite;
+}
+.loading-dot:nth-child(2) { animation-delay: 0.2s; }
+.loading-dot:nth-child(3) { animation-delay: 0.4s; }
+@keyframes dotPulse {
+  0%, 80%, 100% { opacity: 0.3; transform: scale(0.8); }
+  40% { opacity: 1; transform: scale(1.2); }
+}
 
-#fallback {
+.fallback {
   position: fixed;
   inset: 0;
   display: none;
+  flex-direction: column;
   align-items: center;
   justify-content: center;
   background: var(--void);
-  color: var(--gold);
+  color: var(--text);
+  text-align: center;
+  padding: 32px;
+  z-index: 40;
+}
+.fallback.show { display: flex; }
+.fallback h2 {
   font-family: 'Cormorant Garamond', serif;
   font-style: italic;
-  font-size: 18px;
-  text-align: center;
-  padding: 24px;
-  z-index: 50;
+  font-weight: 500;
+  font-size: 32px;
+  color: var(--gold-bright);
+  margin-bottom: 16px;
+  letter-spacing: 0.02em;
+}
+.fallback p {
+  font-family: 'Inter', sans-serif;
+  font-weight: 300;
+  font-size: 15px;
+  color: var(--text-dim);
+  margin-bottom: 32px;
+  max-width: 360px;
+  line-height: 1.5;
+}
+.fallback .continue-btn {
+  padding: 16px 36px;
+  background: linear-gradient(180deg, var(--gold-bright), var(--gold));
+  color: var(--void);
+  font-family: 'Inter', sans-serif;
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.28em;
+  text-transform: uppercase;
+  border: none;
+  border-radius: 999px;
   cursor: pointer;
+  min-height: 48px;
+  min-width: 220px;
 }
 
-@media (prefers-reduced-motion: reduce) {
-  .line, .solo-line, .word, .word-dot, .word-sub, .logo-final {
-    transition-duration: 250ms !important;
-    transform: none !important;
-  }
+.veil {
+  position: fixed;
+  inset: 0;
+  background: var(--void);
+  z-index: 100;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 500ms cubic-bezier(.4, 0, .2, 1);
 }
+.veil.show { opacity: 1; }
+
 @media (max-width: 480px) {
-  .line.primary { font-size: 16px; }
-  .line.emphasis { font-size: 30px; }
-  .solo-line { font-size: 34px; }
-  .word { font-size: 20px; letter-spacing: 0.38em; padding: 12px 0; }
-  .word-sub { font-size: 14px; margin-top: 28px; }
-  .logo-final img { width: 90px; }
-  .logo-name { font-size: 26px; }
-  .text-overlay { bottom: 6%; }
-}
-@media (max-width: 360px) {
-  .line.emphasis { font-size: 26px; }
-  .solo-line { font-size: 28px; }
-  .word { font-size: 18px; letter-spacing: 0.34em; }
+  .loading { font-size: 16px; }
+  .fallback h2 { font-size: 26px; }
+  .fallback p { font-size: 14px; }
 }
 </style>
 </head>
 <body>
 
-<canvas id="scene"></canvas>
-<div id="fallback">3D ko'rinish quvvatlanmaydi. Davom etish uchun bosing.</div>
-<div class="loading" id="loading">Yuklanmoqda…</div>
+<video id="cinematic"
+       autoplay
+       muted
+       playsinline
+       preload="auto"
+       disablepictureinpicture
+       disableRemotePlayback
+       poster="assets/intro-poster.jpg">
+  <source src="assets/intro-cinematic.webm" type="video/webm">
+  <source src="assets/intro-cinematic.mp4" type="video/mp4">
+</video>
 
-<div class="text-overlay" id="textOverlay">
-  <span class="line primary" id="line1"></span>
-  <span class="line emphasis" id="line2"></span>
+<div class="vignette"></div>
+
+<div class="loading" id="loading">
+  Yuklanmoqda
+  <span class="loading-dot"></span>
+  <span class="loading-dot"></span>
+  <span class="loading-dot"></span>
 </div>
 
-<div class="solo-text" id="soloText" aria-live="polite">
-  <span class="solo-line" id="soloLine"></span>
-</div>
-
-<div class="word-list" id="wordList">
-  <span class="word" id="w1">Maqsad</span>
-  <span class="word-dot" id="d1"></span>
-  <span class="word" id="w2">Reja</span>
-  <span class="word-dot" id="d2"></span>
-  <span class="word" id="w3">Harakat</span>
-  <span class="word-dot" id="d3"></span>
-  <span class="word" id="w4">Natija</span>
-  <span class="word-sub" id="ws"></span>
-</div>
-
-<div class="logo-final" id="logoFinal">
-  <img src="assets/mnsm-logo.png" alt="brend">
-  <span class="logo-name">brend</span>
-  <span class="logo-tagline" data-i18n="brand.tagline">sizning intizom do'stingiz</span>
+<div class="fallback" id="fallback">
+  <h2>Vaqt — sizning eng qimmat boyligingiz</h2>
+  <p>brend — sizning intizom do'stingiz. Maqsadlaringizni kunlik harakatga aylantiramiz.</p>
+  <button class="continue-btn" id="continueBtn" type="button">Boshlaymiz ›</button>
 </div>
 
 <button class="back-btn" id="backBtn" type="button">‹ Orqaga</button>
-<button class="skip-btn" id="skipBtn" type="button" data-i18n="intro.skip">O'tkazib yuborish ›</button>
+<button class="skip-btn" id="skipBtn" type="button">O'tkazib yuborish ›</button>
 <div class="veil" id="veil"></div>
 
 <script src="i18n.js"></script>
+<script>
+(function() {
+  'use strict';
 
-<script type="importmap">
-{ "imports": {
-    "three": "https://cdn.jsdelivr.net/npm/three@0.165.0/build/three.module.js",
-    "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.165.0/examples/jsm/"
-} }
-</script>
+  // ===== EARLY GUARDS =====
+  var INTRO_SEEN = 'mvow.motion.introSeen';
+  function go(u) { try { location.replace(u); } catch(e) { location.href = u; } }
+  function setSeen() { try { localStorage.setItem(INTRO_SEEN, '1'); } catch(e) {} }
+  function clearSeen() { try { localStorage.removeItem(INTRO_SEEN); } catch(e) {} }
 
-<script type="module">
-'use strict';
+  try { if (localStorage.getItem(INTRO_SEEN)) { go('anketa.html'); return; } } catch(e) {}
 
-// ===== EARLY GUARDS =====
-const INTRO_SEEN = 'mvow.motion.introSeen';
-function go(u){ try { location.replace(u); } catch(e){ location.href=u; } }
-function setSeen(){ try { localStorage.setItem(INTRO_SEEN, '1'); } catch(e){} }
+  var pref = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  var intensity = '';
+  try { intensity = localStorage.getItem('mvow.motion.intensity') || ''; } catch(e) {}
+  if (pref || intensity === 'minimal') { setSeen(); go('anketa.html'); return; }
 
-try { if (localStorage.getItem(INTRO_SEEN)) { go('anketa.html'); throw new Error('seen'); } } catch(e) { if (e.message === 'seen') throw e; }
+  // ===== ELEMENTS =====
+  var video = document.getElementById('cinematic');
+  var loading = document.getElementById('loading');
+  var fallback = document.getElementById('fallback');
+  var veil = document.getElementById('veil');
 
-const reduced = matchMedia('(prefers-reduced-motion: reduce)').matches;
-let intensity = '';
-try { intensity = localStorage.getItem('mvow.motion.intensity') || ''; } catch(e){}
-if (reduced || intensity === 'minimal') { setSeen(); go('anketa.html'); throw new Error('skip'); }
-
-// ===== i18n helper =====
-function T(key, fallback) {
-  if (window.I18N && I18N.t) {
-    const v = I18N.t(key, fallback);
-    if (v && v !== key) return v;
-  }
-  return fallback;
-}
-
-// ===== WebGL2 check =====
-const canvas = document.getElementById('scene');
-function webglAvailable() {
-  try { return !!document.createElement('canvas').getContext('webgl2'); }
-  catch { return false; }
-}
-
-const veil = document.getElementById('veil');
-const loadingEl = document.getElementById('loading');
-let skipDone = false;
-function skipCinematic() {
-  if (skipDone) return;
-  skipDone = true;
-  veil.classList.add('show');
-  setSeen();
-  setTimeout(() => go('anketa.html'), 500);
-}
-
-if (!webglAvailable()) {
-  document.getElementById('fallback').style.display = 'flex';
-  document.getElementById('fallback').addEventListener('click', skipCinematic);
-  setTimeout(skipCinematic, 3000);
-  throw new Error('No WebGL2');
-}
-
-// ===== Three.js =====
-const THREE = await import('three');
-const { EffectComposer } = await import('three/addons/postprocessing/EffectComposer.js');
-const { RenderPass } = await import('three/addons/postprocessing/RenderPass.js');
-const { UnrealBloomPass } = await import('three/addons/postprocessing/UnrealBloomPass.js');
-const { OutputPass } = await import('three/addons/postprocessing/OutputPass.js');
-const { RoomEnvironment } = await import('three/addons/environments/RoomEnvironment.js');
-
-// ===== Renderer =====
-const renderer = new THREE.WebGLRenderer({
-  canvas,
-  antialias: true,
-  powerPreference: 'high-performance',
-  alpha: false,
-  stencil: false
-});
-renderer.setPixelRatio(Math.min(devicePixelRatio, 2));
-renderer.setSize(innerWidth, innerHeight);
-renderer.toneMapping = THREE.ACESFilmicToneMapping;
-renderer.toneMappingExposure = 1.05;
-renderer.outputColorSpace = THREE.SRGBColorSpace;
-renderer.shadowMap.enabled = true;
-renderer.shadowMap.type = THREE.PCFSoftShadowMap;
-
-// ===== Scene =====
-const scene = new THREE.Scene();
-scene.background = new THREE.Color(0x04060B);
-scene.fog = new THREE.Fog(0x04060B, 8, 22);
-
-const camera = new THREE.PerspectiveCamera(40, innerWidth / innerHeight, 0.1, 100);
-camera.position.set(0.3, 0.05, 7.2);
-
-// ===== HDRI ENVIRONMENT (procedural via RoomEnvironment) =====
-// This is what makes PBR materials look real — they need an environment to reflect.
-const pmrem = new THREE.PMREMGenerator(renderer);
-pmrem.compileEquirectangularShader();
-const env = pmrem.fromScene(new RoomEnvironment(renderer), 0.04).texture;
-scene.environment = env;
-// (we keep scene.background BLACK — only the materials see the environment for reflections)
-
-// ===== KEY DRAMATIC LIGHT =====
-// A single spotlight from above-front gives cinematic mood, plus PBR fills shadows via envMap
-const spotKey = new THREE.SpotLight(0xfff4d6, 28, 12, Math.PI / 5, 0.6, 1.5);
-spotKey.position.set(0.8, 4, 3);
-spotKey.target.position.set(0, 0, 0);
-spotKey.castShadow = true;
-spotKey.shadow.mapSize.set(1024, 1024);
-spotKey.shadow.bias = -0.0005;
-scene.add(spotKey);
-scene.add(spotKey.target);
-
-// Warm rim from back-left
-const rim = new THREE.PointLight(0xffae5b, 18, 8, 1.4);
-rim.position.set(-2.5, 1.2, -2.2);
-scene.add(rim);
-
-// Cool fill from below-front (gives glass a subtle edge)
-const fill = new THREE.PointLight(0x4a6f99, 5, 8, 1.5);
-fill.position.set(0, -1.5, 2);
-scene.add(fill);
-
-// ===== GROUND PLANE (catches shadow, hidden visually via fog) =====
-const ground = new THREE.Mesh(
-  new THREE.PlaneGeometry(40, 40),
-  new THREE.ShadowMaterial({ opacity: 0.4 })
-);
-ground.rotation.x = -Math.PI / 2;
-ground.position.y = -1.6;
-ground.receiveShadow = true;
-scene.add(ground);
-
-// ===== HOURGLASS — smooth bell-curve profile + structural frame =====
-// Classical hourglass shape using parametric cosine bell curve.
-function hourglassProfile() {
-  const H = 1.35;
-  const R_MAX = 0.62;
-  const NECK = 0.045;
-  const STEPS = 36;
-  const pts = [];
-
-  // Apex (bottom tip, used so LatheGeometry closes nicely with cap on top)
-  pts.push(new THREE.Vector2(0.001, -H - 0.005));
-
-  // Bottom half: y from -H to 0
-  for (let i = 0; i <= STEPS; i++) {
-    const t = i / STEPS;
-    const y = -H + t * H;
-    const tNorm = Math.abs(y) / H;
-    // Smooth bell curve (cosine) — classical hourglass silhouette
-    const r = NECK + (R_MAX - NECK) * (1 - Math.cos(Math.PI * tNorm)) / 2;
-    pts.push(new THREE.Vector2(r, y));
+  // ===== NAVIGATION =====
+  var navigated = false;
+  function navigate(target, save) {
+    if (navigated) return;
+    navigated = true;
+    veil.classList.add('show');
+    if (save !== false) setSeen();
+    try { video.pause(); } catch(e) {}
+    setTimeout(function() { go(target); }, 480);
   }
 
-  // Top half: mirror
-  for (let i = 1; i <= STEPS; i++) {
-    const t = i / STEPS;
-    const y = t * H;
-    const tNorm = Math.abs(y) / H;
-    const r = NECK + (R_MAX - NECK) * (1 - Math.cos(Math.PI * tNorm)) / 2;
-    pts.push(new THREE.Vector2(r, y));
-  }
-
-  pts.push(new THREE.Vector2(0.001, H + 0.005));
-  return pts;
-}
-
-const glassGeom = new THREE.LatheGeometry(hourglassProfile(), 96);
-glassGeom.computeVertexNormals();
-
-// REAL GLASS — visible but light-passing (not fully transparent — keeps shape)
-const glassMat = new THREE.MeshPhysicalMaterial({
-  color: 0xfff4d6,
-  metalness: 0,
-  roughness: 0.08,
-  transmission: 0.85,
-  thickness: 0.45,
-  ior: 1.45,
-  attenuationColor: new THREE.Color(0xffd9a0),
-  attenuationDistance: 1.2,
-  envMapIntensity: 1.4,
-  clearcoat: 1.0,
-  clearcoatRoughness: 0.04,
-  side: THREE.DoubleSide,
-  transparent: true,
-});
-const glassMesh = new THREE.Mesh(glassGeom, glassMat);
-glassMesh.castShadow = true;
-
-// SILHOUETTE OUTLINE — dark inverted hull, gives shape definition against bg
-const silhouetteMat = new THREE.MeshBasicMaterial({
-  color: 0x1a1626,
-  side: THREE.BackSide,
-  transparent: true,
-  opacity: 0.45,
-});
-const silhouetteMesh = new THREE.Mesh(glassGeom, silhouetteMat);
-silhouetteMesh.scale.setScalar(1.012);
-
-// ===== STRUCTURAL WOOD FRAME =====
-// Top + bottom plates that the glass rests between, with 4 corner posts CONNECTED.
-const woodMat = new THREE.MeshStandardMaterial({
-  color: 0x3d2916,
-  roughness: 0.78,
-  metalness: 0.05,
-  envMapIntensity: 0.4,
-});
-const woodAccentMat = new THREE.MeshStandardMaterial({
-  color: 0x5a3d24,
-  roughness: 0.65,
-  metalness: 0.08,
-  envMapIntensity: 0.5,
-});
-
-// Plates — slightly wider than glass, with rounded inner ring
-const PLATE_R = 0.78;
-const PLATE_THICK = 0.09;
-const plateGeom = new THREE.CylinderGeometry(PLATE_R, PLATE_R, PLATE_THICK, 64, 1);
-const topPlate = new THREE.Mesh(plateGeom, woodMat);
-topPlate.position.y = 1.35 + PLATE_THICK / 2 + 0.005;
-topPlate.castShadow = true; topPlate.receiveShadow = true;
-const botPlate = new THREE.Mesh(plateGeom, woodMat);
-botPlate.position.y = -1.35 - PLATE_THICK / 2 - 0.005;
-botPlate.castShadow = true; botPlate.receiveShadow = true;
-
-// Inner-rim accent (slightly raised band on each plate)
-const innerRimGeom = new THREE.TorusGeometry(0.66, 0.025, 14, 64);
-const topInnerRim = new THREE.Mesh(innerRimGeom, woodAccentMat);
-topInnerRim.position.y = 1.35;
-topInnerRim.rotation.x = Math.PI / 2;
-topInnerRim.castShadow = true;
-const botInnerRim = new THREE.Mesh(innerRimGeom, woodAccentMat);
-botInnerRim.position.y = -1.35;
-botInnerRim.rotation.x = Math.PI / 2;
-botInnerRim.castShadow = true;
-
-// 4 posts — thicker, with brass end caps so they look STRUCTURAL not floating
-const POST_R = 0.78 - 0.04; // sit on plate edge
-const POST_RADIUS = 0.04;
-const POST_HEIGHT = (1.35 + PLATE_THICK + 0.01) * 2;
-
-function makePost(angle) {
-  const x = Math.cos(angle) * POST_R;
-  const z = Math.sin(angle) * POST_R;
-  const g = new THREE.Group();
-  const main = new THREE.Mesh(
-    new THREE.CylinderGeometry(POST_RADIUS, POST_RADIUS, POST_HEIGHT, 12),
-    woodMat
-  );
-  main.castShadow = true;
-  g.add(main);
-  // Brass end caps (small cylinders at each post end)
-  const brassMat = new THREE.MeshStandardMaterial({
-    color: 0xb8862c,
-    roughness: 0.35,
-    metalness: 0.9,
-    envMapIntensity: 1.4,
+  // ===== BUTTONS =====
+  document.getElementById('skipBtn').addEventListener('click', function() {
+    navigate('anketa.html', true);
   });
-  const capGeom = new THREE.CylinderGeometry(POST_RADIUS * 1.2, POST_RADIUS * 1.2, 0.05, 12);
-  const topB = new THREE.Mesh(capGeom, brassMat); topB.position.y = POST_HEIGHT / 2 + 0.012; topB.castShadow = true;
-  const botB = new THREE.Mesh(capGeom, brassMat); botB.position.y = -POST_HEIGHT / 2 - 0.012; botB.castShadow = true;
-  g.add(topB, botB);
-  g.position.set(x, 0, z);
-  return g;
-}
-const post1 = makePost(Math.PI / 4);
-const post2 = makePost(3 * Math.PI / 4);
-const post3 = makePost(5 * Math.PI / 4);
-const post4 = makePost(7 * Math.PI / 4);
 
-// Gold accent rings on plate edges (the "luxury" detail)
-const goldMat = new THREE.MeshStandardMaterial({
-  color: 0xd4af37,
-  roughness: 0.32,
-  metalness: 0.92,
-  envMapIntensity: 1.5,
-});
-const goldRingGeom = new THREE.TorusGeometry(PLATE_R, 0.018, 14, 64);
-const topGoldRing = new THREE.Mesh(goldRingGeom, goldMat);
-topGoldRing.position.y = 1.35 + PLATE_THICK + 0.005;
-topGoldRing.rotation.x = Math.PI / 2;
-topGoldRing.castShadow = true;
-const botGoldRing = new THREE.Mesh(goldRingGeom, goldMat);
-botGoldRing.position.y = -1.35 - PLATE_THICK - 0.005;
-botGoldRing.rotation.x = Math.PI / 2;
-botGoldRing.castShadow = true;
-
-const hourglass = new THREE.Group();
-hourglass.add(
-  silhouetteMesh, glassMesh,
-  topPlate, botPlate,
-  topInnerRim, botInnerRim,
-  topGoldRing, botGoldRing,
-  post1, post2, post3, post4
-);
-scene.add(hourglass);
-
-// ===== SAND PARTICLES (the glow source — selective bloom target) =====
-const SAND_COUNT = innerWidth < 480 ? 700 : 1100;
-const sandGeom = new THREE.BufferGeometry();
-const sandPos = new Float32Array(SAND_COUNT * 3);
-const sandData = [];
-
-function widthAtY(y) {
-  // Matches the smooth bell curve profile r(y) = NECK + (R_MAX-NECK)*(1-cos(π*|y|/H))/2
-  const H = 1.35;
-  const R_MAX = 0.62;
-  const NECK = 0.045;
-  const tNorm = Math.min(1, Math.abs(y) / H);
-  return NECK + (R_MAX - NECK) * (1 - Math.cos(Math.PI * tNorm)) / 2;
-}
-
-for (let i = 0; i < SAND_COUNT; i++) {
-  const yIsTop = Math.random() < 0.88;
-  const y = yIsTop ? (0.1 + Math.random() * 1.18) : (-0.1 - Math.random() * 0.35);
-  const r = Math.random() * widthAtY(y) * 0.82;
-  const theta = Math.random() * Math.PI * 2;
-  sandPos[i * 3] = Math.cos(theta) * r;
-  sandPos[i * 3 + 1] = y;
-  sandPos[i * 3 + 2] = Math.sin(theta) * r;
-  sandData.push({
-    vy: -(0.4 + Math.random() * 0.35),
-    seed: Math.random() * 100,
-    swirl: (Math.random() - 0.5) * 0.5,
+  document.getElementById('backBtn').addEventListener('click', function() {
+    clearSeen();
+    navigate('gallery.html', false);
   });
-}
-sandGeom.setAttribute('position', new THREE.BufferAttribute(sandPos, 3));
 
-const sandMat = new THREE.PointsMaterial({
-  color: 0xffd87a,
-  size: 0.042,
-  transparent: true,
-  opacity: 1.0,
-  blending: THREE.AdditiveBlending,
-  depthWrite: false,
-  sizeAttenuation: true,
-});
-const sandPoints = new THREE.Points(sandGeom, sandMat);
-hourglass.add(sandPoints);
-
-// ===== TARGET (scene 3 — symbolic: sand transforms into goal) =====
-const targetGroup = new THREE.Group();
-targetGroup.position.set(0, 0.05, 0);
-targetGroup.scale.setScalar(0.01);
-targetGroup.visible = false;
-
-const targetRingGold = new THREE.MeshStandardMaterial({
-  color: 0xf5d76e,
-  roughness: 0.25,
-  metalness: 0.85,
-  envMapIntensity: 1.8,
-  emissive: 0xd4af37,
-  emissiveIntensity: 0.4,
-});
-
-const targetOuter = new THREE.Mesh(new THREE.TorusGeometry(1.05, 0.025, 16, 128), targetRingGold);
-const targetMid = new THREE.Mesh(new THREE.TorusGeometry(0.65, 0.022, 16, 128), targetRingGold);
-const targetInner = new THREE.Mesh(new THREE.TorusGeometry(0.28, 0.02, 14, 96), targetRingGold);
-const targetCenter = new THREE.Mesh(
-  new THREE.SphereGeometry(0.08, 24, 16),
-  new THREE.MeshStandardMaterial({
-    color: 0xffe8a0,
-    roughness: 0.2, metalness: 0.7,
-    emissive: 0xffe8a0, emissiveIntensity: 1.2,
-    envMapIntensity: 1.5,
-  })
-);
-
-// ARROW — pierces the target from upper-right
-const arrowGroup = new THREE.Group();
-const arrowShaft = new THREE.Mesh(
-  new THREE.CylinderGeometry(0.018, 0.018, 1.4, 12),
-  new THREE.MeshStandardMaterial({
-    color: 0x8b4513,
-    roughness: 0.5, metalness: 0.3,
-    envMapIntensity: 0.6,
-  })
-);
-const arrowHead = new THREE.Mesh(
-  new THREE.ConeGeometry(0.06, 0.18, 12),
-  new THREE.MeshStandardMaterial({
-    color: 0xd4af37,
-    roughness: 0.25, metalness: 0.9,
-    envMapIntensity: 1.5,
-    emissive: 0xd4af37, emissiveIntensity: 0.3,
-  })
-);
-arrowHead.position.y = 0.7 + 0.09;
-
-// Fletching (feathers) at tail
-const fletchingGeom = new THREE.ConeGeometry(0.05, 0.16, 4);
-const fletchingMat = new THREE.MeshStandardMaterial({
-  color: 0xd4af37,
-  roughness: 0.4, metalness: 0.7,
-});
-const fletch1 = new THREE.Mesh(fletchingGeom, fletchingMat);
-fletch1.position.y = -0.7;
-fletch1.scale.set(0.6, 0.6, 0.3);
-arrowGroup.add(arrowShaft, arrowHead, fletch1);
-
-// Position: stick into target center, angled
-arrowGroup.position.set(0.4, 0, 0.05);
-arrowGroup.rotation.z = -Math.PI * 0.28;  // tilted 50deg
-
-targetGroup.add(targetOuter, targetMid, targetInner, targetCenter, arrowGroup);
-scene.add(targetGroup);
-
-// ===== AMBIENT DUST =====
-const DUST_COUNT = innerWidth < 480 ? 180 : 320;
-const dustGeom = new THREE.BufferGeometry();
-const dustPos = new Float32Array(DUST_COUNT * 3);
-const dustData = [];
-for (let i = 0; i < DUST_COUNT; i++) {
-  dustPos[i * 3] = (Math.random() - 0.5) * 14;
-  dustPos[i * 3 + 1] = (Math.random() - 0.5) * 10;
-  dustPos[i * 3 + 2] = (Math.random() - 0.5) * 8 - 0.5;
-  dustData.push({
-    vy: -(0.04 + Math.random() * 0.08),
-    seed: Math.random() * 100,
+  document.getElementById('continueBtn').addEventListener('click', function() {
+    navigate('anketa.html', true);
   });
-}
-dustGeom.setAttribute('position', new THREE.BufferAttribute(dustPos, 3));
-const dustMat = new THREE.PointsMaterial({
-  color: 0xffc580,
-  size: 0.032,
-  transparent: true,
-  opacity: 0.42,
-  blending: THREE.AdditiveBlending,
-  depthWrite: false,
-  sizeAttenuation: true,
-});
-const dust = new THREE.Points(dustGeom, dustMat);
-scene.add(dust);
 
-// ===== POSTPROCESSING (selective bloom on sand only) =====
-const composer = new EffectComposer(renderer);
-composer.addPass(new RenderPass(scene, camera));
-const bloom = new UnrealBloomPass(new THREE.Vector2(innerWidth, innerHeight), 0.6, 0.4, 0.78);
-composer.addPass(bloom);
-composer.addPass(new OutputPass());
+  document.addEventListener('keydown', function(e) {
+    if (e.key === 'Escape' || e.key === 'Enter') navigate('anketa.html', true);
+  });
 
-// ===== INTERACTION =====
-const target = { mx: 0, my: 0 };
-const smooth = { mx: 0, my: 0 };
+  // ===== VIDEO EVENTS =====
+  var loadTimeout = null;
 
-addEventListener('pointermove', (e) => {
-  target.mx = (e.clientX / innerWidth) * 2 - 1;
-  target.my = (e.clientY / innerHeight) * 2 - 1;
-}, { passive: true });
+  video.addEventListener('loadeddata', function() {
+    loading.classList.add('hide');
+    if (loadTimeout) clearTimeout(loadTimeout);
+  });
 
-const touchAttractors = [];
-const burstParticles = [];  // visible touch sparks
+  video.addEventListener('canplay', function() {
+    loading.classList.add('hide');
+  });
 
-function onCanvasTouch(e) {
-  const ndcX = (e.clientX / innerWidth) * 2 - 1;
-  const ndcY = -(e.clientY / innerHeight) * 2 + 1;
-  const vec = new THREE.Vector3(ndcX, ndcY, 0.5);
-  vec.unproject(camera);
-  const dir = vec.sub(camera.position).normalize();
-  const dist = (1.0 - camera.position.z) / dir.z;  // intersect z=1 plane (in front of hourglass)
-  const pos = camera.position.clone().add(dir.multiplyScalar(dist));
-  touchAttractors.push({ pos: pos.clone(), life: 1.0 });
+  video.addEventListener('ended', function() {
+    navigate('anketa.html', true);
+  });
 
-  // Add 40 visible burst particles at touch point
-  for (let i = 0; i < 40; i++) {
-    const speed = 0.6 + Math.random() * 1.2;
-    const phi = Math.random() * Math.PI * 2;
-    const theta = (Math.random() - 0.5) * Math.PI * 0.5;
-    burstParticles.push({
-      x: pos.x, y: pos.y, z: pos.z,
-      vx: Math.cos(phi) * Math.cos(theta) * speed,
-      vy: Math.sin(theta) * speed,
-      vz: Math.sin(phi) * Math.cos(theta) * speed,
-      life: 1.0,
-      size: 0.05 + Math.random() * 0.04,
-    });
-  }
-}
-canvas.addEventListener('pointerdown', onCanvasTouch, { passive: true });
-// Also accept touchstart for older browsers
-canvas.addEventListener('touchstart', (e) => {
-  if (e.touches.length) onCanvasTouch({ clientX: e.touches[0].clientX, clientY: e.touches[0].clientY });
-}, { passive: true });
+  video.addEventListener('error', function() {
+    console.warn('[intro] Video load failed, showing fallback');
+    loading.classList.add('hide');
+    fallback.classList.add('show');
+  });
 
-// Visible burst particle mesh — uses a single Points BufferGeometry, updated each frame
-const burstGeom = new THREE.BufferGeometry();
-const BURST_MAX = 800;
-const burstPosArr = new Float32Array(BURST_MAX * 3);
-burstGeom.setAttribute('position', new THREE.BufferAttribute(burstPosArr, 3));
-const burstMat = new THREE.PointsMaterial({
-  color: 0xffe8a0,
-  size: 0.08,
-  transparent: true,
-  opacity: 1.0,
-  blending: THREE.AdditiveBlending,
-  depthWrite: false,
-  sizeAttenuation: true,
-});
-const burstMesh = new THREE.Points(burstGeom, burstMat);
-scene.add(burstMesh);
+  // Autoplay safety — some browsers require user gesture
+  video.play().catch(function(err) {
+    console.warn('[intro] Autoplay blocked:', err);
+    // Show poster + add tap-to-play overlay handled by fallback below
+    // Try again on first user interaction
+    var resumePlay = function() {
+      video.play().catch(function() {});
+      document.removeEventListener('pointerdown', resumePlay);
+    };
+    document.addEventListener('pointerdown', resumePlay, { once: true });
+  });
 
-document.getElementById('skipBtn').addEventListener('click', skipCinematic);
-
-// BACK button — clears introSeen so cinematic replays next time (for testing)
-document.getElementById('backBtn').addEventListener('click', () => {
-  try {
-    localStorage.removeItem('mvow.motion.introSeen');
-    sessionStorage.removeItem('mvow.motion.introSeen');
-  } catch(e){}
-  veil.classList.add('show');
-  setTimeout(() => go('gallery.html'), 400);
-});
-
-addEventListener('keydown', (e) => {
-  if (e.key === 'Escape' || e.key === 'Enter') skipCinematic();
-});
-
-// ===== ANIMATION =====
-const clock = new THREE.Clock();
-let running = true;
-let rafId;
-
-const hgState = {
-  rotZ: 0, targetRotZ: 0, rotZVel: 0,
-  scale: 0.01, targetScale: 1.0, scaleVel: 0,
-  sandFillTop: 1.0, targetSandFill: 1.0, sandVel: 0,
-  visibility: 0, targetVis: 1, visVel: 0,
-};
-
-const targetState = {
-  scale: 0.01, targetScale: 0.01, scaleVel: 0,
-  visibility: 0, targetVis: 0, visVel: 0,
-  rotY: 0,
-};
-
-function springStep(cur, target, vel, dt, k, d) {
-  const force = (target - cur) * k;
-  const damp = vel * d;
-  const newVel = vel + (force - damp) * dt;
-  return { val: cur + newVel * dt, vel: newVel };
-}
-
-// Hide loading once 3D is ready
-setTimeout(() => loadingEl.classList.add('hide'), 600);
-
-function frame() {
-  if (!running) return;
-  rafId = requestAnimationFrame(frame);
-
-  const dt = Math.min(clock.getDelta(), 0.05);
-  const t = clock.elapsedTime;
-
-  smooth.mx = THREE.MathUtils.damp(smooth.mx, target.mx, 5, dt);
-  smooth.my = THREE.MathUtils.damp(smooth.my, target.my, 5, dt);
-
-  const rs = springStep(hgState.rotZ, hgState.targetRotZ, hgState.rotZVel, dt, 30, 11);
-  hgState.rotZ = rs.val; hgState.rotZVel = rs.vel;
-
-  const ss = springStep(hgState.scale, hgState.targetScale, hgState.scaleVel, dt, 45, 13);
-  hgState.scale = ss.val; hgState.scaleVel = ss.vel;
-
-  const vs = springStep(hgState.visibility, hgState.targetVis, hgState.visVel, dt, 50, 14);
-  hgState.visibility = vs.val; hgState.visVel = vs.vel;
-
-  const sfs = springStep(hgState.sandFillTop, hgState.targetSandFill, hgState.sandVel, dt, 7, 7);
-  hgState.sandFillTop = sfs.val; hgState.sandVel = sfs.vel;
-
-  // Hourglass transforms — gentle sway, no full rotation
-  hourglass.rotation.z = hgState.rotZ;
-  hourglass.rotation.y = Math.sin(t * 0.28) * 0.08 + smooth.mx * 0.10;
-  hourglass.rotation.x = -smooth.my * 0.05 + Math.sin(t * 0.55) * 0.01;
-  hourglass.scale.setScalar(hgState.scale * hgState.visibility);
-
-  // Target springs (scene 3)
-  const tss = springStep(targetState.scale, targetState.targetScale, targetState.scaleVel, dt, 45, 13);
-  targetState.scale = tss.val; targetState.scaleVel = tss.vel;
-  const tvs = springStep(targetState.visibility, targetState.targetVis, targetState.visVel, dt, 50, 14);
-  targetState.visibility = tvs.val; targetState.visVel = tvs.vel;
-  targetState.rotY += dt * 0.25;
-  if (targetState.visibility > 0.01) {
-    targetGroup.visible = true;
-    targetGroup.scale.setScalar(targetState.scale * targetState.visibility);
-    targetGroup.rotation.y = targetState.rotY + smooth.mx * 0.10;
-    targetGroup.rotation.x = -smooth.my * 0.05;
-  } else {
-    targetGroup.visible = false;
-  }
-
-  // Sand particle update
-  const sandArr = sandGeom.attributes.position.array;
-  for (let i = 0; i < SAND_COUNT; i++) {
-    const d = sandData[i];
-    let x = sandArr[i * 3];
-    let y = sandArr[i * 3 + 1];
-    let z = sandArr[i * 3 + 2];
-
-    y += d.vy * dt;
-
-    if (Math.abs(y) < 0.4) {
-      const a = d.swirl * dt * 4;
-      const cos = Math.cos(a), sin = Math.sin(a);
-      const nx = x * cos - z * sin;
-      const nz = x * sin + z * cos;
-      x = nx; z = nz;
+  // Hard timeout: if video doesn't load in 8s, show fallback
+  loadTimeout = setTimeout(function() {
+    if (video.readyState < 2) {
+      console.warn('[intro] Video load timeout, showing fallback');
+      loading.classList.add('hide');
+      fallback.classList.add('show');
     }
+  }, 8000);
 
-    const maxR = widthAtY(y) * 0.82;
-    const r2 = x * x + z * z;
-    if (r2 > maxR * maxR) {
-      const rr = Math.sqrt(r2);
-      x = (x / rr) * maxR;
-      z = (z / rr) * maxR;
+  // Visibility — pause video when tab hidden
+  document.addEventListener('visibilitychange', function() {
+    if (document.hidden) {
+      try { video.pause(); } catch(e) {}
+    } else if (!navigated) {
+      video.play().catch(function() {});
     }
+  });
 
-    if (y < -1.25) {
-      if (Math.random() < hgState.sandFillTop * 0.8) {
-        y = 0.2 + Math.random() * 1.15;
-        const rr2 = Math.random() * widthAtY(y) * 0.82;
-        const tt = Math.random() * Math.PI * 2;
-        x = Math.cos(tt) * rr2;
-        z = Math.sin(tt) * rr2;
-        d.vy = -(0.4 + Math.random() * 0.35);
-      } else {
-        y = -1.25 + Math.random() * 0.08;
-      }
-    }
-
-    sandArr[i * 3] = x;
-    sandArr[i * 3 + 1] = y;
-    sandArr[i * 3 + 2] = z;
-  }
-  sandGeom.attributes.position.needsUpdate = true;
-
-  // Dust
-  const dustArr = dustGeom.attributes.position.array;
-  for (let i = 0; i < DUST_COUNT; i++) {
-    const d = dustData[i];
-    let x = dustArr[i * 3];
-    let y = dustArr[i * 3 + 1];
-    let z = dustArr[i * 3 + 2];
-    y += d.vy * dt;
-    x += Math.sin(t * 0.3 + d.seed) * 0.002;
-
-    for (const att of touchAttractors) {
-      const dx = att.pos.x - x;
-      const dy = att.pos.y - y;
-      const dz = att.pos.z - z;
-      const d2 = dx * dx + dy * dy + dz * dz;
-      if (d2 < 4) {
-        const inv = att.life * 0.2 / (d2 + 0.5);
-        x += dx * inv; y += dy * inv; z += dz * inv;
-      }
-    }
-
-    if (y < -6) {
-      y = 6;
-      x = (Math.random() - 0.5) * 14;
-      z = (Math.random() - 0.5) * 8 - 0.5;
-    }
-    dustArr[i * 3] = x;
-    dustArr[i * 3 + 1] = y;
-    dustArr[i * 3 + 2] = z;
-  }
-  dustGeom.attributes.position.needsUpdate = true;
-
-  for (let i = touchAttractors.length - 1; i >= 0; i--) {
-    touchAttractors[i].life -= dt * 0.8;
-    if (touchAttractors[i].life <= 0) touchAttractors.splice(i, 1);
-  }
-
-  // Update visible burst particles
-  for (let i = burstParticles.length - 1; i >= 0; i--) {
-    const b = burstParticles[i];
-    b.x += b.vx * dt;
-    b.y += b.vy * dt;
-    b.z += b.vz * dt;
-    b.vy -= 0.6 * dt;  // gravity
-    b.vx *= 0.96; b.vz *= 0.96;
-    b.life -= dt * 1.2;
-    if (b.life <= 0) burstParticles.splice(i, 1);
-  }
-  // Write burst positions
-  const burstArr = burstGeom.attributes.position.array;
-  const n = Math.min(burstParticles.length, BURST_MAX);
-  for (let i = 0; i < n; i++) {
-    burstArr[i * 3] = burstParticles[i].x;
-    burstArr[i * 3 + 1] = burstParticles[i].y;
-    burstArr[i * 3 + 2] = burstParticles[i].z;
-  }
-  // Hide unused
-  for (let i = n; i < BURST_MAX; i++) {
-    burstArr[i * 3] = 0; burstArr[i * 3 + 1] = -100; burstArr[i * 3 + 2] = 0;
-  }
-  burstGeom.setDrawRange(0, n);
-  burstGeom.attributes.position.needsUpdate = true;
-
-  // Camera breath — subtle Y drift
-  camera.position.y = 0.05 + Math.sin(t * 0.4) * 0.03;
-  camera.lookAt(0, 0.05, 0);
-
-  composer.render();
-}
-
-clock.start();
-frame();
-
-// Lifecycle
-canvas.addEventListener('webglcontextlost', (e) => { e.preventDefault(); running = false; cancelAnimationFrame(rafId); });
-canvas.addEventListener('webglcontextrestored', () => { running = true; clock.getDelta(); frame(); });
-document.addEventListener('visibilitychange', () => {
-  if (document.hidden) { running = false; cancelAnimationFrame(rafId); }
-  else if (!skipDone) { running = true; clock.getDelta(); frame(); }
-});
-
-let resizeT;
-addEventListener('resize', () => {
-  clearTimeout(resizeT);
-  resizeT = setTimeout(() => {
-    camera.aspect = innerWidth / innerHeight;
-    camera.updateProjectionMatrix();
-    renderer.setSize(innerWidth, innerHeight);
-    composer.setSize(innerWidth, innerHeight);
-  }, 120);
-});
-
-// ===== TEXT HELPERS =====
-const line1El = document.getElementById('line1');
-const line2El = document.getElementById('line2');
-const soloLineEl = document.getElementById('soloLine');
-
-function showLines(l1, l2) {
-  line1El.textContent = l1 || '';
-  line2El.textContent = l2 || '';
-  setTimeout(() => {
-    if (l1) line1El.classList.add('show');
-    if (l2) setTimeout(() => line2El.classList.add('show'), 260);
-  }, 60);
-}
-function hideLines() {
-  line1El.classList.remove('show');
-  line2El.classList.remove('show');
-}
-function showSolo(text) {
-  soloLineEl.textContent = text;
-  soloLineEl.classList.remove('exit');
-  setTimeout(() => soloLineEl.classList.add('show'), 60);
-}
-function hideSolo() {
-  soloLineEl.classList.remove('show');
-  soloLineEl.classList.add('exit');
-}
-
-// ===== TIMELINE — 23 seconds =====
-const timers = [];
-function sched(fn, ms) {
-  const id = setTimeout(fn, ms);
-  timers.push(id);
-  return id;
-}
-
-sched(() => {
-  showLines(
-    T('intro.scene1_line1', "Insonning eng qimmat boyligi —"),
-    T('intro.scene1_line2', "vaqt.")
-  );
-}, 1500);
-
-sched(() => { hgState.targetSandFill = 0.2; }, 2700);
-sched(hideLines, 5000);
-
-sched(() => {
-  hgState.targetRotZ = Math.PI * 0.42;
-  showLines(
-    T('intro.scene2_line1', "Uni qaytarib"),
-    T('intro.scene2_line2', "bo'lmaydi.")
-  );
-}, 5700);
-
-sched(hideLines, 9100);
-
-// SCENE 3 — LOGICAL FIX: hourglass fades out, sand TRANSFORMS into target
-sched(() => {
-  hgState.targetVis = 0;          // hourglass dissolves
-  targetState.targetScale = 1.0;  // target grows
-  targetState.targetVis = 1;
-  showLines(
-    T('intro.scene3_line1', "Lekin uni"),
-    T('intro.scene3_line2', "maqsadga aylantirish mumkin.")
-  );
-}, 9800);
-
-sched(hideLines, 13200);
-
-// SCENE 4 — target dissolves, pure typography
-sched(() => {
-  targetState.targetVis = 0;
-  showSolo(T('intro.scene4_line2', "Siz vaqtdan iboratsiz."));
-}, 13900);
-
-sched(hideSolo, 16800);
-
-sched(() => {
-  document.getElementById('w1').textContent = T('intro.scene5_step1_name', 'Maqsad');
-  document.getElementById('w2').textContent = T('intro.scene5_step2_name', 'Reja');
-  document.getElementById('w3').textContent = T('intro.scene5_step3_name', 'Harakat');
-  document.getElementById('w4').textContent = T('intro.scene5_step4_name', 'Natija');
-  const subHtml = T('intro.scene5_headline_line1', 'Maqsadni') + ' <span class="em">' + T('intro.scene5_headline_emphasis', 'yozing') + '.</span>';
-  document.getElementById('ws').innerHTML = subHtml;
-
-  document.getElementById('w1').classList.add('show');
-  sched(() => document.getElementById('d1').classList.add('show'), 380);
-  sched(() => document.getElementById('w2').classList.add('show'), 700);
-  sched(() => document.getElementById('d2').classList.add('show'), 1080);
-  sched(() => document.getElementById('w3').classList.add('show'), 1400);
-  sched(() => document.getElementById('d3').classList.add('show'), 1780);
-  sched(() => document.getElementById('w4').classList.add('show'), 2100);
-  sched(() => document.getElementById('ws').classList.add('show'), 2750);
-}, 17100);
-
-sched(() => {
-  document.querySelectorAll('.word, .word-dot, .word-sub').forEach((el) => el.classList.remove('show'));
-}, 21600);
-
-sched(() => {
-  document.getElementById('logoFinal').classList.add('show');
-}, 22300);
-
-sched(() => {
-  veil.classList.add('show');
-  setSeen();
-  sched(() => go('anketa.html'), 500);
-}, 25500);
-
-// Skip override
-const origSkip = skipCinematic;
-function skipNow() {
-  timers.forEach(clearTimeout);
-  running = false;
-  cancelAnimationFrame(rafId);
-  origSkip();
-}
-document.getElementById('skipBtn').onclick = skipNow;
-addEventListener('keydown', (e) => {
-  if (e.key === 'Escape' || e.key === 'Enter') skipNow();
-});
-
+})();
 </script>
 </body>
 </html>
