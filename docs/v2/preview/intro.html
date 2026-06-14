@@ -424,8 +424,8 @@ const scene = new THREE.Scene();
 scene.background = new THREE.Color(C.bg);
 scene.fog = new THREE.Fog(C.bg, 6, 18);
 
-const camera = new THREE.PerspectiveCamera(38, innerWidth / innerHeight, 0.1, 100);
-camera.position.set(0, 0.2, 5.2);
+const camera = new THREE.PerspectiveCamera(36, innerWidth / innerHeight, 0.1, 100);
+camera.position.set(0, 0.15, 4.4);
 
 // ===== Lights =====
 const key = new THREE.DirectionalLight(0xffffff, 2.2);
@@ -485,40 +485,40 @@ function hourglassProfile() {
 
 const glassGeom = new THREE.LatheGeometry(hourglassProfile(), 48);
 
-// Glass material — translucent toon with strong rim
+// Glass material — semi-opaque toon for CLEAR HOURGLASS VISIBILITY
 const glassMat = new THREE.MeshToonMaterial({
   color: C.accentBright,
   gradientMap: grad3,
   transparent: true,
-  opacity: 0.22,
+  opacity: 0.55,
   side: THREE.DoubleSide,
 });
+glassMat.emissive = new THREE.Color(C.accent);
+glassMat.emissiveIntensity = 0.6;
 
-// Glow accent material — emissive, passes bloom threshold
-const glowMat = new THREE.MeshToonMaterial({
+// CRISP EDGE OUTLINE — actual edges, not wireframe noise
+const edgesGeom = new THREE.EdgesGeometry(glassGeom, 25);
+const edgesMat = new THREE.LineBasicMaterial({
   color: C.accentBright,
-  gradientMap: grad3,
   transparent: true,
-  opacity: 0.55,
-  side: THREE.BackSide,
-  wireframe: true,
+  opacity: 0.9,
+  linewidth: 2,
 });
-glowMat.emissive = new THREE.Color(C.accent);
-glowMat.emissiveIntensity = 1.4;
+const edgesMesh = new THREE.LineSegments(edgesGeom, edgesMat);
 
-// Outline (inverted hull)
-const outlineMat = new THREE.MeshBasicMaterial({
-  color: C.outline,
+// Outer halo glow (inverted hull, no wireframe)
+const haloMat = new THREE.MeshBasicMaterial({
+  color: C.accent,
   side: THREE.BackSide,
   transparent: true,
-  opacity: 0.85,
+  opacity: 0.18,
+  blending: THREE.AdditiveBlending,
+  depthWrite: false,
 });
+const haloMesh = new THREE.Mesh(glassGeom, haloMat);
+haloMesh.scale.setScalar(1.08);
 
 const glassMesh = new THREE.Mesh(glassGeom, glassMat);
-const glowMesh = new THREE.Mesh(glassGeom, glowMat);
-glowMesh.scale.setScalar(1.015);
-const outlineMesh = new THREE.Mesh(glassGeom, outlineMat);
-outlineMesh.scale.setScalar(1.04);
 
 // Wood caps (top + bottom)
 const capGeom = new THREE.CylinderGeometry(0.78, 0.78, 0.12, 32);
@@ -547,7 +547,7 @@ botEdge.position.y = -1.46;
 botEdge.rotation.x = Math.PI / 2;
 
 const hourglass = new THREE.Group();
-hourglass.add(glassMesh, glowMesh, outlineMesh, topCap, botCap, topEdge, botEdge);
+hourglass.add(haloMesh, glassMesh, edgesMesh, topCap, botCap, topEdge, botEdge);
 scene.add(hourglass);
 
 // ===== SAND PARTICLES INSIDE HOURGLASS =====
@@ -589,9 +589,9 @@ sandGeom.setAttribute('position', new THREE.BufferAttribute(sandPos, 3));
 
 const sandMat = new THREE.PointsMaterial({
   color: C.accentBright,
-  size: 0.035,
+  size: 0.06,
   transparent: true,
-  opacity: 0.95,
+  opacity: 1.0,
   blending: THREE.AdditiveBlending,
   depthWrite: false,
   sizeAttenuation: true,
@@ -629,7 +629,7 @@ scene.add(dust);
 // ===== POSTPROCESSING =====
 const composer = new EffectComposer(renderer);
 composer.addPass(new RenderPass(scene, camera));
-const bloom = new UnrealBloomPass(new THREE.Vector2(innerWidth, innerHeight), 1.1, 0.6, 0.78);
+const bloom = new UnrealBloomPass(new THREE.Vector2(innerWidth, innerHeight), 1.4, 0.7, 0.55);
 composer.addPass(bloom);
 composer.addPass(new OutputPass());
 
@@ -714,10 +714,10 @@ function frame() {
   const sfs = springStep(hgState.sandFillTop, hgState.targetSandFill, hgState.sandVel, dt, 8, 7);
   hgState.sandFillTop = sfs.val; hgState.sandVel = sfs.vel;
 
-  // Apply hourglass transforms
+  // Apply hourglass transforms — GENTLE SWAY, NO FULL ROTATION (keeps shape readable)
   hourglass.rotation.z = hgState.rotZ;
-  hourglass.rotation.y = t * 0.15 + smooth.mx * 0.18;
-  hourglass.rotation.x = -smooth.my * 0.08 + Math.sin(t * 0.6) * 0.02;
+  hourglass.rotation.y = Math.sin(t * 0.35) * 0.10 + smooth.mx * 0.10;
+  hourglass.rotation.x = -smooth.my * 0.05 + Math.sin(t * 0.55) * 0.015;
   hourglass.scale.setScalar(hgState.scale * (hgState.visibility));
 
   // Sand particle update
