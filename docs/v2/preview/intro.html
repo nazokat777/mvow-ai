@@ -55,7 +55,7 @@ body::after {
 .text-overlay {
   position: fixed;
   left: 50%;
-  bottom: 16%;
+  bottom: 8%;
   transform: translateX(-50%);
   text-align: center;
   z-index: 5;
@@ -63,6 +63,8 @@ body::after {
   width: calc(100% - 48px);
   padding: 0 16px;
   pointer-events: none;
+  background:
+    radial-gradient(ellipse 130% 90% at 50% 100%, rgba(4, 6, 11, 0.7), transparent 65%);
 }
 .line {
   display: block;
@@ -316,7 +318,7 @@ body::after {
   .word-sub { font-size: 14px; margin-top: 28px; }
   .logo-final img { width: 90px; }
   .logo-name { font-size: 26px; }
-  .text-overlay { bottom: 14%; }
+  .text-overlay { bottom: 6%; }
 }
 @media (max-width: 360px) {
   .line.emphasis { font-size: 26px; }
@@ -448,8 +450,8 @@ const scene = new THREE.Scene();
 scene.background = new THREE.Color(0x04060B);
 scene.fog = new THREE.Fog(0x04060B, 8, 22);
 
-const camera = new THREE.PerspectiveCamera(36, innerWidth / innerHeight, 0.1, 100);
-camera.position.set(0.4, -0.15, 4.9);
+const camera = new THREE.PerspectiveCamera(40, innerWidth / innerHeight, 0.1, 100);
+camera.position.set(0.3, 0.05, 7.2);
 
 // ===== HDRI ENVIRONMENT (procedural via RoomEnvironment) =====
 // This is what makes PBR materials look real — they need an environment to reflect.
@@ -725,7 +727,44 @@ const targetCenter = new THREE.Mesh(
     envMapIntensity: 1.5,
   })
 );
-targetGroup.add(targetOuter, targetMid, targetInner, targetCenter);
+
+// ARROW — pierces the target from upper-right
+const arrowGroup = new THREE.Group();
+const arrowShaft = new THREE.Mesh(
+  new THREE.CylinderGeometry(0.018, 0.018, 1.4, 12),
+  new THREE.MeshStandardMaterial({
+    color: 0x8b4513,
+    roughness: 0.5, metalness: 0.3,
+    envMapIntensity: 0.6,
+  })
+);
+const arrowHead = new THREE.Mesh(
+  new THREE.ConeGeometry(0.06, 0.18, 12),
+  new THREE.MeshStandardMaterial({
+    color: 0xd4af37,
+    roughness: 0.25, metalness: 0.9,
+    envMapIntensity: 1.5,
+    emissive: 0xd4af37, emissiveIntensity: 0.3,
+  })
+);
+arrowHead.position.y = 0.7 + 0.09;
+
+// Fletching (feathers) at tail
+const fletchingGeom = new THREE.ConeGeometry(0.05, 0.16, 4);
+const fletchingMat = new THREE.MeshStandardMaterial({
+  color: 0xd4af37,
+  roughness: 0.4, metalness: 0.7,
+});
+const fletch1 = new THREE.Mesh(fletchingGeom, fletchingMat);
+fletch1.position.y = -0.7;
+fletch1.scale.set(0.6, 0.6, 0.3);
+arrowGroup.add(arrowShaft, arrowHead, fletch1);
+
+// Position: stick into target center, angled
+arrowGroup.position.set(0.4, 0, 0.05);
+arrowGroup.rotation.z = -Math.PI * 0.28;  // tilted 50deg
+
+targetGroup.add(targetOuter, targetMid, targetInner, targetCenter, arrowGroup);
 scene.add(targetGroup);
 
 // ===== AMBIENT DUST =====
@@ -772,16 +811,55 @@ addEventListener('pointermove', (e) => {
 }, { passive: true });
 
 const touchAttractors = [];
-canvas.addEventListener('pointerdown', (e) => {
+const burstParticles = [];  // visible touch sparks
+
+function onCanvasTouch(e) {
   const ndcX = (e.clientX / innerWidth) * 2 - 1;
   const ndcY = -(e.clientY / innerHeight) * 2 + 1;
   const vec = new THREE.Vector3(ndcX, ndcY, 0.5);
   vec.unproject(camera);
   const dir = vec.sub(camera.position).normalize();
-  const dist = -camera.position.z / dir.z;
+  const dist = (1.0 - camera.position.z) / dir.z;  // intersect z=1 plane (in front of hourglass)
   const pos = camera.position.clone().add(dir.multiplyScalar(dist));
-  touchAttractors.push({ pos, life: 1.0 });
+  touchAttractors.push({ pos: pos.clone(), life: 1.0 });
+
+  // Add 40 visible burst particles at touch point
+  for (let i = 0; i < 40; i++) {
+    const speed = 0.6 + Math.random() * 1.2;
+    const phi = Math.random() * Math.PI * 2;
+    const theta = (Math.random() - 0.5) * Math.PI * 0.5;
+    burstParticles.push({
+      x: pos.x, y: pos.y, z: pos.z,
+      vx: Math.cos(phi) * Math.cos(theta) * speed,
+      vy: Math.sin(theta) * speed,
+      vz: Math.sin(phi) * Math.cos(theta) * speed,
+      life: 1.0,
+      size: 0.05 + Math.random() * 0.04,
+    });
+  }
+}
+canvas.addEventListener('pointerdown', onCanvasTouch, { passive: true });
+// Also accept touchstart for older browsers
+canvas.addEventListener('touchstart', (e) => {
+  if (e.touches.length) onCanvasTouch({ clientX: e.touches[0].clientX, clientY: e.touches[0].clientY });
 }, { passive: true });
+
+// Visible burst particle mesh — uses a single Points BufferGeometry, updated each frame
+const burstGeom = new THREE.BufferGeometry();
+const BURST_MAX = 800;
+const burstPosArr = new Float32Array(BURST_MAX * 3);
+burstGeom.setAttribute('position', new THREE.BufferAttribute(burstPosArr, 3));
+const burstMat = new THREE.PointsMaterial({
+  color: 0xffe8a0,
+  size: 0.08,
+  transparent: true,
+  opacity: 1.0,
+  blending: THREE.AdditiveBlending,
+  depthWrite: false,
+  sizeAttenuation: true,
+});
+const burstMesh = new THREE.Points(burstGeom, burstMat);
+scene.add(burstMesh);
 
 document.getElementById('skipBtn').addEventListener('click', skipCinematic);
 
@@ -952,9 +1030,35 @@ function frame() {
     if (touchAttractors[i].life <= 0) touchAttractors.splice(i, 1);
   }
 
-  // Camera breath — slight Y drift + lookAt slightly above center for majestic low angle
-  camera.position.y = -0.15 + Math.sin(t * 0.4) * 0.04;
-  camera.lookAt(0, 0.15, 0);
+  // Update visible burst particles
+  for (let i = burstParticles.length - 1; i >= 0; i--) {
+    const b = burstParticles[i];
+    b.x += b.vx * dt;
+    b.y += b.vy * dt;
+    b.z += b.vz * dt;
+    b.vy -= 0.6 * dt;  // gravity
+    b.vx *= 0.96; b.vz *= 0.96;
+    b.life -= dt * 1.2;
+    if (b.life <= 0) burstParticles.splice(i, 1);
+  }
+  // Write burst positions
+  const burstArr = burstGeom.attributes.position.array;
+  const n = Math.min(burstParticles.length, BURST_MAX);
+  for (let i = 0; i < n; i++) {
+    burstArr[i * 3] = burstParticles[i].x;
+    burstArr[i * 3 + 1] = burstParticles[i].y;
+    burstArr[i * 3 + 2] = burstParticles[i].z;
+  }
+  // Hide unused
+  for (let i = n; i < BURST_MAX; i++) {
+    burstArr[i * 3] = 0; burstArr[i * 3 + 1] = -100; burstArr[i * 3 + 2] = 0;
+  }
+  burstGeom.setDrawRange(0, n);
+  burstGeom.attributes.position.needsUpdate = true;
+
+  // Camera breath — subtle Y drift
+  camera.position.y = 0.05 + Math.sin(t * 0.4) * 0.03;
+  camera.lookAt(0, 0.05, 0);
 
   composer.render();
 }
