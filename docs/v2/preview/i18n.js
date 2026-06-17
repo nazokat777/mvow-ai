@@ -2168,9 +2168,55 @@
   document.documentElement.lang = CURRENT_LANG;
   window.I18N = I18N;
 
-  if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', () => I18N.apply());
-  } else {
-    I18N.apply();
+  // AGGRESSIVE APPLY — har xil page lifecycle nuqtalarida apply chaqiriladi.
+  // Bu agar JS-generated content yoki dynamic DOM bo'lsa ham qamrab oladi.
+  function aggressiveApply() {
+    try { I18N.apply(); } catch(e) {}
   }
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', aggressiveApply);
+  } else {
+    aggressiveApply();
+  }
+  // Window load — barcha resurslar yuklangan
+  window.addEventListener('load', aggressiveApply);
+  // Safety net — JS-generated kontent uchun
+  setTimeout(aggressiveApply, 100);
+  setTimeout(aggressiveApply, 500);
+  setTimeout(aggressiveApply, 1500);
+
+  // MutationObserver — yangi DOM elementlar uchun apply
+  function startObserver() {
+    if (!('MutationObserver' in window)) return;
+    let pending = false;
+    const obs = new MutationObserver(() => {
+      if (pending) return;
+      pending = true;
+      requestAnimationFrame(() => {
+        pending = false;
+        aggressiveApply();
+      });
+    });
+    obs.observe(document.body, { childList: true, subtree: true });
+  }
+  if (document.body) startObserver();
+  else document.addEventListener('DOMContentLoaded', startObserver);
+
+  // VISUAL DEBUG BADGE — sahifa pastiga kichik versiya + lang ko'rsatkichi.
+  // Foydalanuvchi qaysi versiya va qaysi til ekanligini ko'radi.
+  // 4 sekund'da fade out bo'ladi.
+  function showVersionBadge() {
+    if (document.getElementById('mvowVerBadge')) return;
+    const b = document.createElement('div');
+    b.id = 'mvowVerBadge';
+    const applied = document.querySelectorAll('[data-i18n]').length;
+    b.textContent = 'v28.2.4 · ' + CURRENT_LANG + ' · ' + applied + ' keys';
+    b.style.cssText = 'position:fixed;left:12px;bottom:12px;padding:6px 10px;background:rgba(212,175,55,0.95);color:#0a0a0a;font:600 11px/1 -apple-system,Inter,sans-serif;letter-spacing:0.5px;border-radius:6px;z-index:2147483647;pointer-events:none;box-shadow:0 4px 12px rgba(0,0,0,.4);transition:opacity 0.6s ease 3.5s;';
+    document.body.appendChild(b);
+    requestAnimationFrame(() => { b.style.opacity = '0'; });
+    setTimeout(() => { try { b.remove(); } catch(_){} }, 5000);
+  }
+  if (document.body) setTimeout(showVersionBadge, 200);
+  else document.addEventListener('DOMContentLoaded', () => setTimeout(showVersionBadge, 200));
 })();
