@@ -219,7 +219,12 @@
 <script src="data.js" defer></script>
 <script src="nav-overlay.js" defer></script>
 <script>
+document.addEventListener('DOMContentLoaded', function () {
   // ── Joriy ish va sozlamalar ──
+  // BUG FIX (v25.1): bu inline script defer-li, lekin avval defer'siz edi —
+  // shuning uchun MVOW_DATA hali yuklanmasdan turib ishga tushib, default
+  // '25 daq' fallback'iga tushardi. Endi DOMContentLoaded ichida — data.js
+  // defer bilan yuklanib bo'lgan paytda ishlaydi.
   let current = null;
   if (window.MVOW_DATA) {
     current = MVOW_DATA.currentTaskFromPlan();
@@ -451,6 +456,7 @@
     askOverlay.classList.remove('show');
     recordAndExit(false);
   });
+});  // end DOMContentLoaded
 </script>
 
 </body>
