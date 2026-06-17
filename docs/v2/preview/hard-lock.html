@@ -13,7 +13,7 @@
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
 <style>
   * { box-sizing: border-box; margin: 0; padding: 0; }
-  :root { --void:#04060B; --void-soft:#0C0F16; --card:#11151E; --text:#F5F2EC; --text-mid:#B8BBC2; --text-dim:#9CA0A8; --accent:#00E5D4; --accent-soft:#00B5A8; --alert:#FF4757; }
+  :root { --void:#04060B; --void-soft:#0C0F16; --card:#11151E; --text:#F5F2EC; --text-mid:#B8BBC2; --text-dim:#9CA0A8; --alert:#FF4757; }
   body { background: var(--void); font-family:'Inter',sans-serif; color: var(--text); min-height: 100vh; display:flex; justify-content:center; align-items:flex-start; padding: 24px; -webkit-font-smoothing: antialiased; }
   .phone {
     width: 380px; min-height: 800px; background: var(--void); border-radius: 40px;
@@ -39,7 +39,7 @@
   .choice-card {
     width: 100%; max-width: 340px;
     background: var(--card);
-    border: 1px solid rgba(0,229,212,.2);
+    border: 1px solid rgba(212,175,55,.2);
     border-radius: 16px;
     padding: 26px 22px;
     text-align: center;
@@ -133,6 +133,7 @@
 
   @media (max-width: 480px) { body { padding: 0; } .phone { width: 100vw; min-height: 100vh; border-radius: 0; box-shadow: none; } }
 </style>
+<link rel="stylesheet" href="theme.css">
 <link rel="stylesheet" href="motion.css">
 <script src="motion.js" defer></script>
 </head>
@@ -187,8 +188,8 @@
         <span style="display:block;font-weight:600;margin-bottom:2px;" data-i18n="hardlock.opt_notimer">Taymersiz</span>
         <span style="display:block;font-size:10px;color:#9CA0A8;letter-spacing:0.5px;text-transform:none;font-weight:400;" data-i18n="hardlock.opt_notimer_desc">Siz tayyor bo'lganda "Bajardim" deysiz</span>
       </button>
-      <button class="choice-btn secondary" id="chTimer" type="button" style="text-align:left;padding:14px 16px;border-color:rgba(0,229,212,.35);">
-        <span style="display:block;font-weight:600;margin-bottom:2px;color:#7AF5EC;" data-i18n="hardlock.opt_timer">Oddiy taymer</span>
+      <button class="choice-btn secondary" id="chTimer" type="button" style="text-align:left;padding:14px 16px;border-color:rgba(212,175,55,.35);">
+        <span style="display:block;font-weight:600;margin-bottom:2px;color:var(--accent-bright);" data-i18n="hardlock.opt_timer">Oddiy taymer</span>
         <span style="display:block;font-size:10px;color:#9CA0A8;letter-spacing:0.5px;text-transform:none;font-weight:400;" id="chTimerDur" data-i18n="hardlock.opt_timer_desc">Vazifa davomiyligi bo'yicha</span>
       </button>
       <button class="choice-btn primary" id="chPomo" type="button" style="text-align:left;padding:14px 16px;">
@@ -391,7 +392,7 @@
       remaining = WORK_MIN * 60;
       totalSec = WORK_MIN * 60;
       tsub.textContent = (window.I18N ? I18N.t('hardlock.sub_locked', 'fokusdasiz') : 'fokusdasiz') + ' · ' + cycle + '/' + TOTAL_CYC;
-      ring.style.stroke = '#00E5D4';
+      ring.style.stroke = 'var(--accent)';
     }
     paint();
     interval = setInterval(() => {

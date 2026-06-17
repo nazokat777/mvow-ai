@@ -13,7 +13,7 @@
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
 <style>
   * { box-sizing: border-box; margin: 0; padding: 0; }
-  :root { --void:#04060B; --void-soft:#0C0F16; --card:#11151E; --text:#F5F2EC; --text-mid:#B8BBC2; --text-dim:#9CA0A8; --accent:#00E5D4; --accent-soft:#00B5A8; --warm:#F5C26B; }
+  :root { --void:#04060B; --void-soft:#0C0F16; --card:#11151E; --text:#F5F2EC; --text-mid:#B8BBC2; --text-dim:#9CA0A8; --warm:#F5C26B; }
   body { background: var(--void); font-family:'Inter',sans-serif; color: var(--text); min-height: 100vh; display:flex; justify-content:center; align-items:flex-start; padding: 24px; -webkit-font-smoothing: antialiased; }
   .phone { width: 380px; min-height: 800px; background: var(--void); border-radius: 40px; overflow: hidden; position: relative; box-shadow: 0 0 0 8px #1a1d24, 0 30px 80px rgba(0,0,0,.7); }
   .container { padding: 60px 28px 80px; }
@@ -132,7 +132,7 @@
     user-select: none;
     transition: background .15s;
   }
-  .group-head:hover { background: rgba(0,229,212,.04); }
+  .group-head:hover { background: rgba(212,175,55,.04); }
   .group-name {
     font-family: 'Cormorant Garamond', serif;
     font-weight: 500;
@@ -162,7 +162,7 @@
   .group-body {
     display: none;
     padding: 0 16px 12px;
-    border-top: 1px solid rgba(0,229,212,.1);
+    border-top: 1px solid rgba(212,175,55,.1);
   }
   .group.open .group-body { display: block; animation: accIn .25s ease; }
   @keyframes accIn { from { opacity: 0; transform: translateY(-4px); } to { opacity: 1; transform: translateY(0); } }
@@ -204,6 +204,7 @@
 
   @media (max-width: 480px) { body { padding: 0; } .phone { width: 100vw; min-height: 100vh; border-radius: 0; box-shadow: none; } }
 </style>
+<link rel="stylesheet" href="theme.css">
 <link rel="stylesheet" href="motion.css">
 <script src="motion.js" defer></script>
 </head>
@@ -401,13 +402,13 @@
     if (range !== 'day' && window.MVOW_DATA) {
       const b = MVOW_DATA.getBehaviorStats();
       if (b && b.dayStats.length >= 2) {
-        const gradeColor = (pct) => pct >= 80 ? '#00E5D4' : pct >= 50 ? '#F5C26B' : '#FF8E97';
+        const gradeColor = (pct) => pct >= 80 ? 'var(--accent)' : pct >= 50 ? '#F5C26B' : '#FF8E97';
         const lblBest = (window.I18N ? I18N.t('weekly-review.insight_best_day', 'Eng yaxshi kuningiz') : 'Eng yaxshi kuningiz');
         const lblWorst = (window.I18N ? I18N.t('weekly-review.insight_worst_day', 'Eng yomon') : 'Eng yomon');
         const lblAvg = (window.I18N ? I18N.t('weekly-review.insight_avg_completion', "O'rtacha bajarish") : "O'rtacha bajarish");
         const lblPeak = (window.I18N ? I18N.t('weekly-review.insight_peak_time', 'Sermahsul vaqt') : 'Sermahsul vaqt');
         let html = '';
-        html += `<div style="display:flex;justify-content:space-between;align-items:baseline;"><span style="color:var(--text-mid);">${lblBest}</span><span style="color:#00E5D4;font-weight:600;"><span style="font-family:'Cormorant Garamond',serif;font-size:16px;font-style:italic;">${b.best.day}</span> · ${b.best.completion}%</span></div>`;
+        html += `<div style="display:flex;justify-content:space-between;align-items:baseline;"><span style="color:var(--text-mid);">${lblBest}</span><span style="color:var(--accent);font-weight:600;"><span style="font-family:'Cormorant Garamond',serif;font-size:16px;font-style:italic;">${b.best.day}</span> · ${b.best.completion}%</span></div>`;
         if (b.worst.day !== b.best.day) {
           html += `<div style="display:flex;justify-content:space-between;align-items:baseline;"><span style="color:var(--text-mid);">${lblWorst}</span><span style="color:#FF8E97;font-weight:600;"><span style="font-family:'Cormorant Garamond',serif;font-size:16px;font-style:italic;">${b.worst.day}</span> · ${b.worst.completion}%</span></div>`;
         }

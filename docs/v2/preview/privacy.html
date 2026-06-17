@@ -14,7 +14,7 @@
     max-width: 760px; margin: 0 auto;
   }
   header {
-    border-bottom: 1px solid rgba(0,229,212,.2);
+    border-bottom: 1px solid rgba(212,175,55,.2);
     padding-bottom: 30px; margin-bottom: 40px;
     text-align: center;
   }
@@ -22,7 +22,7 @@
     width: 64px; height: 64px;
     background: url(assets/mnsm-logo.png) center/contain no-repeat;
     margin: 0 auto 20px;
-    filter: drop-shadow(0 0 12px rgba(0,229,212,.4));
+    filter: drop-shadow(0 0 12px rgba(212,175,55,.4));
   }
   h1 {
     font-size: 28px; font-weight: 700;
@@ -38,22 +38,23 @@
     margin-top: 16px;
   }
   h2 {
-    color: #00E5D4; font-size: 16px;
+    color: var(--accent); font-size: 16px;
     letter-spacing: 2px; text-transform: uppercase;
     margin: 36px 0 14px;
   }
   p { margin-bottom: 12px; }
   ul { margin: 8px 0 14px 24px; }
   li { margin-bottom: 6px; }
-  a { color: #00E5D4; text-decoration: none; border-bottom: 1px solid rgba(0,229,212,.4); }
-  a:hover { border-bottom-color: #00E5D4; }
-  .emphasis { color: #00E5D4; font-style: italic; }
+  a { color: var(--accent); text-decoration: none; border-bottom: 1px solid rgba(212,175,55,.4); }
+  a:hover { border-bottom-color: var(--accent); }
+  .emphasis { color: var(--accent); font-style: italic; }
   footer {
     margin-top: 60px; padding-top: 30px;
-    border-top: 1px solid rgba(0,229,212,.2);
+    border-top: 1px solid rgba(212,175,55,.2);
     text-align: center; color: #6B6E76; font-size: 12px;
   }
 </style>
+<link rel="stylesheet" href="theme.css">
 </head>
 <body>
 

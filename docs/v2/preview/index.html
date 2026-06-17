@@ -16,7 +16,7 @@
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
 <style>
   * { box-sizing: border-box; margin: 0; padding: 0; }
-  :root { --void:#04060B; --text:#F5F2EC; --text-mid:#B8BBC2; --text-dim:#9CA0A8; --accent:#00E5D4; --accent-soft:#00B5A8; }
+  :root { --void:#04060B; --text:#F5F2EC; --text-mid:#B8BBC2; --text-dim:#9CA0A8; }
   html, body {
     background: var(--void); color: var(--text);
     min-height: 100vh; overflow: hidden;
@@ -33,7 +33,7 @@
   .halo {
     position: absolute;
     width: 340px; height: 340px;
-    background: radial-gradient(circle, rgba(0,229,212,.12), transparent 60%);
+    background: radial-gradient(circle, rgba(212,175,55,.12), transparent 60%);
     border-radius: 50%;
     opacity: 0;
     animation: halo-in 1.2s ease .2s forwards, halo-pulse 5s ease-in-out 2s infinite;
@@ -48,7 +48,7 @@
   .logo {
     width: 92px; height: 92px;
     background: url('assets/mnsm-logo.png') center/contain no-repeat;
-    filter: hue-rotate(160deg) saturate(1.4) drop-shadow(0 0 18px rgba(0,229,212,.45));
+    filter: hue-rotate(160deg) saturate(1.4) drop-shadow(0 0 18px rgba(212,175,55,.45));
     opacity: 0; transform: scale(0.7);
     animation: logo-in 1.0s cubic-bezier(.16,.84,.32,1) .1s forwards;
     z-index: 2;
@@ -95,12 +95,12 @@
     text-align: center; min-height: 48px;
   }
   .lang-btn:hover, .lang-btn:active {
-    border-color: rgba(0,229,212,.4);
-    color: var(--text); background: rgba(0,229,212,.04);
+    border-color: rgba(212,175,55,.4);
+    color: var(--text); background: rgba(212,175,55,.04);
   }
   .lang-btn.on {
     border-color: var(--accent); color: var(--accent);
-    background: rgba(0,229,212,.08);
+    background: rgba(212,175,55,.08);
   }
   .cta-row {
     position: fixed; bottom: 0; left: 0; right: 0;
@@ -120,6 +120,7 @@
     cursor: pointer; min-height: 52px;
   }
 </style>
+<link rel="stylesheet" href="theme.css">
 </head>
 <body>
 

@@ -16,7 +16,7 @@
   :root {
     --void:#04060B;
     --text:#F5F2EC; --text-mid:#B8BBC2; --text-dim:#9CA0A8;
-    --accent:#00E5D4; --accent-soft:#00B5A8;
+    
     --alert:#FF4757;
   }
   body {
@@ -37,8 +37,8 @@
     animation: ring 1.4s ease-in-out infinite;
   }
   @keyframes ring {
-    0%, 100% { box-shadow: 0 0 0 8px #1a1d24, 0 30px 80px rgba(0,0,0,.7), 0 0 60px rgba(0,229,212,0); }
-    50%      { box-shadow: 0 0 0 8px #1a1d24, 0 30px 80px rgba(0,0,0,.7), 0 0 100px rgba(0,229,212,.4); }
+    0%, 100% { box-shadow: 0 0 0 8px #1a1d24, 0 30px 80px rgba(0,0,0,.7), 0 0 60px rgba(212,175,55,0); }
+    50%      { box-shadow: 0 0 0 8px #1a1d24, 0 30px 80px rgba(0,0,0,.7), 0 0 100px rgba(212,175,55,.4); }
   }
   .phone.done {
     animation: none;
@@ -168,6 +168,7 @@
     .phone { width: 100vw; min-height: 100vh; border-radius: 0; box-shadow: none; }
   }
 </style>
+<link rel="stylesheet" href="theme.css">
 </head>
 <body>
 

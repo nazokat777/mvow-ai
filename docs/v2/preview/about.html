@@ -18,13 +18,13 @@
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
 <style>
   * { box-sizing: border-box; margin: 0; padding: 0; }
-  :root { --void:#04060B; --void-soft:#0C0F16; --text:#F5F2EC; --text-mid:#B8BBC2; --text-dim:#9CA0A8; --accent:#00E5D4; --accent-soft:#00B5A8; }
+  :root { --void:#04060B; --void-soft:#0C0F16; --text:#F5F2EC; --text-mid:#B8BBC2; --text-dim:#9CA0A8; }
   body { background: var(--void); font-family:'Inter',sans-serif; color: var(--text); min-height: 100vh; display:flex; justify-content:center; align-items:flex-start; padding: 24px; -webkit-font-smoothing: antialiased; }
   .phone { width: 380px; min-height: 800px; background: var(--void); border-radius: 40px; position: relative; box-shadow: 0 0 0 8px #1a1d24, 0 30px 80px rgba(0,0,0,.7); overflow: hidden; }
   .container { padding: 60px 28px 80px; }
 
   .top { text-align:center; margin-bottom: 36px; }
-  .logo { width: 60px; height: 60px; margin: 0 auto 12px; background: url('assets/mnsm-logo.png') center/contain no-repeat; filter: hue-rotate(160deg) saturate(1.4) drop-shadow(0 0 12px rgba(0,229,212,.4)); }
+  .logo { width: 60px; height: 60px; margin: 0 auto 12px; background: url('assets/mnsm-logo.png') center/contain no-repeat; filter: hue-rotate(160deg) saturate(1.4) drop-shadow(0 0 12px rgba(212,175,55,.4)); }
   .name { font-family:'Cormorant Garamond',serif; font-weight:600; font-size: 26px; letter-spacing: 4px; color: var(--text); }
   .ver { font-size: 11px; letter-spacing: 3px; color: var(--text-dim); text-transform: uppercase; margin-top: 4px; }
 
@@ -74,6 +74,7 @@
 
   @media (max-width: 480px) { body { padding: 0; } .phone { width: 100vw; min-height: 100vh; border-radius: 0; box-shadow: none; } }
 </style>
+<link rel="stylesheet" href="theme.css">
 </head>
 <body>
 

@@ -19,7 +19,7 @@
   :root {
     --void:#04060B; --void-soft:#0C0F16;
     --text:#F5F2EC; --text-mid:#B8BBC2; --text-dim:#9CA0A8;
-    --accent:#00E5D4; --accent-soft:#00B5A8;
+    
   }
   body { background: var(--void); font-family:'Inter',sans-serif; color: var(--text); min-height: 100vh; display:flex; justify-content:center; align-items:flex-start; padding: 24px; -webkit-font-smoothing: antialiased; }
   .phone { width: 380px; min-height: 800px; background: var(--void); border-radius: 40px; position: relative; box-shadow: 0 0 0 8px #1a1d24, 0 30px 80px rgba(0,0,0,.7); overflow: hidden; }
@@ -111,9 +111,9 @@
   /* . pending */
   .t-row.pending .tstat { border: 1.5px solid rgba(255,255,255,.18); background: transparent; }
   /* active — hozir ishlayotgan */
-  .t-row.active { border: 1px solid rgba(0,229,212,.35); background: rgba(0,229,212,.04); }
+  .t-row.active { border: 1px solid rgba(212,175,55,.35); background: rgba(212,175,55,.04); }
   .t-row.active .ttime { color: var(--accent); }
-  .t-row.active .tstat { background: rgba(0,229,212,.4); animation: pulse 1.6s ease-in-out infinite; }
+  .t-row.active .tstat { background: rgba(212,175,55,.4); animation: pulse 1.6s ease-in-out infinite; }
   @keyframes pulse { 0%,100% { transform: scale(1); } 50% { transform: scale(1.18); } }
   .next .lbl { font-size: 10px; letter-spacing: 4px; color: var(--text-dim); text-transform: uppercase; margin-bottom: 8px; }
   .next .row {
@@ -159,6 +159,7 @@
     .phone { width: 100vw; min-height: 100vh; border-radius: 0; box-shadow: none; }
   }
 </style>
+<link rel="stylesheet" href="theme.css">
 <link rel="stylesheet" href="motion.css">
 <script src="motion.js" defer></script>
 </head>
@@ -172,7 +173,7 @@
     <h1 class="greet"><span id="greetWord">Assalomu alaykum</span>, <span class="em" id="userName" data-i18n="home.addressee">do'stim</span>.</h1>
 
     <!-- AI Murabbiy — kontekstli xabar (kerakli holatda chiqadi) -->
-    <div id="murabbiyBox" style="display:none;background:rgba(0,229,212,.06);border:1px solid rgba(0,229,212,.18);border-radius:12px;padding:14px 16px;font-family:'Cormorant Garamond',serif;font-style:italic;font-size:14px;line-height:1.5;color:var(--text);text-align:center;">
+    <div id="murabbiyBox" style="display:none;background:rgba(212,175,55,.06);border:1px solid rgba(212,175,55,.18);border-radius:12px;padding:14px 16px;font-family:'Cormorant Garamond',serif;font-style:italic;font-size:14px;line-height:1.5;color:var(--text);text-align:center;">
       <div id="murabbiyText"></div>
     </div>
 
@@ -243,7 +244,7 @@
     </div>
 
     <!-- BAJARGANDA: Identity (shaxs shakllanmoqda) — streak >= 7 -->
-    <div id="identityBox" style="display:none;background:rgba(0,229,212,.04);border-radius:12px;padding:14px 18px;text-align:center;">
+    <div id="identityBox" style="display:none;background:rgba(212,175,55,.04);border-radius:12px;padding:14px 18px;text-align:center;">
       <div style="font-family:'Cormorant Garamond',serif;font-style:italic;font-size:15px;line-height:1.55;color:var(--text);" id="identityText"></div>
     </div>
 
