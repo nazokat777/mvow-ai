@@ -13,7 +13,7 @@
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
 <style>
   * { box-sizing: border-box; margin: 0; padding: 0; }
-  :root { --void:#04060B; --void-soft:#0C0F16; --card:#11151E; --text:#F5F2EC; --text-mid:#B8BBC2; --text-dim:#9CA0A8; --warm:#F5C26B; }
+  :root { --void:#04060B; --void-soft:#0C0F16; --card:#11151E; --text:#F5F2EC; --text-mid:#B8BBC2; --text-dim:#9CA0A8; --warm:#F5C26B; --miss:#FF4757; }
   body { background: var(--void); font-family:'Inter',sans-serif; color: var(--text); min-height: 100vh; display:flex; justify-content:center; align-items:flex-start; padding: 24px; -webkit-font-smoothing: antialiased; }
   .phone { width: 380px; min-height: 800px; background: var(--void); border-radius: 40px; overflow: hidden; position: relative; box-shadow: 0 0 0 8px #1a1d24, 0 30px 80px rgba(0,0,0,.7); }
   .container { padding: 60px 28px 80px; }
@@ -202,7 +202,278 @@
     line-height: 1.5;
   }
 
-  @media (max-width: 480px) { body { padding: 0; } .phone { width: 100vw; min-height: 100vh; border-radius: 0; box-shadow: none; } }
+  /* ============================================================
+     VAZIFALAR TARIXI — task history (calendar per task)
+     ============================================================ */
+  .tasks-head {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    margin: 26px 0 10px;
+  }
+  .tasks-head .h {
+    font-family: 'Cormorant Garamond', serif;
+    font-weight: 500;
+    font-size: 20px;
+    color: var(--text);
+    letter-spacing: 0.3px;
+  }
+  .tasks-head .sub {
+    font-size: 10px;
+    letter-spacing: 2px;
+    color: var(--text-dim);
+    text-transform: uppercase;
+  }
+  .tasks-list { display: flex; flex-direction: column; gap: 8px; }
+  .task-row {
+    display: grid;
+    grid-template-columns: 1fr auto auto;
+    align-items: center;
+    gap: 12px;
+    padding: 14px 14px 14px 16px;
+    background: var(--void-soft);
+    border-radius: 12px;
+    border: 1px solid transparent;
+    transition: border-color .18s, background .18s;
+  }
+  .task-row:hover { background: var(--card); border-color: rgba(212,175,55,.18); }
+  .task-row .name {
+    font-family: 'Cormorant Garamond', serif;
+    font-weight: 500;
+    font-size: 17px;
+    color: var(--text);
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+  .task-row .stats {
+    font-size: 11px;
+    color: var(--text-mid);
+    letter-spacing: 0.2px;
+    text-align: right;
+    white-space: nowrap;
+  }
+  .task-row .stats .em { color: var(--accent); font-weight: 600; }
+  .task-row .stats .dot { color: var(--text-dim); margin: 0 5px; }
+  .cal-btn {
+    width: 44px;
+    height: 44px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    background: transparent;
+    border: 1px solid rgba(212,175,55,.35);
+    color: var(--accent);
+    border-radius: 10px;
+    cursor: pointer;
+    transition: background .15s, border-color .15s, transform .12s;
+    padding: 0;
+  }
+  .cal-btn:hover, .cal-btn:focus-visible {
+    background: rgba(212,175,55,.08);
+    border-color: var(--accent);
+    outline: none;
+  }
+  .cal-btn:active { transform: scale(.96); }
+  .cal-btn svg { width: 20px; height: 20px; stroke: currentColor; fill: none; stroke-width: 1.8; }
+
+  /* Modal */
+  .cal-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(4,6,11,.78);
+    backdrop-filter: blur(6px);
+    -webkit-backdrop-filter: blur(6px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 999;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity .22s ease;
+    padding: 16px;
+  }
+  .cal-overlay.on { opacity: 1; pointer-events: auto; }
+  .cal-modal {
+    width: 100%;
+    max-width: 360px;
+    background: var(--card);
+    border: 1px solid rgba(212,175,55,.35);
+    border-radius: 18px;
+    padding: 20px 18px 18px;
+    box-shadow: 0 30px 80px rgba(0,0,0,.65), 0 0 0 1px rgba(245,215,110,.06);
+    transform: translateY(8px) scale(.98);
+    transition: transform .25s cubic-bezier(.16,.84,.32,1);
+  }
+  .cal-overlay.on .cal-modal { transform: translateY(0) scale(1); }
+  .cal-mhead {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 12px;
+    margin-bottom: 14px;
+  }
+  .cal-mhead .t {
+    font-family: 'Cormorant Garamond', serif;
+    font-weight: 500;
+    font-size: 22px;
+    color: var(--text);
+    line-height: 1.2;
+    overflow: hidden;
+  }
+  .cal-mhead .x {
+    width: 32px;
+    height: 32px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    background: transparent;
+    border: 1px solid rgba(255,255,255,.1);
+    color: var(--text-mid);
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 18px;
+    line-height: 1;
+    transition: color .15s, border-color .15s;
+    flex-shrink: 0;
+  }
+  .cal-mhead .x:hover { color: var(--accent); border-color: var(--accent); }
+  .cal-stats {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px 10px;
+    font-size: 11px;
+    color: var(--text-mid);
+    letter-spacing: 0.3px;
+    margin-bottom: 16px;
+    padding-bottom: 14px;
+    border-bottom: 1px solid rgba(212,175,55,.12);
+  }
+  .cal-stats .em { color: var(--accent); font-weight: 600; }
+  .cal-stats .sep { color: var(--text-dim); }
+
+  .cal-nav {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 10px;
+  }
+  .cal-nav .month {
+    font-family: 'Cormorant Garamond', serif;
+    font-weight: 500;
+    font-size: 16px;
+    color: var(--accent);
+    letter-spacing: 0.5px;
+  }
+  .cal-nav button {
+    width: 32px;
+    height: 32px;
+    background: transparent;
+    border: 1px solid rgba(212,175,55,.25);
+    color: var(--accent);
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 16px;
+    line-height: 1;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    transition: background .15s, border-color .15s;
+  }
+  .cal-nav button:hover { background: rgba(212,175,55,.08); border-color: var(--accent); }
+
+  .cal-week {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 4px;
+    margin-bottom: 6px;
+  }
+  .cal-week span {
+    text-align: center;
+    font-size: 9px;
+    color: var(--text-dim);
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    padding: 4px 0;
+  }
+  .cal-grid {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 4px;
+  }
+  .cal-cell {
+    aspect-ratio: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    border-radius: 8px;
+    font-size: 11px;
+    color: var(--text-dim);
+    background: transparent;
+    border: 1px solid transparent;
+    position: relative;
+    min-height: 36px;
+  }
+  .cal-cell.out { opacity: .25; }
+  .cal-cell.today { box-shadow: inset 0 0 0 1px rgba(245,215,110,.45); }
+  .cal-cell .d { font-size: 11px; line-height: 1; }
+  .cal-cell .v { font-size: 8px; line-height: 1; margin-top: 2px; letter-spacing: 0.2px; }
+  /* Planned but not done */
+  .cal-cell.planned {
+    border-color: rgba(212,175,55,.35);
+    color: var(--text-mid);
+    background: rgba(212,175,55,.04);
+  }
+  /* Completed — filled gold */
+  .cal-cell.done {
+    background: linear-gradient(135deg, var(--accent-bright), var(--accent));
+    color: var(--void);
+    border-color: var(--accent);
+    font-weight: 600;
+  }
+  .cal-cell.done .v { color: var(--void); opacity: .82; font-weight: 500; }
+  /* Missed — planned but not done (past day) */
+  .cal-cell.missed {
+    border-color: rgba(255,71,87,.55);
+    background: rgba(255,71,87,.06);
+    color: #FF8E97;
+  }
+
+  .cal-legend {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 4px 14px;
+    justify-content: center;
+    margin-top: 14px;
+    font-size: 10px;
+    color: var(--text-dim);
+    letter-spacing: 0.3px;
+  }
+  .cal-legend .li { display: inline-flex; align-items: center; gap: 6px; }
+  .cal-legend .sw { width: 10px; height: 10px; border-radius: 3px; display: inline-block; }
+  .cal-legend .sw.planned { border: 1px solid rgba(212,175,55,.5); background: rgba(212,175,55,.06); }
+  .cal-legend .sw.done { background: var(--accent); }
+  .cal-legend .sw.missed { border: 1px solid rgba(255,71,87,.6); background: rgba(255,71,87,.08); }
+
+  .tasks-empty {
+    text-align: center;
+    padding: 26px 18px;
+    background: var(--void-soft);
+    border-radius: 12px;
+    font-size: 12px;
+    color: var(--text-dim);
+    line-height: 1.5;
+  }
+
+  @media (max-width: 480px) {
+    body { padding: 0; }
+    .phone { width: 100vw; min-height: 100vh; border-radius: 0; box-shadow: none; }
+    .cal-modal { max-width: 100%; padding: 18px 14px 14px; }
+    .cal-cell { min-height: 32px; }
+    .cal-cell .d { font-size: 10px; }
+    .cal-cell .v { font-size: 7px; }
+  }
 </style>
 <link rel="stylesheet" href="theme.css">
 <link rel="stylesheet" href="motion.css">
@@ -244,9 +515,39 @@
       <div id="insightsContent" style="display:flex;flex-direction:column;gap:10px;font-size:13px;line-height:1.5;"></div>
     </div>
 
-    <!-- Per-task grouped list -->
+    <!-- Per-task grouped list (existing) -->
     <div id="historyList"></div>
 
+    <!-- VAZIFALAR TARIXI — per-task calendar -->
+    <div class="tasks-head">
+      <div class="h" data-i18n="weekly-review.tarix_tasks_head">Vazifalar tarixi</div>
+      <div class="sub" data-i18n="weekly-review.tarix_tasks_sub">Har kun bo'yicha</div>
+    </div>
+    <div id="tasksList" class="tasks-list"></div>
+
+  </div>
+</div>
+
+<!-- Calendar modal -->
+<div class="cal-overlay" id="calOverlay" role="dialog" aria-modal="true" aria-labelledby="calTaskName">
+  <div class="cal-modal" role="document">
+    <div class="cal-mhead">
+      <div class="t" id="calTaskName">—</div>
+      <button class="x" id="calClose" aria-label="Yopish" data-i18n-aria="weekly-review.tarix_modal_close">×</button>
+    </div>
+    <div class="cal-stats" id="calStats"></div>
+    <div class="cal-nav">
+      <button id="calPrev" aria-label="Oldingi oy" data-i18n-aria="weekly-review.tarix_prev_month">‹</button>
+      <div class="month" id="calMonthLabel">—</div>
+      <button id="calNext" aria-label="Keyingi oy" data-i18n-aria="weekly-review.tarix_next_month">›</button>
+    </div>
+    <div class="cal-week" id="calWeekRow"></div>
+    <div class="cal-grid" id="calGrid"></div>
+    <div class="cal-legend">
+      <span class="li"><span class="sw planned"></span><span data-i18n="weekly-review.tarix_legend_planned">Belgilangan</span></span>
+      <span class="li"><span class="sw done"></span><span data-i18n="weekly-review.tarix_legend_done">Bajarildi</span></span>
+      <span class="li"><span class="sw missed"></span><span data-i18n="weekly-review.tarix_legend_missed">O'tkazilgan</span></span>
+    </div>
   </div>
 </div>
 
@@ -256,12 +557,20 @@
 <script src="nav-overlay.js" defer></script>
 <script>
   const MONTHS_FALLBACK = ['yan','fev','mar','apr','may','iyun','iyul','avg','sen','okt','noy','dek'];
+  const MONTHS_LONG_FALLBACK = ['Yanvar','Fevral','Mart','Aprel','May','Iyun','Iyul','Avgust','Sentabr','Oktabr','Noyabr','Dekabr'];
   function getMonths() {
     if (window.I18N) {
       const v = I18N.t('weekly-review.months_short', null);
       if (Array.isArray(v) && v.length === 12) return v;
     }
     return MONTHS_FALLBACK;
+  }
+  function getMonthsLong() {
+    if (window.I18N) {
+      const v = I18N.t('weekly-review.months_long', null);
+      if (Array.isArray(v) && v.length === 12) return v;
+    }
+    return MONTHS_LONG_FALLBACK;
   }
 
   function escapeHtml(s) {
@@ -495,9 +804,219 @@
     });
   }
 
+  /* ===========================================================
+     VAZIFALAR TARIXI — task list with per-task month calendar
+     =========================================================== */
+
+  // Build a master index: { taskName: { plannedByDate: Map<iso, taskObj>, doneByDate: Map<iso, historyObj> } }
+  function buildTaskIndex() {
+    const idx = {};
+    const defaultName = (window.I18N ? I18N.t('weekly-review.default_task_name', 'Ish') : 'Ish');
+
+    // 1) Walk weekPlan — every scheduled occurrence
+    const weekPlan = (window.MVOW_DATA && MVOW_DATA.getWeekPlan) ? MVOW_DATA.getWeekPlan() : {};
+    Object.keys(weekPlan || {}).forEach(key => {
+      // key shape: 'dYYYY-MM-DD'
+      if (!/^d\d{4}-\d{2}-\d{2}$/.test(key)) return;
+      const iso = key.slice(1);
+      const arr = Array.isArray(weekPlan[key]) ? weekPlan[key] : [];
+      arr.forEach(t => {
+        const name = (t && t.name) || defaultName;
+        if (!idx[name]) idx[name] = { plannedByDate: new Map(), doneByDate: new Map() };
+        // Keep first occurrence per date (avoid duplicates of same task on same day)
+        if (!idx[name].plannedByDate.has(iso)) {
+          idx[name].plannedByDate.set(iso, { time: t.time || '', dur: t.dur || '' });
+        }
+      });
+    });
+
+    // 2) Walk history — every completed occurrence
+    const history = (window.MVOW_DATA && MVOW_DATA.getHistory) ? MVOW_DATA.getHistory() : [];
+    history.forEach(h => {
+      const name = h.name || defaultName;
+      const iso = h.dateIso;
+      if (!iso) return;
+      if (!idx[name]) idx[name] = { plannedByDate: new Map(), doneByDate: new Map() };
+      // If multiple completions for same task same day, sum minutes
+      const existing = idx[name].doneByDate.get(iso);
+      if (existing) {
+        existing.mins += (h.actualMins || 0);
+        existing.count += 1;
+      } else {
+        idx[name].doneByDate.set(iso, { mins: (h.actualMins || 0), count: 1, time: h.plannedTime || '' });
+      }
+      // A completed task implicitly counts as planned (in case it wasn't in weekPlan)
+      if (!idx[name].plannedByDate.has(iso)) {
+        idx[name].plannedByDate.set(iso, { time: h.plannedTime || '', dur: h.plannedDur || '' });
+      }
+    });
+
+    return idx;
+  }
+
+  let _taskIndex = null;
+  let _calCurrent = { name: null, year: 0, month: 0 }; // month 0-based
+
+  function renderTasksList() {
+    _taskIndex = buildTaskIndex();
+    const wrap = document.getElementById('tasksList');
+    const names = Object.keys(_taskIndex);
+
+    if (!names.length) {
+      const emptyTxt = (window.I18N ? I18N.t('weekly-review.tarix_empty', "Hali rejalashtirilgan vazifa yo'q.") : "Hali rejalashtirilgan vazifa yo'q.");
+      wrap.innerHTML = `<div class="tasks-empty">${emptyTxt}</div>`;
+      return;
+    }
+
+    // Sort by total planned days descending
+    names.sort((a, b) => _taskIndex[b].plannedByDate.size - _taskIndex[a].plannedByDate.size);
+
+    const lblDays = (window.I18N ? I18N.t('weekly-review.tarix_unit_days', 'kun') : 'kun');
+    const lblDone = (window.I18N ? I18N.t('weekly-review.tarix_unit_done', 'bajarildi') : 'bajarildi');
+    const ariaCal = (window.I18N ? I18N.t('weekly-review.tarix_aria_open_cal', 'Kalendarni ochish') : 'Kalendarni ochish');
+
+    wrap.innerHTML = names.map(name => {
+      const entry = _taskIndex[name];
+      const plannedDays = entry.plannedByDate.size;
+      const doneDays = entry.doneByDate.size;
+      return `
+        <div class="task-row" data-task="${escapeHtml(name)}">
+          <div class="name">${escapeHtml(name)}</div>
+          <div class="stats"><span class="em">${plannedDays}</span> ${lblDays}<span class="dot">·</span><span class="em">${doneDays}</span> ${lblDone}</div>
+          <button class="cal-btn" data-open-cal="${escapeHtml(name)}" aria-label="${escapeHtml(ariaCal)}">
+            <svg viewBox="0 0 24 24" aria-hidden="true">
+              <rect x="3" y="5" width="18" height="16" rx="2"></rect>
+              <line x1="3" y1="10" x2="21" y2="10"></line>
+              <line x1="8" y1="3" x2="8" y2="7"></line>
+              <line x1="16" y1="3" x2="16" y2="7"></line>
+            </svg>
+          </button>
+        </div>
+      `;
+    }).join('');
+
+    wrap.querySelectorAll('[data-open-cal]').forEach(btn => {
+      btn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        const name = btn.getAttribute('data-open-cal');
+        openCalendar(name);
+      });
+    });
+  }
+
+  function openCalendar(name) {
+    if (!_taskIndex || !_taskIndex[name]) return;
+    const now = new Date();
+    _calCurrent.name = name;
+    _calCurrent.year = now.getFullYear();
+    _calCurrent.month = now.getMonth();
+    renderCalendar();
+    const overlay = document.getElementById('calOverlay');
+    overlay.classList.add('on');
+    // Focus close for keyboard accessibility
+    requestAnimationFrame(() => {
+      const closeBtn = document.getElementById('calClose');
+      if (closeBtn) closeBtn.focus();
+    });
+  }
+
+  function closeCalendar() {
+    document.getElementById('calOverlay').classList.remove('on');
+  }
+
+  function renderCalendar() {
+    const name = _calCurrent.name;
+    if (!name || !_taskIndex || !_taskIndex[name]) return;
+    const entry = _taskIndex[name];
+    const year = _calCurrent.year;
+    const month = _calCurrent.month;
+
+    document.getElementById('calTaskName').textContent = name;
+
+    const monthsLong = getMonthsLong();
+    document.getElementById('calMonthLabel').textContent = monthsLong[month] + ' ' + year;
+
+    // Week header (Du..Ya)
+    const wkLabels = [
+      (window.I18N ? I18N.t('weekly-review.weekday_mon', 'Du') : 'Du'),
+      (window.I18N ? I18N.t('weekly-review.weekday_tue', 'Se') : 'Se'),
+      (window.I18N ? I18N.t('weekly-review.weekday_wed', 'Ch') : 'Ch'),
+      (window.I18N ? I18N.t('weekly-review.weekday_thu', 'Pa') : 'Pa'),
+      (window.I18N ? I18N.t('weekly-review.weekday_fri', 'Ju') : 'Ju'),
+      (window.I18N ? I18N.t('weekly-review.weekday_sat', 'Sh') : 'Sh'),
+      (window.I18N ? I18N.t('weekly-review.weekday_sun', 'Ya') : 'Ya')
+    ];
+    document.getElementById('calWeekRow').innerHTML = wkLabels.map(w => `<span>${w}</span>`).join('');
+
+    // Build month grid (Monday-start)
+    const firstOfMonth = new Date(year, month, 1);
+    const lastOfMonth = new Date(year, month + 1, 0);
+    const daysInMonth = lastOfMonth.getDate();
+    // Day-of-week with Monday=0..Sunday=6
+    const firstDow = (firstOfMonth.getDay() + 6) % 7;
+
+    const cells = [];
+    // Leading blanks
+    for (let i = 0; i < firstDow; i++) cells.push({ blank: true });
+    // Actual days
+    for (let d = 1; d <= daysInMonth; d++) cells.push({ day: d });
+    // Trailing to fill 7-wide rows (optional — keeps grid tidy)
+    while (cells.length % 7 !== 0) cells.push({ blank: true });
+
+    const todayIso = (window.MVOW_DATA && MVOW_DATA.localDateIso) ? MVOW_DATA.localDateIso(new Date()) : '';
+    const pad = (n) => (n < 10 ? '0' + n : '' + n);
+
+    let statsPlanned = 0, statsDone = 0, statsMins = 0;
+    entry.plannedByDate.forEach((_, iso) => {
+      if (iso.startsWith(year + '-' + pad(month + 1))) statsPlanned += 1;
+    });
+    entry.doneByDate.forEach((v, iso) => {
+      if (iso.startsWith(year + '-' + pad(month + 1))) {
+        statsDone += 1;
+        statsMins += (v.mins || 0);
+      }
+    });
+
+    const lblMarked = (window.I18N ? I18N.t('weekly-review.tarix_modal_marked', 'kun belgilangan') : 'kun belgilangan');
+    const lblDoneShort = (window.I18N ? I18N.t('weekly-review.tarix_modal_done', 'kun bajarildi') : 'kun bajarildi');
+    const lblFocusHrs = (window.I18N ? I18N.t('weekly-review.tarix_modal_focus_hours', 'soat fokus') : 'soat fokus');
+    const focusHrs = Math.round(statsMins / 60 * 10) / 10;
+    document.getElementById('calStats').innerHTML = `
+      <span><span class="em">${statsPlanned}</span> ${lblMarked}</span>
+      <span class="sep">·</span>
+      <span><span class="em">${statsDone}</span> ${lblDoneShort}</span>
+      <span class="sep">·</span>
+      <span><span class="em">${focusHrs}</span> ${lblFocusHrs}</span>
+    `;
+
+    const grid = document.getElementById('calGrid');
+    grid.innerHTML = cells.map(c => {
+      if (c.blank) return `<div class="cal-cell out"></div>`;
+      const iso = year + '-' + pad(month + 1) + '-' + pad(c.day);
+      const isPast = iso < todayIso;
+      const isToday = iso === todayIso;
+      const planned = entry.plannedByDate.has(iso);
+      const done = entry.doneByDate.get(iso);
+      let cls = 'cal-cell';
+      let valHtml = '';
+      if (done) {
+        cls += ' done';
+        const hrs = Math.round(done.mins / 60 * 10) / 10;
+        if (hrs > 0) valHtml = `<div class="v">${hrs}s</div>`;
+      } else if (planned && isPast) {
+        cls += ' missed';
+      } else if (planned) {
+        cls += ' planned';
+      }
+      if (isToday) cls += ' today';
+      return `<div class="${cls}"><div class="d">${c.day}</div>${valHtml}</div>`;
+    }).join('');
+  }
+
   document.addEventListener('DOMContentLoaded', () => {
     let cur = 'week';
     render(cur);
+    renderTasksList();
 
     // Milestone celebration — fires once when streak crosses 7 / 30 / 100
     try {
@@ -525,6 +1044,26 @@
         cur = t.dataset.range;
         render(cur);
       });
+    });
+
+    // Calendar modal wiring
+    const overlay = document.getElementById('calOverlay');
+    document.getElementById('calClose').addEventListener('click', closeCalendar);
+    overlay.addEventListener('click', (e) => {
+      if (e.target === overlay) closeCalendar();
+    });
+    document.getElementById('calPrev').addEventListener('click', () => {
+      _calCurrent.month -= 1;
+      if (_calCurrent.month < 0) { _calCurrent.month = 11; _calCurrent.year -= 1; }
+      renderCalendar();
+    });
+    document.getElementById('calNext').addEventListener('click', () => {
+      _calCurrent.month += 1;
+      if (_calCurrent.month > 11) { _calCurrent.month = 0; _calCurrent.year += 1; }
+      renderCalendar();
+    });
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape' && overlay.classList.contains('on')) closeCalendar();
     });
   });
 </script>
