@@ -395,14 +395,12 @@
     <p class="bio" id="bioLine"></p>
 
     <div class="actions">
-      <a class="cta" id="primaryCta" href="maqsadlar.html" data-i18n="home.cta_plan">Rejani tuzing</a>
+      <a class="cta" id="primaryCta" href="hard-lock.html" data-i18n="home.cta_start">Boshlash</a>
 
       <!-- Tanlovlar — istalganini bos -->
       <div id="tileGrid" style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:6px;">
-        <a class="ghost" id="tilePlan" href="maqsadlar.html" style="margin:0;" data-i18n="home.tile_plan">Bugungi reja</a>
         <a class="ghost" href="maqsadlar.html" style="margin:0;" data-i18n="home.tile_goals">Maqsadlar</a>
-        <a class="ghost" href="weekly-review.html" style="margin:0;" data-i18n="home.tile_calendar">Kalendar</a>
-        <a class="ghost" id="tileEvening" href="kechqurun.html" style="margin:0;" data-i18n="home.tile_evening">Kun yakuni</a>
+        <a class="ghost" href="weekly-review.html" style="margin:0;" data-i18n="home.tile_history">Tarix</a>
       </div>
     </div>
 
@@ -614,26 +612,9 @@
     document.getElementById('focusH').textContent = totalH || 0;
     document.getElementById('sessN').textContent = plan.length;
 
-    // ── AQLLI CTA — joriy holat asosida (vaqt + plan) ──
+    // ── SODDA CTA — doim "Boshlash" → taymerga; maqsad yo'q bo'lsa Maqsad qo'shing ──
     const cta = document.getElementById('primaryCta');
     const greet = smartGreeting();
-    const tilePlan = document.getElementById('tilePlan');
-    const tileEvening = document.getElementById('tileEvening');
-
-    // Hozir aktiv ish bormi?
-    let activeTask = null;
-    for (const t of plan) {
-      const m = (t.time || '').match(/^(\d{1,2}):(\d{2})$/);
-      if (!m) continue;
-      const startMin = (+m[1]) * 60 + (+m[2]);
-      const durMin = window.MVOW_DATA ? MVOW_DATA.parseDurMins(t.dur) : 60;
-      if (nowMin >= startMin && nowMin < startMin + durMin) { activeTask = t; break; }
-    }
-    const upcomingSoon = upcoming && ((tKey(upcoming.time) - nowMin) <= 30);
-    // isEvening: vaqtga asoslangan, matn taqqoslamaymiz (i18n bezdiruvchi bug edi)
-    const hForEvening = nowMin / 60;
-    const isEvening = hForEvening >= 17 || hForEvening < 4;
-    const allDone = plan.length && !upcoming && !activeTask;
 
     // Maqsadlar bormi?
     let hasGoals = false;
@@ -643,26 +624,13 @@
     } catch {}
 
     const Ti = (k, def) => (window.I18N ? I18N.t(k, def) : def);
-    if (!hasGoals) {
+    if (!hasGoals || !plan.length) {
       cta.textContent = Ti('home.cta_add_goal', "Maqsad qo'shing");
       cta.href = 'maqsadlar.html';
-    } else if (allDone || isEvening) {
-      cta.textContent = Ti('home.cta_evening', 'Kun yakuni');
-      cta.href = 'kechqurun.html';
-    } else if (activeTask || upcomingSoon) {
-      cta.textContent = Ti('home.cta_start', 'Boshlayman');
-      cta.href = 'hard-lock.html';
     } else {
-      cta.textContent = Ti('home.cta_today_plan', 'Bugungi reja');
-      cta.href = 'maqsadlar.html';
+      cta.textContent = Ti('home.cta_start', 'Boshlash');
+      cta.href = 'hard-lock.html';
     }
-
-    // Tile takrorlarini yashir — CTA bilan bir xil joyga bormaslik kerak
-    [tilePlan, tileEvening].forEach(t => {
-      if (t && t.getAttribute('href') === cta.getAttribute('href')) {
-        t.style.display = 'none';
-      }
-    });
 
     // ── STREAK MILESTONE PROGRESS (1 / 7 / 30 / 100 / 365) ──
     if (streak > 0) {
