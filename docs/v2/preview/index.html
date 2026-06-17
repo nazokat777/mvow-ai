@@ -144,8 +144,8 @@
   <a class="cta" id="goBtn" href="royhat.html">Boshlaymiz</a>
 </div>
 
-<script src="i18n.js?v=28.2.2" defer></script>
-<script src="lang-switcher.js?v=28.2.2" defer></script>
+<script src="i18n.js?v=28.2.3" defer></script>
+<script src="lang-switcher.js?v=28.2.3" defer></script>
 <script>
   // Qaytuvchi foydalanuvchi — to'g'ridan-to'g'ri uy
   const hasUser = !!localStorage.getItem('mvow.userName') || !!localStorage.getItem('mvow.email');
@@ -166,9 +166,7 @@
   const tagEl = document.getElementById('tagline');
   const goBtn = document.getElementById('goBtn');
 
-  function setLang(lang) {
-    if (window.I18N) I18N.set(lang);
-    else localStorage.setItem('mvow.lang', lang);
+  function applyLang(lang) {
     document.querySelectorAll('.lang-btn').forEach(b =>
       b.classList.toggle('on', b.dataset.lang === lang)
     );
@@ -177,12 +175,26 @@
     document.documentElement.lang = lang;
   }
 
-  const current = localStorage.getItem('mvow.lang') || ((navigator.language || 'uz').slice(0,2));
-  const initLang = ['uz','ru','en'].includes(current) ? current : 'uz';
-  setLang(initLang);
+  function pickLang(lang) {
+    const prev = localStorage.getItem('mvow.lang');
+    localStorage.setItem('mvow.lang', lang);
+    if (window.I18N && typeof I18N.set === 'function') I18N.set(lang);
+    applyLang(lang);
+    if (prev !== lang) {
+      setTimeout(() => location.reload(), 80);
+    }
+  }
+
+  const stored = localStorage.getItem('mvow.lang');
+  const initLang = ['uz','ru','en'].includes(stored)
+    ? stored
+    : (['uz','ru','en'].includes((navigator.language || 'uz').slice(0,2))
+        ? (navigator.language || 'uz').slice(0,2)
+        : 'uz');
+  applyLang(initLang);
 
   document.querySelectorAll('.lang-btn').forEach(b =>
-    b.addEventListener('click', () => setLang(b.dataset.lang))
+    b.addEventListener('click', () => pickLang(b.dataset.lang))
   );
 
   goBtn.addEventListener('click', () => {
