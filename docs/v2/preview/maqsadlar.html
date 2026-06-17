@@ -175,6 +175,165 @@
   .goal.editing .goal-del { display: flex; }
   .goal-del:hover { color: var(--alert); }
 
+  /* Projection / stats line */
+  .goal-projection {
+    margin-top: 10px;
+    padding-top: 10px;
+    border-top: 1px solid rgba(255,255,255,.04);
+    font-size: 11.5px;
+    color: var(--text-mid);
+    letter-spacing: 0.3px;
+    line-height: 1.5;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 4px 10px;
+  }
+  .goal-projection .gp-done    { color: var(--accent); font-weight: 600; }
+  .goal-projection .gp-left    { color: var(--text); }
+  .goal-projection .gp-end     { color: var(--text-mid); }
+  .goal-projection .gp-end b   { color: var(--text); font-weight: 600; }
+  .goal-projection .gp-sep     { color: var(--text-dim); }
+
+  /* Sessions block */
+  .goal-sessions {
+    margin-top: 12px;
+    padding-top: 12px;
+    border-top: 1px solid rgba(255,255,255,.04);
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
+  .gs-label {
+    font-size: 10.5px;
+    letter-spacing: 1.5px;
+    color: var(--text-dim);
+    text-transform: uppercase;
+    margin-bottom: 4px;
+  }
+  .gs-row {
+    display: grid;
+    grid-template-columns: 56px 1fr auto auto;
+    align-items: center;
+    gap: 10px;
+    padding: 8px 10px;
+    border-radius: 8px;
+    background: rgba(255,255,255,.025);
+    border: 1px solid rgba(255,255,255,.04);
+    font-size: 13px;
+  }
+  .gs-time {
+    color: var(--accent);
+    font-weight: 600;
+    font-variant-numeric: tabular-nums;
+  }
+  .gs-dur {
+    color: var(--text);
+    cursor: pointer;
+    padding: 4px 6px;
+    border-radius: 6px;
+    transition: background .15s;
+  }
+  .gs-dur:hover { background: rgba(255,255,255,.05); }
+  .gs-dur-input {
+    width: 100%;
+    background: var(--void-soft);
+    border: 1px solid var(--accent);
+    border-radius: 6px;
+    color: var(--text);
+    font-family: 'Inter', sans-serif;
+    font-size: 13px;
+    padding: 4px 6px;
+  }
+  .gs-edit, .gs-del {
+    width: 28px; height: 28px;
+    border-radius: 6px;
+    background: transparent;
+    border: none;
+    color: var(--text-dim);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 14px;
+    transition: all .15s;
+  }
+  .gs-edit:hover { color: var(--accent); background: rgba(212,175,55,.08); }
+  .gs-del:hover  { color: var(--alert); background: rgba(255,71,87,.08); }
+
+  /* Add session button */
+  .gs-add {
+    margin-top: 4px;
+    width: 100%;
+    padding: 10px;
+    background: transparent;
+    border: 1px dashed rgba(212,175,55,.25);
+    border-radius: 8px;
+    color: var(--accent);
+    font-family: 'Inter', sans-serif;
+    font-size: 12px;
+    font-weight: 500;
+    letter-spacing: 0.5px;
+    cursor: pointer;
+    transition: all .15s;
+  }
+  .gs-add:hover {
+    background: rgba(212,175,55,.05);
+    border-color: var(--accent);
+  }
+
+  /* Inline add-session form */
+  .gs-add-form {
+    margin-top: 4px;
+    padding: 10px;
+    background: rgba(255,255,255,.025);
+    border: 1px solid rgba(212,175,55,.2);
+    border-radius: 8px;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+  }
+  .gs-add-form input,
+  .gs-add-form select {
+    background: var(--void-soft);
+    border: 1px solid rgba(255,255,255,.08);
+    border-radius: 6px;
+    color: var(--text);
+    font-family: 'Inter', sans-serif;
+    font-size: 13px;
+    padding: 8px 10px;
+    min-height: 38px;
+  }
+  .gs-add-form input:focus,
+  .gs-add-form select:focus {
+    outline: none;
+    border-color: var(--accent);
+  }
+  .gs-add-form .gs-add-actions {
+    grid-column: 1 / -1;
+    display: flex;
+    gap: 8px;
+    justify-content: flex-end;
+  }
+  .gs-add-form button {
+    padding: 8px 14px;
+    border-radius: 6px;
+    border: none;
+    cursor: pointer;
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: 0.5px;
+  }
+  .gs-add-cancel {
+    background: transparent;
+    color: var(--text-dim);
+  }
+  .gs-add-cancel:hover { color: var(--text); }
+  .gs-add-save {
+    background: var(--accent);
+    color: var(--void);
+  }
+  .gs-add-save:hover { filter: brightness(1.1); }
+
   /* Add button */
   .add-goal {
     display: flex;
@@ -275,13 +434,45 @@
   };
 
   function loadGoals() {
+    // Prefer the shared inflating loader when present (adds sessions[] + changeLog
+    // for legacy entries without persisting until next save).
+    if (window.MVOW_DATA && typeof MVOW_DATA.loadGoals === 'function') {
+      return MVOW_DATA.loadGoals();
+    }
+    let raw = [];
     try {
-      const g = JSON.parse(localStorage.getItem('mvow.goals') || '[]');
-      return Array.isArray(g) ? g : [];
-    } catch { return []; }
+      raw = JSON.parse(localStorage.getItem('mvow.goals') || '[]');
+    } catch { raw = []; }
+    if (!Array.isArray(raw)) raw = [];
+    // Inflate legacy single-session goals so the rest of the screen can rely on sessions[].
+    return raw.map(g => {
+      if (Array.isArray(g.sessions) && g.sessions.length) return g;
+      const time = g.time || '07:00';
+      const dur  = g.dur  || '60 daq';
+      g.sessions  = [{ sid: 's1', time, dur }];
+      g.changeLog = [{ fromIso: g.startDate, sessions: [{ time, dur }] }];
+      return g;
+    });
   }
   function saveGoals(arr) {
-    localStorage.setItem('mvow.goals', JSON.stringify(arr));
+    if (window.MVOW_DATA && typeof MVOW_DATA.saveGoals === 'function') {
+      MVOW_DATA.saveGoals(arr);
+      return;
+    }
+    // Fallback writer — mirrors legacy fields so older readers keep working.
+    const out = arr.map(g => {
+      const sessions = (Array.isArray(g.sessions) && g.sessions.length)
+        ? g.sessions
+        : [{ sid:'s1', time: g.time || '07:00', dur: g.dur || '60 daq' }];
+      const first = sessions[0];
+      const totalMins = sessions.reduce((s,x) => s + parseDurMins(x.dur), 0);
+      return Object.assign({}, g, {
+        sessions,
+        time: first.time,
+        dur:  fmtHM(totalMins)
+      });
+    });
+    localStorage.setItem('mvow.goals', JSON.stringify(out));
   }
 
   function escapeHtml(s) {
@@ -292,6 +483,167 @@
     const start = new Date(isoStart);
     const now = new Date();
     return Math.max(0, Math.floor((now - start) / 86400000));
+  }
+
+  // ---- Local fallbacks for duration formatting & projection math ----
+  // Used only when MVOW_DATA.* equivalents aren't loaded yet.
+  function parseDurMins(s) {
+    if (window.MVOW_DATA && typeof MVOW_DATA.parseDurMins === 'function') {
+      return MVOW_DATA.parseDurMins(s);
+    }
+    if (!s) return 60;
+    const str = String(s).toLowerCase();
+    let h = 0, m = 0;
+    const hM = str.match(/(\d+)\s*soat/);
+    const mM = str.match(/(\d+)\s*daq/);
+    if (hM) h = parseInt(hM[1], 10);
+    if (mM) m = parseInt(mM[1], 10);
+    if (!hM && !mM) {
+      const n = parseInt(str, 10);
+      if (!isNaN(n)) m = n;
+    }
+    return h * 60 + m || 60;
+  }
+  function fmtHM(mins) {
+    if (window.MVOW_DATA && typeof MVOW_DATA.fmtHM === 'function') {
+      return MVOW_DATA.fmtHM(mins);
+    }
+    const n = Math.max(0, Math.round(mins));
+    const h = Math.floor(n / 60);
+    const m = n % 60;
+    if (h && m) return h + ' soat ' + m + ' daq';
+    if (h)     return h + ' soat';
+    return m + ' daq';
+  }
+  function localIso(d) {
+    if (window.MVOW_DATA && typeof MVOW_DATA.localDateIso === 'function') {
+      return MVOW_DATA.localDateIso(d);
+    }
+    const x = d ? new Date(d) : new Date();
+    const y = x.getFullYear();
+    const mo = String(x.getMonth() + 1).padStart(2, '0');
+    const da = String(x.getDate()).padStart(2, '0');
+    return y + '-' + mo + '-' + da;
+  }
+  function isoAddDays(iso, days) {
+    const d = new Date(iso + 'T00:00:00');
+    d.setDate(d.getDate() + days);
+    return localIso(d);
+  }
+
+  // Projection math fallback if MVOW_DATA.getGoalProgress doesn't exist yet.
+  function getGoalProgress(goalId) {
+    if (window.MVOW_DATA && typeof MVOW_DATA.getGoalProgress === 'function') {
+      return MVOW_DATA.getGoalProgress(goalId);
+    }
+    const goals = loadGoals();
+    const g = goals.find(x => x.id === goalId);
+    if (!g) return null;
+    const sessions = g.sessions || [];
+    const dailyAllocation = sessions.reduce((s,x) => s + parseDurMins(x.dur), 0);
+
+    const info = DURATION_INFO[g.duration] || DURATION_INFO.month;
+    const startIso = g.startDate;
+    const endIso   = isoAddDays(startIso, info.days);
+    const todayIso = localIso();
+
+    // Total target — walk changeLog windows
+    let totalTarget = 0;
+    const log = (g.changeLog && g.changeLog.length)
+      ? g.changeLog
+      : [{ fromIso: startIso, sessions: sessions.map(s => ({ time: s.time, dur: s.dur })) }];
+    for (let i = 0; i < log.length; i++) {
+      const winStart = log[i].fromIso > startIso ? log[i].fromIso : startIso;
+      const winEnd   = (i + 1 < log.length) ? log[i + 1].fromIso : endIso;
+      const a = new Date(winStart + 'T00:00:00');
+      const b = new Date(winEnd   + 'T00:00:00');
+      const days = Math.max(0, Math.round((b - a) / 86400000));
+      const alloc = (log[i].sessions || []).reduce((s,x) => s + parseDurMins(x.dur), 0);
+      totalTarget += days * alloc;
+    }
+
+    const history = (window.MVOW_DATA ? MVOW_DATA.getHistory() : []);
+    const done = history
+      .filter(h => h.name === g.text && h.dateIso >= startIso && h.dateIso < endIso)
+      .reduce((s,h) => s + (h.actualMins || 0), 0);
+
+    const remaining = Math.max(0, totalTarget - done);
+    let projectedEnd = null;
+    if (dailyAllocation > 0) {
+      const daysNeeded = Math.ceil(remaining / dailyAllocation);
+      projectedEnd = isoAddDays(todayIso, daysNeeded);
+    }
+    return { done, remaining, totalTarget, dailyAllocation, projectedEnd, originalEnd: endIso };
+  }
+
+  function fmtHours(mins) {
+    const h = mins / 60;
+    if (h >= 10) return Math.round(h) + ' soat';
+    return (Math.round(h * 10) / 10).toString().replace('.0', '') + ' soat';
+  }
+  function fmtDateShort(iso) {
+    if (!iso) return '—';
+    const d = new Date(iso + 'T00:00:00');
+    if (isNaN(d.getTime())) return iso;
+    const mo = String(d.getMonth() + 1).padStart(2, '0');
+    const da = String(d.getDate()).padStart(2, '0');
+    return d.getFullYear() + '-' + mo + '-' + da;
+  }
+
+  // ---- Session mutators (prefer DATA helpers, fall back to inline writes) ----
+  function _writeGoalSessions(goalId, newSessions) {
+    const goals = loadGoals();
+    const idx = goals.findIndex(x => x.id === goalId);
+    if (idx < 0) return null;
+    const g = goals[idx];
+    // Re-sid (stable s1..sN ordering) to keep the UI deterministic.
+    const fresh = newSessions.map((s, i) => ({
+      sid:  s.sid || ('s' + (i + 1)),
+      time: s.time,
+      dur:  s.dur
+    }));
+    g.sessions = fresh;
+    // Append / replace today's changeLog entry.
+    const today = localIso();
+    g.changeLog = Array.isArray(g.changeLog) ? g.changeLog.slice() : [];
+    const last = g.changeLog[g.changeLog.length - 1];
+    const entry = { fromIso: today, sessions: fresh.map(s => ({ time: s.time, dur: s.dur })) };
+    if (last && last.fromIso === today) g.changeLog[g.changeLog.length - 1] = entry;
+    else g.changeLog.push(entry);
+    goals[idx] = g;
+    saveGoals(goals);
+    return g;
+  }
+  function updateGoalSession(goalId, sid, patch) {
+    if (window.MVOW_DATA && typeof MVOW_DATA.updateGoalSession === 'function') {
+      return MVOW_DATA.updateGoalSession(goalId, sid, patch);
+    }
+    const goals = loadGoals();
+    const g = goals.find(x => x.id === goalId);
+    if (!g) return null;
+    const next = g.sessions.map(s => s.sid === sid ? Object.assign({}, s, patch) : s);
+    return _writeGoalSessions(goalId, next);
+  }
+  function addGoalSession(goalId, sess) {
+    if (window.MVOW_DATA && typeof MVOW_DATA.addGoalSession === 'function') {
+      return MVOW_DATA.addGoalSession(goalId, sess);
+    }
+    const goals = loadGoals();
+    const g = goals.find(x => x.id === goalId);
+    if (!g) return null;
+    const next = g.sessions.concat([{ time: sess.time, dur: sess.dur }]);
+    return _writeGoalSessions(goalId, next);
+  }
+  function removeGoalSession(goalId, sid) {
+    if (window.MVOW_DATA && typeof MVOW_DATA.removeGoalSession === 'function') {
+      try { return MVOW_DATA.removeGoalSession(goalId, sid); } catch { /* falls through */ }
+    }
+    const goals = loadGoals();
+    const g = goals.find(x => x.id === goalId);
+    if (!g) return null;
+    if (g.sessions.length <= 1) return null; // keep at least one
+    const next = g.sessions.filter(s => s.sid !== sid);
+    return _writeGoalSessions(goalId, next);
   }
 
   function render() {
@@ -335,6 +687,44 @@
       const lblDays = _t('maqsadlar.days_unit', 'kun');
       const lblDaysLeft = _t('maqsadlar.days_left', 'kun qoldi');
       const lblDone = _t('maqsadlar.done_lbl', 'Bajarildi');
+      const lblSessions = _t('maqsadlar.sessions_lbl', 'Sessiyalar');
+      const lblAddSession = _t('maqsadlar.add_session', "+ Yana sessiya qo'sh");
+      const lblEditSession = _t('maqsadlar.edit_session', 'Tahrirlash');
+      const lblDelSession = _t('maqsadlar.del_session', "O'chirish");
+      const lblStatsDone = _t('maqsadlar.stats_done', 'soat bajarildi');
+      const lblStatsLeft = _t('maqsadlar.stats_left', 'soat qoldi');
+      const lblStatsEnd  = _t('maqsadlar.stats_end',  'Tugatish');
+      const lblNewTime = _t('maqsadlar.new_time', 'Vaqt');
+      const lblNewDur  = _t('maqsadlar.new_dur',  'Davomiyligi');
+      const lblSave    = _t('common.save', 'Saqlash');
+      const lblCancel  = _t('common.cancel', 'Bekor');
+
+      // Projection stats
+      const prog = getGoalProgress(g.id) || { done: 0, remaining: 0, dailyAllocation: 0, projectedEnd: null };
+      const doneHours = fmtHours(prog.done);
+      const leftHours = fmtHours(prog.remaining);
+      const endTxt = prog.projectedEnd ? fmtDateShort(prog.projectedEnd) : '—';
+
+      const sessions = Array.isArray(g.sessions) && g.sessions.length
+        ? g.sessions
+        : [{ sid:'s1', time: g.time || '07:00', dur: g.dur || '60 daq' }];
+
+      const sessionsHtml = sessions.map(s => `
+        <div class="gs-row" data-sid="${escapeHtml(s.sid)}">
+          <span class="gs-time">${escapeHtml(s.time)}</span>
+          <span class="gs-dur"
+                data-edit-dur="${escapeHtml(s.sid)}"
+                data-current="${escapeHtml(s.dur)}"
+                title="${escapeHtml(lblEditSession)}">${escapeHtml(s.dur)}</span>
+          <button class="gs-edit" data-edit-time="${escapeHtml(s.sid)}"
+                  data-current="${escapeHtml(s.time)}"
+                  type="button" aria-label="${escapeHtml(lblEditSession)}">&#9998;</button>
+          <button class="gs-del" data-del-sid="${escapeHtml(s.sid)}"
+                  type="button" aria-label="${escapeHtml(lblDelSession)}"
+                  ${sessions.length <= 1 ? 'disabled style="opacity:.3;cursor:not-allowed;"' : ''}>×</button>
+        </div>
+      `).join('');
+
       return `
         <div class="goal" data-id="${g.id}">
           <button class="goal-del" data-del="${g.id}" type="button" aria-label="${escapeHtml(lblDelAria)}">×</button>
@@ -350,6 +740,36 @@
             <span class="left">${passed} / ${info.days} ${escapeHtml(lblDays)}</span>
             <span class="right">${remaining} ${escapeHtml(lblDaysLeft)}</span>
           </div>
+
+          <div class="goal-projection">
+            <span class="gp-done"><b>${escapeHtml(doneHours)}</b> ${escapeHtml(lblStatsDone)}</span>
+            <span class="gp-sep">·</span>
+            <span class="gp-left"><b>${escapeHtml(leftHours)}</b> ${escapeHtml(lblStatsLeft)}</span>
+            <span class="gp-sep">·</span>
+            <span class="gp-end">${escapeHtml(lblStatsEnd)}: <b>${escapeHtml(endTxt)}</b></span>
+          </div>
+
+          <div class="goal-sessions" data-goal-sessions="${g.id}">
+            <div class="gs-label">${escapeHtml(lblSessions)}</div>
+            ${sessionsHtml}
+            <button class="gs-add" data-add-session="${g.id}" type="button">${escapeHtml(lblAddSession)}</button>
+            <form class="gs-add-form" data-add-form="${g.id}" hidden>
+              <input type="time" name="time" required value="07:00" aria-label="${escapeHtml(lblNewTime)}">
+              <select name="dur" aria-label="${escapeHtml(lblNewDur)}">
+                <option value="15 daq">15 daq</option>
+                <option value="30 daq" selected>30 daq</option>
+                <option value="45 daq">45 daq</option>
+                <option value="60 daq">1 soat</option>
+                <option value="1 soat 30 daq">1 soat 30 daq</option>
+                <option value="2 soat">2 soat</option>
+              </select>
+              <div class="gs-add-actions">
+                <button type="button" class="gs-add-cancel" data-add-cancel="${g.id}">${escapeHtml(lblCancel)}</button>
+                <button type="submit" class="gs-add-save">${escapeHtml(lblSave)}</button>
+              </div>
+            </form>
+          </div>
+
           <div style="margin-top:10px;padding-top:10px;border-top:1px solid rgba(255,255,255,.04);display:flex;justify-content:space-between;align-items:center;font-size:11px;letter-spacing:0.5px;">
             <span style="color:var(--text-dim);">${escapeHtml(lblDone)}</span>
             <span style="color:${gradeColor};font-weight:600;font-size:14px;">${donePct}%</span>
@@ -365,6 +785,124 @@
         const id = parseInt(b.dataset.del, 10);
         if (!confirm(_t('maqsadlar.del_confirm', "Bu maqsadni o'chirasizmi? Kalendaringizdan ham olib tashlanadi."))) return;
         removeGoal(id);
+      });
+    });
+
+    // Session: edit duration (inline input)
+    list.querySelectorAll('[data-edit-dur]').forEach(span => {
+      span.addEventListener('click', (e) => {
+        e.stopPropagation();
+        if (span.querySelector('input')) return; // already editing
+        const sid = span.dataset.editDur;
+        const goalId = parseInt(span.closest('[data-goal-sessions]').dataset.goalSessions, 10);
+        const cur = span.dataset.current || span.textContent;
+        const input = document.createElement('input');
+        input.type = 'text';
+        input.className = 'gs-dur-input';
+        input.value = cur;
+        input.setAttribute('aria-label', _t('maqsadlar.new_dur', 'Davomiyligi'));
+        span.innerHTML = '';
+        span.appendChild(input);
+        input.focus();
+        input.select();
+        const commit = () => {
+          const v = input.value.trim();
+          if (!v || v === cur) { render(); return; }
+          updateGoalSession(goalId, sid, { dur: v });
+          render();
+        };
+        const cancel = () => render();
+        input.addEventListener('blur', commit);
+        input.addEventListener('keydown', (ev) => {
+          if (ev.key === 'Enter') { ev.preventDefault(); input.blur(); }
+          else if (ev.key === 'Escape') { ev.preventDefault(); cancel(); }
+        });
+      });
+    });
+
+    // Session: edit time (uses native time picker)
+    list.querySelectorAll('[data-edit-time]').forEach(btn => {
+      btn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        const sid = btn.dataset.editTime;
+        const goalId = parseInt(btn.closest('[data-goal-sessions]').dataset.goalSessions, 10);
+        const cur = btn.dataset.current || '07:00';
+        const row = btn.closest('.gs-row');
+        const timeSpan = row.querySelector('.gs-time');
+        if (row.querySelector('input[type=time]')) return;
+        const input = document.createElement('input');
+        input.type = 'time';
+        input.className = 'gs-dur-input';
+        input.value = cur;
+        input.style.width = '100%';
+        timeSpan.style.display = 'none';
+        timeSpan.insertAdjacentElement('afterend', input);
+        input.focus();
+        const commit = () => {
+          const v = input.value;
+          if (!v || v === cur) { render(); return; }
+          updateGoalSession(goalId, sid, { time: v });
+          render();
+        };
+        input.addEventListener('blur', commit);
+        input.addEventListener('keydown', (ev) => {
+          if (ev.key === 'Enter') { ev.preventDefault(); input.blur(); }
+          else if (ev.key === 'Escape') { ev.preventDefault(); render(); }
+        });
+      });
+    });
+
+    // Session: delete
+    list.querySelectorAll('[data-del-sid]').forEach(btn => {
+      btn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        if (btn.disabled) return;
+        const sid = btn.dataset.delSid;
+        const goalId = parseInt(btn.closest('[data-goal-sessions]').dataset.goalSessions, 10);
+        if (!confirm(_t('maqsadlar.del_session_confirm', "Bu sessiyani o'chirasizmi?"))) return;
+        removeGoalSession(goalId, sid);
+        render();
+      });
+    });
+
+    // Session: open add-form
+    list.querySelectorAll('[data-add-session]').forEach(btn => {
+      btn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        const id = btn.dataset.addSession;
+        const form = list.querySelector('[data-add-form="' + id + '"]');
+        if (!form) return;
+        form.hidden = false;
+        btn.hidden = true;
+        const t = form.querySelector('input[name=time]');
+        if (t) t.focus();
+      });
+    });
+
+    // Session: cancel add-form
+    list.querySelectorAll('[data-add-cancel]').forEach(btn => {
+      btn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        const id = btn.dataset.addCancel;
+        const form = list.querySelector('[data-add-form="' + id + '"]');
+        const opener = list.querySelector('[data-add-session="' + id + '"]');
+        if (form) form.hidden = true;
+        if (opener) opener.hidden = false;
+      });
+    });
+
+    // Session: submit add-form
+    list.querySelectorAll('[data-add-form]').forEach(form => {
+      form.addEventListener('submit', (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        const goalId = parseInt(form.dataset.addForm, 10);
+        const fd = new FormData(form);
+        const time = (fd.get('time') || '').toString();
+        const dur  = (fd.get('dur')  || '').toString();
+        if (!time || !dur) return;
+        addGoalSession(goalId, { time, dur });
+        render();
       });
     });
   }

@@ -150,6 +150,107 @@
   }
   .bio.show { display: block; }
 
+  /* "+ vazifa qo'shish" — ghost ROW matching .t-row grid */
+  .t-add-row {
+    display: grid;
+    grid-template-columns: 18px 56px 1fr 20px;
+    gap: 10px;
+    align-items: center;
+    width: 100%;
+    padding: 10px 12px;
+    margin-top: 6px;
+    background: transparent;
+    border: 1px dashed rgba(212,175,55,.22);
+    border-radius: 8px;
+    cursor: pointer;
+    color: var(--text-mid);
+    font-family: 'Inter', sans-serif;
+    text-align: left;
+    transition: border-color .18s, background .18s, color .18s;
+  }
+  .t-add-row:hover { border-color: var(--accent-medium); background: var(--accent-soft); color: var(--text); }
+  .t-add-row .t-add-plus {
+    font-size: 16px; line-height: 1; color: var(--accent);
+    text-align: center; font-weight: 500;
+  }
+  .t-add-row .t-add-label {
+    grid-column: 3 / span 2;
+    font-size: 12px; letter-spacing: 0.4px;
+  }
+
+  /* Inline form — appears in place of the button */
+  .t-add-form {
+    margin-top: 6px;
+    padding: 12px;
+    background: var(--void-soft);
+    border: 1px solid var(--accent-medium);
+    border-radius: 10px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    animation: tAddSlide .18s ease-out;
+  }
+  @keyframes tAddSlide {
+    from { opacity: 0; transform: translateY(-4px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+  .t-add-form[hidden] { display: none; }
+  .t-add-grid {
+    display: grid;
+    grid-template-columns: 90px 1fr;
+    gap: 8px;
+  }
+  .t-add-form input {
+    width: 100%;
+    padding: 9px 10px;
+    background: var(--void);
+    border: 1px solid rgba(255,255,255,.10);
+    border-radius: 6px;
+    color: var(--text);
+    font-family: 'Inter', sans-serif;
+    font-size: 13px;
+    outline: none;
+    transition: border-color .15s;
+  }
+  .t-add-form input:focus { border-color: var(--accent); }
+  .t-add-form input::placeholder { color: var(--text-dim); }
+  .t-add-form input.t-add-time { font-feature-settings: "tnum"; color: var(--accent); }
+  .t-add-form .t-add-name { grid-column: span 1; }
+  .t-add-form .t-add-dur { grid-column: 1 / -1; }
+  .t-add-actions {
+    display: flex;
+    gap: 8px;
+    justify-content: flex-end;
+  }
+  .t-add-cancel, .t-add-save {
+    padding: 9px 16px;
+    font-family: 'Inter', sans-serif;
+    font-size: 11px;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    font-weight: 600;
+    border-radius: 6px;
+    cursor: pointer;
+    border: none;
+  }
+  .t-add-cancel {
+    background: transparent;
+    color: var(--text-mid);
+    border: 1px solid rgba(255,255,255,.10);
+  }
+  .t-add-cancel:hover { color: var(--text); border-color: rgba(255,255,255,.20); }
+  .t-add-save {
+    background: linear-gradient(180deg, var(--accent), var(--accent-deep));
+    color: var(--void);
+  }
+  .t-add-save:hover { filter: brightness(1.08); }
+  .t-add-form.shake { animation: tAddShake .35s ease-in-out; }
+  @keyframes tAddShake {
+    0%, 100% { transform: translateX(0); }
+    20%, 60% { transform: translateX(-4px); }
+    40%, 80% { transform: translateX(4px); }
+  }
+
   .actions { display: flex; flex-direction: column; gap: 10px; margin-top: 8px; }
   .cta { display: block; width: 100%; padding: 16px; background: linear-gradient(180deg, var(--accent), var(--accent-soft)); color: var(--void); font-size: 13px; font-weight: 600; letter-spacing: 2px; text-transform: uppercase; border: none; border-radius: 6px; text-align: center; text-decoration: none; }
   .ghost { display: block; width: 100%; padding: 12px; background: transparent; color: var(--text-mid); font-size: 11px; letter-spacing: 2px; text-transform: uppercase; border: 1px solid rgba(255,255,255,.08); border-radius: 6px; text-align: center; text-decoration: none; }
@@ -252,6 +353,27 @@
     <div id="tasksBlock" style="margin: 8px 0 4px;">
       <div style="font-size:10px;letter-spacing:3px;color:var(--text-dim);text-transform:uppercase;margin-bottom:10px;text-align:center;" data-i18n="home.tasks_lbl">Bugungi vazifalar</div>
       <div id="tasksList" style="display:flex;flex-direction:column;gap:6px;"></div>
+
+      <!-- "+ vazifa qo'shish" — inline ghost row + form -->
+      <button type="button" class="t-add-row" id="addTaskBtn" aria-expanded="false" aria-controls="addTaskForm">
+        <span class="t-add-plus" aria-hidden="true">+</span>
+        <span class="t-add-label" data-i18n="home.add.title">vazifa qo'shish</span>
+      </button>
+
+      <form class="t-add-form" id="addTaskForm" hidden autocomplete="off" novalidate>
+        <div class="t-add-grid">
+          <input type="time" name="time" class="t-add-time" required>
+          <input type="text"  name="name" class="t-add-name" maxlength="40" required
+                 placeholder="Vazifa nomi" data-i18n-placeholder="home.add.name">
+          <input type="text"  name="dur"  class="t-add-dur"  maxlength="20" required
+                 placeholder="1 soat / 30 daq" data-i18n-placeholder="home.add.dur">
+        </div>
+        <div class="t-add-actions">
+          <button type="button" class="t-add-cancel" id="addTaskCancel" data-i18n="home.add.cancel">Bekor</button>
+          <button type="submit"  class="t-add-save"   data-i18n="home.add.save">Qo'shish</button>
+        </div>
+      </form>
+
       <!-- Yana qo'shish / tahrirlash so'rovi -->
       <div id="tasksPrompt" style="display:none;text-align:center;margin-top:12px;font-family:'Cormorant Garamond',serif;font-style:italic;font-size:13px;color:var(--text-dim);">
         <span data-i18n="home.tasks_ask">Yana qo'shasizmi yoki o'zgartirasizmi?</span>
@@ -368,39 +490,109 @@
       return String(s).replace(/[<>"&]/g, c => ({'<':'&lt;','>':'&gt;','"':'&quot;','&':'&amp;'}[c]));
     }
 
-    if (!plan.length) {
-      // Reja yo'q — qisqa eslatma
-      tasksList.innerHTML = '<div style="text-align:center;padding:14px;font-family:\'Cormorant Garamond\',serif;font-style:italic;font-size:13px;color:var(--text-dim);">'
-        + T('home.no_plan', "birinchi qadamingizni qo'ying") + '</div>';
-      tasksPrompt.style.display = 'none';
-    } else {
-      // Bajarilgan ishlar (history) — bugun
-      const completedKeys = (window.MVOW_DATA ? MVOW_DATA.getCompletedKeysToday() : new Set());
-      // Sort plan by time
-      const sorted = [...plan].sort((a,b) => tKey(a.time) - tKey(b.time));
-      tasksList.innerHTML = sorted.map((t, i) => {
-        const taskKey = window.MVOW_DATA && t.time && t.name ? MVOW_DATA.taskKey(MVOW_DATA.today.iso, t.time, t.name) : '';
-        const state = window.MVOW_DATA ? MVOW_DATA.getTaskState(taskKey) : { status: 'pending' };
-        const isDone = completedKeys.has(taskKey) || state.status === 'done';
-        const startMin = tKey(t.time);
-        const durMin = window.MVOW_DATA ? MVOW_DATA.parseDurMins(t.dur) : 60;
-        const endMin = startMin + durMin;
-        const isActive = nowMin >= startMin && nowMin < endMin && !isDone;
-        const isMissed = !isDone && (state.status === 'missed' || nowMin > endMin);
-        let cls = 'pending';
-        let icon = '·';
-        if (isDone) { cls = 'done'; icon = ''; }
-        else if (isMissed) { cls = 'missed'; icon = '✗'; }
-        else if (isActive) { cls = 'active'; icon = '·'; }
-        return `<div class="t-row ${cls}">
-          <span class="ord">${i+1}</span>
-          <span class="ttime">${escapeHtmlH(t.time || '—')}</span>
-          <span class="tname">${escapeHtmlH(t.name || T('today.ish_lbl', 'reja'))}</span>
-          <span class="tstat">${icon === '·' ? '' : icon}</span>
-        </div>`;
-      }).join('');
-      tasksPrompt.style.display = 'block';
+    // Render today's tasks — reusable so add-task can re-call after save
+    function renderTasks() {
+      // Re-read plan so newly added tasks appear
+      plan = window.MVOW_DATA ? MVOW_DATA.getTodayPlan() : plan;
+      plan.sort((a,b) => tKey(a.time) - tKey(b.time));
+
+      if (!plan.length) {
+        tasksList.innerHTML = '<div style="text-align:center;padding:14px;font-family:\'Cormorant Garamond\',serif;font-style:italic;font-size:13px;color:var(--text-dim);">'
+          + T('home.no_plan', "birinchi qadamingizni qo'ying") + '</div>';
+        tasksPrompt.style.display = 'none';
+      } else {
+        const completedKeys = (window.MVOW_DATA ? MVOW_DATA.getCompletedKeysToday() : new Set());
+        const sorted = [...plan].sort((a,b) => tKey(a.time) - tKey(b.time));
+        tasksList.innerHTML = sorted.map((t, i) => {
+          const taskKey = window.MVOW_DATA && t.time && t.name ? MVOW_DATA.taskKey(MVOW_DATA.today.iso, t.time, t.name) : '';
+          const state = window.MVOW_DATA ? MVOW_DATA.getTaskState(taskKey) : { status: 'pending' };
+          const isDone = completedKeys.has(taskKey) || state.status === 'done';
+          const startMin = tKey(t.time);
+          const durMin = window.MVOW_DATA ? MVOW_DATA.parseDurMins(t.dur) : 60;
+          const endMin = startMin + durMin;
+          const isActive = nowMin >= startMin && nowMin < endMin && !isDone;
+          const isMissed = !isDone && (state.status === 'missed' || nowMin > endMin);
+          let cls = 'pending';
+          let icon = '·';
+          if (isDone) { cls = 'done'; icon = ''; }
+          else if (isMissed) { cls = 'missed'; icon = '✗'; }
+          else if (isActive) { cls = 'active'; icon = '·'; }
+          return `<div class="t-row ${cls}">
+            <span class="ord">${i+1}</span>
+            <span class="ttime">${escapeHtmlH(t.time || '—')}</span>
+            <span class="tname">${escapeHtmlH(t.name || T('today.ish_lbl', 'reja'))}</span>
+            <span class="tstat">${icon === '·' ? '' : icon}</span>
+          </div>`;
+        }).join('');
+        tasksPrompt.style.display = 'block';
+      }
     }
+    renderTasks();
+
+    // ── "+ vazifa qo'shish" — inline add ──
+    (function wireAddTask() {
+      const addBtn  = document.getElementById('addTaskBtn');
+      const form    = document.getElementById('addTaskForm');
+      const cancel  = document.getElementById('addTaskCancel');
+      if (!addBtn || !form) return;
+
+      function openForm() {
+        addBtn.hidden = true;
+        addBtn.setAttribute('aria-expanded', 'true');
+        form.hidden = false;
+        const timeIn = form.querySelector('input[name="time"]');
+        // Default to next half-hour for convenience
+        if (timeIn && !timeIn.value) {
+          const now = new Date();
+          const mins = now.getMinutes() < 30 ? 30 : 60;
+          now.setMinutes(now.getMinutes() + (mins - now.getMinutes()));
+          now.setSeconds(0, 0);
+          timeIn.value = String(now.getHours()).padStart(2,'0') + ':' + String(now.getMinutes()).padStart(2,'0');
+        }
+        const nameIn = form.querySelector('input[name="name"]');
+        if (nameIn) setTimeout(() => nameIn.focus(), 60);
+      }
+      function closeForm() {
+        form.hidden = true;
+        form.reset();
+        addBtn.hidden = false;
+        addBtn.setAttribute('aria-expanded', 'false');
+      }
+      function shake() {
+        form.classList.remove('shake');
+        // force reflow to restart animation
+        void form.offsetWidth;
+        form.classList.add('shake');
+      }
+
+      addBtn.addEventListener('click', openForm);
+      cancel.addEventListener('click', closeForm);
+      form.addEventListener('keydown', (e) => { if (e.key === 'Escape') closeForm(); });
+
+      form.addEventListener('submit', (e) => {
+        e.preventDefault();
+        const fd = new FormData(form);
+        const time = (fd.get('time') || '').trim();
+        const name = (fd.get('name') || '').trim();
+        const dur  = (fd.get('dur')  || '').trim();
+        // Validation
+        const timeOk = /^\d{1,2}:\d{2}$/.test(time);
+        const durOk  = window.MVOW_DATA ? MVOW_DATA.parseDurMins(dur) > 0 : /\d/.test(dur);
+        if (!timeOk || !name || !durOk) { shake(); return; }
+        if (!window.MVOW_DATA) { shake(); return; }
+        const current = MVOW_DATA.getTodayPlan();
+        current.push({ time, name, dur });
+        MVOW_DATA.setTodayPlan(current);
+        closeForm();
+        renderTasks();
+        // Refresh stats below — count + total hours
+        const fresh = MVOW_DATA.getTodayPlan();
+        const totalMinFresh = fresh.reduce((s,p) => s + durMins(p.dur), 0);
+        const totalHFresh = Math.round(totalMinFresh / 60 * 10) / 10;
+        const fh = document.getElementById('focusH'); if (fh) fh.textContent = totalHFresh || 0;
+        const sn = document.getElementById('sessN'); if (sn) sn.textContent = fresh.length;
+      });
+    })();
 
     // Stats — bajarilgan va qolgan
     function durMins(s) {

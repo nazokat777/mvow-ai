@@ -161,9 +161,12 @@
 
     // ENG MUHIM FALLBACK: hech narsa topilmasa, MAQSADLARDAN to'g'ridan-to'g'ri hosil qilish
     // — agar maqsadning startDate'i bugundan oldin va davom etayotgan davrida
+    // YANGI: har maqsad sessions[] bo'yicha bir nechta task'ga yoyilishi mumkin
     if (tasks.length === 0) {
       try {
-        const goals = JSON.parse(localStorage.getItem('mvow.goals') || '[]');
+        const goals = (typeof DATA.loadGoals === 'function')
+          ? DATA.loadGoals()
+          : JSON.parse(localStorage.getItem('mvow.goals') || '[]');
         if (Array.isArray(goals) && goals.length) {
           const today = new Date();
           today.setHours(0, 0, 0, 0);
@@ -175,13 +178,19 @@
             const daysSince = Math.floor((today - start) / 86400000);
             const totalDays = g.days || 30;
             if (daysSince >= 0 && daysSince < totalDays) {
-              // Bu maqsad bugun ham davom etmoqda — qo'shish
-              tasks.push({
-                time: g.time || '07:00',
-                name: g.text || 'Reja',
-                dur: g.dur || '60 daq',
-                goalId: g.id
-              });
+              // Bu maqsad bugun ham davom etmoqda — sessions bo'yicha tarqatish
+              const sessions = (Array.isArray(g.sessions) && g.sessions.length)
+                ? g.sessions
+                : [{ sid: 's1', time: g.time || '07:00', dur: g.dur || '60 daq' }];
+              for (const s of sessions) {
+                tasks.push({
+                  time: s.time || g.time || '07:00',
+                  name: g.text || 'Reja',
+                  dur:  s.dur  || g.dur  || '60 daq',
+                  goalId: g.id,
+                  sessionSid: s.sid
+                });
+              }
             }
           }
           // Agar maqsadlardan reja qo'shildi bo'lsa — weekPlan'ga ham saqlab qo'yish
@@ -215,25 +224,34 @@
           if (w[key].length === 0) delete w[key];
         }
         // Maqsadlardan yangi tarqatish (local sanalar bilan)
+        // YANGI: sessions[] bo'yicha har kun uchun bir nechta task chiqaramiz
         for (const g of goals) {
           if (!g || !g.startDate) continue;
           const start = new Date(g.startDate);
           if (isNaN(start.getTime())) continue;
           const totalDays = g.days || 30;
+          // Sessions'ni aniqlash — agar yo'q bo'lsa, eski (time,dur)'dan sintez
+          const sessions = (Array.isArray(g.sessions) && g.sessions.length)
+            ? g.sessions
+            : [{ sid: 's1', time: g.time || '07:00', dur: g.dur || '60 daq' }];
           for (let i = 0; i < totalDays; i++) {
             const d = new Date(start);
             d.setDate(start.getDate() + i);
             const key = 'd' + DATA.localDateIso(d);
             if (!Array.isArray(w[key])) w[key] = [];
-            // Dublikat yo'q
-            const exists = w[key].some(t => t.goalId === g.id);
-            if (!exists) {
-              w[key].push({
-                time: g.time || '07:00',
-                name: g.text || 'Reja',
-                dur: g.dur || '60 daq',
-                goalId: g.id
-              });
+            for (const s of sessions) {
+              // Dublikat yo'q — sessionSid bo'yicha (legacy uchun goalId bilan ham)
+              const exists = w[key].some(t => t.goalId === g.id
+                && (t.sessionSid ? t.sessionSid === s.sid : true));
+              if (!exists) {
+                w[key].push({
+                  time: s.time || g.time || '07:00',
+                  name: g.text || 'Reja',
+                  dur:  s.dur  || g.dur  || '60 daq',
+                  goalId: g.id,
+                  sessionSid: s.sid
+                });
+              }
             }
           }
         }
@@ -268,6 +286,394 @@
       if (!isNaN(n)) total = n;
     }
     return total || 60;
+  };
+
+  // Daqiqani "1 soat 30 daq" formatiga aylantirish — DATA namespacedagi shared helper
+  DATA.fmtHM = function (mins) {
+    mins = Math.max(0, parseInt(mins, 10) || 0);
+    const h = Math.floor(mins / 60);
+    const m = mins % 60;
+    if (h && m) return h + ' soat ' + m + ' daq';
+    if (h)      return h + ' soat';
+    return m + ' daq';
+  };
+
+  // ──────────────────────────────────────────────────────────────
+  // GOAL SHAPE v2 — sessions[] + changeLog (har kunlik blueprint)
+  // Eski shape: { time, dur } bitta sessiya.
+  // Yangi shape: { sessions: [{sid,time,dur}], changeLog: [{fromIso,sessions:[{time,dur}]}] }
+  // Eski yozuvlar saqlanadi: loadGoals inflate qiladi (read-time, idempotent),
+  // saveGoals esa legacy mirrors yozadi (time = sessions[0].time, dur = jami HM).
+  // ──────────────────────────────────────────────────────────────
+  function isoAddDaysLocal(iso, n) {
+    const d = new Date(iso + 'T00:00:00');
+    if (isNaN(d.getTime())) return iso;
+    d.setDate(d.getDate() + n);
+    return DATA.localDateIso(d);
+  }
+  function isoDiffDaysLocal(aIso, bIso) {
+    const a = new Date(aIso + 'T00:00:00');
+    const b = new Date(bIso + 'T00:00:00');
+    if (isNaN(a) || isNaN(b)) return 0;
+    return Math.round((a - b) / 86400000);
+  }
+  function genSid(existingSessions) {
+    let max = 0;
+    for (const s of (existingSessions || [])) {
+      const m = String(s && s.sid || '').match(/^s(\d+)$/);
+      if (m) {
+        const n = parseInt(m[1], 10);
+        if (n > max) max = n;
+      }
+    }
+    return 's' + (max + 1);
+  }
+
+  function inflateGoal(g) {
+    if (!g || typeof g !== 'object') return g;
+    try {
+      if (!Array.isArray(g.sessions) || g.sessions.length === 0) {
+        g.sessions = [{
+          sid: 's1',
+          time: g.time || '07:00',
+          dur:  g.dur  || '60 daq'
+        }];
+      } else {
+        // Sid'siz yozuvlarga sid berish (idempotent)
+        for (let i = 0; i < g.sessions.length; i++) {
+          if (!g.sessions[i].sid) g.sessions[i].sid = 's' + (i + 1);
+        }
+      }
+      if (!Array.isArray(g.changeLog) || g.changeLog.length === 0) {
+        g.changeLog = [{
+          fromIso: g.startDate,
+          sessions: g.sessions.map(s => ({ time: s.time, dur: s.dur }))
+        }];
+      }
+    } catch {
+      g.sessions = g.sessions || [{ sid: 's1', time: '07:00', dur: '60 daq' }];
+      g.changeLog = g.changeLog || [{ fromIso: g.startDate, sessions: [{ time: '07:00', dur: '60 daq' }] }];
+    }
+    return g;
+  }
+
+  DATA.loadGoals = function () {
+    let raw = [];
+    try { raw = JSON.parse(localStorage.getItem('mvow.goals') || '[]'); } catch {}
+    if (!Array.isArray(raw)) raw = [];
+    return raw.map(inflateGoal);
+  };
+
+  DATA.saveGoals = function (goals) {
+    if (!Array.isArray(goals)) return;
+    const out = goals.map(g => {
+      const sessions = (Array.isArray(g.sessions) && g.sessions.length)
+        ? g.sessions
+        : [{ sid: 's1', time: g.time || '07:00', dur: g.dur || '60 daq' }];
+      const first = sessions[0];
+      const totalMins = sessions.reduce((s, x) => s + DATA.parseDurMins(x.dur), 0);
+      return Object.assign({}, g, {
+        sessions: sessions,
+        changeLog: Array.isArray(g.changeLog) && g.changeLog.length
+          ? g.changeLog
+          : [{ fromIso: g.startDate, sessions: sessions.map(s => ({ time: s.time, dur: s.dur })) }],
+        // Legacy mirrors — eski o'quvchilar (home.html, weekly-review, h.k.) uchun
+        time: first.time,
+        dur:  DATA.fmtHM(totalMins)
+      });
+    });
+    localStorage.setItem('mvow.goals', JSON.stringify(out));
+  };
+
+  // ── ONE-TIME MIGRATION: eski shape -> yangi sessions[] (idempotent) ──
+  // Faqat bir marta ishlaydi. Inflate read-time bo'lsa ham, bir marta diskka
+  // yozib qo'yamiz (legacy mirrors bilan birga), keyingi safar barcha sahifalar
+  // birdek yangi shape'ni ko'radi. Bu xavfsiz: legacy mirrors hech qachon
+  // o'chmaydi, eski o'quvchilar ham ishlayveradi.
+  DATA.migrateGoalsToSessions = function () {
+    if (localStorage.getItem('mvow.goalSessionsMigration_v1') === 'done') return;
+    try {
+      const goals = DATA.loadGoals();   // read-time inflate
+      if (goals.length > 0) DATA.saveGoals(goals);
+      localStorage.setItem('mvow.goalSessionsMigration_v1', 'done');
+    } catch {
+      // sukut — loadGoals har doim inflate qiladi, shuning uchun read xavfsiz
+    }
+  };
+  DATA.migrateGoalsToSessions();
+
+  // ── Sessiya yordamchilari ──
+  DATA.getGoalSessions = function (goalId) {
+    const g = DATA.loadGoals().find(x => x && x.id === goalId);
+    if (!g) return [];
+    return g.sessions.map(s => ({ sid: s.sid, time: s.time, dur: s.dur }));
+  };
+
+  // Goal'ning sessions[] ini almashtirish + changeLog ga yozish + weekPlan retile
+  DATA.updateGoalSessions = function (goalId, sessions) {
+    const goals = DATA.loadGoals();
+    const idx = goals.findIndex(x => x && x.id === goalId);
+    if (idx < 0) return null;
+    const g = goals[idx];
+
+    // Sessions'ga sid berish (yangi qatorlar uchun)
+    const cleaned = (Array.isArray(sessions) ? sessions : []).map((s, i) => ({
+      sid:  s.sid || ('s' + (i + 1)),
+      time: s.time || '07:00',
+      dur:  s.dur  || '60 daq'
+    }));
+    // Sid takrorlanmasligi uchun qayta hisoblash
+    const seen = new Set();
+    for (let i = 0; i < cleaned.length; i++) {
+      if (seen.has(cleaned[i].sid)) cleaned[i].sid = genSid(cleaned.slice(0, i));
+      seen.add(cleaned[i].sid);
+    }
+    g.sessions = cleaned;
+
+    // changeLog — agar bugun allaqachon yozilgan bo'lsa, ALMASHTIRAMIZ (append emas)
+    const todayIso = DATA.today.iso;
+    const logEntry = {
+      fromIso: todayIso,
+      sessions: cleaned.map(s => ({ time: s.time, dur: s.dur }))
+    };
+    if (!Array.isArray(g.changeLog)) g.changeLog = [];
+    const last = g.changeLog[g.changeLog.length - 1];
+    if (last && last.fromIso === todayIso) {
+      g.changeLog[g.changeLog.length - 1] = logEntry;
+    } else {
+      g.changeLog.push(logEntry);
+    }
+
+    DATA.saveGoals(goals);
+    // weekPlan: bugundan oxirgacha qayta tile qilish (o'tgan kunlar tegmaydi)
+    DATA._retileGoal(g, { fromIso: todayIso });
+    return g;
+  };
+
+  DATA.updateGoalSession = function (goalId, sid, patch) {
+    const sessions = DATA.getGoalSessions(goalId);
+    if (!sessions.length) return null;
+    const out = sessions.map(s => s.sid === sid
+      ? Object.assign({}, s, patch || {})
+      : s);
+    return DATA.updateGoalSessions(goalId, out);
+  };
+
+  DATA.addGoalSession = function (goalId, sess) {
+    const sessions = DATA.getGoalSessions(goalId);
+    const next = sessions.slice();
+    next.push({
+      sid:  genSid(next),
+      time: (sess && sess.time) || '07:00',
+      dur:  (sess && sess.dur)  || '30 daq'
+    });
+    return DATA.updateGoalSessions(goalId, next);
+  };
+
+  DATA.removeGoalSession = function (goalId, sid, opts) {
+    opts = opts || {};
+    const sessions = DATA.getGoalSessions(goalId);
+    const filtered = sessions.filter(s => s.sid !== sid);
+    if (filtered.length === 0 && !opts.allowEmpty) {
+      throw new Error('Goal must have at least one session');
+    }
+    return DATA.updateGoalSessions(goalId, filtered);
+  };
+
+  // weekPlan retile — bir maqsad uchun bugundan endIso gacha qayta tile
+  // O'tgan kunlar O'ZGARTIRILMAYDI (history matching saqlanadi).
+  DATA._retileGoal = function (goal, opts) {
+    if (!goal || !goal.startDate) return;
+    opts = opts || {};
+    const fromIso = opts.fromIso || DATA.today.iso;
+    const endIso  = isoAddDaysLocal(goal.startDate, goal.days || 30);  // exclusive
+    const w = DATA.getWeekPlan();
+
+    // Bugundan endIso gacha (exclusive) — bu maqsadning eski slotlarini olib tashlash
+    let cursor = fromIso;
+    // Agar fromIso startDate'dan ham oldin bo'lsa, startDate'dan boshlaymiz
+    if (cursor < goal.startDate) cursor = goal.startDate;
+    let safety = 0;
+    while (cursor < endIso && safety < 5000) {
+      const key = 'd' + cursor;
+      if (Array.isArray(w[key])) {
+        w[key] = w[key].filter(t => t.goalId !== goal.id);
+        if (w[key].length === 0) delete w[key];
+      }
+      cursor = isoAddDaysLocal(cursor, 1);
+      safety++;
+    }
+
+    // Endi qayta tile qilamiz — har sessiya alohida task
+    cursor = fromIso;
+    if (cursor < goal.startDate) cursor = goal.startDate;
+    safety = 0;
+    while (cursor < endIso && safety < 5000) {
+      const key = 'd' + cursor;
+      if (!Array.isArray(w[key])) w[key] = [];
+      for (const s of (goal.sessions || [])) {
+        const exists = w[key].some(t => t.goalId === goal.id && t.sessionSid === s.sid);
+        if (!exists) {
+          w[key].push({
+            time: s.time || '07:00',
+            name: goal.text || 'Reja',
+            dur:  s.dur  || '60 daq',
+            goalId: goal.id,
+            sessionSid: s.sid
+          });
+        }
+      }
+      cursor = isoAddDaysLocal(cursor, 1);
+      safety++;
+    }
+
+    DATA.setWeekPlan(w);
+  };
+
+  // ── Goal progress math (single source) ──
+  DATA.getGoalProgress = function (goalId) {
+    const g = DATA.loadGoals().find(x => x && x.id === goalId);
+    if (!g) return null;
+    const todayIso = DATA.today.iso;
+    const startIso = g.startDate;
+    const endIso   = isoAddDaysLocal(startIso, g.days || 30);  // exclusive
+
+    // Bugungi kunlik allocation
+    const dailyAllocation = (g.sessions || []).reduce(
+      (s, x) => s + DATA.parseDurMins(x.dur), 0
+    );
+
+    // Total target — changeLog'ni walk qilib o'tgan window'larni o'z allokatsiyasi bilan hisoblash
+    let totalTarget = 0;
+    const log = (Array.isArray(g.changeLog) && g.changeLog.length)
+      ? g.changeLog
+      : [{ fromIso: startIso, sessions: (g.sessions || []).map(s => ({ time: s.time, dur: s.dur })) }];
+    for (let i = 0; i < log.length; i++) {
+      const winStart = (log[i].fromIso > startIso) ? log[i].fromIso : startIso;
+      const winEnd   = (i + 1 < log.length) ? log[i + 1].fromIso : endIso;
+      const days     = isoDiffDaysLocal(winEnd, winStart);
+      const alloc    = (log[i].sessions || []).reduce(
+        (s, x) => s + DATA.parseDurMins(x.dur), 0
+      );
+      totalTarget += Math.max(0, days) * alloc;
+    }
+
+    // Done — history.actualMins, name match bilan, sana oralig'ida
+    const done = DATA.getHistory()
+      .filter(h => h && h.name === g.text
+                && h.dateIso >= startIso
+                && h.dateIso <  endIso)
+      .reduce((s, h) => s + (h.actualMins || 0), 0);
+
+    const remaining = Math.max(0, totalTarget - done);
+
+    let projectedEnd = null;
+    if (dailyAllocation > 0) {
+      const daysNeeded = Math.ceil(remaining / dailyAllocation);
+      projectedEnd = isoAddDaysLocal(todayIso, daysNeeded);
+    }
+
+    const originalEnd = endIso;
+    const paceDeltaDays = projectedEnd
+      ? isoDiffDaysLocal(originalEnd, projectedEnd)
+      : 0;
+
+    return { done, remaining, totalTarget, dailyAllocation, projectedEnd, originalEnd, paceDeltaDays };
+  };
+
+  // ── Inline maqsadlar.html progress mat'idan ajratilgan ──
+  DATA.goalStats = function (goal) {
+    if (!goal || !goal.startDate) return null;
+    const todayIso = DATA.today.iso;
+    const startIso = goal.startDate;
+    const totalDays = goal.days || 30;
+
+    const passed = Math.max(0, Math.min(totalDays, isoDiffDaysLocal(todayIso, startIso)));
+    const remaining = Math.max(0, totalDays - passed);
+    const timePct = totalDays > 0 ? Math.round((passed / totalDays) * 100) : 0;
+    const expectedSoFar = Math.min(passed + 1, totalDays);
+
+    // Bajarilgan kunlar — history'ga name match orqali
+    const history = DATA.getHistory();
+    const endIso = isoAddDaysLocal(startIso, totalDays);
+    const matching = history.filter(h => h && h.name === goal.text
+                                      && h.dateIso >= startIso
+                                      && h.dateIso <  endIso);
+    // Unique sanalar
+    const uniqDays = new Set(matching.map(h => h.dateIso));
+    const completedDays = uniqDays.size;
+    const donePct = expectedSoFar > 0
+      ? Math.min(100, Math.round((completedDays / expectedSoFar) * 100))
+      : 0;
+    const grade = donePct >= 80 ? 'good' : (donePct >= 50 ? 'mid' : 'low');
+
+    return { passed, remaining, timePct, expectedSoFar, completedDays, donePct, grade };
+  };
+
+  // ── Bugungi rejaga ad-hoc task qo'shish (no goalId) ──
+  DATA.addTaskToToday = function (task) {
+    if (!task || !task.time || !task.name) return null;
+    const arr = DATA.getTodayPlan();
+    const t = {
+      time: task.time,
+      name: task.name,
+      dur:  task.dur || '30 daq'
+    };
+    arr.push(t);
+    DATA.setTodayPlan(arr);
+    return t;
+  };
+
+  // ── Bugungi rejada bitta task'ni olib tashlash (faqat bugun) ──
+  DATA.removeTaskFromToday = function (taskKey) {
+    const todayIso = DATA.today.iso;
+    const arr = DATA.getTodayPlan();
+    const filtered = arr.filter(t => DATA.taskKey(todayIso, t.time, t.name) !== taskKey);
+    if (filtered.length === arr.length) return false;
+    DATA.setTodayPlan(filtered);
+    return true;
+  };
+
+  // ── Goal nomini almashtirish + history.goalId backfill (rename fragility mitigation) ──
+  DATA.renameGoal = function (goalId, newText) {
+    if (!newText || !String(newText).trim()) return;
+    newText = String(newText).trim();
+    const goals = DATA.loadGoals();
+    const g = goals.find(x => x && x.id === goalId);
+    if (!g) return;
+    const oldText = g.text;
+    if (oldText === newText) return;
+    g.text = newText;
+    DATA.saveGoals(goals);
+
+    // weekPlan: bugundan boshlab name'ni almashtirish (o'tgan kunlar history match uchun saqlanadi)
+    const w = DATA.getWeekPlan();
+    const todayIso = DATA.today.iso;
+    for (const key of Object.keys(w)) {
+      if (!Array.isArray(w[key])) continue;
+      const iso = key.slice(1);
+      if (iso < todayIso) continue;
+      for (const t of w[key]) {
+        if (t.goalId === goalId) t.name = newText;
+      }
+    }
+    DATA.setWeekPlan(w);
+
+    // history: goalId backfill (eski entry'larga goalId qo'shamiz, name saqlanadi)
+    try {
+      const hist = DATA.getHistory();
+      const startIso = g.startDate;
+      const endIso = isoAddDaysLocal(startIso, g.days || 30);
+      let touched = false;
+      for (const h of hist) {
+        if (!h.goalId && h.name === oldText
+            && h.dateIso >= startIso && h.dateIso < endIso) {
+          h.goalId = goalId;
+          touched = true;
+        }
+      }
+      if (touched) localStorage.setItem('mvow.history', JSON.stringify(hist));
+    } catch {}
   };
 
   // ──────────────────────────────────────────────────────────────
