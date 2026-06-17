@@ -195,7 +195,6 @@
     'settings.html',          // 5. Sozlamalar + Ruxsatlar (birlashtirilgan)
     // Kun (6-9)
     'home.html',              // 6. Bosh sahifa
-    'routine.html',           // 7. Reja
     'calendar.html',          // 9. Kalendar
     // Bajarish (10-12)
     'hard-lock.html',         // 10. Fokus taymeri
