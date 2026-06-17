@@ -418,6 +418,7 @@
         tile_plan: 'Bugungi reja',
         tile_goals: 'Maqsadlar',
         tile_calendar: 'Kalendar',
+        tile_history: 'Tarix',
         tile_evening: 'Kun yakuni',
         // AI Murabbiy xabarlar
         murabbiy_all_done: 'Bugun hammasi bajarildi. Tabriklayman.',
@@ -1093,6 +1094,7 @@
         tile_plan: 'План на сегодня',
         tile_goals: 'Цели',
         tile_calendar: 'Календарь',
+        tile_history: 'История',
         tile_evening: 'Итог дня',
         murabbiy_all_done: 'Сегодня всё сделано. Поздравляю.',
         murabbiy_high: 'На сегодня осталось {n} дел. Вчера {pct}% — продолжайте.',
@@ -1757,6 +1759,7 @@
         tile_plan: 'Today\'s plan',
         tile_goals: 'Goals',
         tile_calendar: 'Calendar',
+        tile_history: 'History',
         tile_evening: 'Day summary',
         murabbiy_all_done: 'All done for today. Well done.',
         murabbiy_high: '{n} tasks left today. Yesterday {pct}% — keep going.',
