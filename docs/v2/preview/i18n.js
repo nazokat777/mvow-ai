@@ -80,8 +80,12 @@
         scene5_step4_sub: 'Rivojlanishni kuzating',
         scene5_headline_line1: 'Maqsadni yozing.',
         scene5_headline_line2: "Qolgan yo'l xaritasini biz yaratamiz.",
-        skip: "O'tkazib yuborish ›"
-
+        skip: "O'tkazib yuborish ›",
+        back: '‹ Orqaga',
+        loading: 'Yuklanmoqda',
+        fallback_title: 'Vaqt — sizning eng qimmat boyligingiz',
+        fallback_body: "brend — sizning intizom do'stingiz. Maqsadlaringizni kunlik harakatga aylantiramiz.",
+        fallback_cta: 'Boshlaymiz ›'
       },
       welcome: {
         name_ph: 'ismingizni yozing',
@@ -753,8 +757,12 @@
         scene5_step4_sub: 'Следите за ростом',
         scene5_headline_line1: 'Напишите цель.',
         scene5_headline_line2: 'Остальную карту пути составим мы.',
-        skip: 'Пропустить ›'
-
+        skip: 'Пропустить ›',
+        back: '‹ Назад',
+        loading: 'Загрузка',
+        fallback_title: 'Время — ваше самое ценное богатство',
+        fallback_body: 'brend — ваш друг по дисциплине. Превратим ваши цели в ежедневные действия.',
+        fallback_cta: 'Начнём ›'
       },
       welcome: {
         name_ph: 'ваше имя',
@@ -1413,8 +1421,12 @@
         scene5_step4_sub: 'Track growth',
         scene5_headline_line1: 'Write the goal.',
         scene5_headline_line2: "We'll draw the rest of the path.",
-        skip: 'Skip ›'
-
+        skip: 'Skip ›',
+        back: '‹ Back',
+        loading: 'Loading',
+        fallback_title: 'Time is your most precious wealth',
+        fallback_body: 'brend — your discipline companion. Turn your goals into daily action.',
+        fallback_cta: 'Let\'s start ›'
       },
       welcome: {
         name_ph: 'your name',

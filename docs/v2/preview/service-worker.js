@@ -3,7 +3,7 @@
  * after first load. Caches all preview HTML files + the logo.
  */
 
-const CACHE_NAME = 'mvow-v24.0.0';
+const CACHE_NAME = 'mvow-v24.1.0';
 const ASSETS = [
   './',
   // Asosiy infratuzilma
@@ -13,6 +13,7 @@ const ASSETS = [
   './motion.css',
   './motion.js',
   './i18n.js',
+  './lang-switcher.js',
   './nav-overlay.js',
   './manifest.webmanifest',
   './menu.html',

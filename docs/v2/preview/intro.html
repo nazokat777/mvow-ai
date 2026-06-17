@@ -211,23 +211,24 @@ body {
 <div class="vignette"></div>
 
 <div class="loading" id="loading">
-  Yuklanmoqda
+  <span data-i18n="intro.loading">Yuklanmoqda</span>
   <span class="loading-dot"></span>
   <span class="loading-dot"></span>
   <span class="loading-dot"></span>
 </div>
 
 <div class="fallback" id="fallback">
-  <h2>Vaqt — sizning eng qimmat boyligingiz</h2>
-  <p>brend — sizning intizom do'stingiz. Maqsadlaringizni kunlik harakatga aylantiramiz.</p>
-  <button class="continue-btn" id="continueBtn" type="button">Boshlaymiz ›</button>
+  <h2 data-i18n="intro.fallback_title">Vaqt — sizning eng qimmat boyligingiz</h2>
+  <p data-i18n="intro.fallback_body">brend — sizning intizom do'stingiz. Maqsadlaringizni kunlik harakatga aylantiramiz.</p>
+  <button class="continue-btn" id="continueBtn" type="button" data-i18n="intro.fallback_cta">Boshlaymiz ›</button>
 </div>
 
-<button class="back-btn" id="backBtn" type="button">‹ Orqaga</button>
-<button class="skip-btn" id="skipBtn" type="button">O'tkazib yuborish ›</button>
+<button class="back-btn" id="backBtn" type="button" data-i18n="intro.back">‹ Orqaga</button>
+<button class="skip-btn" id="skipBtn" type="button" data-i18n="intro.skip">O'tkazib yuborish ›</button>
 <div class="veil" id="veil"></div>
 
 <script src="i18n.js"></script>
+<script src="lang-switcher.js" defer></script>
 <script>
 (function() {
   'use strict';
