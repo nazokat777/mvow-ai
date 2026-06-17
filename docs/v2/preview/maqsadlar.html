@@ -865,7 +865,7 @@
       });
     });
 
-    // Session: open add-form
+    // Session: open add-form — aqlli vaqt taklif
     list.querySelectorAll('[data-add-session]').forEach(btn => {
       btn.addEventListener('click', (e) => {
         e.stopPropagation();
@@ -875,6 +875,30 @@
         form.hidden = false;
         btn.hidden = true;
         const t = form.querySelector('input[name=time]');
+
+        // Aqlli vaqt: shu maqsadning eng so'nggi sessiyasi tugashidan keyin
+        try {
+          const goals = loadGoals();
+          const goal = goals.find(g => g.id === parseInt(id, 10));
+          if (goal && Array.isArray(goal.sessions) && goal.sessions.length) {
+            // Har session tugash daqiqasi: time + parseDurMins(dur)
+            const ends = goal.sessions.map(s => {
+              const m = String(s.time || '').match(/^(\d{1,2}):(\d{2})$/);
+              if (!m) return -1;
+              const start = (+m[1]) * 60 + (+m[2]);
+              const dur = window.MVOW_DATA ? MVOW_DATA.parseDurMins(s.dur) : 60;
+              return start + dur;
+            }).filter(e => e >= 0);
+            if (ends.length) {
+              const latestEnd = Math.max(...ends);
+              const next = Math.min(latestEnd, 23 * 60 + 30);
+              const hh = String(Math.floor(next / 60)).padStart(2, '0');
+              const mm = String(next % 60).padStart(2, '0');
+              if (t) t.value = hh + ':' + mm;
+            }
+          }
+        } catch {}
+
         if (t) t.focus();
       });
     });
