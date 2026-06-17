@@ -268,8 +268,8 @@
   <button class="next-btn disabled" id="nextBtn" data-i18n="common.next">Keyingi</button>
 </div>
 
-<script src="i18n.js?v=28.2.5" defer></script>
-<script src="lang-switcher.js?v=28.2.5" defer></script>
+<script src="i18n.js?v=28.2.6"></script>
+<script src="lang-switcher.js?v=28.2.6" defer></script>
 <script>
   // ── i18n helper ──
   const T = (k, def) => (window.I18N ? window.I18N.t(k, def) : def);
@@ -551,7 +551,12 @@
     }, 1600);
   }
 
-  render();
+  // I18N tayyor bo'lmasa bir oz kutamiz (defer fallback himoyasi)
+  function _bootWhenI18N(attempt) {
+    if (window.I18N || attempt > 30) { render(); return; }
+    setTimeout(() => _bootWhenI18N((attempt || 0) + 1), 30);
+  }
+  _bootWhenI18N(0);
 </script>
 
 </body>
