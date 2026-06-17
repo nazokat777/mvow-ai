@@ -429,19 +429,29 @@
       // Band vaqtlarni ko'rsatish + aqlli vaqt taklifi
       renderOccupied();
       const slots = getOccupiedSlots();
+      // 1) Mavjud maqsadlar bo'lsa — eng so'nggi tugashidan keyin
       if (slots.length) {
-        // Eng oxirgi tugaydigan slotdan keyingi vaqtni taklif qilish
         const latestEnd = Math.max(...slots.map(s => s.end));
-        const startMin = Math.min(latestEnd, 23*60 + 50);
+        const startMin = Math.min(latestEnd, 23*60 + 30);
         dailyTime.value = minToTime(startMin);
       } else {
-        // Bo'sh — anketadagi energiya cho'qqisidan vaqtni taklif qilish
+        // 2) Bo'sh — anketadan peak vaqt, yo'q bo'lsa keyingi yarim soat
+        let suggested = null;
         try {
           const profile = JSON.parse(localStorage.getItem('mvow.profile') || '{}');
           const peak = profile.energyPeak;
           const peakTimes = { dawn: '05:00', morning: '09:00', noon: '14:00', evening: '19:00', night: '22:00' };
-          if (peak && peakTimes[peak]) dailyTime.value = peakTimes[peak];
+          if (peak && peakTimes[peak]) suggested = peakTimes[peak];
         } catch {}
+        // 3) Hech qaysisi bo'lmasa — hozirgi vaqtdan keyingi yarim soat
+        if (!suggested) {
+          const now = new Date();
+          const m = now.getMinutes() < 30 ? 30 : 60;
+          now.setMinutes(now.getMinutes() + (m - now.getMinutes()));
+          now.setSeconds(0, 0);
+          suggested = String(now.getHours()).padStart(2,'0') + ':' + String(now.getMinutes()).padStart(2,'0');
+        }
+        dailyTime.value = suggested;
       }
       checkStep2();
       setTimeout(() => goalText.focus(), 100);
@@ -478,7 +488,13 @@
         return;
       }
       const text = goalText.value.trim();
-      const time = dailyTime.value || '07:00';
+      // Vaqt bo'sh bo'lsa — KASRO'L saqlanmaydi (user majburan tanlashi kerak)
+      if (!dailyTime.value || !/^\d{1,2}:\d{2}$/.test(dailyTime.value)) {
+        // Vaqt aniqlanmagan — checkStep2 disabled holatga qaytaradi
+        checkStep2();
+        return;
+      }
+      const time = dailyTime.value;
       const durMin = parseInt(dailyDur.value, 10) || 60;
       const hourLbl = (window.I18N ? I18N.t('maqsad.unit_hour', 'soat') : 'soat');
       const minLbl  = (window.I18N ? I18N.t('maqsad.unit_min',  'daq')  : 'daq');
