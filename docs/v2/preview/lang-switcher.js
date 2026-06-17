@@ -80,6 +80,8 @@
       item.onclick = function (e) {
         e.preventDefault();
         e.stopPropagation();
+        // DEBUG v28.2.2 — foydalanuvchiga yangi versiya yetib borganini tasdiqlash
+        try { alert('DEBUG v28.2.2: ' + code + ' tanlandi. Sahifa qayta yuklanadi.'); } catch(_) {}
         setLang(code);
       };
       menu.appendChild(item);
