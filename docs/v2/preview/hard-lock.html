@@ -200,6 +200,58 @@
   </div>
 </div>
 
+<!-- DEEP LOCK overlay — taymer paytida idle bo'lsa, ekran qulflanadi -->
+<div id="deepLockOverlay" style="
+  position:fixed;inset:0;
+  background:rgba(0,0,0,0.92);
+  -webkit-backdrop-filter:blur(6px);
+  backdrop-filter:blur(6px);
+  z-index:200;
+  display:none;
+  flex-direction:column;
+  align-items:center;
+  justify-content:center;
+  opacity:0;
+  transition:opacity 800ms cubic-bezier(.22,.61,.36,1);
+  text-align:center;
+  padding:32px;
+">
+  <div id="dlTime" style="
+    font-family:'Inter',sans-serif;
+    font-weight:200;
+    font-size:64px;
+    color:var(--accent-bright);
+    letter-spacing:0.02em;
+    margin-bottom:24px;
+    text-shadow:0 0 30px rgba(245,215,110,0.4);
+  ">00:00</div>
+  <div data-i18n="hardlock.deep_lock_hint" style="
+    font-family:'Cormorant Garamond',serif;
+    font-style:italic;
+    font-size:18px;
+    color:rgba(245,242,236,0.55);
+    margin-bottom:40px;
+    max-width:300px;
+    line-height:1.5;
+  ">Telefon qulflandi. Fokusda bo'ling.</div>
+  <button id="dlReturnBtn" type="button" style="
+    padding:16px 36px;
+    background:linear-gradient(180deg, var(--accent-bright), var(--accent));
+    color:var(--bg);
+    font-family:'Inter',sans-serif;
+    font-size:13px;
+    font-weight:600;
+    letter-spacing:0.24em;
+    text-transform:uppercase;
+    border:none;
+    border-radius:999px;
+    min-height:52px;
+    min-width:240px;
+    cursor:pointer;
+    box-shadow:0 0 30px rgba(245,215,110,0.4);
+  " data-i18n="hardlock.deep_lock_return">Yaxshi, qaytaman</button>
+</div>
+
 <!-- 2) Tugagandan keyin so'roq: Bajardingizmi? -->
 <div class="ask-overlay" id="askOverlay">
   <div class="choice-card">
@@ -456,6 +508,99 @@ document.addEventListener('DOMContentLoaded', function () {
     askOverlay.classList.remove('show');
     recordAndExit(false);
   });
+
+  // ============================================================
+  // DEEP LOCK — taymer paytida idle bo'lsa, ekran qulflanadi
+  // ============================================================
+  const deepLockOverlay = document.getElementById('deepLockOverlay');
+  const dlTime = document.getElementById('dlTime');
+  const dlReturnBtn = document.getElementById('dlReturnBtn');
+
+  let idleTimer = null;
+  let isDeepLocked = false;
+  const IDLE_MS = 8000; // 8 sekund qaltiraydigan vaqt → keyin qulflanadi
+
+  // Wake Lock — telefon ekranini OS qulflashga yo'l qo'ymaslik
+  let wakeLockSentinel = null;
+  async function acquireWakeLock() {
+    try {
+      if ('wakeLock' in navigator) {
+        wakeLockSentinel = await navigator.wakeLock.request('screen');
+      }
+    } catch (e) { /* user denied or unsupported */ }
+  }
+  async function releaseWakeLock() {
+    try { if (wakeLockSentinel) await wakeLockSentinel.release(); } catch (e) {}
+    wakeLockSentinel = null;
+  }
+
+  function showDeepLock() {
+    if (isDeepLocked) return;
+    // Faqat taymer rejimida ishlaydi (no-timer rejimida emas)
+    if (mode !== 'timer' && mode !== 'pomodoro') return;
+    isDeepLocked = true;
+    deepLockOverlay.style.display = 'flex';
+    // Sync current time
+    if (dlTime) dlTime.textContent = digits.textContent;
+    requestAnimationFrame(() => { deepLockOverlay.style.opacity = '1'; });
+  }
+
+  function hideDeepLock() {
+    if (!isDeepLocked) return;
+    isDeepLocked = false;
+    deepLockOverlay.style.opacity = '0';
+    setTimeout(() => { deepLockOverlay.style.display = 'none'; }, 800);
+    resetIdleTimer();
+  }
+
+  function resetIdleTimer() {
+    if (idleTimer) clearTimeout(idleTimer);
+    if (mode !== 'timer' && mode !== 'pomodoro') return;
+    idleTimer = setTimeout(showDeepLock, IDLE_MS);
+  }
+
+  // Update deep-lock time display sync with main timer
+  const _origPaint = paint;
+  paint = function () {
+    _origPaint();
+    if (isDeepLocked && dlTime) dlTime.textContent = digits.textContent;
+  };
+
+  // Activity events — har tegishida idle timer reset
+  ['pointerdown', 'pointermove', 'keydown'].forEach(ev => {
+    document.addEventListener(ev, (e) => {
+      // deep-lock overlay'da bosish — return tugmasi orqali ochiladi, boshqa joyda javob bermaymiz
+      if (isDeepLocked && e.target !== dlReturnBtn) return;
+      resetIdleTimer();
+    }, { passive: true });
+  });
+
+  // Return button — chuqur qulfdan qaytish
+  dlReturnBtn.addEventListener('click', (e) => {
+    e.stopPropagation();
+    hideDeepLock();
+  });
+
+  // Taymer rejimi tanlanganda boshlanish — choice tugmalari to keyin override
+  const _origChTimer = document.getElementById('chTimer').onclick;
+  document.getElementById('chTimer').addEventListener('click', () => {
+    acquireWakeLock();
+    resetIdleTimer();
+  });
+  document.getElementById('chPomo').addEventListener('click', () => {
+    acquireWakeLock();
+    resetIdleTimer();
+  });
+
+  // Tab visibility — boshqa tab'ga o'tsa wake lock yangilanadi
+  document.addEventListener('visibilitychange', () => {
+    if (document.visibilityState === 'visible' && (mode === 'timer' || mode === 'pomodoro')) {
+      acquireWakeLock();
+    }
+  });
+
+  // Sahifa yopilganda wake lock'ni qaytarish
+  window.addEventListener('pagehide', releaseWakeLock);
 });  // end DOMContentLoaded
 </script>
 
