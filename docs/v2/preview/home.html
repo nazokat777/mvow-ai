@@ -567,6 +567,25 @@
       cancel.addEventListener('click', closeForm);
       form.addEventListener('keydown', (e) => { if (e.key === 'Escape') closeForm(); });
 
+      // Vaqt → daqiqa (00:00 dan)
+      function timeToMin(t) {
+        const m = String(t || '').match(/^(\d{1,2}):(\d{2})$/);
+        return m ? (+m[1]) * 60 + (+m[2]) : null;
+      }
+
+      // Error xabar ko'rsatish
+      function showError(msg) {
+        let err = form.querySelector('.t-add-error');
+        if (!err) {
+          err = document.createElement('div');
+          err.className = 't-add-error';
+          err.style.cssText = 'color:#FF8E97;font-size:12px;margin-top:8px;text-align:center;font-family:Inter,sans-serif;';
+          form.appendChild(err);
+        }
+        err.textContent = msg;
+        setTimeout(() => { if (err) err.textContent = ''; }, 3500);
+      }
+
       form.addEventListener('submit', (e) => {
         e.preventDefault();
         const fd = new FormData(form);
@@ -576,9 +595,33 @@
         // Validation
         const timeOk = /^\d{1,2}:\d{2}$/.test(time);
         const durOk  = window.MVOW_DATA ? MVOW_DATA.parseDurMins(dur) > 0 : /\d/.test(dur);
-        if (!timeOk || !name || !durOk) { shake(); return; }
+        if (!timeOk || !name || !durOk) { shake(); showError("Vaqt, nom va davomiylik kerak"); return; }
         if (!window.MVOW_DATA) { shake(); return; }
+
+        // VAQT TO'QNASHUVI TEKSHIRUVI
+        const newStart = timeToMin(time);
+        const newDur = MVOW_DATA.parseDurMins(dur);
+        const newEnd = newStart + newDur;
         const current = MVOW_DATA.getTodayPlan();
+        for (const t of current) {
+          const tStart = timeToMin(t.time);
+          if (tStart == null) continue;
+          const tDur = MVOW_DATA.parseDurMins(t.dur);
+          const tEnd = tStart + tDur;
+          // Overlap aniqlash: yangi vazifa boshlanishi eski tugashidan oldin VA yangi tugash eski boshlanishidan keyin
+          if (newStart < tEnd && newEnd > tStart) {
+            // Vaqtni HH:MM formatda ko'rsatish
+            const fmtTime = (m) => {
+              const h = Math.floor(m / 60);
+              const mn = m % 60;
+              return String(h).padStart(2, '0') + ':' + String(mn).padStart(2, '0');
+            };
+            shake();
+            showError("Bu vaqtda boshqa vazifa bor: " + (t.name || '?') + " (" + fmtTime(tStart) + "—" + fmtTime(tEnd) + ")");
+            return;
+          }
+        }
+
         current.push({ time, name, dur });
         MVOW_DATA.setTodayPlan(current);
         closeForm();
