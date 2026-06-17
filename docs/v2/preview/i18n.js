@@ -1260,6 +1260,8 @@
         ask_permission: 'Спросить разрешение',
         end: 'Хорошо, возвращаюсь',
         default_task: 'Работа',
+        deep_lock_hint: 'Телефон заблокирован. Сосредоточьтесь.',
+        deep_lock_return: 'Хорошо, вернусь',
         elapsed_label: 'прошло времени',
         done_btn: 'Готово',
         choice_title: 'Как начнём?',
