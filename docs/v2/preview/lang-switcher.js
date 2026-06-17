@@ -29,6 +29,7 @@
 
   function setLang(code) {
     if (!LANG_LABELS[code]) return;
+    const current = (window.I18N && I18N.lang) || localStorage.getItem('mvow.lang') || 'uz';
     try { localStorage.setItem('mvow.lang', code); } catch (e) {}
     if (window.I18N && typeof I18N.set === 'function') {
       I18N.set(code);
@@ -37,6 +38,10 @@
     }
     updateActiveDisplay(code);
     closeMenu();
+    // JS-generated matn (salom, sana, dynamic content) faqat reload bilan yangilanadi
+    if (current !== code) {
+      setTimeout(() => location.reload(), 120);
+    }
   }
 
   let switcherEl = null;
