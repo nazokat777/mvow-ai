@@ -84,7 +84,7 @@
         back: '‹ Orqaga',
         loading: 'Yuklanmoqda',
         fallback_title: 'Vaqt — sizning eng qimmat boyligingiz',
-        fallback_body: "brend — sizning intizom do'stingiz. Maqsadlaringizni kunlik harakatga aylantiramiz.",
+        fallback_body: "Daywarden — sizning intizom do'stingiz. Maqsadlaringizni kunlik harakatga aylantiramiz.",
         fallback_cta: 'Boshlaymiz ›'
       },
       welcome: {
@@ -782,7 +782,7 @@
         back: '‹ Назад',
         loading: 'Загрузка',
         fallback_title: 'Время — ваше самое ценное богатство',
-        fallback_body: 'brend — ваш друг по дисциплине. Превратим ваши цели в ежедневные действия.',
+        fallback_body: 'Daywarden — ваш друг по дисциплине. Превратим ваши цели в ежедневные действия.',
         fallback_cta: 'Начнём ›'
       },
       welcome: {
@@ -1467,7 +1467,7 @@
         back: '‹ Back',
         loading: 'Loading',
         fallback_title: 'Time is your most precious wealth',
-        fallback_body: 'brend — your discipline companion. Turn your goals into daily action.',
+        fallback_body: 'Daywarden — your discipline companion. Turn your goals into daily action.',
         fallback_cta: 'Let\'s start ›'
       },
       welcome: {

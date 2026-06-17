@@ -30,7 +30,7 @@
     brand: {
       // Vaqtincha placeholder — haqiqiy nom keyin shu yerda yangilanadi
       // va butun ilov bo'ylab avtomatik tarqaladi.
-      name:    'brend',
+      name:    'Daywarden',
       tagline: "sizning intizom do'stingiz",
       monogram:'',
       by:      ''
