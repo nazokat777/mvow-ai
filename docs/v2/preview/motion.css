@@ -53,9 +53,9 @@
   transform: translate3d(-50%, -50%, 0) scale(0.6);
   background: radial-gradient(
     circle,
-    rgba(0, 229, 212, 0.32) 0%,
-    rgba(0, 229, 212, 0.10) 45%,
-    rgba(0, 229, 212, 0) 70%
+    rgba(212, 175, 55, 0.32) 0%,
+    rgba(212, 175, 55, 0.10) 45%,
+    rgba(212, 175, 55, 0) 70%
   );
   opacity: 0;
   pointer-events: none;
@@ -87,13 +87,13 @@
 
 .mvw-quietconfirm-mark path {
   fill: none;
-  stroke: #00E5D4;
+  stroke: var(--accent);
   stroke-width: 2.2;
   stroke-linecap: round;
   stroke-linejoin: round;
   stroke-dasharray: 24;
   stroke-dashoffset: 24;
-  filter: drop-shadow(0 0 2px rgba(0, 229, 212, 0.55));
+  filter: drop-shadow(0 0 2px rgba(212, 175, 55, 0.55));
   animation: mvw-quietconfirm-draw var(--mvw-dur-micro) var(--mvw-ease-draw) forwards;
 }
 
@@ -293,8 +293,8 @@
   background: linear-gradient(
     90deg,
     transparent 0%,
-    var(--accent, #00E5D4) 20%,
-    var(--accent, #00E5D4) 80%,
+    var(--accent, var(--accent)) 20%,
+    var(--accent, var(--accent)) 80%,
     transparent 100%
   );
   opacity: 0;
@@ -360,9 +360,9 @@
   opacity: 0.06;
   background: radial-gradient(
     ellipse at center,
-    var(--accent, #00E5D4) 0%,
-    rgba(0, 229, 212, 0.5) 25%,
-    rgba(0, 229, 212, 0.15) 55%,
+    var(--accent, var(--accent)) 0%,
+    rgba(212, 175, 55, 0.5) 25%,
+    rgba(212, 175, 55, 0.15) 55%,
     transparent 75%
   );
   will-change: transform, opacity, filter;
@@ -413,7 +413,7 @@
   width: 0;
   height: 1px;
   margin-bottom: 32px;
-  background: linear-gradient(90deg, transparent 0%, var(--accent, #00E5D4) 50%, transparent 100%);
+  background: linear-gradient(90deg, transparent 0%, var(--accent, var(--accent)) 50%, transparent 100%);
   opacity: 0;
   transform: translateZ(0);
   will-change: width, opacity;
@@ -585,8 +585,8 @@
   justify-content: center;
   opacity: 0;
   transform: scale(0.78);
-  filter: drop-shadow(0 0 14px rgba(0, 229, 212, 0.55))
-          drop-shadow(0 0 32px rgba(0, 229, 212, 0.22));
+  filter: drop-shadow(0 0 14px rgba(212, 175, 55, 0.55))
+          drop-shadow(0 0 32px rgba(212, 175, 55, 0.22));
   animation: mvw-openinghourglass-glow-in var(--mvw-dur-l) var(--mvw-ease-out) 200ms forwards;
 }
 
@@ -609,9 +609,9 @@
   width: 8px;
   height: 8px;
   border-radius: 50%;
-  background: var(--accent, #00E5D4);
-  box-shadow: 0 0 6px rgba(0, 229, 212, 0.7),
-              0 0 14px rgba(0, 229, 212, 0.35);
+  background: var(--accent, var(--accent));
+  box-shadow: 0 0 6px rgba(212, 175, 55, 0.7),
+              0 0 14px rgba(212, 175, 55, 0.35);
   opacity: 0;
   transform: translate(-50%, -60px) scale(0.6);
   will-change: transform, opacity;
@@ -648,8 +648,8 @@
   height: 28px;
   opacity: 0;
   transform: translateY(8px) scale(0.8);
-  filter: drop-shadow(0 0 6px rgba(0, 229, 212, 0.5));
-  color: var(--accent, #00E5D4);
+  filter: drop-shadow(0 0 6px rgba(212, 175, 55, 0.5));
+  color: var(--accent, var(--accent));
   will-change: transform, opacity;
 }
 
@@ -677,7 +677,7 @@
   letter-spacing: 0.04em;
   color: var(--text, #F5F2EC);
   opacity: 0;
-  text-shadow: 0 0 18px rgba(0, 229, 212, 0.25);
+  text-shadow: 0 0 18px rgba(212, 175, 55, 0.25);
   animation: mvw-openinghourglass-wordmark-in var(--mvw-dur-m) var(--mvw-ease-out) 2500ms forwards;
 }
 

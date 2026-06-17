@@ -716,10 +716,10 @@
       glow.className = 'mvw-openinghourglass-glow';
       glow.innerHTML = [
         '<svg viewBox="0 0 80 100" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">',
-          '<path d="M14 8 H66 M14 92 H66" stroke="#00E5D4" stroke-width="3" stroke-linecap="round"/>',
-          '<path d="M18 8 L40 50 L18 92 Z" stroke="#00E5D4" stroke-width="2.2" stroke-linejoin="round" fill="rgba(0,229,212,0.06)"/>',
-          '<path d="M62 8 L40 50 L62 92 Z" stroke="#00E5D4" stroke-width="2.2" stroke-linejoin="round" fill="rgba(0,229,212,0.06)"/>',
-          '<circle cx="40" cy="50" r="1.6" fill="#00E5D4"/>',
+          '<path d="M14 8 H66 M14 92 H66" stroke="#d4af37" stroke-width="3" stroke-linecap="round"/>',
+          '<path d="M18 8 L40 50 L18 92 Z" stroke="#d4af37" stroke-width="2.2" stroke-linejoin="round" fill="rgba(212,175,55,0.06)"/>',
+          '<path d="M62 8 L40 50 L62 92 Z" stroke="#d4af37" stroke-width="2.2" stroke-linejoin="round" fill="rgba(212,175,55,0.06)"/>',
+          '<circle cx="40" cy="50" r="1.6" fill="#d4af37"/>',
         '</svg>'
       ].join('');
       frame.appendChild(glow);
