@@ -1,6 +1,6 @@
 /**
  * M·VoW — DATA: bitta haqiqat manbai (single source of truth).
- * Sana, ishlar ro'yxati, raqamlar, brend — hammasi shu yerda.
+ * Sana, ishlar ro'yxati, raqamlar, Daywarden — hammasi shu yerda.
  * Har sahifa shu fayldan o'qiydi. nav-overlay.js'dan AVVAL yuklanadi.
  *
  * Kelajakda: bu obyektni Kotlin'ga `data class MvowData(...)` ko'chirish oson.

@@ -1,5 +1,5 @@
 /**
- * brend — i18n (O'zbekcha / Русский / English)
+ * Daywarden — i18n (O'zbekcha / Русский / English)
  *
  * Ishlatish:
  *   <h1 data-i18n="welcome.title">Tanishaylik</h1>

@@ -1,5 +1,5 @@
 /**
- * brend Language Switcher — auto-injects a globe icon + dropdown
+ * Daywarden Language Switcher — auto-injects a globe icon + dropdown
  * into the top-right corner of every page.
  *
  * Requires: i18n.js loaded before this script.
