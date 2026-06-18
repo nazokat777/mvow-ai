@@ -2,7 +2,7 @@
   "name": "Daywarden — Sizning intizom do'stingiz",
   "short_name": "Daywarden",
   "description": "Daywarden — sizning intizom do'stingiz. MNSM AI Specialist tomonidan.",
-  "start_url": "./gallery.html",
+  "start_url": "./app.html",
   "scope": "./",
   "display": "standalone",
   "orientation": "portrait",
