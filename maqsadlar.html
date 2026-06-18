@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-<title>{brand} — Maqsadlar</title>
+<title data-i18n="maqsadlar.title">{brand} — Maqsadlar</title>
 <link rel="manifest" href="manifest.webmanifest">
 <meta name="theme-color" content="#04060B">
 <link rel="apple-touch-icon" href="assets/mnsm-logo.png">
@@ -16,11 +16,11 @@
   :root {
     --void:#04060B; --void-soft:#0C0F16;
     --text:#F5F2EC; --text-mid:#B8BBC2; --text-dim:#9CA0A8;
-    --accent:#00E5D4; --accent-soft:#00B5A8;
+    
     --card:#11151E;
     --alert:#FF4757;
-    --c-week:  #7AF5EC;
-    --c-month: #00E5D4;
+    --c-week:  var(--accent-bright);
+    --c-month: var(--accent);
     --c-3mo:   #B8BBC2;
     --c-6mo:   #F5C26B;
     --c-year:  #FF8E97;
@@ -63,8 +63,8 @@
     width: 60px; height: 60px;
     margin: 0 auto 16px;
     border-radius: 50%;
-    background: rgba(0,229,212,.08);
-    border: 1px solid rgba(0,229,212,.25);
+    background: rgba(212,175,55,.08);
+    border: 1px solid rgba(212,175,55,.25);
     display: flex; align-items: center; justify-content: center;
     color: var(--accent);
     font-size: 28px;
@@ -93,7 +93,7 @@
     position: relative;
     transition: all .15s;
   }
-  .goal:active { transform: scale(.99); border-color: rgba(0,229,212,.3); }
+  .goal:active { transform: scale(.99); border-color: rgba(212,175,55,.3); }
   .goal-row {
     display: grid;
     grid-template-columns: 1fr auto;
@@ -175,6 +175,168 @@
   .goal.editing .goal-del { display: flex; }
   .goal-del:hover { color: var(--alert); }
 
+  /* Projection / stats line */
+  .goal-projection {
+    margin-top: 10px;
+    padding-top: 10px;
+    border-top: 1px solid rgba(255,255,255,.04);
+    font-size: 11.5px;
+    color: var(--text-mid);
+    letter-spacing: 0.3px;
+    line-height: 1.5;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 4px 10px;
+  }
+  .goal-projection .gp-done    { color: var(--accent); font-weight: 600; }
+  .goal-projection .gp-left    { color: var(--text); }
+  .goal-projection .gp-end     { color: var(--text-mid); }
+  .goal-projection .gp-end b   { color: var(--text); font-weight: 600; }
+  .goal-projection .gp-sep     { color: var(--text-dim); }
+
+  /* Sessions block */
+  .goal-sessions {
+    margin-top: 12px;
+    padding-top: 12px;
+    border-top: 1px solid rgba(255,255,255,.04);
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
+  .gs-label {
+    font-size: 10.5px;
+    letter-spacing: 1.5px;
+    color: var(--text-dim);
+    text-transform: uppercase;
+    margin-bottom: 4px;
+  }
+  .gs-row {
+    display: grid;
+    grid-template-columns: 56px 1fr auto auto;
+    align-items: center;
+    gap: 10px;
+    padding: 8px 10px;
+    border-radius: 8px;
+    background: rgba(255,255,255,.025);
+    border: 1px solid rgba(255,255,255,.04);
+    font-size: 13px;
+  }
+  .gs-time {
+    color: var(--accent);
+    font-weight: 600;
+    font-variant-numeric: tabular-nums;
+  }
+  .gs-dur {
+    color: var(--text);
+    cursor: pointer;
+    padding: 4px 6px;
+    border-radius: 6px;
+    transition: background .15s;
+  }
+  .gs-dur:hover { background: rgba(255,255,255,.05); }
+  .gs-dur-input {
+    width: 100%;
+    background: var(--void-soft);
+    border: 1px solid var(--accent);
+    border-radius: 6px;
+    color: var(--text);
+    font-family: 'Inter', sans-serif;
+    font-size: 13px;
+    padding: 4px 6px;
+  }
+  .gs-edit, .gs-del {
+    width: 28px; height: 28px;
+    border-radius: 6px;
+    background: transparent;
+    border: none;
+    color: var(--text-dim);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 14px;
+    transition: all .15s;
+  }
+  .gs-edit:hover { color: var(--accent); background: rgba(212,175,55,.08); }
+  .gs-del:hover  { color: var(--alert); background: rgba(255,71,87,.08); }
+
+  /* Add session button */
+  .gs-add {
+    margin-top: 4px;
+    width: 100%;
+    padding: 10px;
+    background: transparent;
+    border: 1px dashed rgba(212,175,55,.25);
+    border-radius: 8px;
+    color: var(--accent);
+    font-family: 'Inter', sans-serif;
+    font-size: 12px;
+    font-weight: 500;
+    letter-spacing: 0.5px;
+    cursor: pointer;
+    transition: all .15s;
+  }
+  .gs-add:hover {
+    background: rgba(212,175,55,.05);
+    border-color: var(--accent);
+  }
+
+  /* Inline add-session form */
+  .gs-add-form {
+    margin-top: 4px;
+    padding: 10px;
+    background: rgba(255,255,255,.025);
+    border: 1px solid rgba(212,175,55,.2);
+    border-radius: 8px;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+  }
+  /* `hidden` atributi `display:grid`dan kuchsiz qoladi — buni aniq bekor qilamiz,
+     aks holda qo'shish formasi har doim ochiq turadi. */
+  .gs-add-form[hidden] { display: none; }
+  .gs-add-form input,
+  .gs-add-form select {
+    background: var(--void-soft);
+    border: 1px solid rgba(255,255,255,.08);
+    border-radius: 6px;
+    color: var(--text);
+    font-family: 'Inter', sans-serif;
+    font-size: 13px;
+    padding: 8px 10px;
+    min-height: 38px;
+  }
+  .gs-add-form input:focus,
+  .gs-add-form select:focus {
+    outline: none;
+    border-color: var(--accent);
+  }
+  .gs-add-form .gs-add-actions {
+    grid-column: 1 / -1;
+    display: flex;
+    gap: 8px;
+    justify-content: flex-end;
+  }
+  .gs-add-form button {
+    padding: 8px 14px;
+    border-radius: 6px;
+    border: none;
+    cursor: pointer;
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: 0.5px;
+  }
+  .gs-add-cancel {
+    background: transparent;
+    color: var(--text-dim);
+  }
+  .gs-add-cancel:hover { color: var(--text); }
+  .gs-add-save {
+    background: var(--accent);
+    color: var(--void);
+  }
+  .gs-add-save:hover { filter: brightness(1.1); }
+
   /* Add button */
   .add-goal {
     display: flex;
@@ -184,7 +346,7 @@
     width: 100%;
     padding: 18px;
     background: transparent;
-    border: 1.5px dashed rgba(0,229,212,.25);
+    border: 1.5px dashed rgba(212,175,55,.25);
     border-radius: 12px;
     color: var(--accent);
     font-family: 'Inter', sans-serif;
@@ -197,7 +359,7 @@
     min-height: 56px;
   }
   .add-goal:hover {
-    background: rgba(0,229,212,.04);
+    background: rgba(212,175,55,.04);
     border-color: var(--accent);
   }
 
@@ -228,53 +390,92 @@
     min-height: 52px;
   }
 </style>
+<link rel="stylesheet" href="theme.css">
 </head>
 <body>
 
 <div class="wrap">
   <div class="header">
-    <h1 class="title">Maqsadlar</h1>
-    <p class="sub" id="countSub">0 ta maqsad</p>
+    <h1 class="title" data-i18n="maqsadlar.title">Maqsadlar</h1>
+    <p class="tagline" style="font-family:'Cormorant Garamond',serif;font-style:italic;font-size:15px;line-height:1.5;color:var(--text-mid);text-align:center;margin:10px 18px 6px;max-width:340px;margin-left:auto;margin-right:auto;">
+      <span data-i18n="maqsadlar.tagline_a">Maqsadlaringizni yozing —</span><br>
+      <span style="color:var(--accent);" data-i18n="maqsadlar.tagline_em">bo'laklarga bo'lib</span><span data-i18n="maqsadlar.tagline_b">, reja va muntazamlik bilan unga yetasiz.</span>
+    </p>
+    <p class="sub" id="countSub" data-i18n="maqsadlar.count_zero_fallback">0 ta maqsad</p>
   </div>
 
   <div id="emptyState" class="empty">
     <div class="ic">+</div>
-    <div class="head">Birinchi maqsadni qo'sh</div>
-    <div class="desc">Ilov uni kalendaringga<br>har kunga tarqatadi</div>
+    <div class="head" data-i18n="maqsadlar.empty_head">Birinchi maqsadni qo'shing</div>
+    <div class="desc"><span data-i18n="maqsadlar.empty_desc_a">Ilov uni kalendaringizga</span><br><span data-i18n="maqsadlar.empty_desc_b">har kunga tarqatadi</span></div>
   </div>
 
   <div class="goals" id="goalsList"></div>
 
   <button class="add-goal" id="addBtn" type="button">
     <span style="font-size:18px;">+</span>
-    <span>Yangi maqsad</span>
+    <span data-i18n="maqsadlar.add_btn">Yangi maqsad</span>
   </button>
 </div>
 
 <div class="bottom">
-  <a class="cta" href="permissions.html">Davom</a>
+  <a class="cta" href="settings.html" data-i18n="common.continue">Davom</a>
 </div>
 
-<script src="i18n.js" defer></script>
-<script src="data.js" defer></script>
-<script src="nav-overlay.js" defer></script>
+<script src="i18n.js?v=28.4.0"></script>
+<script src="lang-switcher.js?v=28.4.0" defer></script>
+<script src="data.js?v=28.4.0" defer></script>
+<script src="nav-overlay.js?v=28.4.0" defer></script>
 <script>
+  function _t(key, fb) { return (window.I18N ? I18N.t(key, fb) : fb); }
   const DURATION_INFO = {
-    'week':  { label: '1 HAFTA', cls: 'badge-week',  days: 7,   short: 'hafta' },
-    'month': { label: '1 OY',    cls: 'badge-month', days: 30,  short: 'oy' },
-    '3mo':   { label: '3 OY',    cls: 'badge-3mo',   days: 90,  short: '3 oy' },
-    '6mo':   { label: '6 OY',    cls: 'badge-6mo',   days: 180, short: '6 oy' },
-    'year':  { label: '1 YIL',   cls: 'badge-year',  days: 365, short: 'yil' }
+    'week':  { get label(){ return _t('maqsadlar.dur_week_lbl', '1 HAFTA'); }, cls: 'badge-week',  days: 7,   get short(){ return _t('maqsadlar.dur_week_short', 'hafta'); } },
+    'month': { get label(){ return _t('maqsadlar.dur_month_lbl', '1 OY'); },    cls: 'badge-month', days: 30,  get short(){ return _t('maqsadlar.dur_month_short', 'oy'); } },
+    '3mo':   { get label(){ return _t('maqsadlar.dur_3mo_lbl', '3 OY'); },     cls: 'badge-3mo',   days: 90,  get short(){ return _t('maqsadlar.dur_3mo_short', '3 oy'); } },
+    '6mo':   { get label(){ return _t('maqsadlar.dur_6mo_lbl', '6 OY'); },     cls: 'badge-6mo',   days: 180, get short(){ return _t('maqsadlar.dur_6mo_short', '6 oy'); } },
+    'year':  { get label(){ return _t('maqsadlar.dur_year_lbl', '1 YIL'); },   cls: 'badge-year',  days: 365, get short(){ return _t('maqsadlar.dur_year_short', 'yil'); } }
   };
 
   function loadGoals() {
+    // Prefer the shared inflating loader when present (adds sessions[] + changeLog
+    // for legacy entries without persisting until next save).
+    if (window.MVOW_DATA && typeof MVOW_DATA.loadGoals === 'function') {
+      return MVOW_DATA.loadGoals();
+    }
+    let raw = [];
     try {
-      const g = JSON.parse(localStorage.getItem('mvow.goals') || '[]');
-      return Array.isArray(g) ? g : [];
-    } catch { return []; }
+      raw = JSON.parse(localStorage.getItem('mvow.goals') || '[]');
+    } catch { raw = []; }
+    if (!Array.isArray(raw)) raw = [];
+    // Inflate legacy single-session goals so the rest of the screen can rely on sessions[].
+    return raw.map(g => {
+      if (Array.isArray(g.sessions) && g.sessions.length) return g;
+      const time = g.time || '07:00';
+      const dur  = g.dur  || '60 daq';
+      g.sessions  = [{ sid: 's1', time, dur }];
+      g.changeLog = [{ fromIso: g.startDate, sessions: [{ time, dur }] }];
+      return g;
+    });
   }
   function saveGoals(arr) {
-    localStorage.setItem('mvow.goals', JSON.stringify(arr));
+    if (window.MVOW_DATA && typeof MVOW_DATA.saveGoals === 'function') {
+      MVOW_DATA.saveGoals(arr);
+      return;
+    }
+    // Fallback writer — mirrors legacy fields so older readers keep working.
+    const out = arr.map(g => {
+      const sessions = (Array.isArray(g.sessions) && g.sessions.length)
+        ? g.sessions
+        : [{ sid:'s1', time: g.time || '07:00', dur: g.dur || '60 daq' }];
+      const first = sessions[0];
+      const totalMins = sessions.reduce((s,x) => s + parseDurMins(x.dur), 0);
+      return Object.assign({}, g, {
+        sessions,
+        time: first.time,
+        dur:  fmtHM(totalMins)
+      });
+    });
+    localStorage.setItem('mvow.goals', JSON.stringify(out));
   }
 
   function escapeHtml(s) {
@@ -287,6 +488,180 @@
     return Math.max(0, Math.floor((now - start) / 86400000));
   }
 
+  // ---- Local fallbacks for duration formatting & projection math ----
+  // Used only when MVOW_DATA.* equivalents aren't loaded yet.
+  function parseDurMins(s) {
+    if (window.MVOW_DATA && typeof MVOW_DATA.parseDurMins === 'function') {
+      return MVOW_DATA.parseDurMins(s);
+    }
+    if (!s) return 60;
+    const str = String(s).toLowerCase();
+    let h = 0, m = 0;
+    const hM = str.match(/(\d+)\s*soat/);
+    const mM = str.match(/(\d+)\s*daq/);
+    if (hM) h = parseInt(hM[1], 10);
+    if (mM) m = parseInt(mM[1], 10);
+    if (!hM && !mM) {
+      const n = parseInt(str, 10);
+      if (!isNaN(n)) m = n;
+    }
+    return h * 60 + m || 60;
+  }
+  function fmtHM(mins) {
+    if (window.MVOW_DATA && typeof MVOW_DATA.fmtHM === 'function') {
+      return MVOW_DATA.fmtHM(mins);
+    }
+    const n = Math.max(0, Math.round(mins));
+    const h = Math.floor(n / 60);
+    const m = n % 60;
+    if (h && m) return h + ' soat ' + m + ' daq';
+    if (h)     return h + ' soat';
+    return m + ' daq';
+  }
+  function localIso(d) {
+    if (window.MVOW_DATA && typeof MVOW_DATA.localDateIso === 'function') {
+      return MVOW_DATA.localDateIso(d);
+    }
+    const x = d ? new Date(d) : new Date();
+    const y = x.getFullYear();
+    const mo = String(x.getMonth() + 1).padStart(2, '0');
+    const da = String(x.getDate()).padStart(2, '0');
+    return y + '-' + mo + '-' + da;
+  }
+  function isoAddDays(iso, days) {
+    const d = new Date(iso + 'T00:00:00');
+    d.setDate(d.getDate() + days);
+    return localIso(d);
+  }
+
+  // Projection math fallback if MVOW_DATA.getGoalProgress doesn't exist yet.
+  function getGoalProgress(goalId) {
+    if (window.MVOW_DATA && typeof MVOW_DATA.getGoalProgress === 'function') {
+      return MVOW_DATA.getGoalProgress(goalId);
+    }
+    const goals = loadGoals();
+    const g = goals.find(x => x.id === goalId);
+    if (!g) return null;
+    const sessions = g.sessions || [];
+    const dailyAllocation = sessions.reduce((s,x) => s + parseDurMins(x.dur), 0);
+
+    const info = DURATION_INFO[g.duration] || DURATION_INFO.month;
+    const startIso = g.startDate;
+    const endIso   = isoAddDays(startIso, info.days);
+    const todayIso = localIso();
+
+    // Total target — walk changeLog windows
+    let totalTarget = 0;
+    const log = (g.changeLog && g.changeLog.length)
+      ? g.changeLog
+      : [{ fromIso: startIso, sessions: sessions.map(s => ({ time: s.time, dur: s.dur })) }];
+    for (let i = 0; i < log.length; i++) {
+      const winStart = log[i].fromIso > startIso ? log[i].fromIso : startIso;
+      const winEnd   = (i + 1 < log.length) ? log[i + 1].fromIso : endIso;
+      const a = new Date(winStart + 'T00:00:00');
+      const b = new Date(winEnd   + 'T00:00:00');
+      const days = Math.max(0, Math.round((b - a) / 86400000));
+      const alloc = (log[i].sessions || []).reduce((s,x) => s + parseDurMins(x.dur), 0);
+      totalTarget += days * alloc;
+    }
+
+    const history = (window.MVOW_DATA ? MVOW_DATA.getHistory() : []);
+    const done = history
+      .filter(h => h.name === g.text && h.dateIso >= startIso && h.dateIso < endIso)
+      .reduce((s,h) => s + (h.actualMins || 0), 0);
+
+    const remaining = Math.max(0, totalTarget - done);
+    let projectedEnd = null;
+    if (dailyAllocation > 0) {
+      const daysNeeded = Math.ceil(remaining / dailyAllocation);
+      projectedEnd = isoAddDays(todayIso, daysNeeded);
+    }
+    return { done, remaining, totalTarget, dailyAllocation, projectedEnd, originalEnd: endIso };
+  }
+
+  function fmtHours(mins) {
+    const hu = _t('maqsadlar.hours_unit', 'soat');
+    const h = mins / 60;
+    if (h >= 10) return Math.round(h) + ' ' + hu;
+    return (Math.round(h * 10) / 10).toString().replace('.0', '') + ' ' + hu;
+  }
+  // Saqlangan davomiylik ("1 soat", "30 daq") ekranda tanlangan tilga moslanadi.
+  // Saqlash formati o'zbekcha qoladi — parseDurMins shu format bilan ishlaydi.
+  function dispDur(s) {
+    const mins = parseDurMins(s);
+    const hu = _t('maqsadlar.hours_unit', 'soat');
+    const mu = _t('maqsadlar.mins_unit', 'daq');
+    const h = Math.floor(mins / 60);
+    const m = mins % 60;
+    if (h && m) return h + ' ' + hu + ' ' + m + ' ' + mu;
+    if (h) return h + ' ' + hu;
+    return m + ' ' + mu;
+  }
+  function fmtDateShort(iso) {
+    if (!iso) return '—';
+    const d = new Date(iso + 'T00:00:00');
+    if (isNaN(d.getTime())) return iso;
+    const mo = String(d.getMonth() + 1).padStart(2, '0');
+    const da = String(d.getDate()).padStart(2, '0');
+    return d.getFullYear() + '-' + mo + '-' + da;
+  }
+
+  // ---- Session mutators (prefer DATA helpers, fall back to inline writes) ----
+  function _writeGoalSessions(goalId, newSessions) {
+    const goals = loadGoals();
+    const idx = goals.findIndex(x => x.id === goalId);
+    if (idx < 0) return null;
+    const g = goals[idx];
+    // Re-sid (stable s1..sN ordering) to keep the UI deterministic.
+    const fresh = newSessions.map((s, i) => ({
+      sid:  s.sid || ('s' + (i + 1)),
+      time: s.time,
+      dur:  s.dur
+    }));
+    g.sessions = fresh;
+    // Append / replace today's changeLog entry.
+    const today = localIso();
+    g.changeLog = Array.isArray(g.changeLog) ? g.changeLog.slice() : [];
+    const last = g.changeLog[g.changeLog.length - 1];
+    const entry = { fromIso: today, sessions: fresh.map(s => ({ time: s.time, dur: s.dur })) };
+    if (last && last.fromIso === today) g.changeLog[g.changeLog.length - 1] = entry;
+    else g.changeLog.push(entry);
+    goals[idx] = g;
+    saveGoals(goals);
+    return g;
+  }
+  function updateGoalSession(goalId, sid, patch) {
+    if (window.MVOW_DATA && typeof MVOW_DATA.updateGoalSession === 'function') {
+      return MVOW_DATA.updateGoalSession(goalId, sid, patch);
+    }
+    const goals = loadGoals();
+    const g = goals.find(x => x.id === goalId);
+    if (!g) return null;
+    const next = g.sessions.map(s => s.sid === sid ? Object.assign({}, s, patch) : s);
+    return _writeGoalSessions(goalId, next);
+  }
+  function addGoalSession(goalId, sess) {
+    if (window.MVOW_DATA && typeof MVOW_DATA.addGoalSession === 'function') {
+      return MVOW_DATA.addGoalSession(goalId, sess);
+    }
+    const goals = loadGoals();
+    const g = goals.find(x => x.id === goalId);
+    if (!g) return null;
+    const next = g.sessions.concat([{ time: sess.time, dur: sess.dur }]);
+    return _writeGoalSessions(goalId, next);
+  }
+  function removeGoalSession(goalId, sid) {
+    if (window.MVOW_DATA && typeof MVOW_DATA.removeGoalSession === 'function') {
+      try { return MVOW_DATA.removeGoalSession(goalId, sid); } catch { /* falls through */ }
+    }
+    const goals = loadGoals();
+    const g = goals.find(x => x.id === goalId);
+    if (!g) return null;
+    if (g.sessions.length <= 1) return null; // keep at least one
+    const next = g.sessions.filter(s => s.sid !== sid);
+    return _writeGoalSessions(goalId, next);
+  }
+
   function render() {
     const goals = loadGoals();
     const list = document.getElementById('goalsList');
@@ -296,32 +671,124 @@
     if (!goals.length) {
       list.style.display = 'none';
       empty.style.display = 'block';
-      sub.textContent = '0 ta maqsad';
+      sub.textContent = (window.I18N ? I18N.tWith('maqsadlar.count', { n: 0 }) : '0 ta maqsad');
       return;
     }
     empty.style.display = 'none';
     list.style.display = 'flex';
-    sub.textContent = goals.length + ' ta maqsad';
+    sub.textContent = (window.I18N ? I18N.tWith('maqsadlar.count', { n: goals.length }) : goals.length + ' ta maqsad');
+
+    // History — har maqsad uchun bajarilgan kunlar sonini hisoblash uchun
+    const history = (window.MVOW_DATA ? MVOW_DATA.getHistory() : []);
 
     list.innerHTML = goals.map(g => {
       const info = DURATION_INFO[g.duration] || DURATION_INFO.month;
       const passed = daysSince(g.startDate);
       const remaining = Math.max(0, info.days - passed);
-      const percent = Math.min(100, Math.round((passed / info.days) * 100));
+      // Vaqt bo'yicha o'tgan % (yo'lda qancha)
+      const timePct = Math.min(100, Math.round((passed / info.days) * 100));
+      // Bajarilganlik % (history bo'yicha — shu maqsad nomi)
+      const expectedSoFar = Math.min(passed + 1, info.days);
+      const completedDays = history.filter(h =>
+        h.name === g.text && h.dateIso >= g.startDate
+      ).length;
+      const donePct = expectedSoFar > 0
+        ? Math.min(100, Math.round((completedDays / expectedSoFar) * 100))
+        : 0;
+      // Yaxshi / o'rta / yomon rang
+      const grade = donePct >= 80 ? 'good' : (donePct >= 50 ? 'mid' : 'low');
+      const gradeColor = donePct >= 80 ? 'var(--accent)' : (donePct >= 50 ? '#F5C26B' : '#FF8E97');
+      const lblEveryDay = _t('maqsadlar.every_day', 'Har kuni');
+      const lblDelAria = _t('common.delete', "O'chir");
+      const lblDays = _t('maqsadlar.days_unit', 'kun');
+      const lblDaysLeft = _t('maqsadlar.days_left', 'kun qoldi');
+      const lblDone = _t('maqsadlar.done_lbl', 'Bajarildi');
+      const lblSessions = _t('maqsadlar.sessions_lbl', 'Sessiyalar');
+      const lblAddSession = _t('maqsadlar.add_session', "+ Yana sessiya qo'sh");
+      const lblEditSession = _t('maqsadlar.edit_session', 'Tahrirlash');
+      const lblDelSession = _t('maqsadlar.del_session', "O'chirish");
+      const lblStatsDone = _t('maqsadlar.stats_done', 'bajarildi');
+      const lblStatsLeft = _t('maqsadlar.stats_left', 'qoldi');
+      const lblStatsEnd  = _t('maqsadlar.stats_end',  'Tugatish');
+      const lblNewTime = _t('maqsadlar.new_time', 'Vaqt');
+      const lblNewDur  = _t('maqsadlar.new_dur',  'Davomiyligi');
+      const lblSave    = _t('common.save', 'Saqlash');
+      const lblCancel  = _t('common.cancel', 'Bekor');
+
+      // Projection stats
+      const prog = getGoalProgress(g.id) || { done: 0, remaining: 0, dailyAllocation: 0, projectedEnd: null };
+      const doneHours = fmtHours(prog.done);
+      const leftHours = fmtHours(prog.remaining);
+      const endTxt = prog.projectedEnd ? fmtDateShort(prog.projectedEnd) : '—';
+
+      const sessions = Array.isArray(g.sessions) && g.sessions.length
+        ? g.sessions
+        : [{ sid:'s1', time: g.time || '07:00', dur: g.dur || '60 daq' }];
+
+      const sessionsHtml = sessions.map(s => `
+        <div class="gs-row" data-sid="${escapeHtml(s.sid)}">
+          <span class="gs-time">${escapeHtml(s.time)}</span>
+          <span class="gs-dur"
+                data-edit-dur="${escapeHtml(s.sid)}"
+                data-current="${escapeHtml(s.dur)}"
+                title="${escapeHtml(lblEditSession)}">${escapeHtml(dispDur(s.dur))}</span>
+          <button class="gs-edit" data-edit-time="${escapeHtml(s.sid)}"
+                  data-current="${escapeHtml(s.time)}"
+                  type="button" aria-label="${escapeHtml(lblEditSession)}">&#9998;</button>
+          <button class="gs-del" data-del-sid="${escapeHtml(s.sid)}"
+                  type="button" aria-label="${escapeHtml(lblDelSession)}"
+                  ${sessions.length <= 1 ? 'disabled style="opacity:.3;cursor:not-allowed;"' : ''}>×</button>
+        </div>
+      `).join('');
+
       return `
         <div class="goal" data-id="${g.id}">
-          <button class="goal-del" data-del="${g.id}" type="button" aria-label="O'chir">×</button>
+          <button class="goal-del" data-del="${g.id}" type="button" aria-label="${escapeHtml(lblDelAria)}">×</button>
           <div class="goal-row">
             <div class="goal-name">${escapeHtml(g.text)}</div>
             <div class="goal-badge ${info.cls}">${info.label}</div>
           </div>
           <div class="goal-meta">
-            Har kuni <span class="em">${escapeHtml(g.time)}</span> · ${escapeHtml(g.dur)}
+            ${escapeHtml(lblEveryDay)} <span class="em">${escapeHtml(g.time)}</span> · ${escapeHtml(dispDur(g.dur))}
           </div>
-          <div class="progress-bar"><div class="progress-fill" style="width:${percent}%"></div></div>
+          <div class="progress-bar"><div class="progress-fill" style="width:${timePct}%"></div></div>
           <div class="progress-text">
-            <span class="left">${passed} / ${info.days} kun</span>
-            <span class="right">${remaining} ${info.short === 'yil' ? 'kun' : 'kun'} qoldi</span>
+            <span class="left">${passed} / ${info.days} ${escapeHtml(lblDays)}</span>
+            <span class="right">${remaining} ${escapeHtml(lblDaysLeft)}</span>
+          </div>
+
+          <div class="goal-projection">
+            <span class="gp-done"><b>${escapeHtml(doneHours)}</b> ${escapeHtml(lblStatsDone)}</span>
+            <span class="gp-sep">·</span>
+            <span class="gp-left"><b>${escapeHtml(leftHours)}</b> ${escapeHtml(lblStatsLeft)}</span>
+            <span class="gp-sep">·</span>
+            <span class="gp-end">${escapeHtml(lblStatsEnd)}: <b>${escapeHtml(endTxt)}</b></span>
+          </div>
+
+          <div class="goal-sessions" data-goal-sessions="${g.id}">
+            <div class="gs-label">${escapeHtml(lblSessions)}</div>
+            ${sessionsHtml}
+            <button class="gs-add" data-add-session="${g.id}" type="button">${escapeHtml(lblAddSession)}</button>
+            <form class="gs-add-form" data-add-form="${g.id}" hidden>
+              <input type="time" name="time" required value="07:00" aria-label="${escapeHtml(lblNewTime)}">
+              <select name="dur" aria-label="${escapeHtml(lblNewDur)}">
+                <option value="15 daq">${escapeHtml(dispDur('15 daq'))}</option>
+                <option value="30 daq" selected>${escapeHtml(dispDur('30 daq'))}</option>
+                <option value="45 daq">${escapeHtml(dispDur('45 daq'))}</option>
+                <option value="60 daq">${escapeHtml(dispDur('60 daq'))}</option>
+                <option value="1 soat 30 daq">${escapeHtml(dispDur('1 soat 30 daq'))}</option>
+                <option value="2 soat">${escapeHtml(dispDur('2 soat'))}</option>
+              </select>
+              <div class="gs-add-actions">
+                <button type="button" class="gs-add-cancel" data-add-cancel="${g.id}">${escapeHtml(lblCancel)}</button>
+                <button type="submit" class="gs-add-save">${escapeHtml(lblSave)}</button>
+              </div>
+            </form>
+          </div>
+
+          <div style="margin-top:10px;padding-top:10px;border-top:1px solid rgba(255,255,255,.04);display:flex;justify-content:space-between;align-items:center;font-size:11px;letter-spacing:0.5px;">
+            <span style="color:var(--text-dim);">${escapeHtml(lblDone)}</span>
+            <span style="color:${gradeColor};font-weight:600;font-size:14px;">${donePct}%</span>
           </div>
         </div>
       `;
@@ -332,8 +799,150 @@
       b.addEventListener('click', (e) => {
         e.stopPropagation();
         const id = parseInt(b.dataset.del, 10);
-        if (!confirm("Bu maqsadni o'chirasanmi? Kalendaringdan ham olib tashlanadi.")) return;
+        if (!confirm(_t('maqsadlar.del_confirm', "Bu maqsadni o'chirasizmi? Kalendaringizdan ham olib tashlanadi."))) return;
         removeGoal(id);
+      });
+    });
+
+    // Session: edit duration (inline input)
+    list.querySelectorAll('[data-edit-dur]').forEach(span => {
+      span.addEventListener('click', (e) => {
+        e.stopPropagation();
+        if (span.querySelector('input')) return; // already editing
+        const sid = span.dataset.editDur;
+        const goalId = parseInt(span.closest('[data-goal-sessions]').dataset.goalSessions, 10);
+        const cur = span.dataset.current || span.textContent;
+        const input = document.createElement('input');
+        input.type = 'text';
+        input.className = 'gs-dur-input';
+        input.value = cur;
+        input.setAttribute('aria-label', _t('maqsadlar.new_dur', 'Davomiyligi'));
+        span.innerHTML = '';
+        span.appendChild(input);
+        input.focus();
+        input.select();
+        const commit = () => {
+          const v = input.value.trim();
+          if (!v || v === cur) { render(); return; }
+          updateGoalSession(goalId, sid, { dur: v });
+          render();
+        };
+        const cancel = () => render();
+        input.addEventListener('blur', commit);
+        input.addEventListener('keydown', (ev) => {
+          if (ev.key === 'Enter') { ev.preventDefault(); input.blur(); }
+          else if (ev.key === 'Escape') { ev.preventDefault(); cancel(); }
+        });
+      });
+    });
+
+    // Session: edit time (uses native time picker)
+    list.querySelectorAll('[data-edit-time]').forEach(btn => {
+      btn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        const sid = btn.dataset.editTime;
+        const goalId = parseInt(btn.closest('[data-goal-sessions]').dataset.goalSessions, 10);
+        const cur = btn.dataset.current || '07:00';
+        const row = btn.closest('.gs-row');
+        const timeSpan = row.querySelector('.gs-time');
+        if (row.querySelector('input[type=time]')) return;
+        const input = document.createElement('input');
+        input.type = 'time';
+        input.className = 'gs-dur-input';
+        input.value = cur;
+        input.style.width = '100%';
+        timeSpan.style.display = 'none';
+        timeSpan.insertAdjacentElement('afterend', input);
+        input.focus();
+        const commit = () => {
+          const v = input.value;
+          if (!v || v === cur) { render(); return; }
+          updateGoalSession(goalId, sid, { time: v });
+          render();
+        };
+        input.addEventListener('blur', commit);
+        input.addEventListener('keydown', (ev) => {
+          if (ev.key === 'Enter') { ev.preventDefault(); input.blur(); }
+          else if (ev.key === 'Escape') { ev.preventDefault(); render(); }
+        });
+      });
+    });
+
+    // Session: delete
+    list.querySelectorAll('[data-del-sid]').forEach(btn => {
+      btn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        if (btn.disabled) return;
+        const sid = btn.dataset.delSid;
+        const goalId = parseInt(btn.closest('[data-goal-sessions]').dataset.goalSessions, 10);
+        if (!confirm(_t('maqsadlar.del_session_confirm', "Bu sessiyani o'chirasizmi?"))) return;
+        removeGoalSession(goalId, sid);
+        render();
+      });
+    });
+
+    // Session: open add-form — aqlli vaqt taklif
+    list.querySelectorAll('[data-add-session]').forEach(btn => {
+      btn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        const id = btn.dataset.addSession;
+        const form = list.querySelector('[data-add-form="' + id + '"]');
+        if (!form) return;
+        form.hidden = false;
+        btn.hidden = true;
+        const t = form.querySelector('input[name=time]');
+
+        // Aqlli vaqt: shu maqsadning eng so'nggi sessiyasi tugashidan keyin
+        try {
+          const goals = loadGoals();
+          const goal = goals.find(g => g.id === parseInt(id, 10));
+          if (goal && Array.isArray(goal.sessions) && goal.sessions.length) {
+            // Har session tugash daqiqasi: time + parseDurMins(dur)
+            const ends = goal.sessions.map(s => {
+              const m = String(s.time || '').match(/^(\d{1,2}):(\d{2})$/);
+              if (!m) return -1;
+              const start = (+m[1]) * 60 + (+m[2]);
+              const dur = window.MVOW_DATA ? MVOW_DATA.parseDurMins(s.dur) : 60;
+              return start + dur;
+            }).filter(e => e >= 0);
+            if (ends.length) {
+              const latestEnd = Math.max(...ends);
+              const next = Math.min(latestEnd, 23 * 60 + 30);
+              const hh = String(Math.floor(next / 60)).padStart(2, '0');
+              const mm = String(next % 60).padStart(2, '0');
+              if (t) t.value = hh + ':' + mm;
+            }
+          }
+        } catch {}
+
+        if (t) t.focus();
+      });
+    });
+
+    // Session: cancel add-form
+    list.querySelectorAll('[data-add-cancel]').forEach(btn => {
+      btn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        const id = btn.dataset.addCancel;
+        const form = list.querySelector('[data-add-form="' + id + '"]');
+        const opener = list.querySelector('[data-add-session="' + id + '"]');
+        if (form) form.hidden = true;
+        if (opener) opener.hidden = false;
+      });
+    });
+
+    // Session: submit add-form
+    list.querySelectorAll('[data-add-form]').forEach(form => {
+      form.addEventListener('submit', (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        const goalId = parseInt(form.dataset.addForm, 10);
+        const fd = new FormData(form);
+        const time = (fd.get('time') || '').toString();
+        const dur  = (fd.get('dur')  || '').toString();
+        if (!time || !dur) return;
+        addGoalSession(goalId, { time, dur });
+        render();
       });
     });
   }
@@ -351,7 +960,7 @@
       for (let i = 0; i < info.days; i++) {
         const d = new Date(start);
         d.setDate(start.getDate() + i);
-        const key = 'd' + d.toISOString().slice(0, 10);
+        const key = 'd' + (window.MVOW_DATA ? MVOW_DATA.localDateIso(d) : d.toISOString().slice(0, 10));
         if (Array.isArray(w[key])) {
           w[key] = w[key].filter(s => !(s.name === goal.text && s.time === goal.time));
         }
@@ -372,5 +981,6 @@
   render();
 </script>
 
+<script src="back-btn.js?v=28.4.0"></script>
 </body>
 </html>

@@ -1,8 +1,8 @@
 {
-  "name": "M·VoW · Sening intizom do'sting",
-  "short_name": "M·VoW",
-  "description": "Discipline AI — psixolog, neyrobiolog, harakatga chorlovchi do'st. MNSM AI Specialist tomonidan.",
-  "start_url": "./gallery.html",
+  "name": "Daywarden — Sizning intizom do'stingiz",
+  "short_name": "Daywarden",
+  "description": "Daywarden — sizning intizom do'stingiz. MNSM AI Specialist tomonidan.",
+  "start_url": "./app.html",
   "scope": "./",
   "display": "standalone",
   "orientation": "portrait",
@@ -29,10 +29,6 @@
     {
       "name": "Bosh sahifa",
       "url": "./home.html"
-    },
-    {
-      "name": "Bugungi reja",
-      "url": "./today-plan.html"
     },
     {
       "name": "Natijalar",

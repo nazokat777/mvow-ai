@@ -13,108 +13,261 @@
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
 <style>
   * { box-sizing: border-box; margin: 0; padding: 0; }
-  :root { --void:#04060B; --text:#F5F2EC; --text-mid:#B8BBC2; --text-dim:#9CA0A8; --accent:#00E5D4; --accent-soft:#00B5A8; --alert:#FF4757; }
+  :root { --void:#04060B; --void-soft:#0C0F16; --card:#11151E; --text:#F5F2EC; --text-mid:#B8BBC2; --text-dim:#9CA0A8; --alert:#FF4757; }
   body { background: var(--void); font-family:'Inter',sans-serif; color: var(--text); min-height: 100vh; display:flex; justify-content:center; align-items:flex-start; padding: 24px; -webkit-font-smoothing: antialiased; }
   .phone {
     width: 380px; min-height: 800px; background: var(--void); border-radius: 40px;
     overflow: hidden; position: relative;
     box-shadow: 0 0 0 8px #1a1d24, 0 30px 80px rgba(0,0,0,.7);
     display: flex; flex-direction: column;
-    transition: background .3s;
   }
-  .phone[data-alert="1"] { background: #1c0a0e; }
   .container { flex:1; display:flex; flex-direction: column; align-items:center; justify-content:center; padding: 60px 32px 100px; gap: 22px; }
 
   .task { text-align: center; }
   .task .name { font-family:'Cormorant Garamond',serif; font-size: 22px; font-weight: 500; }
   .task .time { font-size: 11px; letter-spacing: 3px; color: var(--text-mid); text-transform: uppercase; margin-top: 8px; }
 
+  /* Choice modal (Taymer bilan / Taymersiz) */
+  .choice-overlay {
+    position: fixed; inset: 0;
+    background: rgba(4,6,11,.92);
+    backdrop-filter: blur(10px);
+    z-index: 9999;
+    display: flex; align-items: center; justify-content: center;
+    padding: 24px;
+  }
+  .choice-card {
+    width: 100%; max-width: 340px;
+    background: var(--card);
+    border: 1px solid rgba(212,175,55,.2);
+    border-radius: 16px;
+    padding: 26px 22px;
+    text-align: center;
+    animation: chIn .4s cubic-bezier(.16,.84,.32,1);
+  }
+  @keyframes chIn { from { opacity: 0; transform: translateY(20px) scale(.96); } to { opacity: 1; transform: translateY(0) scale(1); } }
+  .choice-card .ctitle {
+    font-family: 'Cormorant Garamond', serif;
+    font-style: italic; font-size: 22px;
+    line-height: 1.3; color: var(--text);
+    margin-bottom: 6px;
+  }
+  .choice-card .ctask {
+    font-size: 13px; color: var(--accent);
+    margin-bottom: 18px;
+    font-weight: 500;
+  }
+  .choice-card .csub {
+    font-size: 12px; color: var(--text-dim);
+    line-height: 1.5;
+    margin-bottom: 22px;
+  }
+  .choice-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+  .choice-btn {
+    padding: 14px 10px;
+    border: none; border-radius: 999px;
+    font-family: 'Inter', sans-serif;
+    font-size: 12px; font-weight: 600;
+    letter-spacing: 1px; text-transform: uppercase;
+    cursor: pointer; min-height: 48px;
+  }
+  .choice-btn.primary { background: linear-gradient(180deg, var(--accent), var(--accent-soft)); color: var(--void); }
+  .choice-btn.secondary { background: transparent; color: var(--text-mid); border: 1px solid rgba(255,255,255,.12); }
+
+  /* Timer-on ring */
   .ring-wrap { position: relative; width: 240px; height: 240px; }
   .ring-svg { width: 100%; height: 100%; transform: rotate(-90deg); }
   .ring-track { fill: none; stroke: rgba(255,255,255,.06); stroke-width: 3; }
-  .ring-prog {
-    fill: none;
-    stroke: var(--accent);
-    stroke-width: 3;
-    stroke-linecap: round;
-    transition: stroke .3s, stroke-dashoffset 1s linear;
-  }
-  .phone[data-alert="1"] .ring-prog { stroke: var(--alert); }
+  .ring-prog { fill: none; stroke: var(--accent); stroke-width: 3; stroke-linecap: round; transition: stroke-dashoffset 1s linear; }
   .ring-center { position: absolute; inset: 0; display: flex; flex-direction: column; align-items:center; justify-content:center; gap: 6px; }
-  .digits { font-size: 44px; font-weight: 300; color: var(--accent); letter-spacing: 1px; transition: color .3s; font-feature-settings: "tnum"; }
-  .phone[data-alert="1"] .digits { color: var(--alert); }
+  .digits { font-size: 44px; font-weight: 300; color: var(--accent); letter-spacing: 1px; font-feature-settings: "tnum"; }
   .sub { font-size: 9px; letter-spacing: 3px; color: var(--text-dim); text-transform: uppercase; }
 
-  .blocked { font-size: 11px; color: var(--text-mid); letter-spacing: 1px; text-align: center; }
-  .blocked .app { color: var(--text-dim); margin: 0 6px; cursor: pointer; text-decoration: line-through; }
-  .blocked .app:active, .blocked .app:hover { color: var(--alert); }
+  /* Taymersiz katta tugma */
+  .no-timer-area { display: none; text-align: center; gap: 18px; }
+  .no-timer-area.show { display: flex; flex-direction: column; align-items: center; }
+  .no-timer-elapsed {
+    font-family: 'Cormorant Garamond', serif;
+    font-weight: 500;
+    font-size: 56px;
+    color: var(--accent);
+    line-height: 1;
+    font-feature-settings: "tnum";
+  }
+  .no-timer-lbl {
+    font-size: 10px;
+    letter-spacing: 3px;
+    color: var(--text-dim);
+    text-transform: uppercase;
+  }
+  .done-btn {
+    margin-top: 8px;
+    padding: 16px 36px;
+    background: linear-gradient(180deg, var(--accent), var(--accent-soft));
+    color: var(--void);
+    border: none; border-radius: 999px;
+    font-family: 'Inter', sans-serif;
+    font-size: 13px; font-weight: 600;
+    letter-spacing: 2px; text-transform: uppercase;
+    cursor: pointer; min-height: 52px;
+  }
 
-  .alert {
+  /* "Bajardingizmi?" so'roq modali */
+  .ask-overlay {
+    position: fixed; inset: 0;
+    background: rgba(4,6,11,.92);
+    backdrop-filter: blur(10px);
+    z-index: 9998;
     display: none;
-    width: 100%;
-    padding: 14px 16px;
-    border: 1.5px solid var(--alert);
-    border-radius: 10px;
-    background: rgba(255,71,87,.08);
-    text-align: center;
+    align-items: center; justify-content: center;
+    padding: 24px;
   }
-  .phone[data-alert="1"] .alert { display: block; }
-  .alert .msg { font-size: 13px; color: var(--text); margin-bottom: 12px; line-height: 1.4; }
-  .alert .msg .em { color: var(--alert); font-weight: 600; }
-  .alert .actions { display: flex; gap: 8px; }
-  .alert button, .alert a {
-    flex: 1; padding: 10px;
-    border: none; border-radius: 6px;
-    font-family: 'Inter', sans-serif; font-size: 11px; font-weight: 600;
-    letter-spacing: 1px; text-transform: uppercase;
-    cursor: pointer;
-    text-decoration: none;
-    display: flex; align-items: center; justify-content: center;
-  }
-  .alert .stay { background: var(--accent); color: var(--void); }
-  .alert .ask  { background: transparent; color: var(--alert); border: 1px solid var(--alert); }
+  .ask-overlay.show { display: flex; }
+
+  /* Timer hidden when no-timer chosen */
+  .timer-area { display: flex; flex-direction: column; align-items: center; gap: 22px; }
+  .timer-area.hidden { display: none; }
 
   .bottom-bar { padding: 18px 32px env(safe-area-inset-bottom, 18px); }
   .cta { display:block; width:100%; padding:14px; background: transparent; color: var(--text-mid); font-size:12px; letter-spacing:2px; text-transform: uppercase; border:1px solid rgba(255,255,255,.1); border-radius:6px; text-align:center; text-decoration:none; }
 
   @media (max-width: 480px) { body { padding: 0; } .phone { width: 100vw; min-height: 100vh; border-radius: 0; box-shadow: none; } }
 </style>
+<link rel="stylesheet" href="theme.css">
+<link rel="stylesheet" href="motion.css">
+<script src="motion.js" defer></script>
 </head>
 <body>
 
-<div class="phone" id="phone" data-alert="0">
+<div class="phone" id="phone">
   <div class="container">
 
     <div class="task">
-      <div class="name" id="tname">Til o'rganish</div>
-      <div class="time" id="tsub">fokusdasan</div>
-      <div id="cycleDots" style="display:none;justify-content:center;gap:8px;margin-top:10px;"></div>
+      <div class="name" id="tname" data-i18n="hardlock.default_task">Ish</div>
+      <div class="time" id="tsub" data-i18n="hardlock.sub_locked">fokusdasiz</div>
     </div>
 
-    <div class="ring-wrap">
-      <svg class="ring-svg" viewBox="0 0 240 240">
-        <circle class="ring-track" cx="120" cy="120" r="116"/>
-        <circle id="ring" class="ring-prog" cx="120" cy="120" r="116"
-                stroke-dasharray="729" stroke-dashoffset="0"/>
-      </svg>
-      <div class="ring-center">
-        <div class="digits" id="digits">25:00</div>
-        <div class="sub" id="sub">davom etyapsan</div>
+    <!-- Taymer ko'rinishi -->
+    <div class="timer-area" id="timerArea">
+      <div class="ring-wrap">
+        <svg class="ring-svg" viewBox="0 0 240 240">
+          <circle class="ring-track" cx="120" cy="120" r="116"/>
+          <circle id="ring" class="ring-prog" cx="120" cy="120" r="116"
+                  stroke-dasharray="729" stroke-dashoffset="0"/>
+        </svg>
+        <div class="ring-center">
+          <div class="digits" id="digits">25:00</div>
+          <div class="sub" id="sub" data-i18n="hardlock.sub_remain">davom etyapsiz</div>
+        </div>
       </div>
+    </div>
+
+    <!-- Taymersiz ko'rinishi — faqat Bajardim tugmasi (boshqa hech narsa chiqmasin) -->
+    <div class="no-timer-area" id="noTimerArea">
+      <!-- Elapsed counter va o'tgan vaqt yashirin (visual minimal) — JS uchun saqlangan -->
+      <div class="no-timer-elapsed" id="elapsed" style="display:none;">00:00</div>
+      <div class="no-timer-lbl" data-i18n="hardlock.elapsed_label" style="display:none;">o'tgan vaqt</div>
+      <button class="done-btn" id="doneBtn" type="button" data-i18n="hardlock.done_btn">Bajardim</button>
     </div>
 
   </div>
 
   <div class="bottom-bar">
-    <a class="cta" href="home.html">Yaxshi, qaytaman</a>
+    <a class="cta" href="home.html" data-i18n="hardlock.end">Davom etaman</a>
   </div>
 </div>
 
-<script src="i18n.js" defer></script>
-<script src="data.js" defer></script>
-<script src="nav-overlay.js" defer></script>
+<!-- 1) Boshlash tanlovi: Taymersiz / Oddiy taymer / Pomodoro -->
+<div class="choice-overlay" id="choiceOverlay">
+  <div class="choice-card">
+    <div class="ctitle" data-i18n="hardlock.choice_title">Qanday boshlaymiz?</div>
+    <div class="ctask" id="cTaskName" data-i18n="hardlock.default_task">Ish</div>
+    <div id="cTaskMeta" style="font-size:11px;color:#9CA0A8;letter-spacing:1px;text-transform:uppercase;margin-bottom:14px;">— · —</div>
+    <div style="display:flex;flex-direction:column;gap:8px;">
+      <button class="choice-btn secondary" id="chNoTimer" type="button" style="text-align:left;padding:14px 16px;">
+        <span style="display:block;font-weight:600;margin-bottom:2px;" data-i18n="hardlock.opt_notimer">Taymersiz</span>
+        <span style="display:block;font-size:10px;color:#9CA0A8;letter-spacing:0.5px;text-transform:none;font-weight:400;" data-i18n="hardlock.opt_notimer_desc">Siz tayyor bo'lganda "Bajardim" deysiz</span>
+      </button>
+      <button class="choice-btn secondary" id="chTimer" type="button" style="text-align:left;padding:14px 16px;border-color:rgba(212,175,55,.35);">
+        <span style="display:block;font-weight:600;margin-bottom:2px;color:var(--accent-bright);" data-i18n="hardlock.opt_timer">Oddiy taymer</span>
+        <span style="display:block;font-size:10px;color:#9CA0A8;letter-spacing:0.5px;text-transform:none;font-weight:400;" id="chTimerDur" data-i18n="hardlock.opt_timer_desc">Vazifa davomiyligi bo'yicha</span>
+      </button>
+      <button class="choice-btn primary" id="chPomo" type="button" style="text-align:left;padding:14px 16px;">
+        <span style="display:block;font-weight:600;margin-bottom:2px;" data-i18n="hardlock.opt_pomo">Pomodoro</span>
+        <span style="display:block;font-size:10px;color:#04060B;opacity:0.7;letter-spacing:0.5px;text-transform:none;font-weight:400;" id="chPomoDur" data-i18n="hardlock.opt_pomo_desc">25 daq ish + 5 daq dam sikllari</span>
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- DEEP LOCK overlay — taymer paytida idle bo'lsa, ekran qulflanadi -->
+<div id="deepLockOverlay" style="
+  position:fixed;inset:0;
+  background:rgba(0,0,0,0.92);
+  -webkit-backdrop-filter:blur(6px);
+  backdrop-filter:blur(6px);
+  z-index:200;
+  display:none;
+  flex-direction:column;
+  align-items:center;
+  justify-content:center;
+  opacity:0;
+  transition:opacity 800ms cubic-bezier(.22,.61,.36,1);
+  text-align:center;
+  padding:32px;
+">
+  <div id="dlTime" style="
+    font-family:'Inter',sans-serif;
+    font-weight:200;
+    font-size:64px;
+    color:var(--accent-bright);
+    letter-spacing:0.02em;
+    margin-bottom:24px;
+    text-shadow:0 0 30px rgba(245,215,110,0.4);
+  ">00:00</div>
+  <div data-i18n="hardlock.deep_lock_hint" style="
+    font-family:'Cormorant Garamond',serif;
+    font-style:italic;
+    font-size:18px;
+    color:rgba(245,242,236,0.55);
+    margin-bottom:40px;
+    max-width:300px;
+    line-height:1.5;
+  ">Telefon qulflandi. Fokusda bo'ling.</div>
+  <div data-i18n="hardlock.deep_lock_tap" style="
+    font-family:'Inter',sans-serif;
+    font-size:11px;
+    letter-spacing:0.18em;
+    text-transform:uppercase;
+    color:rgba(245,242,236,0.3);
+  ">Yopish uchun ekranga bosing</div>
+</div>
+
+<!-- 2) Tugagandan keyin so'roq: Bajardingizmi? -->
+<div class="ask-overlay" id="askOverlay">
+  <div class="choice-card">
+    <div class="ctitle" data-i18n="hardlock.ask_title">Bajardingizmi?</div>
+    <div class="ctask" id="aTaskName" data-i18n="hardlock.default_task">Ish</div>
+    <div class="csub"><span data-i18n="hardlock.ask_done_prefix">Tugadi. Vaqt —</span> <span id="aDur" data-i18n="hardlock.dur_fallback">25 daq</span>.</div>
+    <input id="hlNote" type="text" maxlength="60" placeholder="Qisqa izoh (mas. speaking)" data-i18n-placeholder="hardlock.note_ph" style="width:100%;margin-bottom:14px;background:#0C0F16;border:1px solid rgba(255,255,255,.1);border-radius:8px;padding:10px 12px;color:#F5F2EC;font-family:'Inter',sans-serif;font-size:13px;outline:none;">
+    <div class="choice-grid">
+      <button class="choice-btn secondary" id="askNo" type="button" data-i18n="hardlock.ans_no">Yo'q</button>
+      <button class="choice-btn primary" id="askYes" type="button" data-i18n="hardlock.ans_yes">Ha</button>
+    </div>
+  </div>
+</div>
+
+<script src="i18n.js?v=28.4.0"></script>
+<script src="lang-switcher.js?v=28.4.0" defer></script>
+<script src="data.js?v=28.4.0" defer></script>
+<script src="nav-overlay.js?v=28.4.0" defer></script>
 <script>
-  // ── Joriy sessiya va sozlamalar ──
+document.addEventListener('DOMContentLoaded', function () {
+  // ── Joriy ish va sozlamalar ──
+  // BUG FIX (v25.1): bu inline script defer-li, lekin avval defer'siz edi —
+  // shuning uchun MVOW_DATA hali yuklanmasdan turib ishga tushib, default
+  // '25 daq' fallback'iga tushardi. Endi DOMContentLoaded ichida — data.js
+  // defer bilan yuklanib bo'lgan paytda ishlaydi.
   let current = null;
   if (window.MVOW_DATA) {
     current = MVOW_DATA.currentTaskFromPlan();
@@ -122,89 +275,51 @@
   if (!current && window.MVOW_DATA) {
     current = MVOW_DATA.currentSession() || (MVOW_DATA.sessions && MVOW_DATA.sessions[0]);
   }
-  if (!current) current = { name: 'Sessiya', dur: '25 daq' };
+  const DEFAULT_TASK_NAME = (window.I18N ? I18N.t('hardlock.default_task', 'Ish') : 'Ish');
+  const DEFAULT_DUR = (window.I18N ? I18N.t('hardlock.dur_fallback', '25 daq') : '25 daq');
+  if (!current) current = { name: DEFAULT_TASK_NAME, time: '', dur: DEFAULT_DUR };
+
   document.getElementById('tname').textContent = current.name;
+  document.getElementById('cTaskName').textContent = current.name;
+  document.getElementById('aTaskName').textContent = current.name;
+  document.getElementById('aDur').textContent = current.dur || DEFAULT_DUR;
 
-  let prefs = {};
-  try { prefs = JSON.parse(localStorage.getItem('mvow.prefs') || '{}'); } catch {}
-  const MODE = prefs.mode || 'simple';
-  // Sessiya vaqti — har doim task'ning haqiqiy davomiyligidan
   const taskMins = window.MVOW_DATA ? MVOW_DATA.parseDurMins(current.dur) : 25;
-  const WORK_MIN  = taskMins;
-  const BREAK_MIN = parseInt(prefs.breakMins  || 5, 10);
-  const TOTAL_CYC = parseInt(prefs.pomoCycles || 3, 10);
+  // Tanlov modal'idagi meta
+  document.getElementById('cTaskMeta').textContent = (current.time || '—') + ' · ' + (current.dur || '—');
+  document.getElementById('chTimerDur').textContent = (window.I18N ? I18N.tWith('hardlock.timer_full', { mins: taskMins }) : (taskMins + ' daqiqa to\'liq'));
+  // Pomodoro sikllari soni (vazifa davomiyligini 25 ga bo'lib chiqarish)
+  const POMO_WORK = 25, POMO_BREAK = 5;
+  const pomoCycles = Math.max(1, Math.round(taskMins / POMO_WORK));
+  const pomoTotalMins = pomoCycles*POMO_WORK + (pomoCycles-1)*POMO_BREAK;
+  document.getElementById('chPomoDur').textContent = (window.I18N ? I18N.tWith('hardlock.pomo_summary', { cycles: pomoCycles, total: pomoTotalMins }) : (pomoCycles + ' sikl · ' + pomoTotalMins + ' daq jami'));
 
+  // Standart (oddiy) rejimda — to'liq vazifa davomiyligi
+  let WORK_MIN = taskMins;
+  let BREAK_MIN = 0;
+  let TOTAL_CYC = 1;
   const RING_CIRC = 729;
+
   const digits = document.getElementById('digits');
   const ring = document.getElementById('ring');
   const tsub = document.getElementById('tsub');
-  const sub = document.getElementById('sub');
-  const dotsEl = document.getElementById('cycleDots');
+  const timerArea = document.getElementById('timerArea');
+  const noTimerArea = document.getElementById('noTimerArea');
+  const elapsedEl = document.getElementById('elapsed');
 
-  // State
-  const ST_KEY = 'mvow.timer';
-  let phase   = 'work';   // 'work' yoki 'break'
-  let cycle   = 1;        // 1..TOTAL_CYC
+  const choiceOverlay = document.getElementById('choiceOverlay');
+  const askOverlay = document.getElementById('askOverlay');
+
+  let mode = null; // 'timer' | 'no-timer'
   let totalSec = WORK_MIN * 60;
   let remaining = totalSec;
+  let startedAt = Date.now();
+  let interval = null;
 
   function fmt(s) {
     const m = Math.floor(s / 60);
     const sec = s % 60;
     return String(m).padStart(2, '0') + ':' + String(sec).padStart(2, '0');
-  }
-
-  function renderCycleDots() {
-    if (MODE !== 'pomodoro') { dotsEl.style.display = 'none'; return; }
-    dotsEl.style.display = 'flex';
-    let html = '';
-    for (let i = 1; i <= TOTAL_CYC; i++) {
-      const active = (i === cycle);
-      const done = (i < cycle);
-      const bg = done ? '#00E5D4' : (active ? 'transparent' : 'rgba(255,255,255,.12)');
-      const border = active ? '1.5px solid #00E5D4' : 'none';
-      html += `<span style="width:9px;height:9px;border-radius:50%;background:${bg};border:${border};"></span>`;
-    }
-    dotsEl.innerHTML = html;
-  }
-
-  function applyPhaseStyle() {
-    if (phase === 'work') {
-      tsub.textContent = 'fokusdasan';
-      sub.textContent  = 'davom etyapsan';
-      ring.style.stroke = '#00E5D4';
-    } else {
-      tsub.textContent = 'dam ol';
-      sub.textContent  = 'tinch tur';
-      ring.style.stroke = '#F5C26B';
-    }
-  }
-
-  function saveState() {
-    localStorage.setItem(ST_KEY, JSON.stringify({
-      endsAt: Date.now() + remaining * 1000,
-      phase, cycle, mode: MODE
-    }));
-  }
-
-  function loadState() {
-    try {
-      const s = JSON.parse(localStorage.getItem(ST_KEY) || 'null');
-      if (s && s.endsAt && s.mode === MODE) {
-        phase = s.phase || 'work';
-        cycle = s.cycle || 1;
-        totalSec = (phase === 'work' ? WORK_MIN : BREAK_MIN) * 60;
-        const left = Math.max(0, Math.floor((s.endsAt - Date.now()) / 1000));
-        if (left > 0 && left <= totalSec) {
-          remaining = left;
-          return;
-        }
-      }
-    } catch {}
-    // Default
-    phase = 'work'; cycle = 1;
-    totalSec = WORK_MIN * 60;
-    remaining = totalSec;
   }
 
   function paint() {
@@ -213,58 +328,269 @@
     ring.style.strokeDashoffset = offset;
   }
 
-  function nextPhase() {
-    if (window.MVOW_DATA) MVOW_DATA.fxFinish();
-    if (MODE !== 'pomodoro') {
-      // Oddiy rejim — taymer tugadi
-      localStorage.removeItem(ST_KEY);
-      setTimeout(() => { location.href = 'session-reflection.html'; }, 1000);
-      return;
+  let askedAlready = false;
+  function paintElapsed() {
+    const elapsedSec = Math.floor((Date.now() - startedAt) / 1000);
+    elapsedEl.textContent = fmt(elapsedSec);
+    // Taymersiz: rejalashtirilgan vaqt o'tgach avtomatik so'roq (bir marta)
+    if (mode === 'no-timer' && !askedAlready && elapsedSec >= WORK_MIN * 60) {
+      askedAlready = true;
+      if (window.MVOW_DATA && MVOW_DATA.fxFinish) MVOW_DATA.fxFinish();
+      askOverlay.classList.add('show');
     }
-    // Pomodoro — keyingi fazaga o'tamiz
-    if (phase === 'work') {
-      // Ish tugadi
-      if (cycle >= TOTAL_CYC) {
-        // Hammasi tamom
-        localStorage.removeItem(ST_KEY);
-        setTimeout(() => { location.href = 'session-reflection.html'; }, 1200);
-        return;
-      }
-      // Damga o'tamiz
-      phase = 'break';
-      totalSec = BREAK_MIN * 60;
-      remaining = totalSec;
-    } else {
-      // Dam tugadi → keyingi ish sikli
-      cycle++;
-      phase = 'work';
-      totalSec = WORK_MIN * 60;
-      remaining = totalSec;
-    }
-    applyPhaseStyle();
-    renderCycleDots();
-    saveState();
-    paint();
   }
 
-  // Init
-  loadState();
-  applyPhaseStyle();
-  renderCycleDots();
-  if (remaining === totalSec) saveState();
-  paint();
-
-  const interval = setInterval(() => {
-    remaining = Math.max(0, remaining - 1);
-    paint();
-    if (remaining === 0) {
-      // Yangi fazaga o'tish
-      nextPhase();
+  function recordAndExit(completed) {
+    if (window.MVOW_DATA) {
+      const actualMins = Math.max(1, Math.round((Date.now() - startedAt) / 60000));
+      if (completed) {
+        const noteEl = document.getElementById('hlNote');
+        const note = noteEl ? noteEl.value.trim() : '';
+        MVOW_DATA.addHistory({
+          name: current.name || DEFAULT_TASK_NAME,
+          plannedTime: current.time || '',
+          plannedDur: current.dur || '',
+          dateIso: MVOW_DATA.today.iso,
+          startedAt,
+          completedAt: Date.now(),
+          actualMins,
+          withTimer: (mode === 'timer' || mode === 'pomodoro'),
+          mode: mode || 'no-timer',
+          note
+        });
+        // Bugungi sanoq oshadi
+        const todayKey = 'mvow.done.' + (window.MVOW_DATA ? MVOW_DATA.today.iso : new Date().toISOString().slice(0,10));
+        const cur = parseInt(localStorage.getItem(todayKey) || '0', 10);
+        localStorage.setItem(todayKey, String(cur + 1));
+        if (MVOW_DATA.fxSuccess) MVOW_DATA.fxSuccess();
+        // Quiet confirm pulse — fires only on successful Bajardim path, just before navigation.
+        try {
+          if (typeof MVOW_MOTION !== 'undefined' && MVOW_MOTION && typeof MVOW_MOTION.quietConfirm === 'function') {
+            const anchor = document.getElementById('askYes') || document.getElementById('doneBtn');
+            if (anchor) MVOW_MOTION.quietConfirm(anchor);
+          }
+        } catch (e) { /* never block navigation on motion failure */ }
+      }
     }
-  }, 1000);
+    setTimeout(() => { location.href = 'session-reflection.html'; }, 600);
+  }
 
-  // Diqqat sinovi olib tashlandi
+  function showAskModal() {
+    if (interval) clearInterval(interval);
+    askOverlay.classList.add('show');
+  }
+
+  // Pomodoro phase state (Pomodoro tanlanganda ishlatiladi)
+  let phase = 'work'; // 'work' yoki 'break'
+  let cycle = 1;
+
+  function startSimpleTimer() {
+    timerArea.classList.remove('hidden');
+    noTimerArea.classList.remove('show');
+    tsub.textContent = (window.I18N ? I18N.t('hardlock.sub_locked', 'fokusdasiz') : 'fokusdasiz');
+    startedAt = Date.now();
+    remaining = WORK_MIN * 60;
+    totalSec = WORK_MIN * 60;
+    paint();
+    interval = setInterval(() => {
+      remaining = Math.max(0, remaining - 1);
+      paint();
+      if (remaining === 0) {
+        if (window.MVOW_DATA && MVOW_DATA.fxFinish) MVOW_DATA.fxFinish();
+        showAskModal();
+      }
+    }, 1000);
+  }
+
+  function startPomodoroTimer() {
+    timerArea.classList.remove('hidden');
+    noTimerArea.classList.remove('show');
+    tsub.textContent = (window.I18N ? I18N.t('hardlock.sub_locked', 'fokusdasiz') : 'fokusdasiz') + ' · ' + cycle + '/' + TOTAL_CYC;
+    startedAt = Date.now();
+    remaining = WORK_MIN * 60;
+    totalSec = WORK_MIN * 60;
+    paint();
+    interval = setInterval(() => {
+      remaining = Math.max(0, remaining - 1);
+      paint();
+      if (remaining === 0) {
+        if (window.MVOW_DATA && MVOW_DATA.fxFinish) MVOW_DATA.fxFinish();
+        nextPomodoroPhase();
+      }
+    }, 1000);
+  }
+
+  function nextPomodoroPhase() {
+    if (interval) clearInterval(interval);
+    if (phase === 'work') {
+      if (cycle >= TOTAL_CYC) {
+        // Hamma sikllar tugadi — so'roq
+        showAskModal();
+        return;
+      }
+      // Dam fazasiga o'tish
+      phase = 'break';
+      remaining = BREAK_MIN * 60;
+      totalSec = BREAK_MIN * 60;
+      tsub.textContent = (window.I18N ? I18N.t('hardlock.sub_break', 'dam') : 'dam') + ' · ' + cycle + '/' + TOTAL_CYC;
+      ring.style.stroke = '#F5C26B';
+    } else {
+      // Dam tugadi — yangi siklga
+      cycle++;
+      phase = 'work';
+      remaining = WORK_MIN * 60;
+      totalSec = WORK_MIN * 60;
+      tsub.textContent = (window.I18N ? I18N.t('hardlock.sub_locked', 'fokusdasiz') : 'fokusdasiz') + ' · ' + cycle + '/' + TOTAL_CYC;
+      ring.style.stroke = 'var(--accent)';
+    }
+    paint();
+    interval = setInterval(() => {
+      remaining = Math.max(0, remaining - 1);
+      paint();
+      if (remaining === 0) {
+        if (window.MVOW_DATA && MVOW_DATA.fxFinish) MVOW_DATA.fxFinish();
+        nextPomodoroPhase();
+      }
+    }, 1000);
+  }
+
+  // Tanlovlar
+  document.getElementById('chTimer').addEventListener('click', () => {
+    mode = 'timer';
+    WORK_MIN = taskMins; // to'liq vazifa davomiyligi
+    TOTAL_CYC = 1;
+    choiceOverlay.style.display = 'none';
+    startSimpleTimer();
+  });
+
+  document.getElementById('chPomo').addEventListener('click', () => {
+    mode = 'pomodoro';
+    WORK_MIN = POMO_WORK;
+    BREAK_MIN = POMO_BREAK;
+    TOTAL_CYC = pomoCycles;
+    choiceOverlay.style.display = 'none';
+    startPomodoroTimer();
+  });
+
+  document.getElementById('chNoTimer').addEventListener('click', () => {
+    mode = 'no-timer';
+    choiceOverlay.style.display = 'none';
+    timerArea.classList.add('hidden');
+    noTimerArea.classList.add('show');
+    tsub.textContent = (window.I18N ? I18N.t('hardlock.sub_no_timer', 'taymersiz') : 'taymersiz');
+    startedAt = Date.now();
+    paintElapsed();
+    interval = setInterval(paintElapsed, 1000);
+  });
+
+  // Taymersiz "Bajardim" → izoh kiritish uchun modal ochiladi
+  document.getElementById('doneBtn').addEventListener('click', () => {
+    if (interval) clearInterval(interval);
+    askOverlay.classList.add('show');
+    setTimeout(() => { const n = document.getElementById('hlNote'); if (n) n.focus(); }, 100);
+  });
+
+  // "Bajardingizmi?" so'roq
+  document.getElementById('askYes').addEventListener('click', () => {
+    askOverlay.classList.remove('show');
+    recordAndExit(true);
+  });
+  document.getElementById('askNo').addEventListener('click', () => {
+    askOverlay.classList.remove('show');
+    recordAndExit(false);
+  });
+
+  // ============================================================
+  // DEEP LOCK — taymer paytida idle bo'lsa, ekran qulflanadi
+  // ============================================================
+  const deepLockOverlay = document.getElementById('deepLockOverlay');
+  const dlTime = document.getElementById('dlTime');
+
+  let idleTimer = null;
+  let isDeepLocked = false;
+  const IDLE_MS = 8000; // 8 sekund qaltiraydigan vaqt → keyin qulflanadi
+
+  // Wake Lock — telefon ekranini OS qulflashga yo'l qo'ymaslik
+  let wakeLockSentinel = null;
+  async function acquireWakeLock() {
+    try {
+      if ('wakeLock' in navigator) {
+        wakeLockSentinel = await navigator.wakeLock.request('screen');
+      }
+    } catch (e) { /* user denied or unsupported */ }
+  }
+  async function releaseWakeLock() {
+    try { if (wakeLockSentinel) await wakeLockSentinel.release(); } catch (e) {}
+    wakeLockSentinel = null;
+  }
+
+  function showDeepLock() {
+    if (isDeepLocked) return;
+    // Faqat taymer rejimida ishlaydi (no-timer rejimida emas)
+    if (mode !== 'timer' && mode !== 'pomodoro') return;
+    isDeepLocked = true;
+    deepLockOverlay.style.display = 'flex';
+    // Sync current time
+    if (dlTime) dlTime.textContent = digits.textContent;
+    requestAnimationFrame(() => { deepLockOverlay.style.opacity = '1'; });
+  }
+
+  function hideDeepLock() {
+    if (!isDeepLocked) return;
+    isDeepLocked = false;
+    deepLockOverlay.style.opacity = '0';
+    setTimeout(() => { deepLockOverlay.style.display = 'none'; }, 800);
+    resetIdleTimer();
+  }
+
+  function resetIdleTimer() {
+    if (idleTimer) clearTimeout(idleTimer);
+    if (mode !== 'timer' && mode !== 'pomodoro') return;
+    idleTimer = setTimeout(showDeepLock, IDLE_MS);
+  }
+
+  // Update deep-lock time display sync with main timer
+  const _origPaint = paint;
+  paint = function () {
+    _origPaint();
+    if (isDeepLocked && dlTime) dlTime.textContent = digits.textContent;
+  };
+
+  // Activity events — har tegishida idle timer reset.
+  // Deep-lock paytida: istalgan bosish/tugma qulf ekranini yopadi (pointermove emas).
+  ['pointerdown', 'pointermove', 'keydown'].forEach(ev => {
+    document.addEventListener(ev, () => {
+      if (isDeepLocked) {
+        if (ev === 'pointerdown' || ev === 'keydown') hideDeepLock();
+        return;
+      }
+      resetIdleTimer();
+    }, { passive: true });
+  });
+
+  // Taymer rejimi tanlanganda boshlanish — choice tugmalari to keyin override
+  const _origChTimer = document.getElementById('chTimer').onclick;
+  document.getElementById('chTimer').addEventListener('click', () => {
+    acquireWakeLock();
+    resetIdleTimer();
+  });
+  document.getElementById('chPomo').addEventListener('click', () => {
+    acquireWakeLock();
+    resetIdleTimer();
+  });
+
+  // Tab visibility — boshqa tab'ga o'tsa wake lock yangilanadi
+  document.addEventListener('visibilitychange', () => {
+    if (document.visibilityState === 'visible' && (mode === 'timer' || mode === 'pomodoro')) {
+      acquireWakeLock();
+    }
+  });
+
+  // Sahifa yopilganda wake lock'ni qaytarish
+  window.addEventListener('pagehide', releaseWakeLock);
+});  // end DOMContentLoaded
 </script>
 
+<script src="back-btn.js?v=28.4.0"></script>
 </body>
 </html>

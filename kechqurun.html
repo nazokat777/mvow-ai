@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-<title>{brand} — Kun yakuni</title>
+<title data-i18n="kechqurun.page_title">{brand} — Kun yakuni</title>
 <link rel="manifest" href="manifest.webmanifest">
 <meta name="theme-color" content="#04060B">
 <link rel="apple-touch-icon" href="assets/mnsm-logo.png">
@@ -16,7 +16,7 @@
   :root {
     --void:#04060B; --void-soft:#0C0F16;
     --text:#F5F2EC; --text-mid:#B8BBC2; --text-dim:#9CA0A8;
-    --accent:#00E5D4; --accent-soft:#00B5A8;
+    
     --card:#11151E;
   }
   html, body {
@@ -69,7 +69,7 @@
     gap: 14px;
     padding: 14px 16px;
     background: var(--card);
-    border: 1px solid rgba(0,229,212,.15);
+    border: 1px solid rgba(212,175,55,.15);
     border-radius: 10px;
   }
   .win .check {
@@ -119,7 +119,7 @@
   .quick-chip {
     padding: 8px 12px;
     background: transparent;
-    border: 1px solid rgba(0,229,212,.25);
+    border: 1px solid rgba(212,175,55,.25);
     border-radius: 999px;
     color: var(--accent);
     font-size: 12px;
@@ -127,7 +127,7 @@
     transition: all .15s;
   }
   .quick-chip:hover, .quick-chip:active {
-    background: rgba(0,229,212,.06);
+    background: rgba(212,175,55,.06);
   }
 
   /* Wake time */
@@ -246,62 +246,81 @@
     min-height: 52px;
   }
 </style>
+<link rel="stylesheet" href="theme.css">
+<link rel="stylesheet" href="motion.css">
+<script src="motion.js" defer></script>
 </head>
 <body>
 
 <div class="wrap">
 
-  <div class="top-stamp" id="dateStamp">11-iyun · payshanba</div>
-  <h1 class="title">Kun yakuni</h1>
+  <div class="top-stamp" id="dateStamp" data-i18n="kechqurun.date_stamp_fallback">11-iyun · payshanba</div>
+  <h1 class="title" data-i18n="kechqurun.title">Kun yakuni</h1>
 
   <!-- Stats -->
   <div class="stats">
     <div class="stat">
       <div class="v" id="doneN">0</div>
-      <div class="l">Bajardim</div>
+      <div class="l" data-i18n="kechqurun.stat_done">Bajardim</div>
     </div>
     <div class="stat">
       <div class="v" id="focusH">0</div>
-      <div class="l">Soat fokus</div>
+      <div class="l" data-i18n="kechqurun.stat_focus">Soat fokus</div>
     </div>
     <div class="stat">
       <div class="v" id="streakN">0</div>
-      <div class="l">Streak</div>
+      <div class="l" data-i18n="kechqurun.stat_streak">Streak</div>
     </div>
   </div>
 
-  <!-- Today's wins -->
+  <!-- Bugungi hisobot — to'liq -->
   <div class="section">
-    <div class="section-head">Bugungi muvaffaqiyatlar</div>
-    <div class="wins" id="winsList">
-      <div class="no-wins">—</div>
-    </div>
-  </div>
+    <div class="section-head" data-i18n="kechqurun.report_head">Bugungi hisobot</div>
 
-  <!-- Tomorrow's plan -->
-  <div class="section">
-    <div class="section-head">Ertangi reja</div>
-    <textarea class="tom-input" id="tomInput" placeholder="ertaga nima qilasan? (har satr — bitta ish)" maxlength="600"></textarea>
-    <div class="quick-chips">
-      <button class="quick-chip" data-add="Sport (45 daq)" type="button">🏃 Sport</button>
-      <button class="quick-chip" data-add="O'qish (1 soat)" type="button">📚 O'qish</button>
-      <button class="quick-chip" data-add="Loyiha (1.5 soat)" type="button">💻 Loyiha</button>
-      <button class="quick-chip" data-add="Kitob (30 daq)" type="button">📖 Kitob</button>
-      <button class="quick-chip" data-add="Sayr (30 daq)" type="button">🚶 Sayr</button>
+    <!-- Completion progress -->
+    <div id="reportProgress" style="background:var(--card);border-radius:12px;padding:16px 18px;margin-bottom:14px;">
+      <div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:10px;">
+        <span style="font-family:'Cormorant Garamond',serif;font-style:italic;font-size:15px;color:var(--text-mid);" data-i18n="kechqurun.report_completion">Bajarish foizi</span>
+        <span style="font-family:'Cormorant Garamond',serif;font-size:24px;font-weight:500;" id="reportPct">0%</span>
+      </div>
+      <div style="height:6px;background:rgba(255,255,255,.06);border-radius:3px;overflow:hidden;">
+        <div id="reportBar" style="height:100%;background:linear-gradient(90deg,var(--accent),var(--accent-soft));border-radius:3px;width:0;transition:width .8s ease;"></div>
+      </div>
+      <div id="reportSummary" style="font-size:11px;color:var(--text-dim);margin-top:8px;letter-spacing:0.5px;"></div>
+    </div>
+
+    <!-- Bajarilgan ishlar (wins) -->
+    <div id="winsBlock">
+      <div style="font-size:10px;letter-spacing:2px;color:var(--accent);text-transform:uppercase;margin-bottom:8px;padding-left:4px;" data-i18n="kechqurun.wins_head">Bugungi muvaffaqiyatlar</div>
+      <div class="wins" id="winsList">
+        <div class="no-wins">—</div>
+      </div>
+    </div>
+
+    <!-- Bajarilmagan ishlar (missed) — agar bo'lsa -->
+    <div id="missedBlock" style="display:none;margin-top:16px;">
+      <div style="font-size:10px;letter-spacing:2px;color:#FF8E97;text-transform:uppercase;margin-bottom:8px;padding-left:4px;" data-i18n="kechqurun.missed_head">Bajarilmagan</div>
+      <div id="missedList" style="display:flex;flex-direction:column;gap:6px;"></div>
+    </div>
+
+    <!-- Sermahsul vaqt -->
+    <div id="insightBlock" style="display:none;margin-top:14px;padding:12px 14px;background:var(--card);border-radius:10px;font-size:12px;color:var(--text-mid);text-align:center;">
+      <span data-i18n="kechqurun.insight_lead">Sermahsul vaqt:</span>
+      <span id="insightTime" style="color:var(--accent);font-weight:500;letter-spacing:0.5px;">—</span>
     </div>
   </div>
 
   <!-- Wake time + alarm -->
   <div class="section">
-    <div class="section-head">Uyg'onish</div>
+    <div class="section-head" data-i18n="kechqurun.wake_head">Uyg'onish</div>
     <div class="wake-row">
-      <label for="wakeTime">Uyg'onish vaqti</label>
+      <label for="wakeTime" data-i18n="kechqurun.wake_time_lbl">Uyg'onish vaqti</label>
       <input id="wakeTime" type="time" value="07:00">
     </div>
     <div class="alarm-toggle">
       <div>
-        <div class="lbl">Budilnik yoq</div>
-        <div class="why">Vaqt kelganda 3 misol bilan uyg'otamiz</div>
+        <div class="lbl" data-i18n="kechqurun.alarm_on_lbl">Budilnik yoq</div>
+        <div class="why" data-i18n="kechqurun.alarm_on_why">Vaqt kelganda 3 misol bilan uyg'otamiz</div>
       </div>
       <div class="toggle on" id="alarmToggle" role="switch" tabindex="0" aria-checked="true"></div>
     </div>
@@ -310,23 +329,35 @@
 </div>
 
 <div class="bottom">
-  <a class="cta" id="saveBtn" href="home.html">Yaxshi tundir</a>
+  <a class="cta" id="saveBtn" href="home.html" data-i18n="kechqurun.cta_save">Xayrli tun</a>
 </div>
 
-<script src="i18n.js" defer></script>
-<script src="data.js" defer></script>
-<script src="nav-overlay.js" defer></script>
+<script src="i18n.js?v=28.4.0"></script>
+<script src="lang-switcher.js?v=28.4.0" defer></script>
+<script src="data.js?v=28.4.0" defer></script>
+<script src="nav-overlay.js?v=28.4.0" defer></script>
 <script>
   document.addEventListener('DOMContentLoaded', () => {
+    // ── Motion: day-close transition (wraps page entrance) ──
+    try {
+      if (window.MVOW_MOTION && typeof MVOW_MOTION.dayClose === 'function') {
+        MVOW_MOTION.dayClose({ target: document.querySelector('.wrap') || document.body });
+      }
+    } catch (_e) { /* motion is decorative — never block page logic */ }
+
     // ── Sana ──
     const d = new Date();
-    const months = ['YAN','FEV','MAR','APR','MAY','IYUN','IYUL','AVG','SEN','OKT','NOY','DEK'];
-    const days = ['YAKSHANBA','DUSHANBA','SESHANBA','CHORSHANBA','PAYSHANBA','JUMA','SHANBA'];
+    const monthsFallback = ['YAN','FEV','MAR','APR','MAY','IYUN','IYUL','AVG','SEN','OKT','NOY','DEK'];
+    const daysFallback = ['YAKSHANBA','DUSHANBA','SESHANBA','CHORSHANBA','PAYSHANBA','JUMA','SHANBA'];
+    const monthsI18n = window.I18N ? I18N.t('common.months_short', null) : null;
+    const daysI18n = window.I18N ? I18N.t('common.weekdays_long', null) : null;
+    const months = Array.isArray(monthsI18n) ? monthsI18n : monthsFallback;
+    const days = Array.isArray(daysI18n) ? daysI18n : daysFallback;
     document.getElementById('dateStamp').textContent =
       `${String(d.getDate()).padStart(2,'0')}-${months[d.getMonth()]} · ${days[d.getDay()]}`;
 
     // ── Stats ──
-    const todayKey = 'mvow.done.' + d.toISOString().slice(0,10);
+    const todayKey = 'mvow.done.' + (window.MVOW_DATA ? MVOW_DATA.localDateIso(d) : d.toISOString().slice(0,10));
     const done = parseInt(localStorage.getItem(todayKey) || '0', 10);
     document.getElementById('doneN').textContent = done;
 
@@ -339,34 +370,94 @@
 
     // Greeting matni olib tashlandi — sokin interfeys
 
-    // ── Bugungi muvaffaqiyatlar ──
+    // ── Bugungi to'liq hisobot ──
     let plan = [];
     if (window.MVOW_DATA) plan = MVOW_DATA.getTodayPlan();
-    const winsEl = document.getElementById('winsList');
-    if (done > 0 && plan.length) {
-      // Birinchi N ta sessiya bajarilgan deb hisoblaymiz
-      const wins = plan.slice(0, done);
-      winsEl.innerHTML = wins.map(w => `
-        <div class="win">
-          <div class="check"><svg viewBox="0 0 24 24" fill="none" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="5 12 10 17 19 8"/></svg></div>
-          <div class="name">${escapeHtml(w.name || 'Ish')}</div>
-          <div class="dur">${escapeHtml(w.dur || '')}</div>
-        </div>
-      `).join('');
+
+    function escapeHtml(s) {
+      return String(s).replace(/[<>"&]/g, c => ({'<':'&lt;','>':'&gt;','"':'&quot;','&':'&amp;'}[c]));
+    }
+    const Tk = (k, def) => (window.I18N ? I18N.t(k, def) : def);
+
+    // History (bugungi) — bajarilgan ishlar uchun
+    const history = window.MVOW_DATA
+      ? MVOW_DATA.getHistory().filter(h => h.dateIso === MVOW_DATA.today.iso)
+      : [];
+    const completedKeys = window.MVOW_DATA ? MVOW_DATA.getCompletedKeysToday() : new Set();
+
+    // Bajarish foizi
+    const totalPlanned = plan.length;
+    const totalDone = history.length;
+    const pct = totalPlanned > 0 ? Math.round((totalDone / totalPlanned) * 100) : 0;
+    const pctEl = document.getElementById('reportPct');
+    const barEl = document.getElementById('reportBar');
+    const sumEl = document.getElementById('reportSummary');
+    if (pctEl) {
+      pctEl.textContent = pct + '%';
+      const color = pct >= 80 ? 'var(--accent)' : (pct >= 50 ? '#F5C26B' : '#FF8E97');
+      pctEl.style.color = color;
+    }
+    if (barEl) setTimeout(() => { barEl.style.width = pct + '%'; }, 100);
+    if (sumEl) {
+      const totalMins = history.reduce((s, h) => s + (h.actualMins || 0), 0);
+      const totalH = Math.round(totalMins / 60 * 10) / 10;
+      sumEl.textContent = totalDone + ' / ' + totalPlanned + ' · ' + totalH + ' ' + Tk('kechqurun.stat_focus', 'soat fokus').toLowerCase();
     }
 
-    // ── Ertangi reja ──
-    const tomInput = document.getElementById('tomInput');
-    const tomSaved = localStorage.getItem('mvow.tomorrowPlan') || '';
-    tomInput.value = tomSaved;
+    // Bajarilgan ishlar (wins) — history asosida
+    const winsEl = document.getElementById('winsList');
+    if (winsEl) {
+      if (history.length) {
+        winsEl.innerHTML = history.map(h => `
+          <div class="win">
+            <div class="check"><svg viewBox="0 0 24 24" fill="none" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="5 12 10 17 19 8"/></svg></div>
+            <div class="name">${escapeHtml(h.name || Tk('kechqurun.fallback_task_cap', 'Ish'))}</div>
+            <div class="dur">${escapeHtml((h.actualMins ? (h.actualMins + ' ' + Tk('today.fmt_units_m', 'daq').split(' ')[1]) : ''))}</div>
+          </div>
+        `).join('');
+      }
+    }
 
-    document.querySelectorAll('.quick-chip').forEach(c => {
-      c.addEventListener('click', () => {
-        const cur = tomInput.value.trim();
-        tomInput.value = cur ? cur + '\n' + c.dataset.add : c.dataset.add;
-        if (window.MVOW_DATA) MVOW_DATA.fxTap();
+    // Bajarilmagan ishlar (missed) — plan'da bor, lekin history'da yo'q
+    const missedBlock = document.getElementById('missedBlock');
+    const missedList = document.getElementById('missedList');
+    if (missedBlock && missedList && plan.length) {
+      const missed = plan.filter(t => {
+        if (!window.MVOW_DATA) return false;
+        const key = MVOW_DATA.taskKey(MVOW_DATA.today.iso, t.time, t.name);
+        return !completedKeys.has(key);
       });
-    });
+      if (missed.length) {
+        missedList.innerHTML = missed.map(t => `
+          <div style="display:grid;grid-template-columns:60px 1fr auto;gap:10px;align-items:center;padding:8px 12px;background:rgba(255,71,87,0.05);border:1px solid rgba(255,71,87,0.18);border-radius:8px;font-size:12px;">
+            <span style="color:#FF8E97;font-weight:500;">${escapeHtml(t.time || '—')}</span>
+            <span style="color:var(--text-mid);">${escapeHtml(t.name || '—')}</span>
+            <span style="color:var(--text-dim);font-size:11px;">${escapeHtml(t.dur || '')}</span>
+          </div>
+        `).join('');
+        missedBlock.style.display = 'block';
+      }
+    }
+
+    // Sermahsul vaqt (peak hour) — history'dagi eng ko'p bajarilgan soatdan
+    const insightBlock = document.getElementById('insightBlock');
+    const insightTime = document.getElementById('insightTime');
+    if (insightBlock && insightTime && history.length) {
+      const byHour = {};
+      history.forEach(h => {
+        const t = (h.plannedTime || '').match(/^(\d{1,2}):/);
+        if (t) {
+          const hr = +t[1];
+          byHour[hr] = (byHour[hr] || 0) + 1;
+        }
+      });
+      const hours = Object.keys(byHour);
+      if (hours.length) {
+        const peak = hours.reduce((a, b) => byHour[a] > byHour[b] ? a : b);
+        insightTime.textContent = String(peak).padStart(2, '0') + ':00 – ' + String((+peak + 2) % 24).padStart(2, '0') + ':00';
+        insightBlock.style.display = 'block';
+      }
+    }
 
     // ── Uyg'onish ──
     const wakeInput = document.getElementById('wakeTime');
@@ -387,7 +478,7 @@
       if (willTurnOn && window.MVOW_DATA) {
         const perm = await MVOW_DATA.requestNotifPermission();
         if (perm !== 'granted') {
-          alert("Bildirishnoma ruxsati berilmadi. Telefon Sozlamalaridan brauzerga bildirishnoma ruxsatini bering.");
+          alert(window.I18N ? I18N.t('kechqurun.notif_denied', "Bildirishnoma ruxsati berilmadi. Telefon Sozlamalaridan brauzerga bildirishnoma ruxsatini bering.") : "Bildirishnoma ruxsati berilmadi. Telefon Sozlamalaridan brauzerga bildirishnoma ruxsatini bering.");
           return;
         }
       }
@@ -406,69 +497,22 @@
     // ── Saqlash + uyga ──
     document.getElementById('saveBtn').addEventListener('click', (e) => {
       e.preventDefault();
-      const tomRaw = tomInput.value.trim();
-      localStorage.setItem('mvow.tomorrowPlan', tomRaw);
       localStorage.setItem('mvow.wakeTime', wakeInput.value);
-
-      let savedCount = 0;
-      // Ertangi reja matnini parse qilib weekPlan'ga saqlash
-      if (tomRaw && window.MVOW_DATA) {
-        const sessions = parsePlans(tomRaw);
-        const tomKey = 'd' + new Date(Date.now() + 86400000).toISOString().slice(0,10);
-        const w = MVOW_DATA.getWeekPlan();
-        if (sessions.length) {
-          w[tomKey] = sessions;
-          MVOW_DATA.setWeekPlan(w);
-          savedCount = sessions.length;
-        }
-      }
       if (window.MVOW_DATA) MVOW_DATA.fxSuccess();
 
       // Tasdiq toast
       const toast = document.createElement('div');
-      toast.style.cssText = 'position:fixed;left:50%;top:30%;transform:translate(-50%,-50%);background:#11151E;border:1px solid rgba(0,229,212,.4);border-radius:14px;padding:24px 28px;color:#7AF5EC;font-family:Inter,sans-serif;font-size:16px;text-align:center;z-index:9999;box-shadow:0 20px 60px rgba(0,0,0,.6);animation:toastIn .4s cubic-bezier(.16,.84,.32,1);';
-      const wakeText = wakeInput.value;
-      toast.innerHTML = '✓ Saqlandi<br><span style="font-size:12px;color:#9CA0A8;letter-spacing:1px;text-transform:uppercase;margin-top:8px;display:block;">' + (savedCount ? savedCount + ' ish · ' : '') + 'budilnik ' + wakeText + '</span>';
+      toast.style.cssText = 'position:fixed;left:50%;top:30%;transform:translate(-50%,-50%);background:#11151E;border:1px solid rgba(212,175,55,.4);border-radius:14px;padding:24px 28px;color:var(--accent-bright);font-family:Inter,sans-serif;font-size:16px;text-align:center;z-index:9999;box-shadow:0 20px 60px rgba(0,0,0,.6);';
+      const toastMain = window.I18N ? I18N.t('kechqurun.toast_main', 'Xayrli tun') : 'Xayrli tun';
+      const toastAlarm = window.I18N ? I18N.tWith('kechqurun.toast_alarm', { time: wakeInput.value }) : ('budilnik ' + wakeInput.value);
+      toast.innerHTML = '✓ ' + toastMain + '<br><span style="font-size:12px;color:#9CA0A8;letter-spacing:1px;text-transform:uppercase;margin-top:8px;display:block;">' + toastAlarm + '</span>';
       document.body.appendChild(toast);
-
-      const style = document.createElement('style');
-      style.textContent = '@keyframes toastIn{from{opacity:0;transform:translate(-50%,-40%) scale(.94);}to{opacity:1;transform:translate(-50%,-50%) scale(1);}}';
-      document.head.appendChild(style);
 
       setTimeout(() => { window.location.href = 'home.html'; }, 1500);
     });
-
-    function parsePlans(raw) {
-      const lines = raw.split(/[\n,;•]+/).map(s => s.trim()).filter(Boolean);
-      const out = [];
-      let hour = 7;
-      for (const line of lines) {
-        let time = '', name = line, dur = '1 soat';
-        const m = line.match(/^(\d{1,2}):(\d{2})\s+(.+?)(?:\s+\((.+?)\))?$/);
-        if (m) {
-          time = `${m[1].padStart(2,'0')}:${m[2]}`;
-          name = m[3].trim();
-          if (m[4]) dur = m[4].trim();
-        } else {
-          // Tekshiruv: dur qavs ichida
-          const dm = line.match(/^(.+?)\s+\((.+?)\)$/);
-          if (dm) {
-            name = dm[1].trim();
-            dur = dm[2].trim();
-          }
-          time = `${String(hour).padStart(2,'0')}:00`;
-          hour++;
-        }
-        out.push({ time, name, dur });
-      }
-      return out;
-    }
-
-    function escapeHtml(s) {
-      return String(s).replace(/[<>"&]/g, c => ({'<':'&lt;','>':'&gt;','"':'&quot;','&':'&amp;'}[c]));
-    }
   });
 </script>
 
+<script src="back-btn.js?v=28.4.0"></script>
 </body>
 </html>

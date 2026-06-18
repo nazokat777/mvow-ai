@@ -16,7 +16,7 @@
   :root {
     --void:#04060B; --void-soft:#0C0F16;
     --text:#F5F2EC; --text-mid:#B8BBC2; --text-dim:#9CA0A8;
-    --accent:#00E5D4; --accent-soft:#00B5A8;
+    
     --card:#11151E;
   }
   html, body {
@@ -74,8 +74,8 @@
     min-height: 58px;
     user-select: none;
   }
-  .opt:hover { border-color: rgba(0,229,212,.3); background: rgba(0,229,212,.04); }
-  .opt.on { border-color: var(--accent); background: rgba(0,229,212,.08); }
+  .opt:hover { border-color: rgba(212,175,55,.3); background: rgba(212,175,55,.04); }
+  .opt.on { border-color: var(--accent); background: rgba(212,175,55,.08); }
   .opt .radio {
     width: 22px; height: 22px;
     border-radius: 50%;
@@ -118,8 +118,8 @@
   textarea::placeholder { color: var(--text-dim); }
 
   .examples {
-    background: rgba(0,229,212,.04);
-    border: 1px solid rgba(0,229,212,.15);
+    background: rgba(212,175,55,.04);
+    border: 1px solid rgba(212,175,55,.15);
     border-radius: 10px;
     padding: 14px;
     margin-bottom: 16px;
@@ -205,6 +205,7 @@
     letter-spacing: 1px;
   }
 </style>
+<link rel="stylesheet" href="theme.css">
 </head>
 <body>
 
@@ -213,28 +214,28 @@
   <!-- STEP 1: Duration -->
   <div class="panel show" id="step1">
     <div class="step-lbl">1 / 2</div>
-    <h1 class="title">Maqsad muddati</h1>
-    <p class="sub">Qancha vaqt ichida erishasan?</p>
+    <h1 class="title" data-i18n="maqsad.step1_title">Maqsad muddati</h1>
+    <p class="sub" data-i18n="maqsad.step1_sub">Qancha vaqt ichida erishasiz?</p>
 
     <div class="options" id="durationList">
       <div class="opt" data-d="week" data-days="7">
-        <div class="lbl"><div class="lbl-main">1 hafta</div><div class="lbl-sub">Yaqin natija</div></div>
+        <div class="lbl"><div class="lbl-main" data-i18n="maqsad.dur_week">1 hafta</div><div class="lbl-sub" data-i18n="maqsad.dur_week_sub">Yaqin natija</div></div>
         <div class="radio"></div>
       </div>
       <div class="opt" data-d="month" data-days="30">
-        <div class="lbl"><div class="lbl-main">1 oy</div><div class="lbl-sub">30 kunlik intizom</div></div>
+        <div class="lbl"><div class="lbl-main" data-i18n="maqsad.dur_month">1 oy</div><div class="lbl-sub" data-i18n="maqsad.dur_month_sub">30 kunlik intizom</div></div>
         <div class="radio"></div>
       </div>
       <div class="opt" data-d="3mo" data-days="90">
-        <div class="lbl"><div class="lbl-main">3 oy</div><div class="lbl-sub">Chuqur o'rganish</div></div>
+        <div class="lbl"><div class="lbl-main" data-i18n="maqsad.dur_3mo">3 oy</div><div class="lbl-sub" data-i18n="maqsad.dur_3mo_sub">Chuqur o'rganish</div></div>
         <div class="radio"></div>
       </div>
       <div class="opt" data-d="6mo" data-days="180">
-        <div class="lbl"><div class="lbl-main">6 oy</div><div class="lbl-sub">Katta o'sish</div></div>
+        <div class="lbl"><div class="lbl-main" data-i18n="maqsad.dur_6mo">6 oy</div><div class="lbl-sub" data-i18n="maqsad.dur_6mo_sub">Katta o'sish</div></div>
         <div class="radio"></div>
       </div>
       <div class="opt" data-d="year" data-days="365">
-        <div class="lbl"><div class="lbl-main">1 yil</div><div class="lbl-sub">Hayot o'zgarishi</div></div>
+        <div class="lbl"><div class="lbl-main" data-i18n="maqsad.dur_year">1 yil</div><div class="lbl-sub" data-i18n="maqsad.dur_year_sub">Hayot o'zgarishi</div></div>
         <div class="radio"></div>
       </div>
     </div>
@@ -243,40 +244,52 @@
   <!-- STEP 2: Goal text + time -->
   <div class="panel" id="step2">
     <div class="step-lbl">2 / 2</div>
-    <h1 class="title" id="step2Title">1 oyda nimaga erishasan?</h1>
-    <p class="sub" id="step2Sub">Aniq yoz — har kuni kalendaringga belgilanadi</p>
+    <h1 class="title" id="step2Title" data-i18n="maqsad.step2_title_month">1 oyda nimaga erishasiz?</h1>
+    <p class="sub" id="step2Sub" data-i18n="maqsad.step2_sub">Aniq yozing — har kuni kalendaringizga belgilanadi</p>
 
-    <textarea id="goalText" placeholder="masalan: Dasturlash darsini o'rganaman" maxlength="200" rows="3"></textarea>
+    <textarea id="goalText" placeholder="masalan: Dasturlash darsini o'rganaman" data-i18n-placeholder="maqsad.goal_ph" maxlength="200" rows="3"></textarea>
 
     <div class="examples">
-      <div class="lbl">Misollar</div>
-      <div class="ex" data-fill="Dasturlash darsi">· Dasturlash darsini o'rganaman</div>
-      <div class="ex" data-fill="Sport mashqi">· Sport mashqi har kuni</div>
-      <div class="ex" data-fill="Kitob o'qish">· Kitob o'qish (har kuni 30 daq)</div>
-      <div class="ex" data-fill="Til o'rganish">· Til o'rganish</div>
+      <div class="lbl" data-i18n="maqsad.examples_lbl">Misollar</div>
+      <div class="ex" data-fill="Dasturlash darsi" data-fill-key="maqsad.ex_coding_fill" data-i18n="maqsad.ex_coding">· Dasturlash darsini o'rganaman</div>
+      <div class="ex" data-fill="Sport mashqi" data-fill-key="maqsad.ex_sport_fill" data-i18n="maqsad.ex_sport">· Sport mashqi har kuni</div>
+      <div class="ex" data-fill="Kitob o'qish" data-fill-key="maqsad.ex_reading_fill" data-i18n="maqsad.ex_reading">· Kitob o'qish (har kuni 30 daq)</div>
+      <div class="ex" data-fill="Til o'rganish" data-fill-key="maqsad.ex_lang_fill" data-i18n="maqsad.ex_lang">· Til o'rganish</div>
+    </div>
+
+    <!-- Band vaqtlar (boshqa maqsadlardan) -->
+    <div id="occupiedHint" style="display:none;background:rgba(212,175,55,.05);border:1px solid rgba(212,175,55,.18);border-radius:10px;padding:10px 14px;margin:8px 0 4px;">
+      <div style="font-size:10px;color:var(--text-dim);letter-spacing:2px;text-transform:uppercase;margin-bottom:6px;" data-i18n="maqsad.occupied_lbl">Band vaqtlar</div>
+      <div id="occupiedList" style="font-size:12px;color:var(--text-mid);line-height:1.6;"></div>
     </div>
 
     <div class="time-input">
-      <label for="dailyTime">Har kun qaysi vaqtda?</label>
+      <label for="dailyTime" data-i18n="maqsad.daily_time_lbl">Har kun qaysi vaqtda?</label>
       <input id="dailyTime" type="time" value="07:00">
     </div>
 
     <div class="time-input">
-      <label for="dailyDur">Davomiylik (daqiqa)</label>
+      <label for="dailyDur" data-i18n="maqsad.daily_dur_lbl">Davomiylik (daqiqa)</label>
       <input id="dailyDur" type="number" min="10" max="240" value="60" style="text-align:right;">
+    </div>
+
+    <!-- Konflikt xabari -->
+    <div id="conflictMsg" style="display:none;background:rgba(255,71,87,.08);border:1px solid rgba(255,71,87,.35);border-radius:10px;padding:12px 14px;margin-top:10px;font-size:12px;color:#FF8E97;line-height:1.5;">
+      <span id="conflictText" data-i18n="maqsad.conflict_default">Bu vaqt allaqachon band.</span>
     </div>
   </div>
 
 </div>
 
 <div class="bottom">
-  <button class="cta disabled" id="nextBtn" type="button">Keyingi</button>
-  <a class="back-link" id="backLink" href="#" style="display:none;">← Orqaga</a>
+  <button class="cta disabled" id="nextBtn" type="button" data-i18n="common.next">Keyingi</button>
+  <a class="back-link" id="backLink" href="#" style="display:none;" data-i18n="maqsad.back">← Orqaga</a>
 </div>
 
-<script src="i18n.js" defer></script>
-<script src="data.js" defer></script>
-<script src="nav-overlay.js" defer></script>
+<script src="i18n.js?v=28.4.0"></script>
+<script src="lang-switcher.js?v=28.4.0" defer></script>
+<script src="data.js?v=28.4.0" defer></script>
+<script src="nav-overlay.js?v=28.4.0" defer></script>
 <script>
   document.addEventListener('DOMContentLoaded', () => {
     let currentStep = 1;
@@ -308,32 +321,138 @@
     document.querySelectorAll('.ex').forEach(e => {
       e.style.cursor = 'pointer';
       e.addEventListener('click', () => {
-        goalText.value = e.dataset.fill;
+        const fallback = e.dataset.fill;
+        const key = e.dataset.fillKey;
+        goalText.value = (key && window.I18N) ? I18N.t(key, fallback) : fallback;
         checkStep2();
         goalText.focus();
       });
     });
 
+    // ── Vaqt utilities ──
+    function timeToMin(t) {
+      const m = String(t || '').match(/^(\d{1,2}):(\d{2})$/);
+      if (!m) return null;
+      return (+m[1]) * 60 + (+m[2]);
+    }
+    function minToTime(min) {
+      const m = ((min % (24*60)) + 24*60) % (24*60);
+      return String(Math.floor(m/60)).padStart(2,'0') + ':' + String(m%60).padStart(2,'0');
+    }
+    function durMinsFrom(g) {
+      if (window.MVOW_DATA && MVOW_DATA.parseDurMins) return MVOW_DATA.parseDurMins(g.dur);
+      const s = String(g.dur || '').toLowerCase();
+      const h = s.match(/(\d+(?:\.\d+)?)\s*s/);
+      const mm = s.match(/(\d+)\s*d/);
+      let t = 0;
+      if (h) t += Math.round(parseFloat(h[1]) * 60);
+      if (mm) t += parseInt(mm[1], 10);
+      return t || 60;
+    }
+
+    // Mavjud maqsadlarning vaqt slotlari
+    function getOccupiedSlots() {
+      let goals = [];
+      try { goals = JSON.parse(localStorage.getItem('mvow.goals') || '[]'); } catch {}
+      if (!Array.isArray(goals)) return [];
+      return goals.map(g => {
+        const start = timeToMin(g.time);
+        const dur = durMinsFrom(g);
+        return { text: g.text, time: g.time, dur: g.dur, start, end: start + dur };
+      }).filter(s => s.start !== null);
+    }
+
+    // Yangi vaqt boshqa maqsad bilan to'qnashadimi?
+    function findConflict() {
+      const newStart = timeToMin(dailyTime.value);
+      const newDur = parseInt(dailyDur.value, 10) || 60;
+      if (newStart === null || newDur <= 0) return null;
+      const newEnd = newStart + newDur;
+      const slots = getOccupiedSlots();
+      for (const s of slots) {
+        if (s.start < newEnd && s.end > newStart) return s;
+      }
+      return null;
+    }
+
+    function renderOccupied() {
+      const slots = getOccupiedSlots();
+      const wrap = document.getElementById('occupiedHint');
+      const list = document.getElementById('occupiedList');
+      if (!slots.length) { wrap.style.display = 'none'; return; }
+      wrap.style.display = 'block';
+      list.innerHTML = slots.map(s =>
+        '<div>' + s.time + '–' + minToTime(s.end) + ' · <em style="color:#F5F2EC;font-style:normal;">' + escapeHtmlMaqsad(s.text) + '</em></div>'
+      ).join('');
+    }
+    function escapeHtmlMaqsad(s) {
+      return String(s).replace(/[<>"&]/g, c => ({'<':'&lt;','>':'&gt;','"':'&quot;','&':'&amp;'}[c]));
+    }
+
     function checkStep2() {
-      nextBtn.classList.toggle('disabled', !goalText.value.trim());
+      const hasText = !!goalText.value.trim();
+      const conflict = findConflict();
+      const conflictMsg = document.getElementById('conflictMsg');
+      const conflictText = document.getElementById('conflictText');
+      if (conflict) {
+        const endStr = minToTime(conflict.end);
+        const prefix = (window.I18N ? I18N.t('maqsad.conflict_prefix', 'Bu vaqt band:') : 'Bu vaqt band:');
+        const afterTxt = (window.I18N ? I18N.tWith('maqsad.conflict_after', { time: endStr }) : (endStr + '\'dan keyin tanlang.'));
+        conflictText.innerHTML = prefix + ' <strong style="color:#F5F2EC;">' + escapeHtmlMaqsad(conflict.text) + '</strong> ' + conflict.time + '–' + endStr + '. <span style="color:#9CA0A8;">' + afterTxt + '</span>';
+        conflictMsg.style.display = 'block';
+      } else {
+        conflictMsg.style.display = 'none';
+      }
+      nextBtn.classList.toggle('disabled', !hasText || !!conflict);
     }
     goalText.addEventListener('input', checkStep2);
+    dailyTime.addEventListener('input', checkStep2);
+    dailyTime.addEventListener('change', checkStep2);
+    dailyDur.addEventListener('input', checkStep2);
+    dailyDur.addEventListener('change', checkStep2);
 
     function gotoStep2() {
       currentStep = 2;
       const titles = {
-        'week':  '1 haftada nimaga erishasan?',
-        'month': '1 oyda nimaga erishasan?',
-        '3mo':   '3 oyda nimaga erishasan?',
-        '6mo':   '6 oyda nimaga erishasan?',
-        'year':  '1 yilda nimaga erishasan?'
+        'week':  (window.I18N ? I18N.t('maqsad.step2_title_week',  '1 haftada nimaga erishasiz?') : '1 haftada nimaga erishasiz?'),
+        'month': (window.I18N ? I18N.t('maqsad.step2_title_month', '1 oyda nimaga erishasiz?')    : '1 oyda nimaga erishasiz?'),
+        '3mo':   (window.I18N ? I18N.t('maqsad.step2_title_3mo',   '3 oyda nimaga erishasiz?')    : '3 oyda nimaga erishasiz?'),
+        '6mo':   (window.I18N ? I18N.t('maqsad.step2_title_6mo',   '6 oyda nimaga erishasiz?')    : '6 oyda nimaga erishasiz?'),
+        'year':  (window.I18N ? I18N.t('maqsad.step2_title_year',  '1 yilda nimaga erishasiz?')   : '1 yilda nimaga erishasiz?')
       };
-      step2Title.textContent = titles[selectedDuration] || 'Nimaga erishasan?';
+      step2Title.textContent = titles[selectedDuration] || (window.I18N ? I18N.t('maqsad.step2_title_default', 'Nimaga erishasiz?') : 'Nimaga erishasiz?');
       step1.classList.remove('show');
       step2.classList.add('show');
       backLink.style.display = 'block';
-      nextBtn.textContent = 'Kalendarga belgila';
+      nextBtn.textContent = (window.I18N ? I18N.t('maqsad.cta_mark_calendar', 'Kalendarga belgila') : 'Kalendarga belgila');
       nextBtn.classList.add('disabled');
+      // Band vaqtlarni ko'rsatish + aqlli vaqt taklifi
+      renderOccupied();
+      const slots = getOccupiedSlots();
+      // 1) Mavjud maqsadlar bo'lsa — eng so'nggi tugashidan keyin
+      if (slots.length) {
+        const latestEnd = Math.max(...slots.map(s => s.end));
+        const startMin = Math.min(latestEnd, 23*60 + 30);
+        dailyTime.value = minToTime(startMin);
+      } else {
+        // 2) Bo'sh — anketadan peak vaqt, yo'q bo'lsa keyingi yarim soat
+        let suggested = null;
+        try {
+          const profile = JSON.parse(localStorage.getItem('mvow.profile') || '{}');
+          const peak = profile.energyPeak;
+          const peakTimes = { dawn: '05:00', morning: '09:00', noon: '14:00', evening: '19:00', night: '22:00' };
+          if (peak && peakTimes[peak]) suggested = peakTimes[peak];
+        } catch {}
+        // 3) Hech qaysisi bo'lmasa — hozirgi vaqtdan keyingi yarim soat
+        if (!suggested) {
+          const now = new Date();
+          const m = now.getMinutes() < 30 ? 30 : 60;
+          now.setMinutes(now.getMinutes() + (m - now.getMinutes()));
+          now.setSeconds(0, 0);
+          suggested = String(now.getHours()).padStart(2,'0') + ':' + String(now.getMinutes()).padStart(2,'0');
+        }
+        dailyTime.value = suggested;
+      }
       checkStep2();
       setTimeout(() => goalText.focus(), 100);
     }
@@ -343,7 +462,7 @@
       step2.classList.remove('show');
       step1.classList.add('show');
       backLink.style.display = 'none';
-      nextBtn.textContent = 'Keyingi';
+      nextBtn.textContent = (window.I18N ? I18N.t('common.next', 'Keyingi') : 'Keyingi');
       nextBtn.classList.toggle('disabled', !selectedDuration);
     }
 
@@ -362,15 +481,33 @@
     });
 
     function saveGoalToCalendar() {
+      // Xavfsizlik tekshiruvi — agar konflikt bo'lsa, saqlamaymiz
+      const conflict = findConflict();
+      if (conflict) {
+        checkStep2();
+        return;
+      }
       const text = goalText.value.trim();
-      const time = dailyTime.value || '07:00';
+      // Vaqt bo'sh bo'lsa — KASRO'L saqlanmaydi (user majburan tanlashi kerak)
+      if (!dailyTime.value || !/^\d{1,2}:\d{2}$/.test(dailyTime.value)) {
+        // Vaqt aniqlanmagan — checkStep2 disabled holatga qaytaradi
+        checkStep2();
+        return;
+      }
+      const time = dailyTime.value;
       const durMin = parseInt(dailyDur.value, 10) || 60;
+      const hourLbl = (window.I18N ? I18N.t('maqsad.unit_hour', 'soat') : 'soat');
+      const minLbl  = (window.I18N ? I18N.t('maqsad.unit_min',  'daq')  : 'daq');
       const dur = durMin >= 60
-        ? (durMin % 60 === 0 ? (durMin/60) + ' soat' : Math.floor(durMin/60) + ' soat ' + (durMin%60) + ' daq')
-        : durMin + ' daq';
+        ? (durMin % 60 === 0 ? (durMin/60) + ' ' + hourLbl : Math.floor(durMin/60) + ' ' + hourLbl + ' ' + (durMin%60) + ' ' + minLbl)
+        : durMin + ' ' + minLbl;
 
       const today = new Date();
-      const startIso = today.toISOString().slice(0, 10);
+      // MUHIM: local sanani ishlatamiz (UTC emas) — vaqt zonasi bug'ini oldini olish
+      const localIso = (window.MVOW_DATA && MVOW_DATA.localDateIso)
+        ? MVOW_DATA.localDateIso(today)
+        : (today.getFullYear() + '-' + String(today.getMonth()+1).padStart(2,'0') + '-' + String(today.getDate()).padStart(2,'0'));
+      const startIso = localIso;
 
       // Maqsadlar ro'yhatiga qo'shish (yangi ID)
       let goals = [];
@@ -389,13 +526,13 @@
       goals.push(newGoal);
       localStorage.setItem('mvow.goals', JSON.stringify(goals));
 
-      // Kalendarga tarqatish
+      // Kalendarga tarqatish (local iso bilan)
       if (window.MVOW_DATA) {
         const w = MVOW_DATA.getWeekPlan();
         for (let i = 0; i < selectedDays; i++) {
           const d = new Date(today);
           d.setDate(today.getDate() + i);
-          const key = 'd' + d.toISOString().slice(0, 10);
+          const key = 'd' + MVOW_DATA.localDateIso(d);
           if (!Array.isArray(w[key])) w[key] = [];
           const exists = w[key].some(s => s.name === text && s.time === time);
           if (!exists) {
@@ -406,10 +543,13 @@
         if (MVOW_DATA.fxSuccess) MVOW_DATA.fxSuccess();
       }
 
-      // Tasdiq toast
+      // Tasdiq toast — falsafiy aniqlik
       const toast = document.createElement('div');
-      toast.style.cssText = 'position:fixed;left:50%;top:30%;transform:translate(-50%,-50%);background:#11151E;border:1px solid rgba(0,229,212,.4);border-radius:14px;padding:24px 28px;color:#7AF5EC;font-family:Inter,sans-serif;font-size:16px;text-align:center;z-index:9999;box-shadow:0 20px 60px rgba(0,0,0,.6);';
-      toast.innerHTML = '✓ Belgilandi<br><span style="font-size:12px;color:#9CA0A8;letter-spacing:1px;text-transform:uppercase;margin-top:8px;display:block;">' + selectedDays + ' kunga · har kuni ' + time + '</span>';
+      toast.style.cssText = 'position:fixed;left:50%;top:30%;transform:translate(-50%,-50%);background:#11151E;border:1px solid rgba(212,175,55,.4);border-radius:14px;padding:26px 30px;color:var(--accent-bright);font-family:Inter,sans-serif;font-size:15px;text-align:center;z-index:9999;box-shadow:0 20px 60px rgba(0,0,0,.6);max-width:300px;';
+      const toastHead = (window.I18N ? I18N.t('maqsad.toast_head', 'Maqsad tizimga<br>aylantirildi') : 'Maqsad tizimga<br>aylantirildi');
+      const toastMeta = (window.I18N ? I18N.tWith('maqsad.toast_meta', { days: selectedDays, time: time }) : (selectedDays + ' kun · har kuni ' + time));
+      const toastFoot = (window.I18N ? I18N.t('maqsad.toast_foot', 'har kungi reja avtomatik chiqadi') : 'har kungi reja avtomatik chiqadi');
+      toast.innerHTML = '<div style="font-family:\'Cormorant Garamond\',serif;font-style:italic;font-size:18px;color:#F5F2EC;margin-bottom:10px;line-height:1.3;">' + toastHead + '</div><div style="font-size:11px;color:#9CA0A8;letter-spacing:1.5px;text-transform:uppercase;margin-bottom:4px;">' + toastMeta + '</div><div style="font-size:11px;color:var(--accent-bright);letter-spacing:1px;">' + toastFoot + '</div>';
       document.body.appendChild(toast);
 
       setTimeout(() => { window.location.href = 'maqsadlar.html'; }, 1400);
@@ -417,5 +557,6 @@
   });
 </script>
 
+<script src="back-btn.js?v=28.4.0"></script>
 </body>
 </html>

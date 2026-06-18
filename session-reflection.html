@@ -3,159 +3,334 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-<title>{brand} — Bajardim</title>
+<title data-i18n="session.page_title">{brand} — Bajardim</title>
 <link rel="manifest" href="manifest.webmanifest">
 <meta name="theme-color" content="#04060B">
 <link rel="apple-touch-icon" href="assets/mnsm-logo.png">
 <link rel="icon" type="image/png" href="assets/mnsm-logo.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
 <style>
   * { box-sizing: border-box; margin: 0; padding: 0; }
-  :root { --void:#04060B; --text:#F5F2EC; --text-mid:#B8BBC2; --text-dim:#9CA0A8; --accent:#00E5D4; --accent-soft:#00B5A8; }
+  :root { --void:#04060B; --void-soft:#0C0F16; --card:#11151E; --text:#F5F2EC; --text-mid:#B8BBC2; --text-dim:#9CA0A8; }
   body { background: var(--void); font-family:'Inter',sans-serif; color: var(--text); min-height: 100vh; display:flex; justify-content:center; align-items:flex-start; padding: 24px; -webkit-font-smoothing: antialiased; }
   .phone { width: 380px; min-height: 800px; background: var(--void); border-radius: 40px; overflow: hidden; position: relative; box-shadow: 0 0 0 8px #1a1d24, 0 30px 80px rgba(0,0,0,.7); display:flex; flex-direction: column; }
-  .container { flex:1; display:flex; flex-direction: column; align-items:center; justify-content:center; padding: 60px 32px 120px; gap: 28px; }
-  .check {
-    width: 84px; height: 84px;
+  .container { flex:1; display:flex; flex-direction: column; padding: 70px 28px 100px; gap: 24px; }
+
+  /* Qisqa tasdiq (yuqorida) */
+  .confirm { text-align: center; }
+  .confirm .check {
+    width: 56px; height: 56px;
+    margin: 0 auto 12px;
     border-radius: 50%;
-    border: 2px solid var(--accent);
+    border: 1.5px solid var(--accent);
     display:flex; align-items:center; justify-content:center;
-    animation: pop 0.6s cubic-bezier(.16,.84,.32,1);
+    animation: pop 0.5s cubic-bezier(.16,.84,.32,1);
   }
-  .check svg { width: 38px; height: 38px; stroke: var(--accent); }
+  .confirm .check svg { width: 24px; height: 24px; stroke: var(--accent); }
+  /* quietConfirm — respect reduced motion + give primitive a hook to suppress legacy pop */
+  .confirm[data-quiet-confirm="on"] .check { animation: none; }
+  @media (prefers-reduced-motion: reduce) {
+    .confirm .check { animation: none; }
+  }
   @keyframes pop {
     0%   { transform: scale(0); opacity: 0; }
-    60%  { transform: scale(1.12); opacity: 1; }
+    60%  { transform: scale(1.1); opacity: 1; }
     100% { transform: scale(1); opacity: 1; }
   }
-  .big { font-family:'Cormorant Garamond',serif; font-style: italic; font-weight:500; font-size: 38px; text-align:center; line-height: 1.2; }
-  .big .em { color: var(--accent); font-style: normal; }
-  .what { text-align: center; }
-  .what .name { font-family:'Cormorant Garamond',serif; font-size: 20px; }
-  .what .time { font-size: 11px; letter-spacing: 3px; color: var(--text-mid); text-transform: uppercase; margin-top: 6px; }
-  .progress {
-    text-align: center;
-    padding: 16px 0;
+  .confirm .title {
+    font-family: 'Cormorant Garamond', serif;
+    font-style: italic;
+    font-weight: 500;
+    font-size: 22px;
+    color: var(--text);
+    margin-bottom: 4px;
+  }
+  .confirm .task-name {
+    font-size: 12px;
+    letter-spacing: 1.5px;
+    color: var(--text-dim);
+    text-transform: uppercase;
+  }
+
+  /* Progress mini */
+  .progress-mini {
+    display: flex;
+    justify-content: center;
+    align-items: baseline;
+    gap: 6px;
+    font-size: 12px;
+    color: var(--text-mid);
+    padding: 12px 0;
     border-top: 1px solid rgba(255,255,255,.04);
     border-bottom: 1px solid rgba(255,255,255,.04);
-    width: 100%;
-    max-width: 240px;
   }
-  .progress .v {
-    font-family: 'Cormorant Garamond', serif;
-    font-size: 24px;
-    color: var(--accent);
-    font-weight: 500;
+  .progress-mini .v { color: var(--accent); font-weight: 600; }
+
+  /* Keyingi reja kartasi */
+  .next-card {
+    background: var(--card);
+    border: 1px solid rgba(212,175,55,.18);
+    border-radius: 14px;
+    padding: 28px 22px;
+    text-align: center;
   }
-  .progress .lbl {
+  .next-card .lbl {
     font-size: 10px;
     letter-spacing: 3px;
-    color: var(--text-mid);
+    color: var(--accent);
     text-transform: uppercase;
-    margin-top: 4px;
+    font-weight: 500;
+    margin-bottom: 18px;
   }
-  .bottom-bar { padding: 24px 32px env(safe-area-inset-bottom, 24px); background: linear-gradient(180deg, transparent, var(--void) 30%); }
-  .cta { display:block; width:100%; padding:16px; background: linear-gradient(180deg, var(--accent), var(--accent-soft)); color: var(--void); font-size:13px; font-weight:600; letter-spacing:2px; text-transform: uppercase; border:none; border-radius:6px; text-align:center; text-decoration:none; }
+  .next-card .time {
+    font-size: 22px;
+    color: var(--accent);
+    font-weight: 500;
+    letter-spacing: 1px;
+    margin-bottom: 10px;
+    font-feature-settings: "tnum";
+  }
+  .next-card .name {
+    font-family: 'Cormorant Garamond', serif;
+    font-style: italic;
+    font-size: 22px;
+    color: var(--text);
+    line-height: 1.3;
+    margin-bottom: 10px;
+  }
+  .next-card .dur {
+    font-size: 11px;
+    letter-spacing: 2px;
+    color: var(--text-dim);
+    text-transform: uppercase;
+  }
+
+  .next-question {
+    text-align: center;
+    font-family: 'Cormorant Garamond', serif;
+    font-style: italic;
+    font-size: 17px;
+    line-height: 1.5;
+    color: var(--text);
+    /* Karta va tugmalar orasida nafas oladigan joy */
+    margin: 30px 0 22px;
+  }
+
+  /* Tugmalar */
+  .actions { display: flex; flex-direction: column; gap: 10px; }
+  .btn-primary {
+    display: block;
+    width: 100%;
+    padding: 16px;
+    background: linear-gradient(180deg, var(--accent), var(--accent-soft));
+    color: var(--void);
+    font-family: 'Inter', sans-serif;
+    font-size: 13px;
+    font-weight: 600;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    border: none;
+    border-radius: 999px;
+    text-align: center;
+    text-decoration: none;
+    cursor: pointer;
+    min-height: 52px;
+  }
+  .btn-ghost {
+    display: block;
+    width: 100%;
+    padding: 14px;
+    background: transparent;
+    color: var(--text-mid);
+    font-family: 'Inter', sans-serif;
+    font-size: 11px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    border: 1px solid rgba(255,255,255,.08);
+    border-radius: 999px;
+    text-align: center;
+    text-decoration: none;
+    cursor: pointer;
+    min-height: 46px;
+  }
+
+  /* Hammasi bajarilgan holat */
+  .all-done {
+    text-align: center;
+    padding: 28px 20px;
+    background: var(--void-soft);
+    border-radius: 14px;
+  }
+  .all-done .icon {
+    font-size: 32px;
+    margin-bottom: 8px;
+  }
+  .all-done .title {
+    font-family: 'Cormorant Garamond', serif;
+    font-style: italic;
+    font-size: 22px;
+    color: var(--text);
+    margin-bottom: 8px;
+    line-height: 1.3;
+  }
+  .all-done .sub {
+    font-size: 12px;
+    color: var(--text-mid);
+    letter-spacing: 0.5px;
+    margin-bottom: 18px;
+  }
+
   @media (max-width: 480px) { body { padding: 0; } .phone { width: 100vw; min-height: 100vh; border-radius: 0; box-shadow: none; } }
 </style>
+<link rel="stylesheet" href="theme.css">
+<link rel="stylesheet" href="motion.css">
+<script src="motion.js" defer></script>
 </head>
 <body>
 
 <div class="phone">
   <div class="container">
 
-    <div class="check">
-      <svg viewBox="0 0 24 24" fill="none" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-        <polyline points="5 12 10 17 19 8"/>
-      </svg>
+    <!-- Qisqa bajardim tasdig'i -->
+    <div class="confirm">
+      <div class="check">
+        <svg viewBox="0 0 24 24" fill="none" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+          <polyline points="5 12 10 17 19 8"/>
+        </svg>
+      </div>
+      <div class="title" data-i18n="session.done_a">Bajardingiz</div>
+      <div class="task-name" id="completedTaskName">—</div>
     </div>
 
-    <h1 class="big" id="big">Bajardim</h1>
-
-    <div class="what">
-      <div class="name" id="taskName">Til o'rganish</div>
-      <div class="time" id="taskTime">1 soat fokus</div>
+    <!-- Bugungi progress mini -->
+    <div class="progress-mini">
+      <span class="v" id="doneN">0</span> /
+      <span id="totalN">0</span>
+      <span data-i18n="session.sub_count">bugun bajarildi</span>
     </div>
 
-    <div class="progress">
-      <div class="v"><span id="doneN">1</span> / <span id="totalN">5</span></div>
-      <div class="lbl" data-i18n="session.sub_count">bugun bajarildi</div>
+    <!-- Keyingi reja bo'lsa — ko'rsatish va so'rash -->
+    <div id="nextSection" style="display:none;">
+      <div class="next-card">
+        <div class="lbl" data-i18n="session.next_task_label">Keyingi vazifa</div>
+        <div class="time" id="nextTime">—</div>
+        <div class="name" id="nextName">—</div>
+        <div class="dur" id="nextDur">—</div>
+      </div>
+      <div class="next-question" data-i18n="session.next_ask">Keyingi rejani boshlaymizmi?</div>
+      <div class="actions">
+        <button class="btn-primary" id="startNextBtn" type="button" data-i18n="session.btn_start_next">Ha, boshlayman</button>
+        <a class="btn-ghost" href="home.html" data-i18n="session.btn_later">Hozircha yo'q</a>
+      </div>
     </div>
 
-  </div>
+    <!-- Hammasi bajarilgan bo'lsa -->
+    <div id="allDoneSection" style="display:none;">
+      <div class="all-done">
+        <div class="icon">✓</div>
+        <div class="title" data-i18n="session.all_done_title">Bugun hammasi bajarildi.</div>
+        <div class="sub" data-i18n="session.all_done_sub">Tabriklayman.</div>
+      </div>
+      <div class="actions" style="margin-top: 16px;">
+        <a class="btn-primary" id="celebrateBtn" href="kechqurun.html" data-i18n="session.btn_day_summary">Kun yakuni</a>
+        <a class="btn-ghost" href="home.html" data-i18n="session.btn_home">Bosh sahifa</a>
+      </div>
+    </div>
 
-  <div class="bottom-bar">
-    <a class="cta" id="cta" href="home.html" data-i18n="session.cta">Davom</a>
   </div>
 </div>
 
-<script src="i18n.js" defer></script>
-<script src="data.js" defer></script>
-<script src="nav-overlay.js" defer></script>
+<script src="i18n.js?v=28.4.0"></script>
+<script src="lang-switcher.js?v=28.4.0" defer></script>
+<script src="data.js?v=28.4.0" defer></script>
+<script src="nav-overlay.js?v=28.4.0" defer></script>
 <script>
   document.addEventListener('DOMContentLoaded', () => {
-    // Ism
-    const name = (localStorage.getItem('mvow.userName') || '').trim();
-    if (name) document.getElementById('userName').textContent = name;
+    if (!window.MVOW_DATA) return;
 
-    // Joriy task — saqlangan rejadan
-    let cur = null;
-    let plan = [];
-    if (window.MVOW_DATA) {
-      plan = MVOW_DATA.getTodayPlan();
-      cur = MVOW_DATA.currentTaskFromPlan();
+    const T = (k, def) => (window.I18N ? I18N.t(k, def) : def);
+
+    // Bugungi reja + bajarilganlar
+    const plan = MVOW_DATA.getTodayPlan();
+    const todayIso = MVOW_DATA.today.iso;
+    const history = MVOW_DATA.getHistory().filter(h => h.dateIso === todayIso);
+    const completedKeys = MVOW_DATA.getCompletedKeysToday();
+
+    // Hozirgina bajarilgan vazifa nomi (history'dagi eng oxirgi yozuv)
+    let justCompletedName = '—';
+    if (history.length) {
+      const latest = history.slice().sort((a,b) => (b.completedAt||0) - (a.completedAt||0))[0];
+      justCompletedName = latest.name || '—';
     }
-    if (!cur && window.MVOW_DATA) {
-      cur = MVOW_DATA.currentSession() || MVOW_DATA.sessions[0];
-    }
-    if (cur) {
-      document.getElementById('taskName').textContent = cur.name;
-      document.getElementById('taskTime').textContent = (cur.dur || '') + ' fokus';
-    }
+    document.getElementById('completedTaskName').textContent = justCompletedName;
 
-    // Hisoblagich (sahifa ochilganda 1 ga oshadi, lekin bir kunda bir marta)
-    const todayKey = 'mvow.done.' + new Date().toISOString().slice(0,10);
-    let done = parseInt(localStorage.getItem(todayKey) || '0', 10);
-    // sahifa qayta yuklansa, ikkilab oshmasin — sessiya unique key kerak
-    const sessionKey = todayKey + '.last';
-    const lastSessionId = localStorage.getItem(sessionKey);
-    const thisSessionId = Date.now() - (Date.now() % 30000); // 30 sek ichida bir xil
-    if (lastSessionId !== String(thisSessionId)) {
-      done++;
-      localStorage.setItem(todayKey, String(done));
-      localStorage.setItem(sessionKey, String(thisSessionId));
-
-      // Umumiy bajarilgan sessiyalar
-      const tot = parseInt(localStorage.getItem('mvow.totalDone') || '0', 10) + 1;
-      localStorage.setItem('mvow.totalDone', String(tot));
-    }
-    document.getElementById('doneN').textContent = done;
-
-    // Sessiya tugaganda nozik feedback (tasdiq)
-    if (window.MVOW_DATA) MVOW_DATA.fxSuccess();
-
-    // Bugungi reja umumiy hajmi
-    document.getElementById('totalN').textContent = plan.length || (window.MVOW_DATA ? MVOW_DATA.sessions.length : 5);
-
-    // Hammasi bajarilgan bo'lsa, CTA'ni bayramga yo'naltirish
-    if (plan.length && done >= plan.length) {
-      const cta = document.getElementById('cta');
-      cta.textContent = 'Yakuniy bayram';
-      cta.href = 'celebrate.html';
-
-      // Streak ham oshadi
-      const lastStreakDate = localStorage.getItem('mvow.lastStreakDate');
-      const today = new Date().toISOString().slice(0,10);
-      if (lastStreakDate !== today) {
-        const cur = parseInt(localStorage.getItem('mvow.streak') || '0', 10);
-        localStorage.setItem('mvow.streak', String(cur + 1));
-        localStorage.setItem('mvow.lastStreakDate', today);
+    // Motion: quiet confirm pulse on the just-completed task name
+    try {
+      const target = document.getElementById('completedTaskName');
+      if (target && window.MVOW_MOTION && typeof MVOW_MOTION.quietConfirm === 'function') {
+        const confirmEl = target.closest('.confirm');
+        if (confirmEl) confirmEl.setAttribute('data-quiet-confirm', 'on');
+        MVOW_MOTION.quietConfirm(target);
       }
+    } catch (e) { /* motion is non-essential — never block the page */ }
+
+    // Hisoblagich
+    const doneCount = history.length;
+    document.getElementById('doneN').textContent = doneCount;
+    document.getElementById('totalN').textContent = plan.length || 0;
+
+    // Sort plan by time
+    function tKey(t) {
+      const m = /^(\d{1,2}):?(\d{2})?$/.exec((t || '').trim());
+      if (!m) return 99999;
+      return (+m[1]) * 60 + (+(m[2] || 0));
+    }
+
+    // Keyingi vazifa — sort qilingan plan'da bajarilmagan birinchi vazifa
+    function findNextTask() {
+      const sorted = plan.slice().sort((a,b) => tKey(a.time) - tKey(b.time));
+      for (const t of sorted) {
+        const key = MVOW_DATA.taskKey(todayIso, t.time, t.name);
+        if (!completedKeys.has(key)) {
+          return t;
+        }
+      }
+      return null;
+    }
+
+    const next = findNextTask();
+    const allDone = plan.length && !next;
+
+    if (next) {
+      // Keyingi reja bor — ko'rsatish + so'rash
+      document.getElementById('nextSection').style.display = 'block';
+      document.getElementById('nextTime').textContent = next.time || '—';
+      document.getElementById('nextName').textContent = next.name || T('today.ish_lbl', 'reja');
+      document.getElementById('nextDur').textContent = next.dur || '';
+
+      document.getElementById('startNextBtn').addEventListener('click', () => {
+        // Hard-lock'ga o'tish — currentTaskFromPlan o'zi keyingi vazifani topadi
+        window.location.href = 'hard-lock.html';
+      });
+    } else if (allDone) {
+      // Hammasi bajarilgan — kun yakuniga
+      document.getElementById('allDoneSection').style.display = 'block';
+      // Streak ko'tarish (kunda bir marta)
+      const lastStreakDate = localStorage.getItem('mvow.lastStreakDate');
+      if (lastStreakDate !== todayIso) {
+        const curStreak = parseInt(localStorage.getItem('mvow.streak') || '0', 10);
+        localStorage.setItem('mvow.streak', String(curStreak + 1));
+        localStorage.setItem('mvow.lastStreakDate', todayIso);
+      }
+    } else {
+      // Plan yo'q yoki noaniq — bosh sahifaga
+      document.getElementById('allDoneSection').style.display = 'block';
     }
   });
 </script>
 
+<script src="back-btn.js?v=28.4.0"></script>
 </body>
 </html>

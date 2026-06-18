@@ -4,6 +4,11 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <title>{brand} — Bu ilov haqida</title>
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+    if (window.I18N) document.title = '{brand} — ' + I18N.t('about.page_title', 'Bu ilov haqida');
+  });
+</script>
 <link rel="manifest" href="manifest.webmanifest">
 <meta name="theme-color" content="#04060B">
 <link rel="apple-touch-icon" href="assets/mnsm-logo.png">
@@ -13,13 +18,13 @@
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
 <style>
   * { box-sizing: border-box; margin: 0; padding: 0; }
-  :root { --void:#04060B; --void-soft:#0C0F16; --text:#F5F2EC; --text-mid:#B8BBC2; --text-dim:#9CA0A8; --accent:#00E5D4; --accent-soft:#00B5A8; }
+  :root { --void:#04060B; --void-soft:#0C0F16; --text:#F5F2EC; --text-mid:#B8BBC2; --text-dim:#9CA0A8; }
   body { background: var(--void); font-family:'Inter',sans-serif; color: var(--text); min-height: 100vh; display:flex; justify-content:center; align-items:flex-start; padding: 24px; -webkit-font-smoothing: antialiased; }
   .phone { width: 380px; min-height: 800px; background: var(--void); border-radius: 40px; position: relative; box-shadow: 0 0 0 8px #1a1d24, 0 30px 80px rgba(0,0,0,.7); overflow: hidden; }
   .container { padding: 60px 28px 80px; }
 
   .top { text-align:center; margin-bottom: 36px; }
-  .logo { width: 60px; height: 60px; margin: 0 auto 12px; background: url('assets/mnsm-logo.png') center/contain no-repeat; filter: hue-rotate(160deg) saturate(1.4) drop-shadow(0 0 12px rgba(0,229,212,.4)); }
+  .logo { width: 60px; height: 60px; margin: 0 auto 12px; background: url('assets/mnsm-logo.png') center/contain no-repeat; filter: hue-rotate(160deg) saturate(1.4) drop-shadow(0 0 12px rgba(212,175,55,.4)); }
   .name { font-family:'Cormorant Garamond',serif; font-weight:600; font-size: 26px; letter-spacing: 4px; color: var(--text); }
   .ver { font-size: 11px; letter-spacing: 3px; color: var(--text-dim); text-transform: uppercase; margin-top: 4px; }
 
@@ -69,6 +74,7 @@
 
   @media (max-width: 480px) { body { padding: 0; } .phone { width: 100vw; min-height: 100vh; border-radius: 0; box-shadow: none; } }
 </style>
+<link rel="stylesheet" href="theme.css">
 </head>
 <body>
 
@@ -77,41 +83,43 @@
 
     <div class="top">
       <div class="logo"></div>
-      <div class="name" data-brand="name">brend</div>
+      <div class="name" data-brand="name">Daywarden</div>
       <div class="ver" id="ver">v 9.2</div>
     </div>
 
     <div class="section">
       <div class="lbl" data-i18n="about.feat_lbl">Imkoniyatlar</div>
-      <div class="feat"><span class="dot">·</span> Reja — yozma yoki ovozli</div>
-      <div class="feat"><span class="dot">·</span> Tahrirlanadigan kun tartibi</div>
-      <div class="feat"><span class="dot">·</span> Fokus taymeri · Pomodoro</div>
-      <div class="feat"><span class="dot">·</span> Streak hisobi</div>
-      <div class="feat"><span class="dot">·</span> Budilnik — 3 misol bilan</div>
-      <div class="feat"><span class="dot">·</span> Haftalik · oylik natijalar</div>
+      <div class="feat"><span class="dot">·</span> <span data-i18n="about.feat_short1">Reja — yozma yoki ovozli</span></div>
+      <div class="feat"><span class="dot">·</span> <span data-i18n="about.feat_short2">Tahrirlanadigan kun tartibi</span></div>
+      <div class="feat"><span class="dot">·</span> <span data-i18n="about.feat_short3">Fokus taymeri · Pomodoro</span></div>
+      <div class="feat"><span class="dot">·</span> <span data-i18n="about.feat_short4">Streak hisobi</span></div>
+      <div class="feat"><span class="dot">·</span> <span data-i18n="about.feat_short5">Budilnik — 3 misol bilan</span></div>
+      <div class="feat"><span class="dot">·</span> <span data-i18n="about.feat_short6">Haftalik · oylik natijalar</span></div>
     </div>
 
     <div class="section">
       <div class="lbl" data-i18n="about.priv_lbl">Maxfiylik</div>
-      <p>Ma'lumotlar telefonda. Reset bilan tozalanadi.</p>
+      <p data-i18n="about.priv_short">Ma'lumotlar telefonda. Reset bilan tozalanadi.</p>
     </div>
 
     <div class="links">
-      <a class="link" href="settings.html">Sozlamalar <span class="arr">›</span></a>
-      <a class="link" href="privacy.html">Maxfiylik siyosati <span class="arr">›</span></a>
-      <a class="link" href="menu.html">Barcha ekranlar <span class="arr">›</span></a>
+      <a class="link" href="settings.html"><span data-i18n="about.settings_link">Sozlamalar</span> <span class="arr">›</span></a>
+      <a class="link" href="privacy.html"><span data-i18n="about.privacy_link">Maxfiylik siyosati</span> <span class="arr">›</span></a>
+      <a class="link" href="menu.html"><span data-i18n="about.all_screens">Barcha ekranlar</span> <span class="arr">›</span></a>
     </div>
 
     <div class="footer">
-      © 2026 · <span class="em" data-brand="name">brend</span>
+      © 2026 · <span class="em" data-brand="name">Daywarden</span>
     </div>
 
   </div>
 </div>
 
-<script src="i18n.js" defer></script>
-<script src="data.js" defer></script>
-<script src="nav-overlay.js" defer></script>
+<script src="i18n.js?v=28.4.0"></script>
+<script src="lang-switcher.js?v=28.4.0" defer></script>
+<script src="data.js?v=28.4.0" defer></script>
+<script src="nav-overlay.js?v=28.4.0" defer></script>
 
+<script src="back-btn.js?v=28.4.0"></script>
 </body>
 </html>

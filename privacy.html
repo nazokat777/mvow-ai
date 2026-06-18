@@ -14,7 +14,7 @@
     max-width: 760px; margin: 0 auto;
   }
   header {
-    border-bottom: 1px solid rgba(0,229,212,.2);
+    border-bottom: 1px solid rgba(212,175,55,.2);
     padding-bottom: 30px; margin-bottom: 40px;
     text-align: center;
   }
@@ -22,7 +22,7 @@
     width: 64px; height: 64px;
     background: url(assets/mnsm-logo.png) center/contain no-repeat;
     margin: 0 auto 20px;
-    filter: drop-shadow(0 0 12px rgba(0,229,212,.4));
+    filter: drop-shadow(0 0 12px rgba(212,175,55,.4));
   }
   h1 {
     font-size: 28px; font-weight: 700;
@@ -38,22 +38,23 @@
     margin-top: 16px;
   }
   h2 {
-    color: #00E5D4; font-size: 16px;
+    color: var(--accent); font-size: 16px;
     letter-spacing: 2px; text-transform: uppercase;
     margin: 36px 0 14px;
   }
   p { margin-bottom: 12px; }
   ul { margin: 8px 0 14px 24px; }
   li { margin-bottom: 6px; }
-  a { color: #00E5D4; text-decoration: none; border-bottom: 1px solid rgba(0,229,212,.4); }
-  a:hover { border-bottom-color: #00E5D4; }
-  .emphasis { color: #00E5D4; font-style: italic; }
+  a { color: var(--accent); text-decoration: none; border-bottom: 1px solid rgba(212,175,55,.4); }
+  a:hover { border-bottom-color: var(--accent); }
+  .emphasis { color: var(--accent); font-style: italic; }
   footer {
     margin-top: 60px; padding-top: 30px;
-    border-top: 1px solid rgba(0,229,212,.2);
+    border-top: 1px solid rgba(212,175,55,.2);
     text-align: center; color: #6B6E76; font-size: 12px;
   }
 </style>
+<link rel="stylesheet" href="theme.css">
 </head>
 <body>
 
@@ -65,20 +66,18 @@
 </header>
 
 <h2>1. Nima ma'lumot yig'amiz?</h2>
-<p>Biz quyidagi ma'lumotlarni <span class="emphasis">faqat ilovangiz ichida</span> saqlaymiz (serverga yuborilmaydi):</p>
+<p>Hech narsa. Barcha ma'lumotlar <span class="emphasis">faqat sizning qurilmangizda</span> saqlanadi — server ham, hisob ham, kuzatuv ham yo'q.</p>
+<p>Qurilmangizda mahalliy saqlanadigan ma'lumotlar (localStorage):</p>
 <ul>
-  <li>Sizning ismingiz va tanlagan tilingiz</li>
-  <li>Sessiyalar tarixi, vaqt, davomiyligi</li>
-  <li>Bloklangan ilovalar ro'yxati</li>
-  <li>Streak (ketma-ket kunlar), statistika</li>
-  <li>Mentor bilan suhbat tarixi</li>
+  <li>Ismingiz, yoshingiz va anketadagi javoblar</li>
+  <li>Maqsadlaringiz va kun tartibingiz</li>
+  <li>Bajarilgan ishlar tarixi (vaqt, davomiylik, izoh)</li>
+  <li>Streak va statistika</li>
 </ul>
-<p>Quyidagilarni server bilan almashtiramiz (faqat AI mentor uchun):</p>
-<ul>
-  <li>Sizning hozirgi savolingiz/suhbatingiz matni</li>
-  <li>Hozirgi sessiya konteksti (mentor javob berishi uchun)</li>
-</ul>
-<p>Bu ma'lumotlar <a href="https://www.anthropic.com/privacy">Anthropic Claude AI</a> tomonidan qayta ishlanadi va saqlanmaydi.</p>
+
+<h2>1.1 Tashqi xizmatlar / API</h2>
+<p><span class="emphasis">Hech qanday tashqi AI yoki server ishlatilmaydi.</span> Murabbiy xabarlari, naqsh aniqlash, xulq-atvor tahlili — hammasi qurilmangiz ichida, oddiy qoidalar bo'yicha hisoblanadi (rule-based logic).</p>
+<p>Ilova internetsiz ham ishlaydi (PWA offline rejimi). Faqat ko'rsatma va shrift uchun ilk yuklanish paytida internet kerak.</p>
 
 <h2>2. Nima ma'lumot yig'maymiz?</h2>
 <ul>
@@ -101,12 +100,13 @@
 </ul>
 
 <h2>4. Uchinchi taraflar</h2>
-<p>Biz quyidagi xizmatlardan foydalanamiz:</p>
+<p>Biz <span class="emphasis">hech qanday uchinchi taraf API'siga ulanmaymiz</span>. Anthropic, OpenAI, Google, Apple yoki boshqa AI/server xizmatlari ishlatilmaydi.</p>
+<p>Faqat texnik infratuzilma:</p>
 <ul>
-  <li><a href="https://www.anthropic.com/privacy">Anthropic Claude AI</a> — mentor javoblari uchun</li>
-  <li>Google (ixtiyoriy) — agar siz Google Calendar bilan sinxronlamoqchi bo'lsangiz</li>
+  <li>Vercel — statik fayllarni xizmat qilish (HTML, CSS, JS)</li>
+  <li>Google Fonts — Garamond va Inter shriftlari (faqat ko'rsatma)</li>
 </ul>
-<p>Sizning ma'lumotlaringiz <span class="emphasis">hech kimga sotilmaydi</span>.</p>
+<p>Sizning ma'lumotlaringiz <span class="emphasis">hech kimga sotilmaydi va hech qaerga jo'natilmaydi</span>.</p>
 
 <h2>5. Ma'lumotlarni o'chirish</h2>
 <p>Istalgan paytda:</p>
@@ -128,5 +128,8 @@
   © 2026 MNSM AI Specialist · M·VoW — Intizom do'sti
 </footer>
 
+<script src="i18n.js?v=28.4.0"></script>
+<script src="lang-switcher.js?v=28.4.0" defer></script>
+<script src="back-btn.js?v=28.4.0"></script>
 </body>
 </html>

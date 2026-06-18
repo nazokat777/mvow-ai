@@ -1,0 +1,227 @@
+/*
+ * Daywarden Global Theme — v1.0
+ * Gold luxury palette
+ * Yagona dizayn tizimi — barcha sahifalar shu fayldan ranglarni oladi
+ */
+
+/* Fonts — load early */
+@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,500;1,600&family=Inter:wght@200;300;400;500;600;700&display=swap');
+
+:root {
+  /* === CORE PALETTE === */
+  --bg: #0a0a0a;
+  --bg-soft: #14140f;
+  --card-bg: #16161a;
+  --card-bg-elevated: #1c1c20;
+
+  --accent: #d4af37;
+  --accent-bright: #f5d76e;
+  --accent-deep: #b8860b;
+  --accent-gradient: linear-gradient(135deg, #f5d76e, #d4af37, #b8860b);
+
+  --text: #f5f5f5;
+  --text-dim: #888;
+  --text-faint: #555;
+
+  /* === SEMANTIC TRANSPARENT VARIANTS === */
+  --accent-soft: rgba(212, 175, 55, 0.10);
+  --accent-medium: rgba(212, 175, 55, 0.25);
+  --accent-strong: rgba(212, 175, 55, 0.45);
+  --accent-glow: rgba(245, 215, 110, 0.55);
+
+  --border-subtle: rgba(245, 245, 245, 0.06);
+  --border-default: rgba(245, 245, 245, 0.10);
+  --border-strong: rgba(212, 175, 55, 0.30);
+
+  --overlay-light: rgba(0, 0, 0, 0.4);
+  --overlay-strong: rgba(0, 0, 0, 0.7);
+
+  /* === LEGACY ALIASES (so old code doesn't break during migration) === */
+  --void: var(--bg);
+  --void-soft: var(--bg-soft);
+  --card: var(--card-bg);
+  --text-mid: var(--text-dim);
+
+  /* === SHAPE === */
+  --radius: 20px;
+  --radius-sm: 8px;
+  --radius-md: 12px;
+  --radius-lg: 20px;
+  --radius-xl: 28px;
+  --radius-pill: 999px;
+
+  /* === TYPOGRAPHY === */
+  --font-heading: 'Cormorant Garamond', 'Playfair Display', Georgia, 'Times New Roman', serif;
+  --font-body: 'Inter', system-ui, -apple-system, 'Segoe UI', sans-serif;
+  --font-mono: ui-monospace, 'SF Mono', Menlo, monospace;
+
+  /* === MOTION === */
+  --ease-enter: cubic-bezier(0.16, 0.84, 0.32, 1);
+  --ease-exit: cubic-bezier(0.4, 0, 1, 1);
+  --ease-celebrate: cubic-bezier(0.16, 1.04, 0.32, 1);
+
+  --dur-quick: 160ms;
+  --dur-normal: 240ms;
+  --dur-slow: 400ms;
+}
+
+/* === BASE STYLES === */
+html, body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: var(--font-body);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* Headings use serif */
+h1, h2, h3, h4, h5, h6,
+.heading, .title {
+  font-family: var(--font-heading);
+}
+
+/* Selection styling — gold */
+::selection {
+  background: rgba(212, 175, 55, 0.35);
+  color: var(--text);
+}
+
+/* Focus visible — gold ring */
+:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+
+/* === UTILITY CLASSES === */
+.text-accent { color: var(--accent); }
+.text-accent-bright { color: var(--accent-bright); }
+.text-dim { color: var(--text-dim); }
+.bg-card { background: var(--card-bg); }
+.gradient-gold { background: var(--accent-gradient); }
+.gradient-gold-text {
+  background: var(--accent-gradient);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  color: transparent;
+}
+
+/* Italic serif emphasis */
+.serif-italic {
+  font-family: var(--font-heading);
+  font-style: italic;
+}
+
+/* === LANGUAGE SWITCHER === */
+.lang-switcher {
+  position: fixed;
+  top: max(20px, env(safe-area-inset-top, 20px));
+  right: 20px;
+  z-index: 9999;
+  font-family: var(--font-body);
+}
+.lang-switcher__btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 12px;
+  min-height: 38px;
+  background: rgba(212, 175, 55, 0.10);
+  color: var(--accent-bright);
+  border: 1.5px solid rgba(212, 175, 55, 0.35);
+  border-radius: var(--radius-pill);
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  cursor: pointer;
+  -webkit-backdrop-filter: blur(14px);
+  backdrop-filter: blur(14px);
+  transition: background var(--dur-quick) ease, border-color var(--dur-quick) ease, color var(--dur-quick) ease;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.35);
+}
+.lang-switcher__btn:hover,
+.lang-switcher__btn:focus-visible {
+  background: rgba(212, 175, 55, 0.18);
+  border-color: rgba(212, 175, 55, 0.55);
+  outline: none;
+}
+.lang-switcher__icon {
+  width: 16px;
+  height: 16px;
+  flex-shrink: 0;
+}
+.lang-switcher__code {
+  letter-spacing: 0.22em;
+}
+.lang-switcher__menu {
+  position: absolute;
+  top: calc(100% + 8px);
+  right: 0;
+  min-width: 160px;
+  padding: 6px;
+  background: var(--card-bg-elevated);
+  border: 1px solid var(--border-default);
+  border-radius: var(--radius-md);
+  box-shadow: 0 16px 40px rgba(0, 0, 0, 0.55);
+  display: none;
+  flex-direction: column;
+  gap: 2px;
+  opacity: 0;
+  transform: translateY(-6px);
+  transition: opacity var(--dur-quick) ease, transform var(--dur-quick) ease;
+}
+.lang-switcher--open .lang-switcher__menu {
+  display: flex;
+  opacity: 1;
+  transform: translateY(0);
+}
+.lang-switcher__item {
+  display: flex;
+  align-items: baseline;
+  gap: 10px;
+  padding: 10px 12px;
+  background: transparent;
+  border: none;
+  border-radius: var(--radius-sm);
+  color: var(--text);
+  font-family: var(--font-body);
+  font-size: 14px;
+  text-align: left;
+  cursor: pointer;
+  transition: background var(--dur-quick) ease;
+}
+.lang-switcher__item:hover,
+.lang-switcher__item:focus-visible {
+  background: rgba(212, 175, 55, 0.10);
+  outline: none;
+}
+.lang-switcher__item.is-active {
+  background: rgba(212, 175, 55, 0.16);
+  color: var(--accent-bright);
+}
+.lang-switcher__item-code {
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--accent);
+  min-width: 28px;
+}
+.lang-switcher__item.is-active .lang-switcher__item-code {
+  color: var(--accent-bright);
+}
+.lang-switcher__item-name {
+  font-size: 14px;
+  font-weight: 400;
+  color: inherit;
+}
+
+/* === REDUCED MOTION === */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}

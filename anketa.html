@@ -3,12 +3,12 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-<title>{brand} — Tanishuv</title>
+<title data-i18n="anketa.page_title">{brand} — Tanishuv</title>
 <link rel="manifest" href="manifest.webmanifest">
 <meta name="theme-color" content="#04060B">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<meta name="apple-mobile-web-app-title" content="brend">
+<meta name="apple-mobile-web-app-title" content="Daywarden">
 <link rel="apple-touch-icon" href="assets/mnsm-logo.png">
 <link rel="icon" type="image/png" href="assets/mnsm-logo.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -19,7 +19,7 @@
   :root {
     --void:#04060B; --void-soft:#0C0F16;
     --text:#F5F2EC; --text-mid:#B8BBC2; --text-dim:#9CA0A8;
-    --accent:#00E5D4; --accent-soft:#00B5A8;
+    
     --card:#11151E;
   }
   html, body {
@@ -128,12 +128,12 @@
     -webkit-tap-highlight-color: transparent;
   }
   .choice:hover, .choice:active {
-    border-color: rgba(0,229,212,.25);
-    background: rgba(0,229,212,.04);
+    border-color: rgba(212,175,55,.25);
+    background: rgba(212,175,55,.04);
   }
   .choice.on {
     border-color: var(--accent);
-    background: rgba(0,229,212,.06);
+    background: rgba(212,175,55,.06);
   }
   .choice .radio {
     width: 22px; height: 22px;
@@ -240,6 +240,7 @@
     line-height: 1.6;
   }
 </style>
+<link rel="stylesheet" href="theme.css">
 </head>
 <body>
 
@@ -257,104 +258,126 @@
         <polyline points="5 12 10 17 19 8"/>
       </svg>
     </div>
-    <div class="title">Tayyor</div>
+    <div class="title" data-i18n="anketa.done_title">Tayyor</div>
   </div>
 </div>
 
 <div class="bottom" id="bottomNav">
-  <button class="back-link" id="backBtn">← Orqaga</button>
-  <button class="next-btn disabled" id="nextBtn">Keyingi</button>
+  <button class="back-link" id="backBtn"><span aria-hidden="true">← </span><span data-i18n="common.back">Orqaga</span></button>
+  <button class="next-btn disabled" id="nextBtn" data-i18n="common.next">Keyingi</button>
 </div>
 
+<script src="i18n.js?v=28.4.0"></script>
+<script src="lang-switcher.js?v=28.4.0" defer></script>
 <script>
-  // ── 8 ta savol ──
+  // ── i18n helper ──
+  const T = (k, def) => (window.I18N ? window.I18N.t(k, def) : def);
+
+  // ── 8 ta savol (titles/labels/notes T(...) orqali tarjima qilinadi) ──
   const QUESTIONS = [
     {
       id: 'name',
       type: 'text',
-      title: 'Ismingiz nima?',
-      placeholder: 'Ism',
+      titleKey: 'anketa.q_name_title',
+      titleDef: 'Ismingiz nima?',
+      placeholderKey: 'anketa.q_name_ph',
+      placeholderDef: 'Ism',
       maxlen: 24,
       validate: v => v.trim().length >= 2,
     },
     {
       id: 'age',
       type: 'choice',
-      title: 'Yoshingiz nechada?',
+      titleKey: 'anketa.q_age_title',
+      titleDef: 'Yoshingiz nechada?',
       options: [
-        { v: '<18',   label: '18 dan kichik' },
-        { v: '18-24', label: '18–24' },
-        { v: '25-34', label: '25–34' },
-        { v: '35-44', label: '35–44' },
-        { v: '45+',   label: '45+' }
+        { v: '<18',   labelKey: 'anketa.age_under18', labelDef: '18 dan kichik' },
+        { v: '18-24', labelKey: 'anketa.age_18_24',   labelDef: '18–24' },
+        { v: '25-34', labelKey: 'anketa.age_25_34',   labelDef: '25–34' },
+        { v: '35-44', labelKey: 'anketa.age_35_44',   labelDef: '35–44' },
+        { v: '45+',   labelKey: 'anketa.age_45plus',  labelDef: '45+' }
       ],
       // izoh olib tashlandi
     },
     {
       id: 'gender',
       type: 'choice',
-      title: 'Jinsingiz?',
+      titleKey: 'anketa.q_gender_title',
+      titleDef: 'Jinsingiz?',
       options: [
-        { v: 'm', label: 'Erkak' },
-        { v: 'f', label: 'Ayol' },
-        { v: 'x', label: 'Aytmayman' }
+        { v: 'm', labelKey: 'anketa.gender_m', labelDef: 'Erkak' },
+        { v: 'f', labelKey: 'anketa.gender_f', labelDef: 'Ayol' },
+        { v: 'x', labelKey: 'anketa.gender_x', labelDef: 'Aytmayman' }
       ]
     },
     {
       id: 'job',
       type: 'choice',
-      title: "Asosan nima bilan shug'ullanasiz?",
+      titleKey: 'anketa.q_job_title',
+      titleDef: "Asosan nima bilan shug'ullanasiz?",
       options: [
-        { v: 'study',  label: "O'qiyman" },
-        { v: 'mental', label: 'Aqliy mehnat' },
-        { v: 'phys',   label: 'Jismoniy mehnat' },
-        { v: 'lead',   label: 'Rahbarlik' },
-        { v: 'other',  label: 'Boshqa' }
+        { v: 'study',  labelKey: 'anketa.job_study',  labelDef: "O'qiyman" },
+        { v: 'mental', labelKey: 'anketa.job_mental', labelDef: 'Aqliy mehnat' },
+        { v: 'phys',   labelKey: 'anketa.job_phys',   labelDef: 'Jismoniy mehnat' },
+        { v: 'lead',   labelKey: 'anketa.job_lead',   labelDef: 'Rahbarlik' },
+        { v: 'other',  labelKey: 'anketa.job_other',  labelDef: 'Boshqa' }
       ]
     },
     {
       id: 'focus_time',
       type: 'choice',
-      title: 'Qachon eng yaxshi fokusda bo\'lasiz?',
+      titleKey: 'anketa.q_focus_title',
+      titleDef: "Qachon eng yaxshi fokusda bo'lasiz?",
       options: [
-        { v: 'dawn',    label: 'Erta tong (5–8)' },
-        { v: 'morning', label: 'Ertalab (8–12)' },
-        { v: 'noon',    label: 'Tushlikdan keyin (13–17)' },
-        { v: 'evening', label: 'Kechqurun (17–21)' },
-        { v: 'night',   label: 'Tunda (21+)' }
+        { v: 'dawn',    labelKey: 'anketa.focus_dawn',    labelDef: 'Erta tong (5–8)' },
+        { v: 'morning', labelKey: 'anketa.focus_morning', labelDef: 'Ertalab (8–12)' },
+        { v: 'noon',    labelKey: 'anketa.focus_noon',    labelDef: 'Tushlikdan keyin (13–17)' },
+        { v: 'evening', labelKey: 'anketa.focus_evening', labelDef: 'Kechqurun (17–21)' },
+        { v: 'night',   labelKey: 'anketa.focus_night',   labelDef: 'Tunda (21+)' }
       ]
     },
     {
       id: 'distract',
       type: 'choice',
-      title: 'Diqqatingiz qaerda chalg\'iydi?',
+      titleKey: 'anketa.q_distract_title',
+      titleDef: "Diqqatingiz qaerda chalg'iydi?",
       options: [
-        { v: 'phone',   label: 'Telefon · ilovalar' },
-        { v: 'noise',   label: 'Atrofdagi shovqin' },
-        { v: 'tired',   label: 'Charchoq' },
-        { v: 'thought', label: 'Boshqa fikrlar' },
-        { v: 'mixed',   label: 'Hammasi' }
+        { v: 'phone',   labelKey: 'anketa.distract_phone',   labelDef: 'Telefon · ilovalar' },
+        { v: 'noise',   labelKey: 'anketa.distract_noise',   labelDef: 'Atrofdagi shovqin' },
+        { v: 'tired',   labelKey: 'anketa.distract_tired',   labelDef: 'Charchoq' },
+        { v: 'thought', labelKey: 'anketa.distract_thought', labelDef: 'Boshqa fikrlar' },
+        { v: 'mixed',   labelKey: 'anketa.distract_mixed',   labelDef: 'Hammasi' }
       ]
     },
     {
-      id: 'session',
+      id: 'situation',
       type: 'choice',
-      title: 'Bitta sessiya qancha bo\'lsin?',
+      titleKey: 'anketa.q_situation_title',
+      titleDef: 'Holatingiz qanday?',
+      noteKey: 'anketa.q_situation_note',
+      noteDef: 'Vaqt va energiyangizga moslashtirish uchun',
       options: [
-        { v: '25', label: '25 daqiqa' },
-        { v: '45', label: '45 daqiqa' },
-        { v: '60', label: '60 daqiqa' },
-        { v: '90', label: '90 daqiqa' }
+        { v: 'student',     labelKey: 'anketa.sit_student',    labelDef: "Talaba — darslar ko'p" },
+        { v: 'parent',      labelKey: 'anketa.sit_parent',     labelDef: 'Ota-ona — bola bilan band' },
+        { v: 'worker',      labelKey: 'anketa.sit_worker',     labelDef: 'Ishlayman — 8 soatlik ish' },
+        { v: 'freelancer',  labelKey: 'anketa.sit_freelancer', labelDef: "Erkin grafik — o'zim belgilayman" },
+        { v: 'searching',   labelKey: 'anketa.sit_searching',  labelDef: "Yo'lda — yangi yo'nalish izlayman" }
       ]
     },
     {
-      id: 'aim',
-      type: 'text',
-      title: 'Bir jumlada — niyating?',
-      placeholder: "masalan, intizomli bo'lish",
-      maxlen: 80,
-      validate: v => true,  // ixtiyoriy
-      optional: true
+      id: 'energy_peak',
+      type: 'choice',
+      titleKey: 'anketa.q_energy_title',
+      titleDef: 'Energiyangiz qachon eng yuqori?',
+      noteKey: 'anketa.q_energy_note',
+      noteDef: "Murakkab vazifalar shu vaqtga qo'yiladi",
+      options: [
+        { v: 'dawn',    labelKey: 'anketa.energy_dawn',    labelDef: 'Erta tong (4–8)' },
+        { v: 'morning', labelKey: 'anketa.energy_morning', labelDef: 'Ertalab (8–12)' },
+        { v: 'noon',    labelKey: 'anketa.energy_noon',    labelDef: 'Tushdan keyin (12–17)' },
+        { v: 'evening', labelKey: 'anketa.energy_evening', labelDef: 'Kechqurun (17–22)' },
+        { v: 'night',   labelKey: 'anketa.energy_night',   labelDef: 'Tunda (22+)' }
+      ]
     }
   ];
 
@@ -363,6 +386,12 @@
   const SAVED_KEY = 'mvow.anketa';
   let answers = {};
   try { answers = JSON.parse(localStorage.getItem(SAVED_KEY) || '{}'); } catch {}
+  // Eski (olib tashlangan) savollardan saqlangan javoblarni tozalash
+  const VALID_IDS = QUESTIONS.map(q => q.id);
+  Object.keys(answers).forEach(k => {
+    if (!VALID_IDS.includes(k)) delete answers[k];
+  });
+  localStorage.setItem(SAVED_KEY, JSON.stringify(answers));
   let stepIdx = 0;
 
   const $ = id => document.getElementById(id);
@@ -385,27 +414,33 @@
     counter.textContent = `${stepIdx + 1} / ${total}`;
     backBtn.classList.toggle('hidden', stepIdx === 0);
 
+    const qTitle = T(q.titleKey, q.titleDef);
+    const sectionLbl = T('anketa.section_lbl', 'Tanishuv');
+
     let html = '<div class="step">';
-    html += '<div class="section-lbl">Tanishuv</div>';
-    html += `<h1 class="question">${escapeHtml(q.title)}</h1>`;
+    html += `<div class="section-lbl">${escapeHtml(sectionLbl)}</div>`;
+    html += `<h1 class="question">${escapeHtml(qTitle)}</h1>`;
 
     if (q.type === 'text') {
       const cur = answers[q.id] || '';
-      html += `<input class="text-input" id="qInput" type="text" maxlength="${q.maxlen || 100}" placeholder="${escapeHtml(q.placeholder || '')}" value="${escapeHtml(cur)}" autocomplete="off">`;
+      const ph = T(q.placeholderKey, q.placeholderDef || '');
+      html += `<input class="text-input" id="qInput" type="text" maxlength="${q.maxlen || 100}" placeholder="${escapeHtml(ph)}" value="${escapeHtml(cur)}" autocomplete="off">`;
     } else if (q.type === 'choice') {
       html += '<div class="choices">';
       for (const opt of q.options) {
         const on = answers[q.id] === opt.v;
+        const optLabel = T(opt.labelKey, opt.labelDef);
         html += `<div class="choice ${on ? 'on' : ''}" data-v="${escapeHtml(opt.v)}" role="radio" tabindex="0" aria-checked="${on}">
-          <span>${escapeHtml(opt.label)}</span>
+          <span>${escapeHtml(optLabel)}</span>
           <span class="radio"></span>
         </div>`;
       }
       html += '</div>';
     }
 
-    if (q.note) {
-      html += `<div class="footer-note">${escapeHtml(q.note)}</div>`;
+    if (q.noteKey || q.noteDef) {
+      const noteTxt = T(q.noteKey, q.noteDef || '');
+      if (noteTxt) html += `<div class="footer-note">${escapeHtml(noteTxt)}</div>`;
     }
 
     html += '</div>';
@@ -490,8 +525,10 @@
       job:    answers.job || '',
       focusTime: answers.focus_time || '',
       distract:  answers.distract || '',
-      sessionMins: answers.session || '45',
-      aim: answers.aim || ''
+      sessionMins: '45',
+      aim: '',
+      situation: answers.situation || '',
+      energyPeak: answers.energy_peak || ''
     };
     localStorage.setItem(PROFILE_KEY, JSON.stringify(profile));
     if (profile.name) localStorage.setItem('mvow.userName', profile.name);
@@ -513,8 +550,14 @@
     }, 1600);
   }
 
-  render();
+  // I18N tayyor bo'lmasa bir oz kutamiz (defer fallback himoyasi)
+  function _bootWhenI18N(attempt) {
+    if (window.I18N || attempt > 30) { render(); return; }
+    setTimeout(() => _bootWhenI18N((attempt || 0) + 1), 30);
+  }
+  _bootWhenI18N(0);
 </script>
 
+<script src="back-btn.js?v=28.4.0"></script>
 </body>
 </html>

@@ -16,7 +16,7 @@
   :root {
     --void:#04060B; --void-soft:#0C0F16;
     --text:#F5F2EC; --text-mid:#B8BBC2; --text-dim:#9CA0A8;
-    --accent:#00E5D4; --accent-soft:#00B5A8;
+    
     --card:#11151E;
   }
   html, body {
@@ -135,8 +135,8 @@
     margin-top: 12px;
   }
   .saved-item {
-    background: rgba(0,229,212,.04);
-    border: 1px solid rgba(0,229,212,.18);
+    background: rgba(212,175,55,.04);
+    border: 1px solid rgba(212,175,55,.18);
     border-radius: 8px;
     padding: 12px 14px;
     margin-bottom: 6px;
@@ -186,6 +186,7 @@
   }
   .saved-banner.show { display: block; animation: fadeIn .3s ease; }
 </style>
+<link rel="stylesheet" href="theme.css">
 </head>
 <body>
 
@@ -208,7 +209,7 @@
       <div class="hint" id="weekRange">10 — 16 iyun</div>
     </div>
     <div class="input-block">
-      <label class="input-lbl">Bu hafta nima qilasan?</label>
+      <label class="input-lbl">Bu hafta nima qilasiz?</label>
       <textarea id="weekGoal" rows="5" placeholder="masalan:&#10;• 3 ta kitob bobi&#10;• 4 ta sport sessiyasi&#10;• 1 ta loyiha bosqichi" maxlength="500"></textarea>
     </div>
   </div>
@@ -220,7 +221,7 @@
       <div class="hint">Bu oy uchun asosiy yo'nalish</div>
     </div>
     <div class="input-block">
-      <label class="input-lbl">Bu oy nima qilasan?</label>
+      <label class="input-lbl">Bu oy nima qilasiz?</label>
       <textarea id="monthGoal" rows="5" placeholder="masalan:&#10;• Til o'qishni 2 daraja oshirish&#10;• Sport — 16 sessiya&#10;• Loyiha — birinchi versiya tayyor" maxlength="500"></textarea>
     </div>
   </div>
@@ -232,7 +233,7 @@
       <div class="hint">3 oy uchun katta maqsad</div>
     </div>
     <div class="input-block">
-      <label class="input-lbl">3 oyda nimaga erishasan?</label>
+      <label class="input-lbl">3 oyda nimaga erishasiz?</label>
       <textarea id="threeMoGoal" rows="5" placeholder="masalan: yangi mahorat o'rganish, sport 50 sessiya, 5 kitob" maxlength="600"></textarea>
     </div>
   </div>
@@ -244,7 +245,7 @@
       <div class="hint">Yarim yillik niyat</div>
     </div>
     <div class="input-block">
-      <label class="input-lbl">6 oyda nimaga erishasan?</label>
+      <label class="input-lbl">6 oyda nimaga erishasiz?</label>
       <textarea id="sixMoGoal" rows="6" placeholder="masalan: yangi til daraja oshirish, loyiha ishga tushirish, sog'lik darajasini ko'tarish" maxlength="700"></textarea>
     </div>
   </div>
@@ -266,12 +267,13 @@
 </div>
 
 <div class="bottom">
-  <a class="cta" id="saveBtn" href="calendar.html">Saqla va davom</a>
+  <a class="cta" id="saveBtn" href="home.html">Saqla va davom</a>
 </div>
 
-<script src="i18n.js" defer></script>
-<script src="data.js" defer></script>
-<script src="nav-overlay.js" defer></script>
+<script src="i18n.js?v=28.4.0"></script>
+<script src="lang-switcher.js?v=28.4.0" defer></script>
+<script src="data.js?v=28.4.0" defer></script>
+<script src="nav-overlay.js?v=28.4.0" defer></script>
 <script>
   document.addEventListener('DOMContentLoaded', () => {
     const KEY = {
@@ -356,5 +358,6 @@
   });
 </script>
 
+<script src="back-btn.js?v=28.4.0"></script>
 </body>
 </html>

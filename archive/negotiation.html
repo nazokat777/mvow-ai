@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>{brand} — Diqqat sinovi</title>
+<link rel="manifest" href="manifest.webmanifest">
+<meta name="theme-color" content="#04060B">
+<link rel="apple-touch-icon" href="assets/mnsm-logo.png">
+<link rel="icon" type="image/png" href="assets/mnsm-logo.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  :root { --void:#04060B; --text:#F5F2EC; --text-mid:#B8BBC2; --text-dim:#9CA0A8; --accent:#00E5D4; --accent-soft:#00B5A8; --alert:#FF4757; --emerald:#4A8A5C; }
+  body { background: var(--void); font-family:'Inter',sans-serif; color: var(--text); min-height: 100vh; display:flex; justify-content:center; align-items:flex-start; padding: 24px; -webkit-font-smoothing: antialiased; }
+  .phone {
+    width: 380px; min-height: 800px; background: var(--void); border-radius: 40px;
+    overflow: hidden; position: relative;
+    box-shadow: 0 0 0 8px #1a1d24, 0 30px 80px rgba(0,0,0,.7);
+    display: flex; flex-direction: column;
+    transition: background .4s;
+  }
+  .phone[data-state="denied"]  { background: #1c0a0e; }
+  .phone[data-state="granted"] { background: #0e1c14; }
+  .container { flex:1; display:flex; flex-direction: column; align-items:center; justify-content:center; padding: 80px 32px 120px; gap: 32px; }
+  .stamp { font-size: 10px; letter-spacing: 4px; color: var(--text-mid); text-transform: uppercase; }
+  .orb {
+    width: 100px; height: 100px;
+    border-radius: 50%;
+    background: var(--accent);
+    box-shadow: 0 0 40px rgba(0,229,212,.4);
+    transition: all .4s;
+  }
+  .phone[data-state="denied"]  .orb { background: var(--alert);   box-shadow: 0 0 40px rgba(255,71,87,.4); }
+  .phone[data-state="granted"] .orb { background: var(--emerald);  box-shadow: 0 0 40px rgba(74,138,92,.4); }
+  .verdict { font-family:'Cormorant Garamond',serif; font-weight:500; font-size: 24px; text-align:center; line-height: 1.4; }
+  .verdict .em { color: var(--accent); }
+  .phone[data-state="denied"]  .verdict .em { color: var(--alert); }
+  .phone[data-state="granted"] .verdict .em { color: var(--emerald); }
+  .bottom-bar { padding: 24px 32px env(safe-area-inset-bottom, 24px); }
+  .cta { display:block; width:100%; padding:16px; background: linear-gradient(180deg, var(--accent), var(--accent-soft)); color: var(--void); font-size:13px; font-weight:600; letter-spacing:2px; text-transform: uppercase; border:none; border-radius:6px; text-align:center; text-decoration:none; cursor: pointer; transition: background .3s; }
+  .phone[data-state="denied"]  .cta { background: var(--alert); }
+  .phone[data-state="granted"] .cta { background: var(--emerald); }
+  @media (max-width: 480px) { body { padding: 0; } .phone { width: 100vw; min-height: 100vh; border-radius: 0; box-shadow: none; } }
+</style>
+</head>
+<body>
+
+<div class="phone" id="phone" data-state="thinking">
+  <div class="container">
+    <div class="stamp" id="stamp">Do'st o'ylayapti</div>
+    <div class="orb"></div>
+    <div class="verdict" id="verdict">Sababing tarozida.<br>Bir lahza…</div>
+  </div>
+
+  <div class="bottom-bar">
+    <button class="cta" id="advance">Kuting</button>
+  </div>
+</div>
+
+<script src="i18n.js" defer></script>
+<script src="data.js" defer></script>
+<script src="nav-overlay.js" defer></script>
+<script>
+  const states = {
+    thinking: { stamp: "Do'st o'ylayapti", verdict: "Sababingni tinglayapman.<br>Bir lahza…", btn: "Kutaman" },
+    denied:   { stamp: "Bu vaqt seniki",      verdict: 'Hozir <span class="em">fokus</span> vaqti.<br>Bu narsa kechqurun ham kuta oladi.', btn: "Qaytaman" },
+    granted:  { stamp: "Ruxsat · 5 daqiqa",   verdict: 'Bu <span class="em">muhim</span>.<br>5 daqiqa olib turaman.', btn: "Davom etaman" }
+  };
+  const phone = document.getElementById('phone');
+  const stamp = document.getElementById('stamp');
+  const verd = document.getElementById('verdict');
+  const btn = document.getElementById('advance');
+  const order = ['thinking','denied','granted','thinking'];
+  let idx = 0;
+  function set(s) {
+    phone.dataset.state = s;
+    stamp.textContent = states[s].stamp;
+    verd.innerHTML = states[s].verdict;
+    btn.textContent = states[s].btn;
+  }
+  btn.addEventListener('click', () => { idx = (idx + 1) % 3; set(order[idx]); });
+</script>
+
+</body>
+</html>

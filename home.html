@@ -3,12 +3,12 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-<title>{brand} — Bosh sahifa</title>
+<title data-i18n="home.page_title">{brand} — Bosh sahifa</title>
 <link rel="manifest" href="manifest.webmanifest">
 <meta name="theme-color" content="#04060B">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<meta name="apple-mobile-web-app-title" content="brend">
+<meta name="apple-mobile-web-app-title" content="Daywarden">
 <link rel="apple-touch-icon" href="assets/mnsm-logo.png">
 <link rel="icon" type="image/png" href="assets/mnsm-logo.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -19,7 +19,7 @@
   :root {
     --void:#04060B; --void-soft:#0C0F16;
     --text:#F5F2EC; --text-mid:#B8BBC2; --text-dim:#9CA0A8;
-    --accent:#00E5D4; --accent-soft:#00B5A8;
+    
   }
   body { background: var(--void); font-family:'Inter',sans-serif; color: var(--text); min-height: 100vh; display:flex; justify-content:center; align-items:flex-start; padding: 24px; -webkit-font-smoothing: antialiased; }
   .phone { width: 380px; min-height: 800px; background: var(--void); border-radius: 40px; position: relative; box-shadow: 0 0 0 8px #1a1d24, 0 30px 80px rgba(0,0,0,.7); overflow: hidden; }
@@ -56,6 +56,77 @@
   .next {
     text-align: center;
   }
+  /* BUGUNGI VAZIFALAR — har bir vazifa qatori */
+  .t-row {
+    display: grid;
+    grid-template-columns: 18px 56px 1fr 20px;
+    gap: 10px;
+    align-items: center;
+    padding: 10px 12px;
+    background: var(--void-soft);
+    border-radius: 8px;
+    transition: opacity .2s;
+  }
+  .t-row .ord {
+    font-size: 11px;
+    color: var(--text-dim);
+    text-align: center;
+    font-feature-settings: "tnum";
+  }
+  .t-row .ttime {
+    font-size: 12px;
+    color: var(--accent);
+    font-weight: 500;
+    letter-spacing: 0.3px;
+  }
+  .t-row .tname {
+    font-size: 13px;
+    color: var(--text);
+    line-height: 1.3;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+  .t-row .tstat {
+    width: 18px; height: 18px;
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0;
+  }
+  /* ✓ done */
+  .t-row.done { opacity: 0.6; }
+  .t-row.done .tname { text-decoration: line-through; color: var(--text-mid); }
+  .t-row.done .tstat { background: var(--accent); }
+  .t-row.done .tstat::after {
+    content: '';
+    width: 8px; height: 5px;
+    border-left: 2px solid var(--void);
+    border-bottom: 2px solid var(--void);
+    transform: rotate(-45deg) translate(1px, -1px);
+  }
+  /* ✗ missed */
+  .t-row.missed .tname { color: var(--text-mid); }
+  .t-row.missed .ttime { color: #FF8E97; opacity: 0.85; }
+  .t-row.missed .tstat { background: #FF4757; font-size: 12px; color: #fff; line-height: 1; font-weight: 600; }
+  /* . pending */
+  .t-row.pending .tstat { border: 1.5px solid rgba(255,255,255,.18); background: transparent; }
+  /* ⏰ overdue — bugun vaqti o'tdi, lekin hali bajarish mumkin (jazo emas, eslatma) */
+  .t-item { display: flex; flex-direction: column; }
+  .t-row.overdue .ttime { color: #F5C26B; }
+  .t-row.overdue .tstat { border: 1.5px solid rgba(245,194,107,.5); background: transparent; }
+  .t-note {
+    margin: 5px 12px 2px 40px;
+    font-family: 'Cormorant Garamond', serif;
+    font-style: italic;
+    font-size: 11.5px;
+    color: #F5C26B;
+    line-height: 1.45;
+  }
+  /* active — hozir ishlayotgan */
+  .t-row.active { border: 1px solid rgba(212,175,55,.35); background: rgba(212,175,55,.04); }
+  .t-row.active .ttime { color: var(--accent); }
+  .t-row.active .tstat { background: rgba(212,175,55,.4); animation: pulse 1.6s ease-in-out infinite; }
+  @keyframes pulse { 0%,100% { transform: scale(1); } 50% { transform: scale(1.18); } }
   .next .lbl { font-size: 10px; letter-spacing: 4px; color: var(--text-dim); text-transform: uppercase; margin-bottom: 8px; }
   .next .row {
     display: flex; align-items: baseline; justify-content: center; gap: 12px;
@@ -91,6 +162,107 @@
   }
   .bio.show { display: block; }
 
+  /* "+ vazifa qo'shish" — ghost ROW matching .t-row grid */
+  .t-add-row {
+    display: grid;
+    grid-template-columns: 18px 56px 1fr 20px;
+    gap: 10px;
+    align-items: center;
+    width: 100%;
+    padding: 10px 12px;
+    margin-top: 6px;
+    background: transparent;
+    border: 1px dashed rgba(212,175,55,.22);
+    border-radius: 8px;
+    cursor: pointer;
+    color: var(--text-mid);
+    font-family: 'Inter', sans-serif;
+    text-align: left;
+    transition: border-color .18s, background .18s, color .18s;
+  }
+  .t-add-row:hover { border-color: var(--accent-medium); background: var(--accent-soft); color: var(--text); }
+  .t-add-row .t-add-plus {
+    font-size: 16px; line-height: 1; color: var(--accent);
+    text-align: center; font-weight: 500;
+  }
+  .t-add-row .t-add-label {
+    grid-column: 3 / span 2;
+    font-size: 12px; letter-spacing: 0.4px;
+  }
+
+  /* Inline form — appears in place of the button */
+  .t-add-form {
+    margin-top: 6px;
+    padding: 12px;
+    background: var(--void-soft);
+    border: 1px solid var(--accent-medium);
+    border-radius: 10px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    animation: tAddSlide .18s ease-out;
+  }
+  @keyframes tAddSlide {
+    from { opacity: 0; transform: translateY(-4px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+  .t-add-form[hidden] { display: none; }
+  .t-add-grid {
+    display: grid;
+    grid-template-columns: 90px 1fr;
+    gap: 8px;
+  }
+  .t-add-form input {
+    width: 100%;
+    padding: 9px 10px;
+    background: var(--void);
+    border: 1px solid rgba(255,255,255,.10);
+    border-radius: 6px;
+    color: var(--text);
+    font-family: 'Inter', sans-serif;
+    font-size: 13px;
+    outline: none;
+    transition: border-color .15s;
+  }
+  .t-add-form input:focus { border-color: var(--accent); }
+  .t-add-form input::placeholder { color: var(--text-dim); }
+  .t-add-form input.t-add-time { font-feature-settings: "tnum"; color: var(--accent); }
+  .t-add-form .t-add-name { grid-column: span 1; }
+  .t-add-form .t-add-dur { grid-column: 1 / -1; }
+  .t-add-actions {
+    display: flex;
+    gap: 8px;
+    justify-content: flex-end;
+  }
+  .t-add-cancel, .t-add-save {
+    padding: 9px 16px;
+    font-family: 'Inter', sans-serif;
+    font-size: 11px;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    font-weight: 600;
+    border-radius: 6px;
+    cursor: pointer;
+    border: none;
+  }
+  .t-add-cancel {
+    background: transparent;
+    color: var(--text-mid);
+    border: 1px solid rgba(255,255,255,.10);
+  }
+  .t-add-cancel:hover { color: var(--text); border-color: rgba(255,255,255,.20); }
+  .t-add-save {
+    background: linear-gradient(180deg, var(--accent), var(--accent-deep));
+    color: var(--void);
+  }
+  .t-add-save:hover { filter: brightness(1.08); }
+  .t-add-form.shake { animation: tAddShake .35s ease-in-out; }
+  @keyframes tAddShake {
+    0%, 100% { transform: translateX(0); }
+    20%, 60% { transform: translateX(-4px); }
+    40%, 80% { transform: translateX(4px); }
+  }
+
   .actions { display: flex; flex-direction: column; gap: 10px; margin-top: 8px; }
   .cta { display: block; width: 100%; padding: 16px; background: linear-gradient(180deg, var(--accent), var(--accent-soft)); color: var(--void); font-size: 13px; font-weight: 600; letter-spacing: 2px; text-transform: uppercase; border: none; border-radius: 6px; text-align: center; text-decoration: none; }
   .ghost { display: block; width: 100%; padding: 12px; background: transparent; color: var(--text-mid); font-size: 11px; letter-spacing: 2px; text-transform: uppercase; border: 1px solid rgba(255,255,255,.08); border-radius: 6px; text-align: center; text-decoration: none; }
@@ -100,6 +272,9 @@
     .phone { width: 100vw; min-height: 100vh; border-radius: 0; box-shadow: none; }
   }
 </style>
+<link rel="stylesheet" href="theme.css">
+<link rel="stylesheet" href="motion.css">
+<script src="motion.js" defer></script>
 </head>
 <body>
 
@@ -108,17 +283,113 @@
 
     <div class="stamp" id="dateStamp">10-JUN · CHORSHANBA</div>
 
-    <h1 class="greet"><span id="greetWord">Salom</span>, <span class="em" id="userName">do'stim</span>.</h1>
+    <h1 class="greet"><span id="greetWord">Assalomu alaykum</span>, <span class="em" id="userName" data-i18n="home.addressee">do'stim</span>.</h1>
+
+    <!-- AI Murabbiy — kontekstli xabar (kerakli holatda chiqadi) -->
+    <div id="murabbiyBox" style="display:none;background:rgba(212,175,55,.06);border:1px solid rgba(212,175,55,.18);border-radius:12px;padding:14px 16px;font-family:'Cormorant Garamond',serif;font-style:italic;font-size:14px;line-height:1.5;color:var(--text);text-align:center;">
+      <div id="murabbiyText"></div>
+    </div>
+
+    <!-- BAJARMAGANDA: Failure recovery — 3-6 kun: oddiy · 7+ kun: diagnostika -->
+    <div id="recoveryBox" style="display:none;background:rgba(255,71,87,.08);border:1px solid rgba(255,71,87,.3);border-radius:12px;padding:14px 16px;text-align:center;">
+      <div style="font-family:'Cormorant Garamond',serif;font-style:italic;font-size:15px;color:#FF8E97;margin-bottom:8px;line-height:1.4;" id="recoveryText"></div>
+      <!-- Oddiy recovery (3-6 kun) -->
+      <div id="recoverySimple" style="display:none;">
+        <button id="recoveryBtn" type="button" style="margin-top:6px;padding:10px 20px;background:#FF4757;color:#fff;border:none;border-radius:999px;font-family:'Inter',sans-serif;font-size:11px;font-weight:600;letter-spacing:1.5px;text-transform:uppercase;cursor:pointer;" data-i18n="home.recovery_btn_simple">Rejani qayta tuzish</button>
+      </div>
+      <!-- Diagnostika (7+ kun) -->
+      <div id="diagnosticBox" style="display:none;margin-top:10px;">
+        <div style="font-size:12px;color:#9CA0A8;margin-bottom:10px;letter-spacing:0.5px;" data-i18n="home.recovery_diag_q">Sabab nima edi?</div>
+        <div id="diagOpts" style="display:flex;flex-direction:column;gap:8px;">
+          <button class="diag-opt" data-fix="reduce" type="button" style="padding:11px 14px;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.12);border-radius:10px;color:#F5F2EC;font-family:'Inter',sans-serif;font-size:12px;text-align:left;cursor:pointer;">
+            <span style="display:block;font-weight:500;margin-bottom:2px;" data-i18n="home.recovery_opt_reduce">Vazifa hajmi katta edi</span>
+            <span style="font-size:10px;color:#9CA0A8;letter-spacing:0.5px;" data-i18n="home.recovery_opt_reduce_desc">Davomiylikni qisqartirish — siz % tanlaysiz</span>
+          </button>
+          <button class="diag-opt" data-fix="time" type="button" style="padding:11px 14px;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.12);border-radius:10px;color:#F5F2EC;font-family:'Inter',sans-serif;font-size:12px;text-align:left;cursor:pointer;">
+            <span style="display:block;font-weight:500;margin-bottom:2px;" data-i18n="home.recovery_opt_time">Vaqt to'g'ri kelmadi</span>
+            <span style="font-size:10px;color:#9CA0A8;letter-spacing:0.5px;" data-i18n="home.recovery_opt_time_desc">Maqsadlarni tahrirlash — vaqtni o'zgartiring</span>
+          </button>
+          <button class="diag-opt" data-fix="other" type="button" style="padding:11px 14px;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.12);border-radius:10px;color:#F5F2EC;font-family:'Inter',sans-serif;font-size:12px;text-align:left;cursor:pointer;">
+            <span style="display:block;font-weight:500;margin-bottom:2px;" data-i18n="home.recovery_opt_other">Boshqa sabab</span>
+            <span style="font-size:10px;color:#9CA0A8;letter-spacing:0.5px;" data-i18n="home.recovery_opt_other_desc">Rejani qolgan kunlarga qayta tarqatish</span>
+          </button>
+        </div>
+        <!-- Foiz tanlash (Vazifa katta tanlangach chiqadi) -->
+        <div id="reducePctBox" style="display:none;margin-top:12px;padding-top:12px;border-top:1px solid rgba(255,255,255,.08);">
+          <div style="font-size:11px;color:#9CA0A8;margin-bottom:8px;letter-spacing:1px;text-transform:uppercase;text-align:center;" data-i18n="home.recovery_pct_q">Necha foiz qisqartiramiz?</div>
+          <div style="display:flex;gap:6px;justify-content:center;flex-wrap:wrap;margin-bottom:8px;">
+            <button class="red-pct" data-pct="15" type="button" style="padding:10px 14px;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.1);border-radius:10px;color:#F5F2EC;font-family:'Inter',sans-serif;font-size:13px;font-weight:600;cursor:pointer;">15%</button>
+            <button class="red-pct" data-pct="30" type="button" style="padding:10px 14px;background:rgba(245,194,107,.18);border:1px solid rgba(245,194,107,.5);border-radius:10px;color:#F5F2EC;font-family:'Inter',sans-serif;font-size:13px;font-weight:600;cursor:pointer;">30% ★</button>
+            <button class="red-pct" data-pct="50" type="button" style="padding:10px 14px;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.1);border-radius:10px;color:#F5F2EC;font-family:'Inter',sans-serif;font-size:13px;font-weight:600;cursor:pointer;">50%</button>
+          </div>
+          <div style="display:flex;gap:6px;align-items:center;">
+            <input type="number" id="reducePctCustom" min="5" max="80" placeholder="Boshqa" data-i18n-placeholder="home.recovery_pct_other" style="flex:1;background:#0C0F16;border:1px solid rgba(255,255,255,.1);border-radius:8px;padding:9px;color:#F5F2EC;font-family:'Inter',sans-serif;font-size:13px;outline:none;">
+            <button id="reducePctCustomBtn" type="button" style="padding:9px 12px;background:transparent;border:1px solid rgba(255,255,255,.15);color:var(--text-mid);border-radius:8px;font-family:'Inter',sans-serif;font-size:11px;cursor:pointer;letter-spacing:1px;">%</button>
+          </div>
+        </div>
+      </div>
+    </div>
 
     <div class="streak">
       <div class="n" id="streakN">0</div>
       <div class="lbl" data-i18n="home.streak_lbl">kun yo'l</div>
+      <!-- Milestone progress: 1 / 7 / 30 / 100 -->
+      <div id="milestoneBox" style="margin-top:10px;display:none;">
+        <div style="font-size:9px;letter-spacing:2px;color:var(--text-dim);text-transform:uppercase;margin-bottom:4px;" id="milestoneLbl"></div>
+        <div style="height:4px;background:rgba(255,255,255,.06);border-radius:2px;overflow:hidden;max-width:200px;margin:0 auto;">
+          <div id="milestoneBar" style="height:100%;background:linear-gradient(90deg,var(--accent),var(--accent-soft));border-radius:2px;width:0;transition:width .6s ease;"></div>
+        </div>
+      </div>
     </div>
 
-    <div class="next">
-      <div class="lbl" data-i18n="home.next">Keyingi</div>
-      <div class="row" id="nextRow">
-        <span class="none" data-i18n="home.no_plan">birinchi qadamingni qo'y</span>
+    <!-- VAQT NAQSHI: ma'lum vaqtda muntazam bajarmaslik aniqlanganida -->
+    <div id="patternBox" style="display:none;background:rgba(245,194,107,.08);border:1px solid rgba(245,194,107,.3);border-radius:12px;padding:14px 16px;">
+      <div style="font-family:'Cormorant Garamond',serif;font-style:italic;font-size:14px;color:var(--text);line-height:1.55;margin-bottom:10px;" id="patternText"></div>
+      <div style="font-size:11px;color:var(--text-dim);letter-spacing:1px;text-transform:uppercase;margin-bottom:10px;text-align:center;" data-i18n="home.pattern_choose">Qaysi vaqtga ko'chiramiz?</div>
+      <div id="patternTimeOpts" style="display:flex;flex-wrap:wrap;gap:6px;justify-content:center;margin-bottom:10px;"></div>
+      <div style="display:flex;gap:6px;margin-bottom:10px;align-items:center;">
+        <input type="time" id="patternCustomTime" style="flex:1;background:#0C0F16;border:1px solid rgba(255,255,255,.1);border-radius:8px;padding:10px;color:#F5F2EC;font-family:'Inter',sans-serif;font-size:13px;outline:none;">
+        <button id="patternCustomBtn" type="button" style="padding:10px 14px;background:#F5C26B;color:#04060B;border:none;border-radius:8px;font-family:'Inter',sans-serif;font-size:11px;font-weight:600;letter-spacing:1px;text-transform:uppercase;cursor:pointer;" data-i18n="home.pattern_custom_label">Belgila</button>
+      </div>
+      <div style="text-align:center;">
+        <button id="patternRejectBtn" type="button" style="padding:8px 14px;background:transparent;border:none;color:var(--text-dim);font-family:'Inter',sans-serif;font-size:11px;letter-spacing:1px;cursor:pointer;text-decoration:underline;" data-i18n="home.pattern_reject">Hozircha yo'q</button>
+      </div>
+    </div>
+
+    <!-- BAJARGANDA: Identity (shaxs shakllanmoqda) — streak >= 7 -->
+    <div id="identityBox" style="display:none;background:rgba(212,175,55,.04);border-radius:12px;padding:14px 18px;text-align:center;">
+      <div style="font-family:'Cormorant Garamond',serif;font-style:italic;font-size:15px;line-height:1.55;color:var(--text);" id="identityText"></div>
+    </div>
+
+    <!-- BUGUNGI VAZIFALAR — to'liq ketma-ketlik (vaqt + status badge) -->
+    <div id="tasksBlock" style="margin: 8px 0 4px;">
+      <div style="font-size:10px;letter-spacing:3px;color:var(--text-dim);text-transform:uppercase;margin-bottom:10px;text-align:center;" data-i18n="home.tasks_lbl">Bugungi vazifalar</div>
+      <div id="tasksList" style="display:flex;flex-direction:column;gap:6px;"></div>
+
+      <!-- "+ vazifa qo'shish" — inline ghost row + form -->
+      <button type="button" class="t-add-row" id="addTaskBtn" aria-expanded="false" aria-controls="addTaskForm">
+        <span class="t-add-plus" aria-hidden="true">+</span>
+        <span class="t-add-label" data-i18n="home.add.title">vazifa qo'shish</span>
+      </button>
+
+      <form class="t-add-form" id="addTaskForm" hidden autocomplete="off" novalidate>
+        <div class="t-add-grid">
+          <input type="time" name="time" class="t-add-time" required>
+          <input type="text"  name="name" class="t-add-name" maxlength="40" required
+                 placeholder="Vazifa nomi" data-i18n-placeholder="home.add.name">
+          <input type="text"  name="dur"  class="t-add-dur"  maxlength="20" required
+                 placeholder="1 soat / 30 daq" data-i18n-placeholder="home.add.dur">
+        </div>
+        <div class="t-add-actions">
+          <button type="button" class="t-add-cancel" id="addTaskCancel" data-i18n="home.add.cancel">Bekor</button>
+          <button type="submit"  class="t-add-save"   data-i18n="home.add.save">Qo'shish</button>
+        </div>
+      </form>
+
+      <!-- Yana qo'shish / tahrirlash so'rovi -->
+      <div id="tasksPrompt" style="display:none;text-align:center;margin-top:12px;font-family:'Cormorant Garamond',serif;font-style:italic;font-size:13px;color:var(--text-dim);">
+        <span data-i18n="home.tasks_ask">Yana qo'shasizmi yoki o'zgartirasizmi?</span>
+        <a href="maqsadlar.html" style="display:inline-block;margin-left:8px;color:var(--accent);text-decoration:none;font-style:normal;font-size:12px;letter-spacing:1px;text-transform:uppercase;font-weight:500;font-family:'Inter',sans-serif;" data-i18n="home.tasks_edit">Tahrirlash →</a>
       </div>
     </div>
 
@@ -128,7 +399,7 @@
         <div class="l" data-i18n="home.focus_lbl">fokus</div>
       </div>
       <div class="stat">
-        <div class="v"><span class="em" id="sessN">0</span> <span style="font-size:13px;color:var(--text-mid)">ish</span></div>
+        <div class="v"><span class="em" id="sessN">0</span> <span style="font-size:13px;color:var(--text-mid)">reja</span></div>
         <div class="l" data-i18n="home.sessions_lbl">bugun</div>
       </div>
     </div>
@@ -136,23 +407,22 @@
     <p class="bio" id="bioLine"></p>
 
     <div class="actions">
-      <a class="cta" id="primaryCta" href="routine.html">Rejani tuz</a>
+      <a class="cta" id="primaryCta" href="hard-lock.html" data-i18n="home.cta_start">Boshlash</a>
 
       <!-- Tanlovlar — istalganini bos -->
-      <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:6px;">
-        <a class="ghost" href="today-plan.html" style="margin:0;">Bugungi reja</a>
-        <a class="ghost" href="maqsadlar.html" style="margin:0;">Maqsadlar</a>
-        <a class="ghost" href="calendar.html" style="margin:0;">Kalendar</a>
-        <a class="ghost" href="kechqurun.html" style="margin:0;">Kun yakuni</a>
+      <div id="tileGrid" style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:6px;">
+        <a class="ghost" href="maqsadlar.html" style="margin:0;" data-i18n="home.tile_goals">Maqsadlar</a>
+        <a class="ghost" href="weekly-review.html" style="margin:0;" data-i18n="home.tile_history">Tarix</a>
       </div>
     </div>
 
   </div>
 </div>
 
-<script src="i18n.js" defer></script>
-<script src="data.js" defer></script>
-<script src="nav-overlay.js" defer></script>
+<script src="i18n.js?v=28.4.0"></script>
+<script src="lang-switcher.js?v=28.4.0" defer></script>
+<script src="data.js?v=28.4.0" defer></script>
+<script src="nav-overlay.js?v=28.4.0" defer></script>
 <script>
   document.addEventListener('DOMContentLoaded', () => {
     // Sana va vaqt
@@ -180,6 +450,15 @@
     // Streak — saqlangan bo'lsa o'sha, yo'q bo'lsa 0 (soxta default yo'q)
     const streak = parseInt(localStorage.getItem('mvow.streak') || '0', 10);
     document.getElementById('streakN').textContent = streak;
+    // Mark streak block as ambient-pulse target so motion.js can scope its halo to it
+    // (data attribute is additive — no existing CSS selector matches it)
+    const _streakBlock = document.querySelector('.streak');
+    if (_streakBlock) {
+      _streakBlock.dataset.ambientTarget = 'streak';
+      // streakN itself gets the inner glow anchor — keeps milestoneBar transition untouched
+      const _streakN = document.getElementById('streakN');
+      if (_streakN) _streakN.dataset.ambientGlow = 'true';
+    }
 
     // Bugungi reja — faqat foydalanuvchi tuzgan reja (namuna ko'rsatilmaydi)
     let plan = [];
@@ -199,68 +478,181 @@
     const nowMin = d.getHours() * 60 + d.getMinutes();
     const hourNow = d.getHours();
 
-    // ── AQLLI SALOM — foydalanuvchining haqiqiy jadvaliga qaraydi ──
-    function tKeyFromStr(t) {
-      const m = /^(\d{1,2}):?(\d{2})?$/.exec((t || '').trim());
-      if (!m) return null;
-      return (+m[1]) * 60 + (+(m[2] || 0));
-    }
+    // ── SALOM — universal vaqt asosida (4-11 tong · 11-17 kun · 17-22 kech · 22-4 tun) ──
     function smartGreeting() {
-      // Wake time — settings'dan yoki rejaning birinchi task'idan
-      let wakeMin = null;
-      try {
-        const wakeStr = localStorage.getItem('mvow.wakeTime');
-        if (wakeStr) {
-          const m = wakeStr.match(/^(\d{1,2}):(\d{2})$/);
-          if (m) wakeMin = (+m[1]) * 60 + (+m[2]);
-        }
-      } catch {}
-
-      let firstMin = null, lastMin = null;
-      if (plan.length) {
-        const sorted = [...plan].sort((a,b) => (tKeyFromStr(a.time) ?? 0) - (tKeyFromStr(b.time) ?? 0));
-        firstMin = tKeyFromStr(sorted[0].time);
-        lastMin = tKeyFromStr(sorted[sorted.length-1].time);
-        if (wakeMin == null && firstMin != null) wakeMin = Math.max(0, firstMin - 30);
-      }
-      // Default wake — sozlama bo'lmasa
-      if (wakeMin == null) wakeMin = 360; // 06:00
-
-      // Bedtime — taxminan 6 soat oldin wake
-      const bedMin = ((wakeMin + 24 * 60 - 6 * 60) % (24 * 60));
-
-      // Fazalar:
-      // 1) bedtime'dan wake'gacha — tun
-      // 2) wake'dan +4 soat — tong
-      // 3) +4 dan +9 soatgacha — kunduz
-      // 4) +9 dan bedtime'gacha — kech
-      const noonMin = (wakeMin + 4 * 60) % (24 * 60);
-      const eveningMin = (wakeMin + 9 * 60) % (24 * 60);
-
-      function inRange(now, start, end) {
-        if (start <= end) return now >= start && now < end;
-        // O'rab qoluvchi (masalan 22:00 → 02:00)
-        return now >= start || now < end;
-      }
-
-      if (inRange(nowMin, bedMin, wakeMin)) return 'Xayrli tun';
-      if (inRange(nowMin, wakeMin, noonMin)) return 'Xayrli tong';
-      if (inRange(nowMin, noonMin, eveningMin)) return 'Xayrli kun';
-      return 'Xayrli kech';
+      const h = nowMin / 60;
+      const T = (k, def) => (window.I18N ? I18N.t(k, def) : def);
+      if (h >= 4 && h < 11)  return T('home.greet_morning', 'Xayrli tong');
+      if (h >= 11 && h < 17) return T('home.greet_day', 'Assalomu alaykum');
+      if (h >= 17 && h < 22) return T('home.greet_evening', 'Xayrli kech');
+      return T('home.greet_night', 'Xayrli tun');
     }
     document.getElementById('greetWord').textContent = smartGreeting();
 
-    // KEYINGI — faqat BUGUNGI kelajakdagi task'lar
+    // ── BUGUNGI VAZIFALAR — to'liq ketma-ketlik (vaqt + nom + status) ──
     const upcoming = plan.find(p => tKey(p.time) >= nowMin);
-    const nextRow = document.getElementById('nextRow');
-    if (upcoming) {
-      nextRow.innerHTML = `<span class="time">${upcoming.time || '—'}</span><span class="name">${upcoming.name || 'ish'}</span>`;
-    } else if (plan.length) {
-      // Bugungilar tugadi
-      nextRow.innerHTML = '<span class="none">bugungi rejalar tugadi</span>';
-    } else {
-      nextRow.innerHTML = '<span class="none">reja yo\'q</span>';
+    const T = (k, def) => (window.I18N ? I18N.t(k, def) : def);
+    const tasksList = document.getElementById('tasksList');
+    const tasksPrompt = document.getElementById('tasksPrompt');
+    const tasksBlock = document.getElementById('tasksBlock');
+
+    function escapeHtmlH(s) {
+      return String(s).replace(/[<>"&]/g, c => ({'<':'&lt;','>':'&gt;','"':'&quot;','&':'&amp;'}[c]));
     }
+
+    // Render today's tasks — reusable so add-task can re-call after save
+    function renderTasks() {
+      // Re-read plan so newly added tasks appear
+      plan = window.MVOW_DATA ? MVOW_DATA.getTodayPlan() : plan;
+      plan.sort((a,b) => tKey(a.time) - tKey(b.time));
+
+      if (!plan.length) {
+        tasksList.innerHTML = '<div style="text-align:center;padding:14px;font-family:\'Cormorant Garamond\',serif;font-style:italic;font-size:13px;color:var(--text-dim);">'
+          + T('home.no_plan', "birinchi qadamingizni qo'ying") + '</div>';
+        tasksPrompt.style.display = 'none';
+      } else {
+        const completedKeys = (window.MVOW_DATA ? MVOW_DATA.getCompletedKeysToday() : new Set());
+        const overdueTxt = T('home.overdue_reminder', "Vaqti o'tdi — hali kech emas, bugun baribir bajaring");
+        const sorted = [...plan].sort((a,b) => tKey(a.time) - tKey(b.time));
+        tasksList.innerHTML = sorted.map((t, i) => {
+          const taskKey = window.MVOW_DATA && t.time && t.name ? MVOW_DATA.taskKey(MVOW_DATA.today.iso, t.time, t.name) : '';
+          const state = window.MVOW_DATA ? MVOW_DATA.getTaskState(taskKey) : { status: 'pending' };
+          const isDone = completedKeys.has(taskKey) || state.status === 'done';
+          const startMin = tKey(t.time);
+          const durMin = window.MVOW_DATA ? MVOW_DATA.parseDurMins(t.dur) : 60;
+          const endMin = startMin + durMin;
+          const isActive = nowMin >= startMin && nowMin < endMin && !isDone;
+          const isExplicitMissed = !isDone && state.status === 'missed';
+          // Bugun vaqti o'tib ketgan, lekin bajarilmagan — bu "o'tkazib yuborildi" EMAS.
+          // Kun hali tugamagan, shuning uchun muloyim eslatma ko'rsatamiz.
+          const isOverdue = !isDone && !isExplicitMissed && nowMin > endMin;
+          let cls = 'pending';
+          let icon = '·';
+          if (isDone) { cls = 'done'; icon = ''; }
+          else if (isExplicitMissed) { cls = 'missed'; icon = '✗'; }
+          else if (isOverdue) { cls = 'overdue'; icon = '·'; }
+          else if (isActive) { cls = 'active'; icon = '·'; }
+          return `<div class="t-item">
+            <div class="t-row ${cls}">
+              <span class="ord">${i+1}</span>
+              <span class="ttime">${escapeHtmlH(t.time || '—')}</span>
+              <span class="tname">${escapeHtmlH(t.name || T('today.ish_lbl', 'reja'))}</span>
+              <span class="tstat">${icon === '·' ? '' : icon}</span>
+            </div>${isOverdue ? `<div class="t-note">⏰ ${escapeHtmlH(overdueTxt)}</div>` : ''}
+          </div>`;
+        }).join('');
+        tasksPrompt.style.display = 'block';
+      }
+    }
+    renderTasks();
+
+    // ── "+ vazifa qo'shish" — inline add ──
+    (function wireAddTask() {
+      const addBtn  = document.getElementById('addTaskBtn');
+      const form    = document.getElementById('addTaskForm');
+      const cancel  = document.getElementById('addTaskCancel');
+      if (!addBtn || !form) return;
+
+      function openForm() {
+        addBtn.hidden = true;
+        addBtn.setAttribute('aria-expanded', 'true');
+        form.hidden = false;
+        const timeIn = form.querySelector('input[name="time"]');
+        // Default to next half-hour for convenience
+        if (timeIn && !timeIn.value) {
+          const now = new Date();
+          const mins = now.getMinutes() < 30 ? 30 : 60;
+          now.setMinutes(now.getMinutes() + (mins - now.getMinutes()));
+          now.setSeconds(0, 0);
+          timeIn.value = String(now.getHours()).padStart(2,'0') + ':' + String(now.getMinutes()).padStart(2,'0');
+        }
+        const nameIn = form.querySelector('input[name="name"]');
+        if (nameIn) setTimeout(() => nameIn.focus(), 60);
+      }
+      function closeForm() {
+        form.hidden = true;
+        form.reset();
+        addBtn.hidden = false;
+        addBtn.setAttribute('aria-expanded', 'false');
+      }
+      function shake() {
+        form.classList.remove('shake');
+        // force reflow to restart animation
+        void form.offsetWidth;
+        form.classList.add('shake');
+      }
+
+      addBtn.addEventListener('click', openForm);
+      cancel.addEventListener('click', closeForm);
+      form.addEventListener('keydown', (e) => { if (e.key === 'Escape') closeForm(); });
+
+      // Vaqt → daqiqa (00:00 dan)
+      function timeToMin(t) {
+        const m = String(t || '').match(/^(\d{1,2}):(\d{2})$/);
+        return m ? (+m[1]) * 60 + (+m[2]) : null;
+      }
+
+      // Error xabar ko'rsatish
+      function showError(msg) {
+        let err = form.querySelector('.t-add-error');
+        if (!err) {
+          err = document.createElement('div');
+          err.className = 't-add-error';
+          err.style.cssText = 'color:#FF8E97;font-size:12px;margin-top:8px;text-align:center;font-family:Inter,sans-serif;';
+          form.appendChild(err);
+        }
+        err.textContent = msg;
+        setTimeout(() => { if (err) err.textContent = ''; }, 3500);
+      }
+
+      form.addEventListener('submit', (e) => {
+        e.preventDefault();
+        const fd = new FormData(form);
+        const time = (fd.get('time') || '').trim();
+        const name = (fd.get('name') || '').trim();
+        const dur  = (fd.get('dur')  || '').trim();
+        // Validation
+        const timeOk = /^\d{1,2}:\d{2}$/.test(time);
+        const durOk  = window.MVOW_DATA ? MVOW_DATA.parseDurMins(dur) > 0 : /\d/.test(dur);
+        if (!timeOk || !name || !durOk) { shake(); showError("Vaqt, nom va davomiylik kerak"); return; }
+        if (!window.MVOW_DATA) { shake(); return; }
+
+        // VAQT TO'QNASHUVI TEKSHIRUVI
+        const newStart = timeToMin(time);
+        const newDur = MVOW_DATA.parseDurMins(dur);
+        const newEnd = newStart + newDur;
+        const current = MVOW_DATA.getTodayPlan();
+        for (const t of current) {
+          const tStart = timeToMin(t.time);
+          if (tStart == null) continue;
+          const tDur = MVOW_DATA.parseDurMins(t.dur);
+          const tEnd = tStart + tDur;
+          // Overlap aniqlash: yangi vazifa boshlanishi eski tugashidan oldin VA yangi tugash eski boshlanishidan keyin
+          if (newStart < tEnd && newEnd > tStart) {
+            // Vaqtni HH:MM formatda ko'rsatish
+            const fmtTime = (m) => {
+              const h = Math.floor(m / 60);
+              const mn = m % 60;
+              return String(h).padStart(2, '0') + ':' + String(mn).padStart(2, '0');
+            };
+            shake();
+            showError("Bu vaqtda boshqa vazifa bor: " + (t.name || '?') + " (" + fmtTime(tStart) + "—" + fmtTime(tEnd) + ")");
+            return;
+          }
+        }
+
+        current.push({ time, name, dur });
+        MVOW_DATA.setTodayPlan(current);
+        closeForm();
+        renderTasks();
+        // Refresh stats below — count + total hours
+        const fresh = MVOW_DATA.getTodayPlan();
+        const totalMinFresh = fresh.reduce((s,p) => s + durMins(p.dur), 0);
+        const totalHFresh = Math.round(totalMinFresh / 60 * 10) / 10;
+        const fh = document.getElementById('focusH'); if (fh) fh.textContent = totalHFresh || 0;
+        const sn = document.getElementById('sessN'); if (sn) sn.textContent = fresh.length;
+      });
+    })();
 
     // Stats — bajarilgan va qolgan
     function durMins(s) {
@@ -282,20 +674,428 @@
     document.getElementById('focusH').textContent = totalH || 0;
     document.getElementById('sessN').textContent = plan.length;
 
-    // CTA — foydalanuvchining kun tartibiga moslashadi
+    // ── SODDA CTA — doim "Boshlash" → taymerga; maqsad yo'q bo'lsa Maqsad qo'shing ──
     const cta = document.getElementById('primaryCta');
     const greet = smartGreeting();
-    if (greet === 'Xayrli kech' || greet === 'Xayrli tun' || (!upcoming && plan.length)) {
-      // Kech, tun yoki bugungilar tugadi → kun yakuni
-      cta.textContent = 'Kun yakuni';
-      cta.href = 'kechqurun.html';
-    } else if (plan.length) {
-      cta.textContent = 'Boshlayman';
-      cta.href = 'day-flow.html';
+
+    // Maqsadlar bormi?
+    let hasGoals = false;
+    try {
+      const g = JSON.parse(localStorage.getItem('mvow.goals') || '[]');
+      hasGoals = Array.isArray(g) && g.length > 0;
+    } catch {}
+
+    const Ti = (k, def) => (window.I18N ? I18N.t(k, def) : def);
+    if (!hasGoals || !plan.length) {
+      cta.textContent = Ti('home.cta_add_goal', "Maqsad qo'shing");
+      cta.href = 'maqsadlar.html';
+    } else {
+      cta.textContent = Ti('home.cta_start', 'Boshlash');
+      cta.href = 'hard-lock.html';
+    }
+
+    // ── STREAK MILESTONE PROGRESS (1 / 7 / 30 / 100 / 365) ──
+    if (streak > 0) {
+      const milestones = [1, 7, 30, 100, 365];
+      const next = milestones.find(m => m > streak);
+      const prev = [...milestones].reverse().find(m => m <= streak) || 0;
+      const milestoneBox = document.getElementById('milestoneBox');
+      const milestoneLbl = document.getElementById('milestoneLbl');
+      const milestoneBar = document.getElementById('milestoneBar');
+      if (milestoneBox && next) {
+        const remaining = next - streak;
+        const span = next - prev;
+        const progress = ((streak - prev) / span) * 100;
+        const mLabel = window.I18N
+          ? I18N.tWith('home.milestone_label', { next: next, remaining: remaining })
+          : (next + ' kun gacha ' + remaining + ' kun');
+        milestoneLbl.textContent = mLabel;
+        milestoneBox.style.display = 'block';
+        setTimeout(() => { milestoneBar.style.width = progress + '%'; }, 50);
+      } else if (milestoneBox && streak >= 365) {
+        milestoneLbl.textContent = window.I18N
+          ? I18N.tWith('home.milestone_master', { n: streak })
+          : ('Yillik usta · ' + streak + ' kun');
+        milestoneBox.style.display = 'block';
+        setTimeout(() => { milestoneBar.style.width = '100%'; }, 50);
+      }
+    }
+
+    // ── AI MURABBIY xabari (kontekstli) ──
+    const todayCompletedToday = window.MVOW_DATA ? MVOW_DATA.getCompletedKeysToday().size : 0;
+    const todayRemaining = Math.max(0, plan.length - todayCompletedToday);
+    // Kechagi ko'rsatkichlar
+    const yesterday = new Date();
+    yesterday.setDate(yesterday.getDate() - 1);
+    const yIso = MVOW_DATA.localDateIso(yesterday);
+    const yPlanKey = 'd' + yIso;
+    let yPlan = [];
+    if (window.MVOW_DATA) yPlan = MVOW_DATA.getWeekPlan()[yPlanKey] || [];
+    const yHistory = window.MVOW_DATA ? MVOW_DATA.getHistory().filter(h => h.dateIso === yIso) : [];
+    const yPct = yPlan.length > 0 ? Math.round((yHistory.length / yPlan.length) * 100) : null;
+
+    function murabbiyMessage() {
+      if (!hasGoals) return null;
+      if (!plan.length) return null;
+      const tw = (k, params) => (window.I18N ? I18N.tWith(k, params) : '');
+      const emN = '<span class="em">' + todayRemaining + '</span>';
+      const emPct = '<span class="em">' + (yPct || 0) + '%</span>';
+
+      // Asosiy xabar — bajarish holatiga qarab
+      let main;
+      if (todayRemaining === 0 && plan.length > 0) {
+        main = tw('home.murabbiy_all_done', {});
+      } else if (yPct !== null) {
+        if (yPct >= 80)      main = tw('home.murabbiy_high', { n: emN, pct: emPct });
+        else if (yPct >= 50) main = tw('home.murabbiy_mid',  { n: emN, pct: emPct });
+        else if (yPct > 0)   main = tw('home.murabbiy_low',  { n: emN, pct: emPct });
+        else                 main = tw('home.murabbiy_zero', { n: emN, pct: emPct });
+      } else {
+        main = tw('home.murabbiy_plain', { n: emN });
+      }
+
+      // Kontekstli qo'shimcha — situation / weekday / energy peak
+      let ctx = null;
+      try {
+        const profile = JSON.parse(localStorage.getItem('mvow.profile') || '{}');
+        const wd = d.getDay(); // 0=Yak ... 6=Sh
+        const isWeekend = wd === 0 || wd === 6;
+        const hT = (k, def) => (window.I18N ? I18N.t(k, def) : def);
+        const situationHints = {
+          student:    { weekday: hT('home.hint_student_weekday',    'Talaba — darslar oralig\'idagi vaqtni topib oling.'),  weekend: hT('home.hint_student_weekend',    'Bo\'sh kun — bir blokga ko\'proq vaqt ajrating.') },
+          parent:     { weekday: hT('home.hint_parent_weekday',     'Bola maktabga ketganda 30 daqiqani yutib oling.'),     weekend: hT('home.hint_parent_weekend',     'Bola uxlatilganda 30 daq topishga harakat qiling.') },
+          worker:     { weekday: hT('home.hint_worker_weekday',     'Ish kuni — ertalab yoki kechqurun qisqa blok yetadi.'), weekend: hT('home.hint_worker_weekend',     'Bo\'sh kun — bir blokga ko\'proq vaqt ajrating.') },
+          freelancer: { weekday: hT('home.hint_freelancer_weekday', 'Erkin vaqt — energiya cho\'qqisida boshlang.'),         weekend: hT('home.hint_freelancer_weekend', 'Bugun ham bir qadam — uzilish bo\'lmasin.') },
+          searching:  { weekday: hT('home.hint_searching_weekday',  'Yo\'lda — bitta qadam ham yetadi.'),                    weekend: hT('home.hint_searching_weekend',  'Bo\'sh kun — bitta blokni puxta bajaring.') }
+        };
+        if (profile.situation && situationHints[profile.situation]) {
+          ctx = situationHints[profile.situation][isWeekend ? 'weekend' : 'weekday'];
+        }
+        // Streak ogohlantirishi (yo'qotish xavfi)
+        if (!ctx && streak > 0 && todayRemaining > 0 && hourNow >= 18) {
+          const riskTxt = window.I18N ? I18N.tWith('home.streak_at_risk', { n: streak }) : (streak + ' kunlik streak xatarda — vaqt bor.');
+          ctx = '<span style="color:#F5C26B;">' + riskTxt + '</span>';
+        }
+      } catch {}
+
+      return main + (ctx ? '<br><span style="font-size:12px;color:var(--text-mid);font-style:normal;font-family:Inter,sans-serif;letter-spacing:0.2px;">' + ctx + '</span>' : '');
+    }
+    const mMsg = murabbiyMessage();
+    if (mMsg) {
+      const box = document.getElementById('murabbiyBox');
+      const txt = document.getElementById('murabbiyText');
+      txt.innerHTML = mMsg;
+      // Custom em styling
+      box.querySelectorAll('.em').forEach(e => {
+        e.style.cssText = 'color:var(--accent);font-style:normal;font-weight:600;';
+      });
+      box.style.display = 'block';
+    }
+
+    // ── FAILURE RECOVERY (faqat user bajarmaganda) ──
+    function checkRecovery() {
+      const history = window.MVOW_DATA ? MVOW_DATA.getHistory() : [];
+      if (!hasGoals) return null;
+      const lastIso = history.length ? history.map(h => h.dateIso).sort().pop() : null;
+      if (!lastIso) {
+        // History bo'sh va maqsad bor → maqsad qachon qo'yilgan?
+        try {
+          const goals = JSON.parse(localStorage.getItem('mvow.goals') || '[]');
+          if (Array.isArray(goals) && goals.length) {
+            const earliest = goals.map(g => g.startDate).sort()[0];
+            const last = new Date(earliest);
+            const today = new Date(); today.setHours(0,0,0,0);
+            const days = Math.floor((today - last) / 86400000);
+            if (days >= 3) return days;
+          }
+        } catch {}
+        return null;
+      }
+      const last = new Date(lastIso);
+      const today = new Date(); today.setHours(0,0,0,0);
+      const days = Math.floor((today - last) / 86400000);
+      return days >= 3 ? days : null;
+    }
+
+    // Maqsadlar davomiyligini foiz bilan kamaytirish + qayta tarqatish
+    function reduceAndRegen(pct) {
+      try {
+        const goals = JSON.parse(localStorage.getItem('mvow.goals') || '[]');
+        if (!Array.isArray(goals) || !goals.length || !window.MVOW_DATA) return;
+        for (const g of goals) {
+          const curMins = MVOW_DATA.parseDurMins(g.dur);
+          let newMins = Math.max(10, Math.round(curMins * (1 - pct/100) / 5) * 5);
+          if (newMins >= 60) {
+            g.dur = (newMins % 60 === 0) ? (newMins/60) + ' soat' : Math.floor(newMins/60) + ' soat ' + (newMins%60) + ' daq';
+          } else {
+            g.dur = newMins + ' daq';
+          }
+        }
+        localStorage.setItem('mvow.goals', JSON.stringify(goals));
+        // weekPlan'dagi yozuvlarni ham yangilash
+        const w = MVOW_DATA.getWeekPlan();
+        const todayDate = new Date();
+        for (const g of goals) {
+          const elapsedDays = Math.floor((todayDate - new Date(g.startDate)) / 86400000);
+          const remainingDays = Math.max(0, g.days - elapsedDays);
+          for (let i = 0; i < remainingDays; i++) {
+            const d = new Date(todayDate);
+            d.setDate(todayDate.getDate() + i);
+            const key = 'd' + MVOW_DATA.localDateIso(d);
+            if (!Array.isArray(w[key])) w[key] = [];
+            const existing = w[key].find(s => s.goalId === g.id);
+            if (existing) {
+              existing.dur = g.dur;
+            } else {
+              w[key].push({ time: g.time, name: g.text, dur: g.dur, goalId: g.id });
+            }
+          }
+        }
+        MVOW_DATA.setWeekPlan(w);
+        if (MVOW_DATA.fxSuccess) MVOW_DATA.fxSuccess();
+        location.reload();
+      } catch (err) { console.error('Reduce failed:', err); }
+    }
+
+    function regenOnly() {
+      try {
+        const goals = JSON.parse(localStorage.getItem('mvow.goals') || '[]');
+        if (!Array.isArray(goals) || !goals.length || !window.MVOW_DATA) return;
+        const w = MVOW_DATA.getWeekPlan();
+        const todayDate = new Date();
+        for (const g of goals) {
+          const elapsedDays = Math.floor((todayDate - new Date(g.startDate)) / 86400000);
+          const remainingDays = Math.max(0, g.days - elapsedDays);
+          for (let i = 0; i < remainingDays; i++) {
+            const d = new Date(todayDate);
+            d.setDate(todayDate.getDate() + i);
+            const key = 'd' + MVOW_DATA.localDateIso(d);
+            if (!Array.isArray(w[key])) w[key] = [];
+            const exists = w[key].some(s => (s.goalId === g.id) || (s.name === g.text && s.time === g.time));
+            if (!exists) w[key].push({ time: g.time, name: g.text, dur: g.dur, goalId: g.id });
+          }
+        }
+        MVOW_DATA.setWeekPlan(w);
+        if (MVOW_DATA.fxSuccess) MVOW_DATA.fxSuccess();
+        location.reload();
+      } catch (err) { console.error('Regen failed:', err); }
+    }
+
+    const recoveryDays = checkRecovery();
+    if (recoveryDays !== null) {
+      const recBox = document.getElementById('recoveryBox');
+      const recText = document.getElementById('recoveryText');
+      const simpleBox = document.getElementById('recoverySimple');
+      const diagBox = document.getElementById('diagnosticBox');
+      recBox.style.display = 'block';
+      if (recoveryDays >= 7) {
+        // Diagnostika — sabab so'rash
+        const leadTxt = window.I18N ? I18N.tWith('home.recovery_lead', { n: '<strong>' + recoveryDays + '</strong>' }) : (recoveryDays + ' kun reja bajarilmadi.');
+        recText.innerHTML = leadTxt;
+        diagBox.style.display = 'block';
+        const reducePctBox = document.getElementById('reducePctBox');
+        const diagOpts = document.getElementById('diagOpts');
+        document.querySelectorAll('.diag-opt').forEach(b => {
+          b.addEventListener('click', () => {
+            const fix = b.dataset.fix;
+            if (fix === 'reduce') {
+              // User'dan % so'raymiz
+              diagOpts.style.display = 'none';
+              reducePctBox.style.display = 'block';
+            }
+            else if (fix === 'time') location.href = 'maqsadlar.html';
+            else regenOnly();
+          });
+        });
+        document.querySelectorAll('.red-pct').forEach(b => {
+          b.addEventListener('click', () => reduceAndRegen(parseInt(b.dataset.pct, 10)));
+        });
+        document.getElementById('reducePctCustomBtn').addEventListener('click', () => {
+          const v = parseInt(document.getElementById('reducePctCustom').value, 10);
+          if (!isNaN(v) && v >= 5 && v <= 80) reduceAndRegen(v);
+        });
+      } else {
+        // Oddiy recovery (3-6 kun)
+        const lead = window.I18N ? I18N.tWith('home.recovery_lead', { n: '<strong>' + recoveryDays + '</strong>' }) : (recoveryDays + ' kun reja bajarilmagan.');
+        const q = window.I18N ? I18N.t('home.recovery_simple_q', '') : 'Qolgan kunlarga qayta tarqataymizmi?';
+        const btnTxt = window.I18N ? I18N.t('home.recovery_btn_simple', '') : 'Rejani qayta tuzish';
+        recText.innerHTML = lead + '<br>' + q;
+        document.getElementById('recoveryBtn').textContent = btnTxt;
+        simpleBox.style.display = 'block';
+        document.getElementById('recoveryBtn').addEventListener('click', regenOnly);
+      }
+    }
+
+    // ── VAQT NAQSHI: ma'lum vaqtda 10+ ketma-ket bajarmaslik ──
+    function getConsecutiveMissesForGoal(goal) {
+      if (!window.MVOW_DATA) return 0;
+      const history = MVOW_DATA.getHistory();
+      const w = MVOW_DATA.getWeekPlan();
+      let misses = 0;
+      const d = new Date();
+      d.setHours(0,0,0,0);
+      d.setDate(d.getDate() - 1); // kechagi kundan
+      const goalStart = new Date(goal.startDate);
+      for (let i = 0; i < 60; i++) {
+        if (d < goalStart) break;
+        const iso = MVOW_DATA.localDateIso(d);
+        const planForDay = w['d' + iso] || [];
+        const hasTaskForGoal = planForDay.some(t =>
+          (t.goalId === goal.id) || (t.name === goal.text && t.time === goal.time)
+        );
+        if (hasTaskForGoal) {
+          const done = history.some(h => h.dateIso === iso && h.name === goal.text);
+          if (done) break;
+          misses++;
+        }
+        d.setDate(d.getDate() - 1);
+      }
+      return misses;
+    }
+
+    function findPatternFailure() {
+      try {
+        const goals = JSON.parse(localStorage.getItem('mvow.goals') || '[]');
+        if (!Array.isArray(goals)) return null;
+        // Rad etilgan takliflarni o'tkazib yuborish
+        const rejected = JSON.parse(localStorage.getItem('mvow.patternRejected') || '{}');
+        for (const g of goals) {
+          if (rejected[g.id]) continue;
+          const misses = getConsecutiveMissesForGoal(g);
+          if (misses >= 10) {
+            return { goal: g, misses };
+          }
+        }
+      } catch {}
+      return null;
+    }
+
+    function suggestedPeakTime() {
+      try {
+        const profile = JSON.parse(localStorage.getItem('mvow.profile') || '{}');
+        const map = { dawn: '05:00', morning: '09:00', noon: '14:00', evening: '19:00', night: '22:00' };
+        return map[profile.energyPeak] || '06:30';
+      } catch { return '06:30'; }
+    }
+
+    function changeGoalTime(goalId, newTime) {
+      try {
+        const goals = JSON.parse(localStorage.getItem('mvow.goals') || '[]');
+        const g = goals.find(x => x.id === goalId);
+        if (!g || !window.MVOW_DATA) return;
+        g.time = newTime;
+        localStorage.setItem('mvow.goals', JSON.stringify(goals));
+        // Bugundan keyingi kunlarda task time yangilanadi
+        const w = MVOW_DATA.getWeekPlan();
+        const todayIso = MVOW_DATA.today.iso;
+        for (const key of Object.keys(w)) {
+          const iso = key.slice(1);
+          if (iso < todayIso) continue;
+          if (!Array.isArray(w[key])) continue;
+          w[key].forEach(t => {
+            if (t.goalId === goalId) t.time = newTime;
+          });
+        }
+        MVOW_DATA.setWeekPlan(w);
+        if (MVOW_DATA.fxSuccess) MVOW_DATA.fxSuccess();
+        location.reload();
+      } catch (err) { console.error('Change time failed:', err); }
+    }
+
+    // ── RECOVERY MOMENT (motion primitive) — 2+ kun tanaffus ──
+    // Bir sessiyada faqat bir marta ishga tushadi. Overlay'ni primitive o'zi quradi.
+    try {
+      if (window.MVOW_MOTION && typeof MVOW_MOTION.recoveryMoment === 'function'
+          && !sessionStorage.getItem('mvow.recoveryShown')) {
+        // lastStreakDate — saqlangan signaldan yoki history'ning oxirgi sanasidan
+        let lastIso = localStorage.getItem('mvow.lastStreakDate') || null;
+        if (!lastIso && window.MVOW_DATA) {
+          const h = MVOW_DATA.getHistory();
+          if (h.length) lastIso = h.map(x => x.dateIso).sort().pop();
+        }
+        if (lastIso) {
+          const last = new Date(lastIso); last.setHours(0,0,0,0);
+          const t0 = new Date(); t0.setHours(0,0,0,0);
+          const gap = Math.floor((t0 - last) / 86400000);
+          if (gap >= 2) {
+            const _lang = (document.documentElement.lang || 'uz').toLowerCase().slice(0, 2);
+            MVOW_MOTION.recoveryMoment({ lang: _lang });
+          }
+        }
+      }
+    } catch (err) { console.warn('recoveryMoment skipped:', err); }
+
+    const pattern = (recoveryDays === null) ? findPatternFailure() : null;
+    if (pattern) {
+      const peakTime = suggestedPeakTime();
+      const pBox = document.getElementById('patternBox');
+      const pText = document.getElementById('patternText');
+      const emTime = '<span style="color:var(--accent);font-style:normal;font-weight:600;">' + pattern.goal.time + '</span>';
+      const emMisses = '<span style="color:#FF8E97;font-style:normal;">' + pattern.misses + '</span>';
+      pText.innerHTML = window.I18N
+        ? I18N.tWith('home.pattern_text', { time: emTime, goal: pattern.goal.text, n: emMisses })
+        : ('Siz ' + emTime + ' da «' + pattern.goal.text + '» rejasini ' + emMisses + ' kun ketma-ket bajarmadingiz.');
+      // Taklif tugmalari — energiya cho'qqisi + standart vaqtlar
+      const pT = (k, def) => (window.I18N ? I18N.t(k, def) : def);
+      const standardOptions = [
+        { time: '05:00', label: '05:00 ' + pT('home.pattern_time_dawn', 'erta tong') },
+        { time: '07:00', label: '07:00 ' + pT('home.pattern_time_morning', 'tong') },
+        { time: '12:00', label: '12:00 ' + pT('home.pattern_time_noon', 'tushda') },
+        { time: '19:00', label: '19:00 ' + pT('home.pattern_time_evening', 'kech') }
+      ];
+      // Tavsiya qilingan vaqtni birinchi qatorga olib chiqish
+      const opts = [...standardOptions];
+      if (!opts.find(o => o.time === peakTime)) {
+        opts.unshift({ time: peakTime, label: peakTime + ' ' + pT('home.pattern_recommended_tag', 'tavsiya'), recommended: true });
+      } else {
+        opts.forEach(o => { if (o.time === peakTime) o.recommended = true; });
+      }
+      // Joriy vaqtni o'tkazib yuborish
+      const filtered = opts.filter(o => o.time !== pattern.goal.time);
+      const optsEl = document.getElementById('patternTimeOpts');
+      optsEl.innerHTML = filtered.map(o => `
+        <button class="pat-time-opt" data-time="${o.time}" type="button" style="padding:10px 14px;background:${o.recommended ? 'rgba(245,194,107,.18)' : 'rgba(255,255,255,.04)'};border:1px solid ${o.recommended ? 'rgba(245,194,107,.5)' : 'rgba(255,255,255,.1)'};border-radius:10px;color:#F5F2EC;font-family:'Inter',sans-serif;font-size:12px;cursor:pointer;">${o.label}${o.recommended ? ' ★' : ''}</button>
+      `).join('');
+      pBox.style.display = 'block';
+      pBox.querySelectorAll('.pat-time-opt').forEach(b => {
+        b.addEventListener('click', () => changeGoalTime(pattern.goal.id, b.dataset.time));
+      });
+      document.getElementById('patternCustomBtn').addEventListener('click', () => {
+        const t = document.getElementById('patternCustomTime').value;
+        if (/^\d{1,2}:\d{2}$/.test(t)) changeGoalTime(pattern.goal.id, t);
+      });
+      document.getElementById('patternRejectBtn').addEventListener('click', () => {
+        try {
+          const rejected = JSON.parse(localStorage.getItem('mvow.patternRejected') || '{}');
+          rejected[pattern.goal.id] = Date.now();
+          localStorage.setItem('mvow.patternRejected', JSON.stringify(rejected));
+          pBox.style.display = 'none';
+        } catch {}
+      });
+    }
+
+    // ── IDENTITY (faqat streak >= 7 va maqsad bo'lganda) ──
+    if (streak >= 7 && hasGoals && recoveryDays === null) {
+      try {
+        const goals = JSON.parse(localStorage.getItem('mvow.goals') || '[]');
+        const goalText = (goals[0] && goals[0].text) ? goals[0].text : null;
+        const idBox = document.getElementById('identityBox');
+        const idText = document.getElementById('identityText');
+        const streakSpan = '<span style="color:var(--accent);font-style:normal;font-weight:600;">' + streak + '</span>';
+        const subTxt = window.I18N ? I18N.t('home.identity_sub', "Bu — sizning yangi shaxsingizdir.") : "Bu — sizning yangi shaxsingizdir.";
+        let mainTxt;
+        if (goalText) {
+          mainTxt = window.I18N ? I18N.tWith('home.identity_with_goal', { streak: streakSpan + ' ' + (I18N.t('home.streak_lbl', '')||''), goal: goalText }) : ('Siz ' + streakSpan + ' kun davomida «' + goalText + '» yo\'lidasiz.');
+        } else {
+          mainTxt = window.I18N ? I18N.tWith('home.identity_plain', { streak: streakSpan + ' ' + (I18N.t('home.streak_lbl', '')||'') }) : ('Siz ' + streakSpan + ' kun davomida intizom yo\'lidasiz.');
+        }
+        idText.innerHTML = mainTxt + '<br><span style="font-size:12px;color:var(--text-mid);">' + subTxt + '</span>';
+        idBox.style.display = 'block';
+      } catch {}
     }
 
     // Streak risk indikatori — gapirmaydi, faqat ko'rsatadi
-    const todayKey = 'mvow.done.' + new Date().toISOString().slice(0,10);
+    const todayKey = 'mvow.done.' + MVOW_DATA.today.iso;
     const todayDone = parseInt(localStorage.getItem(todayKey) || '0', 10);
     const hour = hourNow;
     if (streak > 0 && todayDone === 0 && hour >= 18 && hour < 22) {
@@ -303,11 +1103,32 @@
       if (streakEl) {
         streakEl.style.color = '#FF8E97';
         const lbl = streakEl.parentNode.querySelector('.lbl');
-        if (lbl) lbl.textContent = 'xatarda';
+        if (lbl) lbl.textContent = (window.I18N ? I18N.t('home.streak_xatarda', 'xatarda') : 'xatarda');
       }
     }
+
+    // ── AMBIENT PULSE (streak >= 30, no recovery state, no at-risk recolor) ──
+    // Run AFTER streak risk indicator so we can skip pulse when streak is in danger
+    // (red color signals warning, not celebration). The primitive internally
+    // guards on streak threshold (30+), intensity, and reduced-motion.
+    try {
+      const _streakRecolored = (streak > 0 && todayDone === 0 && hour >= 18 && hour < 22);
+      const _shouldPulse = recoveryDays === null
+        && !_streakRecolored
+        && window.MVOW_MOTION
+        && MVOW_MOTION.AmbientPulse
+        && typeof MVOW_MOTION.AmbientPulse.run === 'function';
+      if (_shouldPulse) {
+        MVOW_MOTION.AmbientPulse.run({ persistent: true });
+        // Cleanup on navigation away (PWA single-page feel) so injected DOM/listeners don't leak
+        window.addEventListener('pagehide', () => {
+          if (MVOW_MOTION.AmbientPulse._cleanup) MVOW_MOTION.AmbientPulse._cleanup();
+        }, { once: true });
+      }
+    } catch (err) { console.warn('ambientPulse skipped:', err); }
   });
 </script>
 
+<script src="back-btn.js?v=28.4.0"></script>
 </body>
 </html>

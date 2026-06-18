@@ -13,7 +13,7 @@
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
 <style>
   * { box-sizing: border-box; margin: 0; padding: 0; }
-  :root { --void:#04060B; --text:#F5F2EC; --text-mid:#B8BBC2; --text-dim:#9CA0A8; --accent:#00E5D4; }
+  :root { --void:#04060B; --text:#F5F2EC; --text-mid:#B8BBC2; --text-dim:#9CA0A8; }
   body { background: var(--void); font-family:'Inter',sans-serif; color: var(--text); min-height: 100vh; display:flex; justify-content:center; align-items:flex-start; padding: 24px; -webkit-font-smoothing: antialiased; }
   .phone { width: 380px; min-height: 800px; background: var(--void); border-radius: 40px; overflow: hidden; position: relative; box-shadow: 0 0 0 8px #1a1d24, 0 30px 80px rgba(0,0,0,.7); }
   .container { padding: 80px 32px 100px; }
@@ -120,7 +120,12 @@
   .footer .em { color: var(--text-mid); }
 
   @media (max-width: 480px) { body { padding: 0; } .phone { width: 100vw; min-height: 100vh; border-radius: 0; box-shadow: none; } }
+
+  /* Celebration intensity + replay intro pills */
+  .intensity-pill { flex:1; padding:10px 8px; background:rgba(255,255,255,.03); border:1px solid rgba(255,255,255,.08); color:var(--text-mid); border-radius:8px; font-size:11px; letter-spacing:1px; text-transform:uppercase; cursor:pointer; font-family:'Inter',sans-serif; }
+  .intensity-pill.active { background:rgba(212,175,55,.12); border-color:var(--accent); color:var(--accent); }
 </style>
+<link rel="stylesheet" href="theme.css">
 </head>
 <body>
 
@@ -129,136 +134,74 @@
 
     <div class="me">
       <div class="name" id="userName">—</div>
-      <div class="sub"><span class="em" id="streakN">0</span> kun yo'l</div>
+      <div class="sub"><span class="em" id="streakN">0</span> <span data-i18n="settings.sub">kun yo'l</span></div>
     </div>
 
-    <div class="section-lbl" data-i18n="settings.sec_lang">Til</div>
+    <div class="section-lbl" data-i18n="settings.sec_permissions">Ruxsatlar</div>
 
     <div class="row">
-      <div class="lbl" data-i18n="settings.language">Til</div>
-      <select id="langSel">
-        <option value="uz">O'zbekcha</option>
-        <option value="ru">Русский</option>
-        <option value="en">English</option>
-      </select>
-    </div>
-
-    <div class="section-lbl" data-i18n="settings.sec_mentor">Mentor</div>
-
-    <div class="row">
-      <div class="lbl" data-i18n="settings.tone">Mentor ohangi</div>
-      <select data-pref="tone">
-        <option value="warm" data-i18n="settings.tone_warm">Iliq</option>
-        <option value="mid" selected data-i18n="settings.tone_mid">O'rta</option>
-        <option value="strict" data-i18n="settings.tone_strict">Qattiq</option>
-      </select>
+      <div class="lbl" data-i18n="settings.perm_screen_time">Ekran vaqti</div>
+      <div class="toggle" data-perm="screenTime" role="switch" tabindex="0" data-i18n-aria="settings.perm_screen_time_aria" aria-label="Ekran vaqti ruxsati" aria-checked="false"></div>
     </div>
 
     <div class="row">
-      <div class="lbl">Aralashish darajasi</div>
-      <select data-pref="meddle">
-        <option value="quiet" selected>Kamtar</option>
-        <option value="mid">O'rta</option>
-        <option value="active">Faol</option>
-      </select>
+      <div class="lbl" data-i18n="settings.perm_notification">Bildirishnomalar</div>
+      <div class="toggle" data-perm="notification" role="switch" tabindex="0" data-i18n-aria="settings.perm_notification_aria" aria-label="Bildirishnoma ruxsati" aria-checked="false"></div>
     </div>
 
-    <div class="section-lbl">Sessiya</div>
+    <div class="section-lbl" data-i18n="settings.sec_wake">Uyg'onish</div>
 
     <div class="row">
-      <div class="lbl">Rejim</div>
-      <select data-pref="mode">
-        <option value="simple" selected>Oddiy</option>
-        <option value="pomodoro">Pomodoro</option>
-      </select>
-    </div>
-
-    <div class="row">
-      <div class="lbl">Sessiya davomiyligi</div>
-      <select data-pref="sessionMins">
-        <option value="25">25 daq</option>
-        <option value="45" selected>45 daq</option>
-        <option value="60">60 daq</option>
-        <option value="90">90 daq</option>
-      </select>
-    </div>
-
-    <div class="row">
-      <div class="lbl">Pomodoro sikllari</div>
-      <select data-pref="pomoCycles">
-        <option value="2">2 sikl</option>
-        <option value="3" selected>3 sikl</option>
-        <option value="4">4 sikl</option>
-        <option value="5">5 sikl</option>
-      </select>
-    </div>
-
-    <div class="row">
-      <div class="lbl">Dam vaqti</div>
-      <select data-pref="breakMins">
-        <option value="5" selected>5 daq</option>
-        <option value="10">10 daq</option>
-        <option value="15">15 daq</option>
-      </select>
-    </div>
-
-    <div class="row">
-      <div class="lbl">Uyg'onish vaqti</div>
+      <div class="lbl" data-i18n="settings.wake_time">Uyg'onish vaqti</div>
       <input type="time" data-pref="wakeTime" value="06:00">
     </div>
 
-    <div class="section-lbl">Bildirishnomalar</div>
+    <div class="section-lbl" data-i18n="settings.sec_notif">Bildirishnomalar</div>
 
     <div class="row">
-      <div class="lbl">Auto-davom</div>
-      <div class="toggle" data-toggle="autoNext" role="switch" tabindex="0" aria-label="Auto-davom" aria-checked="false"></div>
+      <div class="lbl" data-i18n="settings.auto_next">Auto-davom</div>
+      <div class="toggle" data-toggle="autoNext" role="switch" tabindex="0" data-i18n-aria="settings.auto_next" aria-label="Auto-davom" aria-checked="false"></div>
     </div>
 
     <div class="row">
-      <div class="lbl">Ovozli eslatma</div>
-      <div class="toggle" data-toggle="voiceRemind" role="switch" tabindex="0" aria-label="Ovozli eslatma" aria-checked="false"></div>
+      <div class="lbl" data-i18n="settings.voice_remind">Ovozli eslatma</div>
+      <div class="toggle" data-toggle="voiceRemind" role="switch" tabindex="0" data-i18n-aria="settings.voice_remind" aria-label="Ovozli eslatma" aria-checked="false"></div>
     </div>
 
     <div class="row">
-      <div class="lbl">Diqqat sinovi</div>
-      <div class="toggle" data-toggle="negotiation" role="switch" tabindex="0" aria-label="Diqqat sinovi" aria-checked="false"></div>
+      <div class="lbl" data-i18n="settings.negotiation">Diqqat sinovi</div>
+      <div class="toggle" data-toggle="negotiation" role="switch" tabindex="0" data-i18n-aria="settings.negotiation" aria-label="Diqqat sinovi" aria-checked="false"></div>
     </div>
 
-    <button id="testNotifBtn" type="button" style="margin-top:16px;width:100%;padding:14px;background:transparent;border:1px solid rgba(0,229,212,.25);border-radius:8px;color:var(--accent);font-family:'Inter',sans-serif;font-size:12px;letter-spacing:2px;text-transform:uppercase;cursor:pointer;min-height:48px;">Bildirishnoma sinovi</button>
+    <button id="testNotifBtn" type="button" data-i18n="settings.test_notif_btn" style="margin-top:16px;width:100%;padding:14px;background:transparent;border:1px solid rgba(212,175,55,.25);border-radius:8px;color:var(--accent);font-family:'Inter',sans-serif;font-size:12px;letter-spacing:2px;text-transform:uppercase;cursor:pointer;min-height:48px;">Bildirishnoma sinovi</button>
     <div id="testNotifStatus" style="text-align:center;font-size:11px;color:var(--text-mid);margin-top:8px;letter-spacing:1px;"></div>
 
+    <div class="section" style="margin-top:24px;">
+      <button class="intensity-pill" type="button" id="replayIntro" data-i18n="settings.replay_intro" style="width:100%;">Tanishuv ko'rinishini qayta ko'rsatish</button>
+    </div>
+
     <div class="row" style="margin-top:24px;">
-      <a href="about.html" style="font-size:14px;color:var(--text);text-decoration:none;">Bu ilov haqida</a>
+      <a href="about.html" data-i18n="settings.about_link" style="font-size:14px;color:var(--text);text-decoration:none;">Bu ilov haqida</a>
       <span style="color:var(--text-dim);">›</span>
     </div>
 
-    <button class="danger" id="resetBtn" type="button">Hammasini tozalash</button>
+    <button class="danger" id="resetBtn" type="button" data-i18n="settings.reset">Hammasini tozalash</button>
 
-    <div class="footer">v <span class="em" data-brand="name">brend</span> 9.2</div>
+    <div class="footer">v <span class="em" data-brand="name">Daywarden</span> 9.2</div>
 
   </div>
 </div>
 
 <div style="position:fixed;bottom:0;left:0;right:0;padding:16px 24px env(safe-area-inset-bottom, 20px);background:linear-gradient(180deg,transparent,#04060B 40%);z-index:50;">
-  <a href="home.html" style="display:block;max-width:380px;margin:0 auto;padding:16px;background:linear-gradient(180deg,#00E5D4,#00B5A8);color:#04060B;font-family:'Inter',sans-serif;font-size:13px;font-weight:600;letter-spacing:2px;text-transform:uppercase;border-radius:999px;text-align:center;text-decoration:none;min-height:52px;">Davom</a>
+  <a href="home.html" data-i18n="common.continue" style="display:block;max-width:380px;margin:0 auto;padding:16px;background:linear-gradient(180deg,var(--accent),var(--accent-deep));color:#04060B;font-family:'Inter',sans-serif;font-size:13px;font-weight:600;letter-spacing:2px;text-transform:uppercase;border-radius:999px;text-align:center;text-decoration:none;min-height:52px;">Davom</a>
 </div>
 
-<script src="i18n.js" defer></script>
-<script src="data.js" defer></script>
-<script src="nav-overlay.js" defer></script>
+<script src="i18n.js?v=28.4.0"></script>
+<script src="lang-switcher.js?v=28.4.0" defer></script>
+<script src="data.js?v=28.4.0" defer></script>
+<script src="nav-overlay.js?v=28.4.0" defer></script>
 <script>
   document.addEventListener('DOMContentLoaded', () => {
-    // Til tanlash
-    const langSel = document.getElementById('langSel');
-    if (langSel && window.I18N) {
-      langSel.value = I18N.lang;
-      langSel.addEventListener('change', () => {
-        I18N.set(langSel.value);
-        // Sahifani qayta yuklab — barcha dinamik matnlar yangilansin
-        setTimeout(() => location.reload(), 200);
-      });
-    }
-
     // Ism
     const userName = (localStorage.getItem('mvow.userName') || '').trim();
     document.getElementById('userName').textContent = userName || '—';
@@ -305,13 +248,14 @@
         testStatus.textContent = '...';
         const res = await MVOW_DATA.testNotification();
         if (res === 'sent') {
-          testStatus.textContent = 'Yuborildi ✓';
+          testStatus.textContent = (window.I18N ? I18N.t('settings.test_notif_sent', 'Yuborildi ✓') : 'Yuborildi ✓');
         } else if (res === 'denied') {
-          testStatus.textContent = 'Ruxsat rad qilindi. Brauzer sozlamasidan ruxsat ber.';
+          testStatus.textContent = (window.I18N ? I18N.t('settings.test_notif_denied', 'Ruxsat rad qilindi. Brauzer sozlamasidan ruxsat bering.') : 'Ruxsat rad qilindi. Brauzer sozlamasidan ruxsat bering.');
         } else if (res === 'unsupported') {
-          testStatus.textContent = 'Bu brauzerda qo\'llab-quvvatlanmaydi.';
+          testStatus.textContent = (window.I18N ? I18N.t('settings.test_notif_unsupported', 'Bu brauzerda qo\'llab-quvvatlanmaydi.') : 'Bu brauzerda qo\'llab-quvvatlanmaydi.');
         } else {
-          testStatus.textContent = 'Holat: ' + res;
+          const statusLbl = (window.I18N ? I18N.t('settings.test_notif_status', 'Holat:') : 'Holat:');
+          testStatus.textContent = statusLbl + ' ' + res;
         }
       });
     }
@@ -324,19 +268,19 @@
         // Hammasini tozalash
         const keys = Object.keys(localStorage).filter(k => k.startsWith('mvow.'));
         keys.forEach(k => localStorage.removeItem(k));
-        resetBtn.textContent = 'Tozalandi · qaytamiz';
+        resetBtn.textContent = (window.I18N ? I18N.t('settings.reset_done', 'Tozalandi · qaytamiz') : 'Tozalandi · qaytamiz');
         setTimeout(() => { location.replace('welcome.html'); }, 800);
       } else {
         resetBtn.classList.add('confirm');
-        resetBtn.textContent = 'Aniqmisan? Bos';
+        resetBtn.textContent = (window.I18N ? I18N.t('settings.reset_confirm', 'Aniqmisiz? Bosing') : 'Aniqmisiz? Bosing');
         confirmTimer = setTimeout(() => {
           resetBtn.classList.remove('confirm');
-          resetBtn.textContent = 'Hammasini tozalash';
+          resetBtn.textContent = (window.I18N ? I18N.t('settings.reset', 'Hammasini tozalash') : 'Hammasini tozalash');
         }, 3000);
       }
     });
 
-    // Toggle'lar
+    // Toggle'lar (sozlama)
     document.querySelectorAll('[data-toggle]').forEach(el => {
       const key = el.dataset.toggle;
       if (merged[key]) { el.classList.add('on'); el.setAttribute('aria-checked','true'); }
@@ -352,8 +296,44 @@
         if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); flip(); }
       });
     });
+
+    // Ruxsat toggle'lari (data-perm) — haqiqiy brauzer ruxsatini so'rash
+    const PERM_KEY = 'mvow.perm';
+    let permSaved = {};
+    try { permSaved = JSON.parse(localStorage.getItem(PERM_KEY) || '{}'); } catch {}
+    document.querySelectorAll('[data-perm]').forEach(t => {
+      const key = t.dataset.perm;
+      if (permSaved[key]) { t.classList.add('on'); t.setAttribute('aria-checked','true'); }
+      const flip = async () => {
+        if (window.MVOW_DATA && MVOW_DATA.fxTap) MVOW_DATA.fxTap();
+        if (key === 'notification' && !t.classList.contains('on')) {
+          if ('Notification' in window) {
+            try {
+              const res = await Notification.requestPermission();
+              if (res !== 'granted') return;
+            } catch {}
+          }
+        }
+        const on = !t.classList.contains('on');
+        t.classList.toggle('on', on);
+        t.setAttribute('aria-checked', on ? 'true' : 'false');
+        permSaved[key] = on;
+        localStorage.setItem(PERM_KEY, JSON.stringify(permSaved));
+      };
+      t.addEventListener('click', flip);
+      t.addEventListener('keydown', e => {
+        if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); flip(); }
+      });
+    });
+
+    // ── Replay opening cinematic ──
+    document.getElementById('replayIntro')?.addEventListener('click', () => {
+      localStorage.removeItem('mvow.motion.introSeen');
+      window.location.href = 'intro.html';
+    });
   });
 </script>
 
+<script src="back-btn.js?v=28.4.0"></script>
 </body>
 </html>

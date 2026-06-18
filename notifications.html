@@ -13,7 +13,7 @@
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
 <style>
   * { box-sizing: border-box; margin: 0; padding: 0; }
-  :root { --void:#04060B; --text:#F5F2EC; --text-mid:#B8BBC2; --text-dim:#9CA0A8; --accent:#00E5D4; --emerald:#4A8A5C; --crimson:#B8334A; }
+  :root { --void:#04060B; --text:#F5F2EC; --text-mid:#B8BBC2; --text-dim:#9CA0A8; --emerald:#4A8A5C; --crimson:#B8334A; }
   body { background: var(--void); font-family:'Inter',sans-serif; color: var(--text); min-height: 100vh; display:flex; justify-content:center; align-items:flex-start; padding: 24px; -webkit-font-smoothing: antialiased; }
   .phone { width: 380px; min-height: 800px; background: var(--void); border-radius: 40px; overflow: hidden; position: relative; box-shadow: 0 0 0 8px #1a1d24, 0 30px 80px rgba(0,0,0,.7); }
   .container { padding: 60px 24px 40px; }
@@ -72,6 +72,7 @@
 
   @media (max-width: 480px) { body { padding: 0; } .phone { width: 100vw; min-height: 100vh; border-radius: 0; box-shadow: none; } }
 </style>
+<link rel="stylesheet" href="theme.css">
 </head>
 <body>
 
@@ -90,8 +91,10 @@
   </div>
 </div>
 
-<script src="data.js" defer></script>
-<script src="nav-overlay.js" defer></script>
+<script src="i18n.js?v=28.4.0"></script>
+<script src="lang-switcher.js?v=28.4.0" defer></script>
+<script src="data.js?v=28.4.0" defer></script>
+<script src="nav-overlay.js?v=28.4.0" defer></script>
 <script>
   function fmtTime(ts) {
     const d = new Date(ts);
@@ -133,10 +136,10 @@
     }
 
     // Bajarilgan
-    const todayKey = 'mvow.done.' + new Date().toISOString().slice(0,10);
+    const todayKey = 'mvow.done.' + (window.MVOW_DATA ? MVOW_DATA.today.iso : new Date().toISOString().slice(0,10));
     const done = parseInt(localStorage.getItem(todayKey) || '0', 10);
     if (done > 0 && !out.some(e => e.type === 'done' && e.day === todayDateStr() && e.count === done)) {
-      out.push({ ts: now - 60000 * 5, type: 'done', text: `${done} ta sessiya bajarildi.`, day: todayDateStr(), count: done });
+      out.push({ ts: now - 60000 * 5, type: 'done', text: `${done} ta ish bajarildi.`, day: todayDateStr(), count: done });
     }
 
     return out;
@@ -157,7 +160,7 @@
 
     const container = document.getElementById('items');
     if (!evts.length) {
-      container.innerHTML = `<div class="empty">Bugun hech qanday xabar yo'q.<br>Reja tuz, sessiyani bajar — bu yerda chiqadi.</div>`;
+      container.innerHTML = `<div class="empty">Bugun hech qanday xabar yo'q.<br>Reja tuzing, ishni bajaring — bu yerda chiqadi.</div>`;
       return;
     }
 
@@ -177,5 +180,6 @@
   render();
 </script>
 
+<script src="back-btn.js?v=28.4.0"></script>
 </body>
 </html>

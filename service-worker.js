@@ -3,42 +3,40 @@
  * after first load. Caches all preview HTML files + the logo.
  */
 
-const CACHE_NAME = 'mvow-v15.0.0';
+const CACHE_NAME = 'daywarden-v28.4.0';
 const ASSETS = [
   './',
   // Asosiy infratuzilma
   './index.html',
   './data.js',
+  './theme.css',
+  './motion.css',
+  './motion.js',
   './i18n.js',
+  './lang-switcher.js',
   './nav-overlay.js',
+  './back-btn.js',
   './manifest.webmanifest',
   './menu.html',
   './gallery.html',
   './about.html',
   './royhat.html',
   './assets/mnsm-logo.png',
+  './assets/intro-cinematic.mp4',
   // 17 ekran SEQ tartibida
   './intro.html',             // 1
   './anketa.html',            // 2
   './vada.html',              // 3
   './maqsad.html',            // (maqsad qo'shish)
   './maqsadlar.html',         // 4 (maqsadlar ro'yhati)
-  './permissions.html',       // 5
-  './settings.html',          // 5
+  './settings.html',          // 5 (Sozlamalar + Ruxsatlar birlashtirilgan)
   './alarm.html',             // 6
   './home.html',              // 7
-  './routine.html',           // 8
-  './today-plan.html',        // 9
-  './rejalar.html',           // 10 (hafta/oy/yil)
-  './calendar.html',          // 11
-  './day-flow.html',          // 11
-  './hard-lock.html',         // 12
-  './negotiation.html',       // 13
-  './session-reflection.html',// 14
-  './kechqurun.html',         // 15 (kechki sharh)
-  './notifications.html',     // 16
-  './weekly-review.html',     // 16
-  './celebrate.html'          // 17
+  './hard-lock.html',         // 11 (taymer)
+  './session-reflection.html',// 12 (bajardim)
+  './kechqurun.html',         // 13 (kechki sharh)
+  './weekly-review.html',     // 14 (natijalar)
+  './celebrate.html'          // 15 (bayram)
 ];
 
 // Install — pre-cache all app assets
@@ -162,7 +160,7 @@ self.addEventListener('notificationclick', event => {
 
 // Push event (kelajak uchun, server yuborgan push'larni qo'llab-quvvatlash)
 self.addEventListener('push', event => {
-  let data = { title: "Uyg'on", body: 'Vaqt keldi. Misolni yech.', url: './alarm.html' };
+  let data = { title: "Uyg'oning", body: 'Vaqt keldi. Misolni yeching.', url: './alarm.html' };
   try { if (event.data) data = Object.assign(data, event.data.json()); } catch {}
   event.waitUntil(
     self.registration.showNotification(data.title, {

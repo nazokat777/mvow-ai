@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-<title>{brand} — Bayram</title>
+<title data-i18n="celebrate.page_title">{brand} — Bayram</title>
 <link rel="manifest" href="manifest.webmanifest">
 <meta name="theme-color" content="#04060B">
 <link rel="apple-touch-icon" href="assets/mnsm-logo.png">
@@ -13,7 +13,7 @@
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
 <style>
   * { box-sizing: border-box; margin: 0; padding: 0; }
-  :root { --void:#04060B; --text:#F5F2EC; --text-mid:#B8BBC2; --text-dim:#9CA0A8; --accent:#00E5D4; --accent-soft:#00B5A8; }
+  :root { --void:#04060B; --text:#F5F2EC; --text-mid:#B8BBC2; --text-dim:#9CA0A8; }
   body { background: var(--void); font-family:'Inter',sans-serif; color: var(--text); min-height: 100vh; display:flex; justify-content:center; align-items:flex-start; padding: 24px; -webkit-font-smoothing: antialiased; }
   .phone { width: 380px; min-height: 800px; background: var(--void); border-radius: 40px; overflow: hidden; position: relative; box-shadow: 0 0 0 8px #1a1d24, 0 30px 80px rgba(0,0,0,.7); display:flex; flex-direction:column; }
   .container { flex:1; padding: 80px 32px 120px; display:flex; flex-direction:column; gap: 48px; }
@@ -31,6 +31,9 @@
     margin-bottom: 12px;
   }
   .hero .sub { font-family:'Cormorant Garamond',serif; font-style:italic; font-size: 16px; color: var(--text-mid); }
+  .hero { position: relative; } /* anchor for milestoneMark overlay so injected DOM is contained, not pushed into page flow */
+  .hero .big { position: relative; z-index: 1; } /* keep the +70% numeral above any mark overlay */
+  @media (prefers-reduced-motion: reduce) { .hero [data-milestone-mark] { animation: none !important; opacity: 1 !important; } }
 
   .chains {
     display:flex; flex-direction: column; gap: 0;
@@ -50,17 +53,20 @@
   .cta { display:block; width:100%; padding:16px; background: linear-gradient(180deg, var(--accent), var(--accent-soft)); color: var(--void); font-size:13px; font-weight:600; letter-spacing:2px; text-transform: uppercase; border:none; border-radius:6px; text-align:center; text-decoration:none; }
   @media (max-width: 480px) { body { padding: 0; } .phone { width: 100vw; min-height: 100vh; border-radius: 0; box-shadow: none; } }
 </style>
+<link rel="stylesheet" href="theme.css">
+<link rel="stylesheet" href="motion.css">
+<script src="motion.js" defer></script>
 </head>
 <body>
 
 <div class="phone">
   <div class="container">
 
-    <div class="stamp">7 kun · tugadi</div>
+    <div class="stamp" data-i18n="celebrate.stamp">7 kun · tugadi</div>
 
     <div class="hero">
       <div class="big">+70%</div>
-      <div class="sub">oldingi sendan kuchliroq</div>
+      <div class="sub" data-i18n="celebrate.sub">oldingi sizdan kuchliroqsiz</div>
     </div>
 
     <div class="chains" id="chains"></div>
@@ -68,24 +74,40 @@
   </div>
 
   <div class="bottom-bar">
-    <a class="cta" href="home.html">Keyingi hafta</a>
+    <a class="cta" href="home.html" data-i18n="celebrate.cta">Keyingi hafta</a>
   </div>
 </div>
 
-<script src="data.js" defer></script>
-<script src="nav-overlay.js" defer></script>
+<script src="i18n.js?v=28.4.0"></script>
+<script src="lang-switcher.js?v=28.4.0" defer></script>
+<script src="data.js?v=28.4.0" defer></script>
+<script src="nav-overlay.js?v=28.4.0" defer></script>
 <script>
   document.addEventListener('DOMContentLoaded', () => {
     if (!window.MVOW_DATA) return;
     const list = document.getElementById('chains');
+    const daysUnit = (window.I18N ? I18N.t('celebrate.days_unit', 'kun') : 'kun');
     list.innerHTML = MVOW_DATA.chains.map(c => `
       <div class="chain">
         <span class="name">${c.name}</span>
-        <span class="days"><span class="em">${c.days}</span> kun</span>
+        <span class="days"><span class="em">${c.days}</span> ${daysUnit}</span>
       </div>
     `).join('');
+
+    // --- Motion: milestoneMark on the hero number, gated by streak ---
+    try {
+      if (window.MVOW_MOTION && typeof MVOW_MOTION.milestoneMark === 'function') {
+        const _streak = parseInt(localStorage.getItem('mvow.streak') || '0', 10) || 0;
+        const hero = document.querySelector('.hero .big');
+        if (hero && _streak >= 7) {
+          hero.setAttribute('data-milestone-mark', '');
+          MVOW_MOTION.milestoneMark(hero, { streak: _streak });
+        }
+      }
+    } catch (e) { /* motion is non-critical; never block celebrate render */ }
   });
 </script>
 
+<script src="back-btn.js?v=28.4.0"></script>
 </body>
 </html>

@@ -3,176 +3,1071 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-<title>{brand} — Natijalar</title>
+<title data-i18n="weekly-review.page_title">{brand} — Tarix</title>
 <link rel="manifest" href="manifest.webmanifest">
 <meta name="theme-color" content="#04060B">
 <link rel="apple-touch-icon" href="assets/mnsm-logo.png">
 <link rel="icon" type="image/png" href="assets/mnsm-logo.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
 <style>
   * { box-sizing: border-box; margin: 0; padding: 0; }
-  :root { --void:#04060B; --void-soft:#0C0F16; --text:#F5F2EC; --text-mid:#B8BBC2; --text-dim:#9CA0A8; --accent:#00E5D4; --accent-soft:#00B5A8; }
+  :root { --void:#04060B; --void-soft:#0C0F16; --card:#11151E; --text:#F5F2EC; --text-mid:#B8BBC2; --text-dim:#9CA0A8; --warm:#F5C26B; --miss:#FF4757; }
   body { background: var(--void); font-family:'Inter',sans-serif; color: var(--text); min-height: 100vh; display:flex; justify-content:center; align-items:flex-start; padding: 24px; -webkit-font-smoothing: antialiased; }
   .phone { width: 380px; min-height: 800px; background: var(--void); border-radius: 40px; overflow: hidden; position: relative; box-shadow: 0 0 0 8px #1a1d24, 0 30px 80px rgba(0,0,0,.7); }
-  .container { padding: 60px 32px 40px; }
+  .container { padding: 60px 28px 80px; }
 
-  .tabs { display:flex; gap: 4px; padding: 4px; background: var(--void-soft); border-radius: 8px; margin-bottom: 40px; }
-  .tab { flex:1; padding: 10px; text-align:center; font-size: 11px; letter-spacing: 2px; text-transform: uppercase; color: var(--text-mid); cursor: pointer; border-radius: 6px; }
+  .title { font-family: 'Cormorant Garamond', serif; font-weight: 500; font-size: 32px; text-align: center; margin-bottom: 4px; }
+  .subtitle { text-align: center; font-size: 11px; letter-spacing: 3px; color: var(--text-dim); text-transform: uppercase; margin-bottom: 22px; }
+
+  .tabs { display:flex; gap: 4px; padding: 4px; background: var(--void-soft); border-radius: 8px; margin-bottom: 18px; }
+  .tab { flex:1; padding: 10px; text-align:center; font-size: 11px; letter-spacing: 2px; text-transform: uppercase; color: var(--text-mid); cursor: pointer; border-radius: 6px; transition: all .15s; }
   .tab.on { background: var(--accent); color: var(--void); font-weight: 600; }
 
-  /* Hero — bitta katta raqam */
-  .hero { text-align: center; margin-bottom: 48px; }
-  .hero .big {
-    font-family:'Cormorant Garamond',serif;
+  /* Hero — jonli diagramma + raqam */
+  .hero {
+    background: var(--card);
+    border-radius: 14px;
+    padding: 18px 16px 14px;
+    margin-bottom: 22px;
+  }
+  .hero-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    margin-bottom: 14px;
+  }
+  /* milestoneMark anchor — ensure transforms/filters from MVOW_MOTION don't get clipped */
+  .hero-num { position: relative; transform-origin: left center; will-change: transform, filter; }
+  .hero-num {
+    font-family: 'Cormorant Garamond', serif;
     font-weight: 500;
-    font-size: 96px;
+    font-size: 38px;
     color: var(--accent);
     line-height: 1;
   }
-  .hero .lbl { font-size: 11px; letter-spacing: 4px; color: var(--text-mid); text-transform: uppercase; margin-top: 4px; }
+  .hero-num-lbl {
+    font-size: 10px;
+    letter-spacing: 2px;
+    color: var(--text-dim);
+    text-transform: uppercase;
+    margin-left: 6px;
+  }
+  .hero-meta {
+    font-size: 11px;
+    color: var(--text-mid);
+    letter-spacing: 1px;
+    text-align: right;
+    line-height: 1.5;
+  }
+  .hero-meta .em { color: var(--accent); font-weight: 500; }
 
-  /* Bar chart — 7 kun */
+  /* Chart — bars */
   .chart {
     display: grid;
-    grid-template-columns: repeat(7, 1fr);
-    gap: 8px;
+    grid-template-columns: repeat(var(--cols, 7), 1fr);
+    gap: 4px;
     align-items: end;
-    height: 110px;
-    margin-bottom: 12px;
+    height: 60px;
+    margin-bottom: 6px;
   }
-  .bar {
-    background: var(--accent);
-    border-radius: 4px 4px 0 0;
-    transition: opacity .2s;
+  .chart-bar-wrap {
+    display: flex; flex-direction: column;
+    align-items: center;
+    justify-content: flex-end;
+    height: 100%;
+    position: relative;
   }
-  .bar.dim { opacity: .25; }
-  .days {
+  .chart-bar {
+    width: 100%;
+    background: linear-gradient(180deg, var(--accent), var(--accent-soft));
+    border-radius: 3px 3px 0 0;
+    transition: height .6s cubic-bezier(.16,.84,.32,1);
+    min-height: 2px;
+  }
+  .chart-bar.dim { opacity: .25; }
+  .chart-bar.today { background: linear-gradient(180deg, var(--warm), #D9A555); }
+  .chart-bar-val {
+    position: absolute;
+    top: -14px;
+    font-size: 9px;
+    color: var(--accent);
+    font-weight: 500;
+    opacity: 0;
+    transition: opacity .3s;
+  }
+  .chart-bar-wrap:hover .chart-bar-val { opacity: 1; }
+  .chart-labels {
+    display: grid;
+    grid-template-columns: repeat(var(--cols, 7), 1fr);
+    gap: 4px;
+    margin-top: 4px;
+  }
+  .chart-labels span {
+    text-align: center;
+    font-size: 9px;
+    color: var(--text-dim);
+    letter-spacing: 1px;
+    text-transform: uppercase;
+  }
+  .chart-labels span.today { color: var(--accent); font-weight: 600; }
+
+  /* Task group — bosib ochiladigan accordion */
+  .group {
+    margin-bottom: 10px;
+    background: var(--void-soft);
+    border-radius: 12px;
+    overflow: hidden;
+    transition: background .2s;
+  }
+  .group.open { background: var(--card); }
+  .group-head {
+    display: grid;
+    grid-template-columns: 1fr auto 18px;
+    align-items: center;
+    gap: 12px;
+    padding: 14px 16px;
+    cursor: pointer;
+    user-select: none;
+    transition: background .15s;
+  }
+  .group-head:hover { background: rgba(212,175,55,.04); }
+  .group-name {
+    font-family: 'Cormorant Garamond', serif;
+    font-weight: 500;
+    font-size: 17px;
+    color: var(--text);
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+  .group-stats {
+    font-size: 11px;
+    color: var(--accent);
+    letter-spacing: 0.3px;
+    text-align: right;
+  }
+  .group-stats .x { color: var(--text-dim); margin: 0 5px; }
+  .group-chevron {
+    color: var(--text-dim);
+    font-size: 14px;
+    transition: transform .25s ease, color .15s;
+    line-height: 1;
+  }
+  .group.open .group-chevron {
+    transform: rotate(90deg);
+    color: var(--accent);
+  }
+  .group-body {
+    display: none;
+    padding: 0 16px 12px;
+    border-top: 1px solid rgba(212,175,55,.1);
+  }
+  .group.open .group-body { display: block; animation: accIn .25s ease; }
+  @keyframes accIn { from { opacity: 0; transform: translateY(-4px); } to { opacity: 1; transform: translateY(0); } }
+
+  .h-entry {
+    display: grid;
+    grid-template-columns: 78px 1fr auto;
+    gap: 10px;
+    align-items: center;
+    padding: 10px 0;
+    border-bottom: 1px solid rgba(255,255,255,.03);
+  }
+  .h-entry:last-child { border-bottom: none; }
+  .h-entry .date { font-size: 12px; color: var(--accent); font-weight: 500; letter-spacing: 0.3px; }
+  .h-entry .note { font-size: 13px; color: var(--text); font-style: italic; font-family: 'Cormorant Garamond', serif; line-height: 1.3; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .h-entry .note.empty { color: var(--text-dim); font-family: 'Inter', sans-serif; font-style: normal; font-size: 11px; letter-spacing: 1px; text-transform: uppercase; }
+  .h-entry .dur { font-size: 12px; color: var(--text-mid); font-weight: 500; text-align: right; }
+
+  /* Empty state */
+  .empty {
+    text-align: center;
+    padding: 40px 24px;
+    background: var(--card);
+    border-radius: 12px;
+    margin-top: 12px;
+  }
+  .empty .lbl {
+    font-family: 'Cormorant Garamond', serif;
+    font-style: italic;
+    font-size: 17px;
+    color: var(--text-mid);
+    margin-bottom: 6px;
+  }
+  .empty .hint {
+    font-size: 12px;
+    color: var(--text-dim);
+    line-height: 1.5;
+  }
+
+  /* ============================================================
+     VAZIFALAR TARIXI — task history (calendar per task)
+     ============================================================ */
+  .tasks-head {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    margin: 26px 0 10px;
+  }
+  .tasks-head .h {
+    font-family: 'Cormorant Garamond', serif;
+    font-weight: 500;
+    font-size: 20px;
+    color: var(--text);
+    letter-spacing: 0.3px;
+  }
+  .tasks-head .sub {
+    font-size: 10px;
+    letter-spacing: 2px;
+    color: var(--text-dim);
+    text-transform: uppercase;
+  }
+  .tasks-list { display: flex; flex-direction: column; gap: 8px; }
+  .task-row {
+    display: grid;
+    grid-template-columns: 1fr auto auto;
+    align-items: center;
+    gap: 12px;
+    padding: 14px 14px 14px 16px;
+    background: var(--void-soft);
+    border-radius: 12px;
+    border: 1px solid transparent;
+    transition: border-color .18s, background .18s;
+  }
+  .task-row:hover { background: var(--card); border-color: rgba(212,175,55,.18); }
+  .task-row .name {
+    font-family: 'Cormorant Garamond', serif;
+    font-weight: 500;
+    font-size: 17px;
+    color: var(--text);
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+  .task-row .stats {
+    font-size: 11px;
+    color: var(--text-mid);
+    letter-spacing: 0.2px;
+    text-align: right;
+    white-space: nowrap;
+  }
+  .task-row .stats .em { color: var(--accent); font-weight: 600; }
+  .task-row .stats .dot { color: var(--text-dim); margin: 0 5px; }
+  .cal-btn {
+    width: 44px;
+    height: 44px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    background: transparent;
+    border: 1px solid rgba(212,175,55,.35);
+    color: var(--accent);
+    border-radius: 10px;
+    cursor: pointer;
+    transition: background .15s, border-color .15s, transform .12s;
+    padding: 0;
+  }
+  .cal-btn:hover, .cal-btn:focus-visible {
+    background: rgba(212,175,55,.08);
+    border-color: var(--accent);
+    outline: none;
+  }
+  .cal-btn:active { transform: scale(.96); }
+  .cal-btn svg { width: 20px; height: 20px; stroke: currentColor; fill: none; stroke-width: 1.8; }
+
+  /* Modal */
+  .cal-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(4,6,11,.78);
+    backdrop-filter: blur(6px);
+    -webkit-backdrop-filter: blur(6px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 999;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity .22s ease;
+    padding: 16px;
+  }
+  .cal-overlay.on { opacity: 1; pointer-events: auto; }
+  .cal-modal {
+    width: 100%;
+    max-width: 360px;
+    background: var(--card);
+    border: 1px solid rgba(212,175,55,.35);
+    border-radius: 18px;
+    padding: 20px 18px 18px;
+    box-shadow: 0 30px 80px rgba(0,0,0,.65), 0 0 0 1px rgba(245,215,110,.06);
+    transform: translateY(8px) scale(.98);
+    transition: transform .25s cubic-bezier(.16,.84,.32,1);
+  }
+  .cal-overlay.on .cal-modal { transform: translateY(0) scale(1); }
+  .cal-mhead {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 12px;
+    margin-bottom: 14px;
+  }
+  .cal-mhead .t {
+    font-family: 'Cormorant Garamond', serif;
+    font-weight: 500;
+    font-size: 22px;
+    color: var(--text);
+    line-height: 1.2;
+    overflow: hidden;
+  }
+  .cal-mhead .x {
+    width: 32px;
+    height: 32px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    background: transparent;
+    border: 1px solid rgba(255,255,255,.1);
+    color: var(--text-mid);
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 18px;
+    line-height: 1;
+    transition: color .15s, border-color .15s;
+    flex-shrink: 0;
+  }
+  .cal-mhead .x:hover { color: var(--accent); border-color: var(--accent); }
+  .cal-stats {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px 10px;
+    font-size: 11px;
+    color: var(--text-mid);
+    letter-spacing: 0.3px;
+    margin-bottom: 16px;
+    padding-bottom: 14px;
+    border-bottom: 1px solid rgba(212,175,55,.12);
+  }
+  .cal-stats .em { color: var(--accent); font-weight: 600; }
+  .cal-stats .sep { color: var(--text-dim); }
+
+  .cal-nav {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 10px;
+  }
+  .cal-nav .month {
+    font-family: 'Cormorant Garamond', serif;
+    font-weight: 500;
+    font-size: 16px;
+    color: var(--accent);
+    letter-spacing: 0.5px;
+  }
+  .cal-nav button {
+    width: 32px;
+    height: 32px;
+    background: transparent;
+    border: 1px solid rgba(212,175,55,.25);
+    color: var(--accent);
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 16px;
+    line-height: 1;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    transition: background .15s, border-color .15s;
+  }
+  .cal-nav button:hover { background: rgba(212,175,55,.08); border-color: var(--accent); }
+
+  .cal-week {
     display: grid;
     grid-template-columns: repeat(7, 1fr);
-    gap: 8px;
-    margin-bottom: 40px;
+    gap: 4px;
+    margin-bottom: 6px;
   }
-  .days span { text-align:center; font-size: 9px; letter-spacing: 1px; color: var(--text-dim); text-transform: uppercase; }
-
-  /* 3 ta minimal stat */
-  .stats {
+  .cal-week span {
+    text-align: center;
+    font-size: 9px;
+    color: var(--text-dim);
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    padding: 4px 0;
+  }
+  .cal-grid {
     display: grid;
-    grid-template-columns: 1fr 1fr 1fr;
-    gap: 16px;
-    padding-top: 24px;
-    border-top: 1px solid rgba(255,255,255,.04);
+    grid-template-columns: repeat(7, 1fr);
+    gap: 4px;
   }
-  .stat { text-align: center; }
-  .stat .v { font-family:'Cormorant Garamond',serif; font-size: 22px; font-weight: 500; color: var(--accent); }
-  .stat .l { font-size: 9px; letter-spacing: 2px; color: var(--text-mid); text-transform: uppercase; margin-top: 4px; }
+  .cal-cell {
+    aspect-ratio: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    border-radius: 8px;
+    font-size: 11px;
+    color: var(--text-dim);
+    background: transparent;
+    border: 1px solid transparent;
+    position: relative;
+    min-height: 36px;
+  }
+  .cal-cell.out { opacity: .25; }
+  .cal-cell.today { box-shadow: inset 0 0 0 1px rgba(245,215,110,.45); }
+  .cal-cell .d { font-size: 11px; line-height: 1; }
+  .cal-cell .v { font-size: 8px; line-height: 1; margin-top: 2px; letter-spacing: 0.2px; }
+  /* Planned but not done */
+  .cal-cell.planned {
+    border-color: rgba(212,175,55,.35);
+    color: var(--text-mid);
+    background: rgba(212,175,55,.04);
+  }
+  /* Completed — filled gold */
+  .cal-cell.done {
+    background: linear-gradient(135deg, var(--accent-bright), var(--accent));
+    color: var(--void);
+    border-color: var(--accent);
+    font-weight: 600;
+  }
+  .cal-cell.done .v { color: var(--void); opacity: .82; font-weight: 500; }
+  /* Missed — planned but not done (past day) */
+  .cal-cell.missed {
+    border-color: rgba(255,71,87,.55);
+    background: rgba(255,71,87,.06);
+    color: #FF8E97;
+  }
 
-  @media (max-width: 480px) { body { padding: 0; } .phone { width: 100vw; min-height: 100vh; border-radius: 0; box-shadow: none; } }
+  .cal-legend {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 4px 14px;
+    justify-content: center;
+    margin-top: 14px;
+    font-size: 10px;
+    color: var(--text-dim);
+    letter-spacing: 0.3px;
+  }
+  .cal-legend .li { display: inline-flex; align-items: center; gap: 6px; }
+  .cal-legend .sw { width: 10px; height: 10px; border-radius: 3px; display: inline-block; }
+  .cal-legend .sw.planned { border: 1px solid rgba(212,175,55,.5); background: rgba(212,175,55,.06); }
+  .cal-legend .sw.done { background: var(--accent); }
+  .cal-legend .sw.missed { border: 1px solid rgba(255,71,87,.6); background: rgba(255,71,87,.08); }
+
+  .tasks-empty {
+    text-align: center;
+    padding: 26px 18px;
+    background: var(--void-soft);
+    border-radius: 12px;
+    font-size: 12px;
+    color: var(--text-dim);
+    line-height: 1.5;
+  }
+
+  @media (max-width: 480px) {
+    body { padding: 0; }
+    .phone { width: 100vw; min-height: 100vh; border-radius: 0; box-shadow: none; }
+    .cal-modal { max-width: 100%; padding: 18px 14px 14px; }
+    .cal-cell { min-height: 32px; }
+    .cal-cell .d { font-size: 10px; }
+    .cal-cell .v { font-size: 7px; }
+  }
 </style>
+<link rel="stylesheet" href="theme.css">
+<link rel="stylesheet" href="motion.css">
+<script src="motion.js" defer></script>
 </head>
 <body>
 
 <div class="phone">
   <div class="container">
 
+    <h1 class="title" data-i18n="weekly-review.title">Tarix</h1>
+    <div class="subtitle" data-i18n="weekly-review.subtitle">Bajarilgan ishlar</div>
+
     <div class="tabs">
-      <div class="tab">Kun</div>
-      <div class="tab on">Hafta</div>
-      <div class="tab">Oy</div>
+      <div class="tab" data-range="day" data-i18n="weekly-review.tab_day">Bugun</div>
+      <div class="tab on" data-range="week" data-i18n="weekly-review.tab_week">Hafta</div>
+      <div class="tab" data-range="month" data-i18n="weekly-review.tab_month">Oy</div>
     </div>
 
+    <!-- Hero: jonli diagramma + raqam -->
     <div class="hero">
-      <div class="big" data-mvow="week.focusHours">38</div>
-      <div class="lbl">Soat fokus</div>
+      <div class="hero-top">
+        <div>
+          <span class="hero-num" id="heroNum">0</span>
+          <span class="hero-num-lbl" data-i18n="weekly-review.hero_focus_hours">soat fokus</span>
+        </div>
+        <div class="hero-meta">
+          <span class="em" id="heroCount">0</span> <span data-i18n="weekly-review.hero_plans">reja</span><br>
+          <span data-i18n="weekly-review.hero_streak">streak</span> · <span class="em" id="heroStreak">0</span>
+        </div>
+      </div>
+      <div class="chart" id="chart"></div>
+      <div class="chart-labels" id="chartLabels"></div>
     </div>
 
-    <div class="chart" id="chart"></div>
-    <div class="days" id="days"></div>
-
-    <div class="stats">
-      <div class="stat">
-        <div class="v" data-mvow="week.sessionCount">38</div>
-        <div class="l">Sessiya</div>
-      </div>
-      <div class="stat">
-        <div class="v" data-mvow="streak">12</div>
-        <div class="l">Streak</div>
-      </div>
-      <div class="stat">
-        <div class="v" data-mvow="week.change">+12%</div>
-        <div class="l">O'zgarish</div>
-      </div>
+    <!-- Xulq-atvor tahlili -->
+    <div id="insightsBox" style="display:none;background:var(--card);border-radius:14px;padding:18px 16px;margin-bottom:22px;">
+      <div style="font-size:11px;letter-spacing:3px;color:var(--accent);text-transform:uppercase;font-weight:500;margin-bottom:14px;" data-i18n="weekly-review.insights_title">Xulq-atvor tahlili</div>
+      <div id="insightsContent" style="display:flex;flex-direction:column;gap:10px;font-size:13px;line-height:1.5;"></div>
     </div>
+
+    <!-- Per-task grouped list (existing) -->
+    <div id="historyList"></div>
+
+    <!-- VAZIFALAR TARIXI — per-task calendar -->
+    <div class="tasks-head">
+      <div class="h" data-i18n="weekly-review.tarix_tasks_head">Vazifalar tarixi</div>
+      <div class="sub" data-i18n="weekly-review.tarix_tasks_sub">Har kun bo'yicha</div>
+    </div>
+    <div id="tasksList" class="tasks-list"></div>
 
   </div>
 </div>
 
-<script src="i18n.js" defer></script>
-<script src="data.js" defer></script>
-<script src="nav-overlay.js" defer></script>
-<script>
-  // Haftaning 7 kuni uchun bajarilgan sessiyalar (localStorage'dan)
-  function getWeekData() {
-    const out = [];
-    const today = new Date();
-    // Dushanbadan boshlanadigan hafta
-    const dayOfWeek = today.getDay(); // 0=Yakshanba
-    const monday = new Date(today);
-    monday.setDate(today.getDate() - ((dayOfWeek + 6) % 7));
+<!-- Calendar modal -->
+<div class="cal-overlay" id="calOverlay" role="dialog" aria-modal="true" aria-labelledby="calTaskName">
+  <div class="cal-modal" role="document">
+    <div class="cal-mhead">
+      <div class="t" id="calTaskName">—</div>
+      <button class="x" id="calClose" aria-label="Yopish" data-i18n-aria="weekly-review.tarix_modal_close">×</button>
+    </div>
+    <div class="cal-stats" id="calStats"></div>
+    <div class="cal-nav">
+      <button id="calPrev" aria-label="Oldingi oy" data-i18n-aria="weekly-review.tarix_prev_month">‹</button>
+      <div class="month" id="calMonthLabel">—</div>
+      <button id="calNext" aria-label="Keyingi oy" data-i18n-aria="weekly-review.tarix_next_month">›</button>
+    </div>
+    <div class="cal-week" id="calWeekRow"></div>
+    <div class="cal-grid" id="calGrid"></div>
+    <div class="cal-legend">
+      <span class="li"><span class="sw planned"></span><span data-i18n="weekly-review.tarix_legend_planned">Belgilangan</span></span>
+      <span class="li"><span class="sw done"></span><span data-i18n="weekly-review.tarix_legend_done">Bajarildi</span></span>
+      <span class="li"><span class="sw missed"></span><span data-i18n="weekly-review.tarix_legend_missed">O'tkazilgan</span></span>
+    </div>
+  </div>
+</div>
 
-    for (let i = 0; i < 7; i++) {
-      const d = new Date(monday);
-      d.setDate(monday.getDate() + i);
-      const key = 'mvow.done.' + d.toISOString().slice(0,10);
-      const count = parseInt(localStorage.getItem(key) || '0', 10);
-      // Har sessiya ~ 45 daq = 0.75 soat (taxmin)
-      out.push(count * 0.75);
+<script src="i18n.js?v=28.4.0"></script>
+<script src="lang-switcher.js?v=28.4.0" defer></script>
+<script src="data.js?v=28.4.0" defer></script>
+<script src="nav-overlay.js?v=28.4.0" defer></script>
+<script>
+  const MONTHS_FALLBACK = ['yan','fev','mar','apr','may','iyun','iyul','avg','sen','okt','noy','dek'];
+  const MONTHS_LONG_FALLBACK = ['Yanvar','Fevral','Mart','Aprel','May','Iyun','Iyul','Avgust','Sentabr','Oktabr','Noyabr','Dekabr'];
+  function getMonths() {
+    if (window.I18N) {
+      const v = I18N.t('weekly-review.months_short', null);
+      if (Array.isArray(v) && v.length === 12) return v;
     }
-    return out;
+    return MONTHS_FALLBACK;
+  }
+  function getMonthsLong() {
+    if (window.I18N) {
+      const v = I18N.t('weekly-review.months_long', null);
+      if (Array.isArray(v) && v.length === 12) return v;
+    }
+    return MONTHS_LONG_FALLBACK;
+  }
+
+  function escapeHtml(s) {
+    return String(s).replace(/[<>"&]/g, c => ({'<':'&lt;','>':'&gt;','"':'&quot;','&':'&amp;'}[c]));
+  }
+  function fmtDur(mins) {
+    if (!mins || mins <= 0) return '—';
+    const h = Math.floor(mins / 60);
+    const m = mins % 60;
+    const soat = (window.I18N ? I18N.t('weekly-review.unit_hour', 'soat') : 'soat');
+    const daq = (window.I18N ? I18N.t('weekly-review.unit_min', 'daq') : 'daq');
+    if (h && m) return h + ' ' + soat + ' ' + m + ' ' + daq;
+    if (h) return h + ' ' + soat;
+    return m + ' ' + daq;
+  }
+  function fmtShortDate(iso) {
+    const d = new Date(iso);
+    const months = getMonths();
+    return d.getDate() + '-' + months[d.getMonth()];
+  }
+
+  function inRange(iso, range) {
+    const d = new Date(iso);
+    const now = new Date();
+    if (range === 'day') {
+      return iso === MVOW_DATA.localDateIso(now);
+    }
+    if (range === 'week') {
+      const dayOfWeek = now.getDay();
+      const monday = new Date(now); monday.setHours(0,0,0,0);
+      monday.setDate(now.getDate() - ((dayOfWeek + 6) % 7));
+      return d >= monday;
+    }
+    if (range === 'month') {
+      return d.getFullYear() === now.getFullYear() && d.getMonth() === now.getMonth();
+    }
+    return true;
+  }
+
+  // Jonli diagramma — vaqt o'qiga qarab bars
+  function buildChart(range, history) {
+    const now = new Date();
+    const todayIso = MVOW_DATA.localDateIso(now);
+    const chartEl = document.getElementById('chart');
+    const labelsEl = document.getElementById('chartLabels');
+    chartEl.innerHTML = '';
+    labelsEl.innerHTML = '';
+
+    let buckets = [];
+    if (range === 'day') {
+      // Bugungi top 7 vazifa
+      const today = history.filter(h => h.dateIso === todayIso);
+      const groups = {};
+      const defaultName = (window.I18N ? I18N.t('weekly-review.default_task_name', 'Ish') : 'Ish');
+      today.forEach(h => { const k = h.name || defaultName; groups[k] = (groups[k] || 0) + (h.actualMins || 0); });
+      buckets = Object.entries(groups)
+        .sort((a, b) => b[1] - a[1])
+        .slice(0, 7)
+        .map(([name, mins]) => ({ label: name.slice(0, 4), val: Math.round(mins / 60 * 10) / 10, today: false, raw: mins }));
+      if (!buckets.length) buckets = Array(7).fill(0).map(() => ({ label: '·', val: 0, today: false, raw: 0 }));
+    } else if (range === 'week') {
+      const dayOfWeek = now.getDay();
+      const monday = new Date(now); monday.setHours(0,0,0,0);
+      monday.setDate(now.getDate() - ((dayOfWeek + 6) % 7));
+      const labels = [
+        (window.I18N ? I18N.t('weekly-review.weekday_mon', 'Du') : 'Du'),
+        (window.I18N ? I18N.t('weekly-review.weekday_tue', 'Se') : 'Se'),
+        (window.I18N ? I18N.t('weekly-review.weekday_wed', 'Ch') : 'Ch'),
+        (window.I18N ? I18N.t('weekly-review.weekday_thu', 'Pa') : 'Pa'),
+        (window.I18N ? I18N.t('weekly-review.weekday_fri', 'Ju') : 'Ju'),
+        (window.I18N ? I18N.t('weekly-review.weekday_sat', 'Sh') : 'Sh'),
+        (window.I18N ? I18N.t('weekly-review.weekday_sun', 'Ya') : 'Ya')
+      ];
+      for (let i = 0; i < 7; i++) {
+        const d = new Date(monday); d.setDate(monday.getDate() + i);
+        const iso = MVOW_DATA.localDateIso(d);
+        const sum = history.filter(h => h.dateIso === iso).reduce((s, h) => s + (h.actualMins || 0), 0);
+        buckets.push({ label: labels[i], val: Math.round(sum / 60 * 10) / 10, today: iso === todayIso, raw: sum });
+      }
+    } else {
+      // Month: last ~30 days
+      const days = now.getDate();
+      for (let i = days - 1; i >= 0; i--) {
+        const d = new Date(now.getFullYear(), now.getMonth(), now.getDate() - i);
+        const iso = MVOW_DATA.localDateIso(d);
+        const sum = history.filter(h => h.dateIso === iso).reduce((s, h) => s + (h.actualMins || 0), 0);
+        const label = (d.getDate() % 5 === 0 || i === days - 1) ? String(d.getDate()) : '';
+        buckets.push({ label, val: Math.round(sum / 60 * 10) / 10, today: iso === todayIso, raw: sum });
+      }
+    }
+
+    const max = Math.max(...buckets.map(b => b.val), 0.5);
+    chartEl.style.setProperty('--cols', buckets.length);
+    labelsEl.style.setProperty('--cols', buckets.length);
+
+    buckets.forEach(b => {
+      const wrap = document.createElement('div');
+      wrap.className = 'chart-bar-wrap';
+      const bar = document.createElement('div');
+      bar.className = 'chart-bar' + (b.val < max * 0.3 ? ' dim' : '') + (b.today ? ' today' : '');
+      bar.style.height = '0%';
+      wrap.appendChild(bar);
+      if (b.val > 0) {
+        const valEl = document.createElement('div');
+        valEl.className = 'chart-bar-val';
+        const hourShort = (window.I18N ? I18N.t('weekly-review.unit_hour_short', 's') : 's');
+        valEl.textContent = b.val + hourShort;
+        wrap.appendChild(valEl);
+      }
+      chartEl.appendChild(wrap);
+      // Anim
+      requestAnimationFrame(() => {
+        bar.style.height = Math.max(3, (b.val / max) * 100) + '%';
+      });
+      const lbl = document.createElement('span');
+      lbl.textContent = b.label;
+      if (b.today) lbl.className = 'today';
+      labelsEl.appendChild(lbl);
+    });
+  }
+
+  function render(range) {
+    const allHistory = window.MVOW_DATA ? MVOW_DATA.getHistory() : [];
+    const history = allHistory.filter(h => inRange(h.dateIso, range));
+    history.sort((a,b) => (b.completedAt || 0) - (a.completedAt || 0));
+
+    // Hero raqamlar
+    const totalMins = history.reduce((s,h) => s + (h.actualMins || 0), 0);
+    document.getElementById('heroNum').textContent = Math.round(totalMins / 60 * 10) / 10 || 0;
+    document.getElementById('heroCount').textContent = history.length;
+    document.getElementById('heroStreak').textContent = parseInt(localStorage.getItem('mvow.streak') || '0', 10);
+
+    // Diagramma
+    buildChart(range, allHistory);
+
+    // Xulq-atvor tahlili (faqat hafta yoki oy ko'rinishida)
+    const insBox = document.getElementById('insightsBox');
+    const insContent = document.getElementById('insightsContent');
+    if (range !== 'day' && window.MVOW_DATA) {
+      const b = MVOW_DATA.getBehaviorStats();
+      if (b && b.dayStats.length >= 2) {
+        const gradeColor = (pct) => pct >= 80 ? 'var(--accent)' : pct >= 50 ? '#F5C26B' : '#FF8E97';
+        const lblBest = (window.I18N ? I18N.t('weekly-review.insight_best_day', 'Eng yaxshi kuningiz') : 'Eng yaxshi kuningiz');
+        const lblWorst = (window.I18N ? I18N.t('weekly-review.insight_worst_day', 'Eng yomon') : 'Eng yomon');
+        const lblAvg = (window.I18N ? I18N.t('weekly-review.insight_avg_completion', "O'rtacha bajarish") : "O'rtacha bajarish");
+        const lblPeak = (window.I18N ? I18N.t('weekly-review.insight_peak_time', 'Sermahsul vaqt') : 'Sermahsul vaqt');
+        let html = '';
+        html += `<div style="display:flex;justify-content:space-between;align-items:baseline;"><span style="color:var(--text-mid);">${lblBest}</span><span style="color:var(--accent);font-weight:600;"><span style="font-family:'Cormorant Garamond',serif;font-size:16px;font-style:italic;">${b.best.day}</span> · ${b.best.completion}%</span></div>`;
+        if (b.worst.day !== b.best.day) {
+          html += `<div style="display:flex;justify-content:space-between;align-items:baseline;"><span style="color:var(--text-mid);">${lblWorst}</span><span style="color:#FF8E97;font-weight:600;"><span style="font-family:'Cormorant Garamond',serif;font-size:16px;font-style:italic;">${b.worst.day}</span> · ${b.worst.completion}%</span></div>`;
+        }
+        html += `<div style="display:flex;justify-content:space-between;align-items:baseline;"><span style="color:var(--text-mid);">${lblAvg}</span><span style="color:${gradeColor(b.avg)};font-weight:600;">${b.avg}%</span></div>`;
+        if (b.peakRange) {
+          html += `<div style="display:flex;justify-content:space-between;align-items:baseline;"><span style="color:var(--text-mid);">${lblPeak}</span><span style="color:var(--accent);font-weight:600;">${b.peakRange}</span></div>`;
+        }
+        insContent.innerHTML = html;
+        insBox.style.display = 'block';
+      } else {
+        insBox.style.display = 'none';
+      }
+    } else {
+      insBox.style.display = 'none';
+    }
+
+    // Vazifa bo'yicha guruhlash
+    const list = document.getElementById('historyList');
+    if (!history.length) {
+      const emptyLbl = (window.I18N ? I18N.t('weekly-review.empty_title', "Hozircha bo'sh.") : "Hozircha bo'sh.");
+      const emptyHint1 = (window.I18N ? I18N.t('weekly-review.empty_hint1', "Ish bajarilganda bu yerda ko'rinadi —") : "Ish bajarilganda bu yerda ko'rinadi —");
+      const emptyHint2 = (window.I18N ? I18N.t('weekly-review.empty_hint2', 'sana, davomiylik va qisqa izoh bilan.') : 'sana, davomiylik va qisqa izoh bilan.');
+      list.innerHTML = `
+        <div class="empty">
+          <div class="lbl">${emptyLbl}</div>
+          <div class="hint">${emptyHint1}<br>${emptyHint2}</div>
+        </div>
+      `;
+      return;
+    }
+
+    const groups = {};
+    const defaultNameList = (window.I18N ? I18N.t('weekly-review.default_task_name', 'Ish') : 'Ish');
+    for (const h of history) {
+      const k = h.name || defaultNameList;
+      if (!groups[k]) groups[k] = [];
+      groups[k].push(h);
+    }
+    // Eng so'nggi tugatilganga ko'ra tartiblash
+    const sortedNames = Object.keys(groups).sort((a, b) => {
+      const aMax = Math.max(...groups[a].map(h => h.completedAt || 0));
+      const bMax = Math.max(...groups[b].map(h => h.completedAt || 0));
+      return bMax - aMax;
+    });
+
+    const timesLbl = (window.I18N ? I18N.t('weekly-review.times_label', 'marta') : 'marta');
+    list.innerHTML = sortedNames.map((name, idx) => {
+      const items = groups[name];
+      const totalMins = items.reduce((s, h) => s + (h.actualMins || 0), 0);
+      // Har yozuv: sana + izoh + davomiylik
+      const entriesHtml = items.map(h => `
+        <div class="h-entry">
+          <div class="date">${fmtShortDate(h.dateIso)}</div>
+          <div class="note ${h.note ? '' : 'empty'}">${h.note ? escapeHtml(h.note) : '—'}</div>
+          <div class="dur">${fmtDur(h.actualMins)}</div>
+        </div>
+      `).join('');
+      return `
+        <div class="group" data-group="${idx}">
+          <div class="group-head" data-toggle="${idx}">
+            <div class="group-name">${escapeHtml(name)}</div>
+            <div class="group-stats">${fmtDur(totalMins)}<span class="x">·</span>${items.length} ${timesLbl}</div>
+            <div class="group-chevron">›</div>
+          </div>
+          <div class="group-body">
+            ${entriesHtml}
+          </div>
+        </div>
+      `;
+    }).join('');
+
+    // Accordion — har vazifa nomini bosib batafsil ochish
+    list.querySelectorAll('[data-toggle]').forEach(head => {
+      head.addEventListener('click', () => {
+        const group = head.parentElement;
+        const wasOpen = group.classList.contains('open');
+        // Boshqalarni yopish — accordion behavior (faqat bittasi ochiq)
+        list.querySelectorAll('.group.open').forEach(g => {
+          if (g !== group) g.classList.remove('open');
+        });
+        group.classList.toggle('open', !wasOpen);
+      });
+    });
+  }
+
+  /* ===========================================================
+     VAZIFALAR TARIXI — task list with per-task month calendar
+     =========================================================== */
+
+  // Build a master index: { taskName: { plannedByDate: Map<iso, taskObj>, doneByDate: Map<iso, historyObj> } }
+  function buildTaskIndex() {
+    const idx = {};
+    const defaultName = (window.I18N ? I18N.t('weekly-review.default_task_name', 'Ish') : 'Ish');
+
+    // 1) Walk weekPlan — every scheduled occurrence
+    const weekPlan = (window.MVOW_DATA && MVOW_DATA.getWeekPlan) ? MVOW_DATA.getWeekPlan() : {};
+    Object.keys(weekPlan || {}).forEach(key => {
+      // key shape: 'dYYYY-MM-DD'
+      if (!/^d\d{4}-\d{2}-\d{2}$/.test(key)) return;
+      const iso = key.slice(1);
+      const arr = Array.isArray(weekPlan[key]) ? weekPlan[key] : [];
+      arr.forEach(t => {
+        const name = (t && t.name) || defaultName;
+        if (!idx[name]) idx[name] = { plannedByDate: new Map(), doneByDate: new Map() };
+        // Keep first occurrence per date (avoid duplicates of same task on same day)
+        if (!idx[name].plannedByDate.has(iso)) {
+          idx[name].plannedByDate.set(iso, { time: t.time || '', dur: t.dur || '' });
+        }
+      });
+    });
+
+    // 2) Walk history — every completed occurrence
+    const history = (window.MVOW_DATA && MVOW_DATA.getHistory) ? MVOW_DATA.getHistory() : [];
+    history.forEach(h => {
+      const name = h.name || defaultName;
+      const iso = h.dateIso;
+      if (!iso) return;
+      if (!idx[name]) idx[name] = { plannedByDate: new Map(), doneByDate: new Map() };
+      // If multiple completions for same task same day, sum minutes
+      const existing = idx[name].doneByDate.get(iso);
+      if (existing) {
+        existing.mins += (h.actualMins || 0);
+        existing.count += 1;
+      } else {
+        idx[name].doneByDate.set(iso, { mins: (h.actualMins || 0), count: 1, time: h.plannedTime || '' });
+      }
+      // A completed task implicitly counts as planned (in case it wasn't in weekPlan)
+      if (!idx[name].plannedByDate.has(iso)) {
+        idx[name].plannedByDate.set(iso, { time: h.plannedTime || '', dur: h.plannedDur || '' });
+      }
+    });
+
+    return idx;
+  }
+
+  let _taskIndex = null;
+  let _calCurrent = { name: null, year: 0, month: 0 }; // month 0-based
+
+  function renderTasksList() {
+    _taskIndex = buildTaskIndex();
+    const wrap = document.getElementById('tasksList');
+    const names = Object.keys(_taskIndex);
+
+    if (!names.length) {
+      const emptyTxt = (window.I18N ? I18N.t('weekly-review.tarix_empty', "Hali rejalashtirilgan vazifa yo'q.") : "Hali rejalashtirilgan vazifa yo'q.");
+      wrap.innerHTML = `<div class="tasks-empty">${emptyTxt}</div>`;
+      return;
+    }
+
+    // Sort by total planned days descending
+    names.sort((a, b) => _taskIndex[b].plannedByDate.size - _taskIndex[a].plannedByDate.size);
+
+    const lblDays = (window.I18N ? I18N.t('weekly-review.tarix_unit_days', 'kun') : 'kun');
+    const lblDone = (window.I18N ? I18N.t('weekly-review.tarix_unit_done', 'bajarildi') : 'bajarildi');
+    const ariaCal = (window.I18N ? I18N.t('weekly-review.tarix_aria_open_cal', 'Kalendarni ochish') : 'Kalendarni ochish');
+
+    wrap.innerHTML = names.map(name => {
+      const entry = _taskIndex[name];
+      const plannedDays = entry.plannedByDate.size;
+      const doneDays = entry.doneByDate.size;
+      return `
+        <div class="task-row" data-task="${escapeHtml(name)}">
+          <div class="name">${escapeHtml(name)}</div>
+          <div class="stats"><span class="em">${plannedDays}</span> ${lblDays}<span class="dot">·</span><span class="em">${doneDays}</span> ${lblDone}</div>
+          <button class="cal-btn" data-open-cal="${escapeHtml(name)}" aria-label="${escapeHtml(ariaCal)}">
+            <svg viewBox="0 0 24 24" aria-hidden="true">
+              <rect x="3" y="5" width="18" height="16" rx="2"></rect>
+              <line x1="3" y1="10" x2="21" y2="10"></line>
+              <line x1="8" y1="3" x2="8" y2="7"></line>
+              <line x1="16" y1="3" x2="16" y2="7"></line>
+            </svg>
+          </button>
+        </div>
+      `;
+    }).join('');
+
+    wrap.querySelectorAll('[data-open-cal]').forEach(btn => {
+      btn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        const name = btn.getAttribute('data-open-cal');
+        openCalendar(name);
+      });
+    });
+  }
+
+  function openCalendar(name) {
+    if (!_taskIndex || !_taskIndex[name]) return;
+    const now = new Date();
+    _calCurrent.name = name;
+    _calCurrent.year = now.getFullYear();
+    _calCurrent.month = now.getMonth();
+    renderCalendar();
+    const overlay = document.getElementById('calOverlay');
+    overlay.classList.add('on');
+    // Focus close for keyboard accessibility
+    requestAnimationFrame(() => {
+      const closeBtn = document.getElementById('calClose');
+      if (closeBtn) closeBtn.focus();
+    });
+  }
+
+  function closeCalendar() {
+    document.getElementById('calOverlay').classList.remove('on');
+  }
+
+  function renderCalendar() {
+    const name = _calCurrent.name;
+    if (!name || !_taskIndex || !_taskIndex[name]) return;
+    const entry = _taskIndex[name];
+    const year = _calCurrent.year;
+    const month = _calCurrent.month;
+
+    document.getElementById('calTaskName').textContent = name;
+
+    const monthsLong = getMonthsLong();
+    document.getElementById('calMonthLabel').textContent = monthsLong[month] + ' ' + year;
+
+    // Week header (Du..Ya)
+    const wkLabels = [
+      (window.I18N ? I18N.t('weekly-review.weekday_mon', 'Du') : 'Du'),
+      (window.I18N ? I18N.t('weekly-review.weekday_tue', 'Se') : 'Se'),
+      (window.I18N ? I18N.t('weekly-review.weekday_wed', 'Ch') : 'Ch'),
+      (window.I18N ? I18N.t('weekly-review.weekday_thu', 'Pa') : 'Pa'),
+      (window.I18N ? I18N.t('weekly-review.weekday_fri', 'Ju') : 'Ju'),
+      (window.I18N ? I18N.t('weekly-review.weekday_sat', 'Sh') : 'Sh'),
+      (window.I18N ? I18N.t('weekly-review.weekday_sun', 'Ya') : 'Ya')
+    ];
+    document.getElementById('calWeekRow').innerHTML = wkLabels.map(w => `<span>${w}</span>`).join('');
+
+    // Build month grid (Monday-start)
+    const firstOfMonth = new Date(year, month, 1);
+    const lastOfMonth = new Date(year, month + 1, 0);
+    const daysInMonth = lastOfMonth.getDate();
+    // Day-of-week with Monday=0..Sunday=6
+    const firstDow = (firstOfMonth.getDay() + 6) % 7;
+
+    const cells = [];
+    // Leading blanks
+    for (let i = 0; i < firstDow; i++) cells.push({ blank: true });
+    // Actual days
+    for (let d = 1; d <= daysInMonth; d++) cells.push({ day: d });
+    // Trailing to fill 7-wide rows (optional — keeps grid tidy)
+    while (cells.length % 7 !== 0) cells.push({ blank: true });
+
+    const todayIso = (window.MVOW_DATA && MVOW_DATA.localDateIso) ? MVOW_DATA.localDateIso(new Date()) : '';
+    const pad = (n) => (n < 10 ? '0' + n : '' + n);
+
+    let statsPlanned = 0, statsDone = 0, statsMins = 0;
+    entry.plannedByDate.forEach((_, iso) => {
+      if (iso.startsWith(year + '-' + pad(month + 1))) statsPlanned += 1;
+    });
+    entry.doneByDate.forEach((v, iso) => {
+      if (iso.startsWith(year + '-' + pad(month + 1))) {
+        statsDone += 1;
+        statsMins += (v.mins || 0);
+      }
+    });
+
+    const lblMarked = (window.I18N ? I18N.t('weekly-review.tarix_modal_marked', 'kun belgilangan') : 'kun belgilangan');
+    const lblDoneShort = (window.I18N ? I18N.t('weekly-review.tarix_modal_done', 'kun bajarildi') : 'kun bajarildi');
+    const lblFocusHrs = (window.I18N ? I18N.t('weekly-review.tarix_modal_focus_hours', 'soat fokus') : 'soat fokus');
+    const focusHrs = Math.round(statsMins / 60 * 10) / 10;
+    document.getElementById('calStats').innerHTML = `
+      <span><span class="em">${statsPlanned}</span> ${lblMarked}</span>
+      <span class="sep">·</span>
+      <span><span class="em">${statsDone}</span> ${lblDoneShort}</span>
+      <span class="sep">·</span>
+      <span><span class="em">${focusHrs}</span> ${lblFocusHrs}</span>
+    `;
+
+    const grid = document.getElementById('calGrid');
+    grid.innerHTML = cells.map(c => {
+      if (c.blank) return `<div class="cal-cell out"></div>`;
+      const iso = year + '-' + pad(month + 1) + '-' + pad(c.day);
+      const isPast = iso < todayIso;
+      const isToday = iso === todayIso;
+      const planned = entry.plannedByDate.has(iso);
+      const done = entry.doneByDate.get(iso);
+      let cls = 'cal-cell';
+      let valHtml = '';
+      if (done) {
+        cls += ' done';
+        const hrs = Math.round(done.mins / 60 * 10) / 10;
+        if (hrs > 0) valHtml = `<div class="v">${hrs}s</div>`;
+      } else if (planned && isPast) {
+        cls += ' missed';
+      } else if (planned) {
+        cls += ' planned';
+      }
+      if (isToday) cls += ' today';
+      return `<div class="${cls}"><div class="d">${c.day}</div>${valHtml}</div>`;
+    }).join('');
   }
 
   document.addEventListener('DOMContentLoaded', () => {
-    // Faqat real ma'lumot — namuna ko'rsatilmaydi
-    const data = getWeekData();
-    const hasReal = data.some(v => v > 0);
-    const max = Math.max(...data, 1);
+    let cur = 'week';
+    render(cur);
+    renderTasksList();
 
-    // Asosiy raqamlar
-    const totalH = Math.round(data.reduce((s,v) => s + v, 0) * 10) / 10;
-    const sessionTotal = data.reduce((s,v) => s + Math.round(v / 0.75), 0);
-    const streak = parseInt(localStorage.getItem('mvow.streak') || '0', 10);
+    // Milestone celebration — fires once when streak crosses 7 / 30 / 100
+    try {
+      const _streak = parseInt(localStorage.getItem('mvow.streak') || '0', 10);
+      const MILESTONES = [7, 30, 100];
+      const seenKey = 'mvow.milestone.seen';
+      const seen = JSON.parse(localStorage.getItem(seenKey) || '[]');
+      const due = MILESTONES.find(m => _streak >= m && !seen.includes(m));
+      if (due && window.MVOW_MOTION && typeof MVOW_MOTION.milestoneMark === 'function') {
+        const _target = document.getElementById('heroNum');
+        if (_target) {
+          // Defer one frame so chart bar height transition + render() text update settle first
+          requestAnimationFrame(() => {
+            MVOW_MOTION.milestoneMark(_target, { streak: _streak });
+          });
+          seen.push(due);
+          localStorage.setItem(seenKey, JSON.stringify(seen));
+        }
+      }
+    } catch (e) { /* milestone is non-critical — never block render */ }
+    document.querySelectorAll('.tab').forEach(t => {
+      t.addEventListener('click', () => {
+        document.querySelectorAll('.tab').forEach(x => x.classList.remove('on'));
+        t.classList.add('on');
+        cur = t.dataset.range;
+        render(cur);
+      });
+    });
 
-    const focusEl = document.querySelector('[data-mvow="week.focusHours"]');
-    if (focusEl) focusEl.textContent = totalH || 0;
-    const sessEl = document.querySelector('[data-mvow="week.sessionCount"]');
-    if (sessEl) sessEl.textContent = sessionTotal || 0;
-    const streakEl = document.querySelector('[data-mvow="streak"]');
-    if (streakEl) streakEl.textContent = streak;
-    const changeEl = document.querySelector('[data-mvow="week.change"]');
-    if (changeEl) changeEl.textContent = hasReal ? '+' + sessionTotal + ' ish' : '—';
-
-    // Chart
-    const chart = document.getElementById('chart');
-    const days = document.getElementById('days');
-    const labels = ['Du','Se','Ch','Pa','Ju','Sh','Ya'];
-    const todayIdx = (new Date().getDay() + 6) % 7; // Du = 0
-
-    data.forEach((v, i) => {
-      const bar = document.createElement('div');
-      bar.className = 'bar' + (v < max * .5 ? ' dim' : '');
-      bar.style.height = Math.max(2, (v / max) * 100) + '%';
-      chart.appendChild(bar);
-      const lbl = document.createElement('span');
-      lbl.textContent = labels[i] + (i === todayIdx ? ' ·' : '');
-      days.appendChild(lbl);
+    // Calendar modal wiring
+    const overlay = document.getElementById('calOverlay');
+    document.getElementById('calClose').addEventListener('click', closeCalendar);
+    overlay.addEventListener('click', (e) => {
+      if (e.target === overlay) closeCalendar();
+    });
+    document.getElementById('calPrev').addEventListener('click', () => {
+      _calCurrent.month -= 1;
+      if (_calCurrent.month < 0) { _calCurrent.month = 11; _calCurrent.year -= 1; }
+      renderCalendar();
+    });
+    document.getElementById('calNext').addEventListener('click', () => {
+      _calCurrent.month += 1;
+      if (_calCurrent.month > 11) { _calCurrent.month = 0; _calCurrent.year += 1; }
+      renderCalendar();
+    });
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape' && overlay.classList.contains('on')) closeCalendar();
     });
   });
-  document.querySelectorAll('.tab').forEach(t => t.addEventListener('click', () => {
-    document.querySelectorAll('.tab').forEach(x => x.classList.remove('on'));
-    t.classList.add('on');
-  }));
 </script>
 
+<script src="back-btn.js?v=28.4.0"></script>
 </body>
 </html>

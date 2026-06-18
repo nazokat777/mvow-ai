@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <title>{brand} — Gallereya</title>
-<meta name="description" content="Intizom do'sti — sening do'sting.">
+<meta name="description" content="Intizom do'sti — sizning do'stingiz.">
 <link rel="manifest" href="manifest.webmanifest">
 <meta name="theme-color" content="#04060B">
 <link rel="apple-touch-icon" href="assets/mnsm-logo.png">
@@ -14,7 +14,7 @@
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500&family=Inter:wght@300;400;500&display=swap" rel="stylesheet">
 <style>
   * { box-sizing: border-box; margin: 0; padding: 0; }
-  :root { --void:#04060B; --void-soft:#0C0F16; --text:#F5F2EC; --text-mid:#B8BBC2; --text-dim:#9CA0A8; --accent:#00E5D4; }
+  :root { --void:#04060B; --void-soft:#0C0F16; --text:#F5F2EC; --text-mid:#B8BBC2; --text-dim:#9CA0A8; }
   body { background: var(--void); font-family:'Inter',sans-serif; color: var(--text); min-height: 100vh; padding: 40px 24px 40px; -webkit-font-smoothing: antialiased; }
   .wrap { max-width: 1100px; margin: 0 auto; }
   .h { text-align:center; margin-bottom: 48px; }
@@ -24,7 +24,7 @@
   .section .lbl { font-size: 11px; letter-spacing: 4px; color: var(--text-dim); text-transform: uppercase; padding: 0 4px 16px; }
   .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 16px; }
   .card { background: var(--void-soft); border-radius: 12px; overflow: hidden; text-decoration: none; color: var(--text); transition: transform .15s, box-shadow .15s; display: flex; flex-direction: column; }
-  .card:hover { transform: translateY(-2px); box-shadow: 0 8px 24px rgba(0,229,212,.12); }
+  .card:hover { transform: translateY(-2px); box-shadow: 0 8px 24px rgba(212,175,55,.12); }
   .thumb { height: 400px; background: #000; overflow: hidden; position: relative; }
   .thumb iframe { border: 0; width: 380px; height: 800px; transform: scale(0.5); transform-origin: top left; pointer-events: none; }
   .card .lbl-row { padding: 14px 14px 16px; display: flex; align-items: baseline; gap: 10px; }
@@ -37,14 +37,15 @@
     .card .name { font-size: 12px; }
   }
 </style>
+<link rel="stylesheet" href="theme.css">
 </head>
 <body>
 
 <div class="wrap">
 
   <div class="h">
-    <div class="title" data-brand="name">brend</div>
-    <div class="sub">19 ekran · preview</div>
+    <div class="title" data-brand="name">Daywarden</div>
+    <div class="sub">15 ekran · preview</div>
   </div>
 
   <div class="section">
@@ -53,13 +54,13 @@
       <a class="card" href="intro.html"><div class="thumb"><iframe src="intro.html" loading="lazy"></iframe></div><div class="lbl-row"><span class="num">1</span><span class="name">Tanishuv</span></div></a>
       <a class="card" href="anketa.html"><div class="thumb"><iframe src="anketa.html" loading="lazy"></iframe></div><div class="lbl-row"><span class="num">2</span><span class="name">Anketa</span></div></a>
       <a class="card" href="vada.html"><div class="thumb"><iframe src="vada.html" loading="lazy"></iframe></div><div class="lbl-row"><span class="num">3</span><span class="name">Va'da</span></div></a>
+      <a class="card" href="maqsadlar.html"><div class="thumb"><iframe src="maqsadlar.html" loading="lazy"></iframe></div><div class="lbl-row"><span class="num">4</span><span class="name">Maqsadlar</span></div></a>
     </div>
   </div>
 
   <div class="section">
     <div class="lbl">Sozlama</div>
     <div class="grid">
-      <a class="card" href="permissions.html"><div class="thumb"><iframe src="permissions.html" loading="lazy"></iframe></div><div class="lbl-row"><span class="num">4</span><span class="name">Ruxsatlar</span></div></a>
       <a class="card" href="settings.html"><div class="thumb"><iframe src="settings.html" loading="lazy"></iframe></div><div class="lbl-row"><span class="num">5</span><span class="name">Sozlamalar</span></div></a>
     </div>
   </div>
@@ -67,36 +68,32 @@
   <div class="section">
     <div class="lbl">Kun</div>
     <div class="grid">
-      <a class="card" href="alarm.html"><div class="thumb"><iframe src="alarm.html" loading="lazy"></iframe></div><div class="lbl-row"><span class="num">6</span><span class="name">Uyg'on</span></div></a>
-      <a class="card" href="home.html"><div class="thumb"><iframe src="home.html" loading="lazy"></iframe></div><div class="lbl-row"><span class="num">7</span><span class="name">Bosh sahifa</span></div></a>
-      <a class="card" href="routine.html"><div class="thumb"><iframe src="routine.html" loading="lazy"></iframe></div><div class="lbl-row"><span class="num">8</span><span class="name">Rejani ayt</span></div></a>
-      <a class="card" href="today-plan.html"><div class="thumb"><iframe src="today-plan.html" loading="lazy"></iframe></div><div class="lbl-row"><span class="num">9</span><span class="name">Bugungi reja</span></div></a>
-      <a class="card" href="rejalar.html"><div class="thumb"><iframe src="rejalar.html" loading="lazy"></iframe></div><div class="lbl-row"><span class="num">10</span><span class="name">Uzoq yo'l</span></div></a>
-      <a class="card" href="calendar.html"><div class="thumb"><iframe src="calendar.html" loading="lazy"></iframe></div><div class="lbl-row"><span class="num">11</span><span class="name">Kalendar</span></div></a>
+      <a class="card" href="home.html"><div class="thumb"><iframe src="home.html" loading="lazy"></iframe></div><div class="lbl-row"><span class="num">6</span><span class="name">Bosh sahifa</span></div></a>
+      <a class="card" href="alarm.html"><div class="thumb"><iframe src="alarm.html" loading="lazy"></iframe></div><div class="lbl-row"><span class="num">10</span><span class="name">Budilnik</span></div></a>
     </div>
   </div>
 
   <div class="section">
     <div class="lbl">Bajarish</div>
     <div class="grid">
-      <a class="card" href="day-flow.html"><div class="thumb"><iframe src="day-flow.html" loading="lazy"></iframe></div><div class="lbl-row"><span class="num">12</span><span class="name">Bugungi yo'l</span></div></a>
-      <a class="card" href="hard-lock.html"><div class="thumb"><iframe src="hard-lock.html" loading="lazy"></iframe></div><div class="lbl-row"><span class="num">13</span><span class="name">Fokus rejimi</span></div></a>
-      <a class="card" href="negotiation.html"><div class="thumb"><iframe src="negotiation.html" loading="lazy"></iframe></div><div class="lbl-row"><span class="num">14</span><span class="name">Diqqat sinovi</span></div></a>
-      <a class="card" href="session-reflection.html"><div class="thumb"><iframe src="session-reflection.html" loading="lazy"></iframe></div><div class="lbl-row"><span class="num">15</span><span class="name">Bajardim</span></div></a>
-      <a class="card" href="kechqurun.html"><div class="thumb"><iframe src="kechqurun.html" loading="lazy"></iframe></div><div class="lbl-row"><span class="num">16</span><span class="name">Kun yakuni</span></div></a>
+      <a class="card" href="hard-lock.html"><div class="thumb"><iframe src="hard-lock.html" loading="lazy"></iframe></div><div class="lbl-row"><span class="num">11</span><span class="name">Fokus taymeri</span></div></a>
+      <a class="card" href="session-reflection.html"><div class="thumb"><iframe src="session-reflection.html" loading="lazy"></iframe></div><div class="lbl-row"><span class="num">12</span><span class="name">Bajardim</span></div></a>
+      <a class="card" href="kechqurun.html"><div class="thumb"><iframe src="kechqurun.html" loading="lazy"></iframe></div><div class="lbl-row"><span class="num">13</span><span class="name">Kun yakuni</span></div></a>
     </div>
   </div>
 
   <div class="section">
     <div class="lbl">Natija</div>
     <div class="grid">
-      <a class="card" href="notifications.html"><div class="thumb"><iframe src="notifications.html" loading="lazy"></iframe></div><div class="lbl-row"><span class="num">17</span><span class="name">Xabarlar</span></div></a>
-      <a class="card" href="weekly-review.html"><div class="thumb"><iframe src="weekly-review.html" loading="lazy"></iframe></div><div class="lbl-row"><span class="num">18</span><span class="name">Natijalar</span></div></a>
-      <a class="card" href="celebrate.html"><div class="thumb"><iframe src="celebrate.html" loading="lazy"></iframe></div><div class="lbl-row"><span class="num">19</span><span class="name">Bayram</span></div></a>
+      <a class="card" href="weekly-review.html"><div class="thumb"><iframe src="weekly-review.html" loading="lazy"></iframe></div><div class="lbl-row"><span class="num">14</span><span class="name">Tarix</span></div></a>
+      <a class="card" href="celebrate.html"><div class="thumb"><iframe src="celebrate.html" loading="lazy"></iframe></div><div class="lbl-row"><span class="num">15</span><span class="name">Bayram</span></div></a>
     </div>
   </div>
 
 </div>
 
+<script src="i18n.js?v=28.4.0"></script>
+<script src="lang-switcher.js?v=28.4.0" defer></script>
+<script src="back-btn.js?v=28.4.0"></script>
 </body>
 </html>
