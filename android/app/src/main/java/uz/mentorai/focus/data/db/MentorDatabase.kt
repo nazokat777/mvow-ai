@@ -16,7 +16,9 @@ import uz.mentorai.focus.data.stats.DailyStatsEntity
         DailyStatsEntity::class
     ],
     version = 3,
-    exportSchema = false
+    // Schema tarixi app/schemas/ ga eksport qilinadi — kelgusi versiyalar uchun
+    // qo'lda Migration(n, n+1) yozish imkonini beradi (ma'lumot o'chmaydi).
+    exportSchema = true
 )
 abstract class MentorDatabase : RoomDatabase() {
     abstract fun sessionDao(): SessionDao

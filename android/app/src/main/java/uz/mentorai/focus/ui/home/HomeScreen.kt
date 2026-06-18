@@ -34,6 +34,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import kotlinx.coroutines.delay
+import uz.mentorai.focus.BuildConfig
 import uz.mentorai.focus.core.permissions.PermissionChecker
 import uz.mentorai.focus.core.permissions.PermissionStep
 import uz.mentorai.focus.ui.components.MentorPrimaryButton
@@ -205,9 +206,12 @@ private fun BoxScope.StartSessionCard(
             enabled = canStart
         )
 
-        // DEV preview — yangi Hard Lock dizaynini ko'rish
+        // DEV preview gallereyasi — FAQAT debug build'da ko'rinadi.
+        // Release APK'da bu tugmalar yo'q va tegishli activity'lar manifestda
+        // e'lon qilinmagan (app/src/debug/AndroidManifest.xml ga ko'chirilgan).
         val previewContext = LocalContext.current
 
+        if (BuildConfig.DEBUG) {
         // ASOSIY OQIM — to'liq demo kun zanjiri (eng muhim tugma)
         MentorPrimaryButton(
             text = "✦  TO'LIQ KUN ZANJIRINI KO'R",
@@ -362,6 +366,7 @@ private fun BoxScope.StartSessionCard(
                 )
             }
         )
+        }  // if (BuildConfig.DEBUG) — DEV preview gallereyasi tugadi
     }
 }
 

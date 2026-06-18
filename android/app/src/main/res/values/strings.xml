@@ -12,6 +12,9 @@
     <string name="notif_channel_alarm">Sessiya boshlanish</string>
     <string name="notif_channel_alarm_desc">Rejadagi vazifa boshlanish vaqtida bildirishnoma</string>
 
+    <string name="wake_notif_title">Sessiya vaqti keldi</string>
+    <string name="wake_notif_text">Fokus sessiyangizni boshlash vaqti keldi. Ekranni oching.</string>
+
     <string name="device_admin_label">Mentor-AI: Intizom himoyasi</string>
     <string name="device_admin_description">Mentor-AI ni tasodifan oʻchirib qoʻyishdan saqlaydi va sessiya davomida ekranni qulflash imkonini beradi.</string>
 </resources>

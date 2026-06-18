@@ -72,7 +72,9 @@ class NegotiationFsm @Inject constructor() {
     companion object {
         const val MAX_REQUESTS_PER_DAY = 3
         const val MIN_MINUTES_BEFORE_NEGOTIATION = 25
-        val HIGH_RISK_CATEGORIES = setOf("social_media", "short_video", "worship")
+        // Ibodat (worship) ataylab chiqarib tashlandi — uni "yuqori xavfli chalg'ituvchi"
+        // deb belgilash qadriyatlarga zid. Ibodat focus kategoriyasi sifatida qoladi.
+        val HIGH_RISK_CATEGORIES = setOf("social_media", "short_video")
     }
 }
 

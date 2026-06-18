@@ -10,11 +10,13 @@ import androidx.work.CoroutineWorker
 import androidx.work.WorkerParameters
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedInject
+import kotlinx.coroutines.flow.first
 import uz.mentorai.focus.MainActivity
 import uz.mentorai.focus.MentorApplication
 import uz.mentorai.focus.R
 import uz.mentorai.focus.core.permissions.PermissionChecker
 import uz.mentorai.focus.core.permissions.PermissionStep
+import uz.mentorai.focus.data.session.SessionEntity
 import uz.mentorai.focus.data.session.SessionRepository
 
 /**
@@ -35,9 +37,14 @@ class GuardValidationWorker @AssistedInject constructor(
         val overlayOk = PermissionChecker.isGranted(ctx, PermissionStep.OVERLAY)
 
         if (!accessibilityOk || !overlayOk) {
-            // Sessiya bormi?
-            sessionRepository.activeSession  // Just to ensure repo loaded
-            notifyTamper(!accessibilityOk, !overlayOk)
+            // Faqat faol sessiya paytida ruxsat buzilishi muhim — aks holda
+            // foydalanuvchini bekorga bezovta qilmaymiz.
+            val active = sessionRepository.activeSession.first()
+            if (active != null) {
+                notifyTamper(!accessibilityOk, !overlayOk)
+                // Himoya buzildi — sessiyani penalty bilan tugatamiz (streak uziladi).
+                sessionRepository.endActiveSession(SessionEntity.REASON_FORCE_STOP)
+            }
         }
 
         return Result.success()

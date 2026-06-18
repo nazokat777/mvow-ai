@@ -7,6 +7,7 @@ import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
+import uz.mentorai.focus.BuildConfig
 import uz.mentorai.focus.data.db.MentorDatabase
 import uz.mentorai.focus.data.scheduled.ScheduledSessionDao
 import uz.mentorai.focus.data.session.SessionDao
@@ -25,7 +26,14 @@ object DatabaseModule {
             MentorDatabase::class.java,
             MentorDatabase.DB_NAME
         )
-            .fallbackToDestructiveMigration(true)  // Sprint 2.5'gacha — migration yo'q
+            .apply {
+                // Faqat DEBUG build'da schema o'zgarsa bazani qayta quramiz (dev qulayligi).
+                // RELEASE'da bu YO'Q — ma'lumot o'chmasligi uchun. Versiya oshganda
+                // .addMigrations(MIGRATION_n_n1) bilan migration yozish SHART.
+                if (BuildConfig.DEBUG) {
+                    fallbackToDestructiveMigration(true)
+                }
+            }
             .build()
 
     @Provides

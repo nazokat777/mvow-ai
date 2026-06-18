@@ -57,6 +57,10 @@ class AnthropicClient @Inject constructor(
             .post(body)
             .build()
 
+        // Anthropic `stop_reason`ni `message_delta` event'ida yuboradi (`message_stop`da emas).
+        // Uni shu yerda ushlab, oqim tugaganda MessageStop bilan emit qilamiz.
+        var capturedStopReason: String? = null
+
         val factory = EventSources.createFactory(httpClient)
         val source: EventSource = factory.newEventSource(httpRequest, object : EventSourceListener() {
             override fun onEvent(
@@ -93,9 +97,12 @@ class AnthropicClient @Inject constructor(
                                 }
                             }
                         }
+                        "message_delta" -> {
+                            val delta = parsed["delta"] as? Map<*, *>
+                            (delta?.get("stop_reason") as? String)?.let { capturedStopReason = it }
+                        }
                         "message_stop" -> {
-                            val msg = parsed["message"] as? Map<*, *>
-                            trySend(StreamEvent.MessageStop(msg?.get("stop_reason") as? String))
+                            trySend(StreamEvent.MessageStop(capturedStopReason))
                         }
                     }
                 } catch (e: Exception) {

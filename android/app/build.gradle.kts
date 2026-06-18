@@ -100,6 +100,11 @@ android {
     }
 }
 
+// Room schema tarixini app/schemas/ ga eksport qilamiz (migration yozish uchun zarur).
+ksp {
+    arg("room.schemaLocation", "$projectDir/schemas")
+}
+
 dependencies {
     // Core
     implementation(libs.androidx.core.ktx)

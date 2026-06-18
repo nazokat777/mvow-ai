@@ -2,7 +2,6 @@ package uz.mentorai.focus.data.stats
 
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
-import java.text.SimpleDateFormat
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 import java.util.Locale
@@ -53,21 +52,30 @@ class StatsRepository @Inject constructor(
 
     /**
      * Streak: bugundan boshlab orqaga qarab, har kuni `countsTowardStreak`
-     * bo'lsa hisoblaymiz. Bo'sh kun (yozuv yo'q) — streak buziladi.
+     * bo'lsa hisoblaymiz.
+     *
+     * Muhim: bugun hali yozuv bo'lmasa (foydalanuvchi hali hech narsa qilmagan)
+     * streak uzilmaydi — kechagi kunga o'tamiz. O'tgan kunlarda yozuv yo'qligi
+     * esa haqiqiy uzilish bo'ladi.
      */
     private fun computeStreak(stats: List<DailyStatsEntity>): Int {
         if (stats.isEmpty()) return 0
         val byDate = stats.associateBy { it.date }
         var streak = 0
         var date = LocalDate.now()
-        val formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd")
+        val today = LocalDate.now()
 
         while (true) {
-            val key = date.format(formatter)
+            val key = date.format(DATE_FMT)
             val entry = byDate[key]
-            if (entry == null) break
-            // Bugun uchun: hech qanday sessiya yo'q bo'lsa ham uzilmaydi (kun davom etmoqda)
-            val isToday = date == LocalDate.now()
+            val isToday = date == today
+
+            if (entry == null) {
+                // Bugun yozuv yo'q — kun hali davom etmoqda, uzmaymiz.
+                // O'tgan kunda yozuv yo'q — haqiqiy uzilish.
+                if (isToday) { date = date.minusDays(1); continue } else break
+            }
+
             when {
                 entry.streakBroken -> break
                 entry.countsTowardStreak -> { streak++; date = date.minusDays(1) }
@@ -78,7 +86,12 @@ class StatsRepository @Inject constructor(
         return streak
     }
 
-    private fun todayKey(): String =
-        SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
-            .format(java.util.Date())
+    private fun todayKey(): String = LocalDate.now().format(DATE_FMT)
+
+    companion object {
+        // Locale.ROOT — qurilma tili (masalan, arabcha) raqamlarni o'zgartirmasligi uchun.
+        // Saqlash va o'qish bitta formatterdan foydalanadi.
+        private val DATE_FMT: DateTimeFormatter =
+            DateTimeFormatter.ofPattern("yyyy-MM-dd", Locale.ROOT)
+    }
 }

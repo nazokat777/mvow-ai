@@ -1,4 +1,4 @@
-v<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools">
 
@@ -21,6 +21,8 @@ v<?xml version="1.0" encoding="utf-8"?>
     <uses-permission android:name="android.permission.DISABLE_KEYGUARD" />
     <uses-permission android:name="android.permission.SCHEDULE_EXACT_ALARM" />
     <uses-permission android:name="android.permission.USE_EXACT_ALARM" />
+    <!-- Full-screen-intent — alarm vaqtida lock screen ustida sessiya ekranini ko'tarish (Android 14+) -->
+    <uses-permission android:name="android.permission.USE_FULL_SCREEN_INTENT" />
 
     <!-- App monitoring -->
     <uses-permission android:name="android.permission.PACKAGE_USAGE_STATS"
@@ -80,119 +82,8 @@ v<?xml version="1.0" encoding="utf-8"?>
             android:excludeFromRecents="true"
             android:theme="@style/Theme.MentorAI.Overlay" />
 
-        <!-- Hard Lock preview (dev) — sessiya boshlamasdan dizaynni ko'rish -->
-        <activity
-            android:name=".ui.preview.HardLockPreviewActivity"
-            android:exported="false"
-            android:theme="@style/Theme.MentorAI.Overlay" />
-
-        <!-- Tonggi tasdiq preview (dev) -->
-        <activity
-            android:name=".ui.preview.MorningConfirmPreviewActivity"
-            android:exported="false"
-            android:theme="@style/Theme.MentorAI" />
-
-        <!-- Ertangi reja preview (dev) -->
-        <activity
-            android:name=".ui.preview.TomorrowPlanPreviewActivity"
-            android:exported="false"
-            android:theme="@style/Theme.MentorAI" />
-
-        <!-- Kunlik oqim preview (dev) -->
-        <activity
-            android:name=".ui.preview.DayFlowPreviewActivity"
-            android:exported="false"
-            android:theme="@style/Theme.MentorAI" />
-
-        <!-- Routine (AI rejalashtirgich) preview (dev) -->
-        <activity
-            android:name=".ui.preview.RoutinePreviewActivity"
-            android:exported="false"
-            android:theme="@style/Theme.MentorAI" />
-
-        <!-- Celebrate (haftalik bayram) preview (dev) -->
-        <activity
-            android:name=".ui.preview.CelebratePreviewActivity"
-            android:exported="false"
-            android:theme="@style/Theme.MentorAI" />
-
-        <!-- Pomodoro preview (dev) -->
-        <activity
-            android:name=".ui.preview.PomodoroPreviewActivity"
-            android:exported="false"
-            android:theme="@style/Theme.MentorAI" />
-
-        <!-- Daily brief preview (dev) -->
-        <activity
-            android:name=".ui.preview.DailyBriefPreviewActivity"
-            android:exported="false"
-            android:theme="@style/Theme.MentorAI" />
-
-        <!-- Session reflection preview (dev) -->
-        <activity
-            android:name=".ui.preview.SessionReflectionPreviewActivity"
-            android:exported="false"
-            android:theme="@style/Theme.MentorAI" />
-
-        <!-- Stuck (turg'unlik) preview (dev) -->
-        <activity
-            android:name=".ui.preview.StuckPreviewActivity"
-            android:exported="false"
-            android:theme="@style/Theme.MentorAI" />
-
-        <!-- Mentor chat preview (dev) -->
-        <activity
-            android:name=".ui.preview.ChatPreviewActivity"
-            android:exported="false"
-            android:theme="@style/Theme.MentorAI" />
-
-        <!-- Urgent time preview (dev) -->
-        <activity
-            android:name=".ui.preview.UrgentTimePreviewActivity"
-            android:exported="false"
-            android:theme="@style/Theme.MentorAI" />
-
-        <!-- Rest mode preview (dev) -->
-        <activity
-            android:name=".ui.preview.RestModePreviewActivity"
-            android:exported="false"
-            android:theme="@style/Theme.MentorAI" />
-
-        <!-- Weekly review preview (dev) -->
-        <activity
-            android:name=".ui.preview.WeeklyReviewPreviewActivity"
-            android:exported="false"
-            android:theme="@style/Theme.MentorAI" />
-
-        <!-- Notifications preview (dev) -->
-        <activity
-            android:name=".ui.preview.NotificationsPreviewActivity"
-            android:exported="false"
-            android:theme="@style/Theme.MentorAI" />
-
-        <!-- Online class preview (dev) -->
-        <activity
-            android:name=".ui.preview.OnlineClassPreviewActivity"
-            android:exported="false"
-            android:theme="@style/Theme.MentorAI" />
-
-        <!-- Add session preview (dev) -->
-        <activity
-            android:name=".ui.preview.AddSessionPreviewActivity"
-            android:exported="false"
-            android:theme="@style/Theme.MentorAI" />
-
-        <!-- Profile preview (dev) -->
-        <activity
-            android:name=".ui.preview.ProfilePreviewActivity"
-            android:exported="false"
-            android:theme="@style/Theme.MentorAI" />
-
-        <!-- DAILY FLOW DEMO — end-to-end zanjir (asosiy ilova oqimini ko'rsatadi) -->
-        <activity
-            android:name=".ui.demo.DailyFlowDemoActivity"
-            android:exported="false"
-            android:theme="@style/Theme.MentorAI" />
+        <!-- Preview/demo activity'lar app/src/debug/AndroidManifest.xml ga ko'chirildi
+             (faqat debug build'da bo'ladi, release APK'ga chiqmaydi). -->
 
         <!-- Asosiy guard service -->
         <service
