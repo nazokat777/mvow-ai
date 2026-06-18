@@ -246,8 +246,8 @@
       display: flex;
       align-items: center;
       gap: 8px;
-      /* Chap tomonda universal "orqaga" tugmasi (back-btn.js) uchun joy */
-      padding-left: 48px;
+      /* Chap tomonda universal "orqaga" (‹) va "mundarija" (☰) tugmalari uchun joy */
+      padding-left: 104px;
     }
     .seq-btn {
       pointer-events: auto;
@@ -373,7 +373,6 @@
         </div>
         <div class="seq-progress"><div class="seq-progress-fill" style="width:${globalPercent}%"></div></div>
       </div>
-      <a class="seq-btn" href="menu.html" aria-label="Barcha ekranlar" title="Yopish">×</a>
     </div>
   `;
   document.body.appendChild(top);
