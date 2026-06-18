@@ -758,23 +758,23 @@
   };
 
   // Tashqaridan chaqirish uchun: Ha (done) — history'ga ham qo'shiladi
+  // MUHIM: startedAt va completedAt — HAQIQIY bajarilgan vaqt (rejadagi vaqt emas).
+  // task.actualStartedAt bo'lsa (taymer'dan), uni ishlatamiz. Aks holda
+  // hozirgi vaqtdan dur'ni ayirib hisoblaymiz.
   DATA.markTaskDone = function (task, taskKey, note) {
     DATA.setTaskState(taskKey, { status: 'done' });
-    const m = (task.time || '').match(/^(\d{1,2}):(\d{2})$/);
-    let startedAt = Date.now();
-    if (m) {
-      const d = new Date();
-      d.setHours(+m[1], +m[2], 0, 0);
-      startedAt = d.getTime();
-    }
+    const completedAt = Date.now();
     const durMin = DATA.parseDurMins(task.dur);
+    const startedAt = (typeof task.actualStartedAt === 'number' && task.actualStartedAt > 0)
+      ? task.actualStartedAt
+      : (completedAt - durMin * 60 * 1000);
     DATA.addHistory({
       name: task.name || 'Ish',
       plannedTime: task.time || '',
       plannedDur: task.dur || '',
       dateIso: DATA.today.iso,
       startedAt,
-      completedAt: Date.now(),
+      completedAt,
       actualMins: durMin,
       withTimer: false,
       note: (note || '').trim()
