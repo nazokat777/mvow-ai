@@ -110,6 +110,18 @@
   .t-row.missed .tstat { background: #FF4757; font-size: 12px; color: #fff; line-height: 1; font-weight: 600; }
   /* . pending */
   .t-row.pending .tstat { border: 1.5px solid rgba(255,255,255,.18); background: transparent; }
+  /* ⏰ overdue — bugun vaqti o'tdi, lekin hali bajarish mumkin (jazo emas, eslatma) */
+  .t-item { display: flex; flex-direction: column; }
+  .t-row.overdue .ttime { color: #F5C26B; }
+  .t-row.overdue .tstat { border: 1.5px solid rgba(245,194,107,.5); background: transparent; }
+  .t-note {
+    margin: 5px 12px 2px 40px;
+    font-family: 'Cormorant Garamond', serif;
+    font-style: italic;
+    font-size: 11.5px;
+    color: #F5C26B;
+    line-height: 1.45;
+  }
   /* active — hozir ishlayotgan */
   .t-row.active { border: 1px solid rgba(212,175,55,.35); background: rgba(212,175,55,.04); }
   .t-row.active .ttime { color: var(--accent); }
@@ -500,6 +512,7 @@
         tasksPrompt.style.display = 'none';
       } else {
         const completedKeys = (window.MVOW_DATA ? MVOW_DATA.getCompletedKeysToday() : new Set());
+        const overdueTxt = T('home.overdue_reminder', "Vaqti o'tdi — hali kech emas, bugun baribir bajaring");
         const sorted = [...plan].sort((a,b) => tKey(a.time) - tKey(b.time));
         tasksList.innerHTML = sorted.map((t, i) => {
           const taskKey = window.MVOW_DATA && t.time && t.name ? MVOW_DATA.taskKey(MVOW_DATA.today.iso, t.time, t.name) : '';
@@ -509,17 +522,23 @@
           const durMin = window.MVOW_DATA ? MVOW_DATA.parseDurMins(t.dur) : 60;
           const endMin = startMin + durMin;
           const isActive = nowMin >= startMin && nowMin < endMin && !isDone;
-          const isMissed = !isDone && (state.status === 'missed' || nowMin > endMin);
+          const isExplicitMissed = !isDone && state.status === 'missed';
+          // Bugun vaqti o'tib ketgan, lekin bajarilmagan — bu "o'tkazib yuborildi" EMAS.
+          // Kun hali tugamagan, shuning uchun muloyim eslatma ko'rsatamiz.
+          const isOverdue = !isDone && !isExplicitMissed && nowMin > endMin;
           let cls = 'pending';
           let icon = '·';
           if (isDone) { cls = 'done'; icon = ''; }
-          else if (isMissed) { cls = 'missed'; icon = '✗'; }
+          else if (isExplicitMissed) { cls = 'missed'; icon = '✗'; }
+          else if (isOverdue) { cls = 'overdue'; icon = '·'; }
           else if (isActive) { cls = 'active'; icon = '·'; }
-          return `<div class="t-row ${cls}">
-            <span class="ord">${i+1}</span>
-            <span class="ttime">${escapeHtmlH(t.time || '—')}</span>
-            <span class="tname">${escapeHtmlH(t.name || T('today.ish_lbl', 'reja'))}</span>
-            <span class="tstat">${icon === '·' ? '' : icon}</span>
+          return `<div class="t-item">
+            <div class="t-row ${cls}">
+              <span class="ord">${i+1}</span>
+              <span class="ttime">${escapeHtmlH(t.time || '—')}</span>
+              <span class="tname">${escapeHtmlH(t.name || T('today.ish_lbl', 'reja'))}</span>
+              <span class="tstat">${icon === '·' ? '' : icon}</span>
+            </div>${isOverdue ? `<div class="t-note">⏰ ${escapeHtmlH(overdueTxt)}</div>` : ''}
           </div>`;
         }).join('');
         tasksPrompt.style.display = 'block';
