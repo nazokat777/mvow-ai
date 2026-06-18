@@ -234,22 +234,13 @@
     max-width:300px;
     line-height:1.5;
   ">Telefon qulflandi. Fokusda bo'ling.</div>
-  <button id="dlReturnBtn" type="button" style="
-    padding:16px 36px;
-    background:linear-gradient(180deg, var(--accent-bright), var(--accent));
-    color:var(--bg);
+  <div data-i18n="hardlock.deep_lock_tap" style="
     font-family:'Inter',sans-serif;
-    font-size:13px;
-    font-weight:600;
-    letter-spacing:0.24em;
+    font-size:11px;
+    letter-spacing:0.18em;
     text-transform:uppercase;
-    border:none;
-    border-radius:999px;
-    min-height:52px;
-    min-width:240px;
-    cursor:pointer;
-    box-shadow:0 0 30px rgba(245,215,110,0.4);
-  " data-i18n="hardlock.deep_lock_return">Davom etaman</button>
+    color:rgba(245,242,236,0.3);
+  ">Yopish uchun ekranga bosing</div>
 </div>
 
 <!-- 2) Tugagandan keyin so'roq: Bajardingizmi? -->
@@ -514,7 +505,6 @@ document.addEventListener('DOMContentLoaded', function () {
   // ============================================================
   const deepLockOverlay = document.getElementById('deepLockOverlay');
   const dlTime = document.getElementById('dlTime');
-  const dlReturnBtn = document.getElementById('dlReturnBtn');
 
   let idleTimer = null;
   let isDeepLocked = false;
@@ -566,19 +556,16 @@ document.addEventListener('DOMContentLoaded', function () {
     if (isDeepLocked && dlTime) dlTime.textContent = digits.textContent;
   };
 
-  // Activity events — har tegishida idle timer reset
+  // Activity events — har tegishida idle timer reset.
+  // Deep-lock paytida: istalgan bosish/tugma qulf ekranini yopadi (pointermove emas).
   ['pointerdown', 'pointermove', 'keydown'].forEach(ev => {
-    document.addEventListener(ev, (e) => {
-      // deep-lock overlay'da bosish — return tugmasi orqali ochiladi, boshqa joyda javob bermaymiz
-      if (isDeepLocked && e.target !== dlReturnBtn) return;
+    document.addEventListener(ev, () => {
+      if (isDeepLocked) {
+        if (ev === 'pointerdown' || ev === 'keydown') hideDeepLock();
+        return;
+      }
       resetIdleTimer();
     }, { passive: true });
-  });
-
-  // Return button — chuqur qulfdan qaytish
-  dlReturnBtn.addEventListener('click', (e) => {
-    e.stopPropagation();
-    hideDeepLock();
   });
 
   // Taymer rejimi tanlanganda boshlanish — choice tugmalari to keyin override
