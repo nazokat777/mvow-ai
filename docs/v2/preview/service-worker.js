@@ -15,6 +15,7 @@ const ASSETS = [
   './i18n.js',
   './lang-switcher.js',
   './nav-overlay.js',
+  './back-btn.js',
   './manifest.webmanifest',
   './menu.html',
   './gallery.html',

@@ -246,6 +246,8 @@
       display: flex;
       align-items: center;
       gap: 8px;
+      /* Chap tomonda universal "orqaga" tugmasi (back-btn.js) uchun joy */
+      padding-left: 48px;
     }
     .seq-btn {
       pointer-events: auto;
@@ -364,7 +366,6 @@
   top.className = 'seq-top-bar';
   top.innerHTML = `
     <div class="seq-top-row">
-      <button class="seq-btn" id="seqBackBtn" type="button" aria-label="Orqaga" title="Orqaga" style="font-family:inherit;font-size:22px;font-weight:500;">‹</button>
       <div class="seq-progress-wrap">
         <div class="seq-progress-meta">
           <span class="name">${currentSection.name}</span>
@@ -377,25 +378,7 @@
   `;
   document.body.appendChild(top);
 
-  // Back tugmasi mantiqi:
-  //   - referrer ichki (shu domendan) bo'lsa → history.back() (tabiiy)
-  //   - aks holda → home.html (xavfsiz fallback)
-  const backBtn = document.getElementById('seqBackBtn');
-  if (backBtn) {
-    backBtn.addEventListener('click', (e) => {
-      e.preventDefault();
-      const ref = document.referrer || '';
-      const sameOrigin = ref && ref.indexOf(location.origin) === 0;
-      if (sameOrigin && window.history.length > 1) {
-        history.back();
-      } else if (idx > 0) {
-        // history bo'sh — SEQ tartibida orqaga
-        location.href = SEQ[idx - 1];
-      } else {
-        location.href = 'home.html';
-      }
-    });
-  }
+  // Orqaga tugmasi endi universal back-btn.js tomonidan barcha sahifaga qo'yiladi.
 
   // Yon strelka tugmalar olib tashlandi — foydalanuvchi sahifa ichidagi CTA bilan davom etadi
 

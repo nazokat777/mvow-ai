@@ -176,14 +176,8 @@
     <button id="testNotifBtn" type="button" data-i18n="settings.test_notif_btn" style="margin-top:16px;width:100%;padding:14px;background:transparent;border:1px solid rgba(212,175,55,.25);border-radius:8px;color:var(--accent);font-family:'Inter',sans-serif;font-size:12px;letter-spacing:2px;text-transform:uppercase;cursor:pointer;min-height:48px;">Bildirishnoma sinovi</button>
     <div id="testNotifStatus" style="text-align:center;font-size:11px;color:var(--text-mid);margin-top:8px;letter-spacing:1px;"></div>
 
-    <div class="section-lbl" style="margin-top:24px;">Bayram darajasi</div>
-    <div class="section">
-      <div style="display:flex;gap:6px;margin-top:8px;">
-        <button class="intensity-pill" data-val="minimal" type="button">Minimal</button>
-        <button class="intensity-pill" data-val="balanced" type="button">O'rtacha</button>
-        <button class="intensity-pill" data-val="energetic" type="button">Quvvatli</button>
-      </div>
-      <button class="intensity-pill" type="button" id="replayIntro" style="margin-top:10px;width:100%;">Tanishuv ko'rinishini qayta ko'rsatish</button>
+    <div class="section" style="margin-top:24px;">
+      <button class="intensity-pill" type="button" id="replayIntro" data-i18n="settings.replay_intro" style="width:100%;">Tanishuv ko'rinishini qayta ko'rsatish</button>
     </div>
 
     <div class="row" style="margin-top:24px;">
@@ -332,17 +326,6 @@
       });
     });
 
-    // ── Celebration intensity (motion-system) ──
-    const cur = localStorage.getItem('mvow.motion.intensity') || 'balanced';
-    document.querySelectorAll('.intensity-pill[data-val]').forEach(b => {
-      if (b.dataset.val === cur) b.classList.add('active');
-      b.addEventListener('click', () => {
-        document.querySelectorAll('.intensity-pill[data-val]').forEach(x => x.classList.remove('active'));
-        b.classList.add('active');
-        localStorage.setItem('mvow.motion.intensity', b.dataset.val);
-      });
-    });
-
     // ── Replay opening cinematic ──
     document.getElementById('replayIntro')?.addEventListener('click', () => {
       localStorage.removeItem('mvow.motion.introSeen');
@@ -351,5 +334,6 @@
   });
 </script>
 
+<script src="back-btn.js?v=28.4.0"></script>
 </body>
 </html>
