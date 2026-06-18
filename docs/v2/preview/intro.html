@@ -196,18 +196,7 @@ body {
 </head>
 <body>
 
-<video id="cinematic"
-       autoplay
-       muted
-       playsinline
-       preload="auto"
-       disablepictureinpicture
-       disableRemotePlayback
-       poster="assets/intro-poster.jpg">
-  <source src="assets/intro-cinematic.webm" type="video/webm">
-  <source src="assets/intro-cinematic.mp4" type="video/mp4">
-</video>
-
+<!-- Qum soat videosi olib tashlandi — intro matnli ko'rinishda -->
 <div class="vignette"></div>
 
 <div class="loading" id="loading">
@@ -247,7 +236,6 @@ body {
   if (pref || intensity === 'minimal') { setSeen(); go('anketa.html'); return; }
 
   // ===== ELEMENTS =====
-  var video = document.getElementById('cinematic');
   var loading = document.getElementById('loading');
   var fallback = document.getElementById('fallback');
   var veil = document.getElementById('veil');
@@ -259,7 +247,6 @@ body {
     navigated = true;
     veil.classList.add('show');
     if (save !== false) setSeen();
-    try { video.pause(); } catch(e) {}
     setTimeout(function() { go(target); }, 480);
   }
 
@@ -281,57 +268,9 @@ body {
     if (e.key === 'Escape' || e.key === 'Enter') navigate('anketa.html', true);
   });
 
-  // ===== VIDEO EVENTS =====
-  var loadTimeout = null;
-
-  video.addEventListener('loadeddata', function() {
-    loading.classList.add('hide');
-    if (loadTimeout) clearTimeout(loadTimeout);
-  });
-
-  video.addEventListener('canplay', function() {
-    loading.classList.add('hide');
-  });
-
-  video.addEventListener('ended', function() {
-    navigate('anketa.html', true);
-  });
-
-  video.addEventListener('error', function() {
-    console.warn('[intro] Video load failed, showing fallback');
-    loading.classList.add('hide');
-    fallback.classList.add('show');
-  });
-
-  // Autoplay safety — some browsers require user gesture
-  video.play().catch(function(err) {
-    console.warn('[intro] Autoplay blocked:', err);
-    // Show poster + add tap-to-play overlay handled by fallback below
-    // Try again on first user interaction
-    var resumePlay = function() {
-      video.play().catch(function() {});
-      document.removeEventListener('pointerdown', resumePlay);
-    };
-    document.addEventListener('pointerdown', resumePlay, { once: true });
-  });
-
-  // Hard timeout: if video doesn't load in 8s, show fallback
-  loadTimeout = setTimeout(function() {
-    if (video.readyState < 2) {
-      console.warn('[intro] Video load timeout, showing fallback');
-      loading.classList.add('hide');
-      fallback.classList.add('show');
-    }
-  }, 8000);
-
-  // Visibility — pause video when tab hidden
-  document.addEventListener('visibilitychange', function() {
-    if (document.hidden) {
-      try { video.pause(); } catch(e) {}
-    } else if (!navigated) {
-      video.play().catch(function() {});
-    }
-  });
+  // ===== VIDEOSIZ — darhol matnli intro ko'rsatamiz (video keyin qo'shiladi) =====
+  loading.classList.add('hide');
+  fallback.classList.add('show');
 
 })();
 </script>
