@@ -212,12 +212,20 @@
   const next = idx < SEQ.length - 1 ? SEQ[idx + 1] : null;
 
   // 5 ta bo'lim — 14 ekran (permissions settings'ga birlashtirildi)
+  // Bo'lim nomlari tanlangan tilga moslanadi (oldin faqat o'zbekcha edi).
+  const _navLang = (window.I18N && I18N.lang) ? I18N.lang : 'uz';
+  const SECTION_NAMES = {
+    uz: ['Tanishuv',   'Sozlama',   'Kun',   'Bajarish',   'Natija'],
+    ru: ['Знакомство', 'Настройка', 'День',  'Выполнение', 'Итог'],
+    en: ['Intro',      'Setup',     'Day',   'Execution',  'Result']
+  };
+  const _secNames = SECTION_NAMES[_navLang] || SECTION_NAMES.uz;
   const SECTIONS = [
-    { name: 'Tanishuv',  range: [0, 4] },   // 1-4
-    { name: 'Sozlama',   range: [4, 5] },   // 5
-    { name: 'Kun',       range: [5, 9] },   // 6-9
-    { name: 'Bajarish',  range: [9, 12] },  // 10-12
-    { name: 'Natija',    range: [12, 14] }  // 13-14
+    { name: _secNames[0], range: [0, 4] },   // 1-4
+    { name: _secNames[1], range: [4, 5] },   // 5
+    { name: _secNames[2], range: [5, 9] },   // 6-9
+    { name: _secNames[3], range: [9, 12] },  // 10-12
+    { name: _secNames[4], range: [12, 14] }  // 13-14
   ];
   const currentSection = SECTIONS.find(s => idx >= s.range[0] && idx < s.range[1]) || SECTIONS[0];
   const sectionIdx = idx - currentSection.range[0] + 1;
@@ -293,15 +301,27 @@
 
     /* Side arrows o'chirildi — foydalanuvchi sahifa ichidagi tugmalar bilan davom etadi */
 
+    /* === Til tugmasi nav-paneldagi tugmalar (yopish/tarix) bilan to'qnashmasin ===
+       Standalone sahifada top:20px right:20px edi va yopish tugmasi ustiga tushardi.
+       Nav-overlay bo'lganda tepa paneldan pastga tushiramiz. */
+    .lang-switcher {
+      top: max(64px, calc(env(safe-area-inset-top, 0px) + 64px)) !important;
+      right: 12px !important;
+      z-index: 99990 !important;
+    }
+
     /* === Phone ichida scrollbar yashirish === */
     .phone, .phone *, body, html { scrollbar-width: none; -ms-overflow-style: none; }
     .phone::-webkit-scrollbar, .phone *::-webkit-scrollbar,
     body::-webkit-scrollbar, html::-webkit-scrollbar { display: none; width: 0; height: 0; }
 
     /* === Top padding so content doesn't hide behind progress bar === */
+    /* `.wrap` — yangi sahifalar (maqsadlar, maqsad...) `.phone` ishlatmaydi,
+       shuning uchun ularni ham tepa panel + til tugmasi tagiga tushiramiz. */
     .phone .container,
-    .phone > div:first-child:not(.halo):not(.backdrop) {
-      padding-top: max(60px, env(safe-area-inset-top, 60px));
+    .phone > div:first-child:not(.halo):not(.backdrop),
+    body > .wrap {
+      padding-top: max(96px, calc(env(safe-area-inset-top, 0px) + 96px)) !important;
     }
 
     /* === Bottom-bar sticky — CTA hech qachon kesilmasin === */

@@ -34,8 +34,8 @@
         loading: 'Yuklanmoqda...',
         error: 'Xato',
         and: 'va',
-        months_short: "['YAN','FEV','MAR','APR','MAY','IYUN','IYUL','AVG','SEN','OKT','NOY','DEK']",
-        weekdays_long: "['YAKSHANBA','DUSHANBA','SESHANBA','CHORSHANBA','PAYSHANBA','JUMA','SHANBA']"
+        months_short: ['YAN','FEV','MAR','APR','MAY','IYUN','IYUL','AVG','SEN','OKT','NOY','DEK'],
+        weekdays_long: ['YAKSHANBA','DUSHANBA','SESHANBA','CHORSHANBA','PAYSHANBA','JUMA','SHANBA']
       },
       brand: {
         tagline: "sizning intizom do'stingiz"
@@ -268,7 +268,19 @@
         days_unit: 'kun',
         days_left: 'kun qoldi',
         done_lbl: 'Bajarildi',
-        del_confirm: "Bu maqsadni o'chirasizmi? Kalendaringizdan ham olib tashlanadi."
+        del_confirm: "Bu maqsadni o'chirasizmi? Kalendaringizdan ham olib tashlanadi.",
+        sessions_lbl: 'Sessiyalar',
+        add_session: "+ Yana sessiya qo'sh",
+        edit_session: 'Tahrirlash',
+        del_session: "O'chirish",
+        del_session_confirm: "Bu sessiyani o'chirasizmi?",
+        stats_done: 'bajarildi',
+        stats_left: 'qoldi',
+        stats_end: 'Tugatish',
+        new_time: 'Vaqt',
+        new_dur: 'Davomiyligi',
+        hours_unit: 'soat',
+        mins_unit: 'daq'
       },
       kechqurun: {
         title: 'Kun yakuni',
@@ -314,7 +326,15 @@
         tarix_prev_month: 'Oldingi oy',
         tarix_tasks_head: 'Vazifalar tarixi',
         tarix_tasks_sub: 'Har vazifa uchun kalendar',
-        months_short: "['yan','fev','mar','apr','may','iyun','iyul','avg','sen','okt','noy','dek']",
+        months_short: ['yan','fev','mar','apr','may','iyun','iyul','avg','sen','okt','noy','dek'],
+        months_long: ['Yanvar','Fevral','Mart','Aprel','May','Iyun','Iyul','Avgust','Sentabr','Oktabr','Noyabr','Dekabr'],
+        tarix_aria_open_cal: 'Kalendarni ochish',
+        tarix_empty: "Hali rejalashtirilgan vazifa yo'q.",
+        tarix_unit_days: 'kun',
+        tarix_unit_done: 'bajarildi',
+        tarix_modal_marked: 'kun belgilangan',
+        tarix_modal_done: 'kun bajarildi',
+        tarix_modal_focus_hours: 'soat fokus',
         subtitle: 'Bajarilgan ishlar',
         tab_day: 'Bugun',
         tab_week: 'Hafta',
@@ -732,8 +752,8 @@
         loading: 'Загрузка...',
         error: 'Ошибка',
         and: 'и',
-        months_short: "['ЯНВ','ФЕВ','МАР','АПР','МАЙ','ИЮН','ИЮЛ','АВГ','СЕН','ОКТ','НОЯ','ДЕК']",
-        weekdays_long: "['ВОСКРЕСЕНЬЕ','ПОНЕДЕЛЬНИК','ВТОРНИК','СРЕДА','ЧЕТВЕРГ','ПЯТНИЦА','СУББОТА']"
+        months_short: ['ЯНВ','ФЕВ','МАР','АПР','МАЙ','ИЮН','ИЮЛ','АВГ','СЕН','ОКТ','НОЯ','ДЕК'],
+        weekdays_long: ['ВОСКРЕСЕНЬЕ','ПОНЕДЕЛЬНИК','ВТОРНИК','СРЕДА','ЧЕТВЕРГ','ПЯТНИЦА','СУББОТА']
       },
       brand: {
         tagline: 'ваш друг по дисциплине'
@@ -966,7 +986,19 @@
         days_unit: 'дн',
         days_left: 'дн осталось',
         done_lbl: 'Выполнено',
-        del_confirm: 'Удалить эту цель? Она также будет убрана из вашего календаря.'
+        del_confirm: 'Удалить эту цель? Она также будет убрана из вашего календаря.',
+        sessions_lbl: 'Сессии',
+        add_session: '+ Добавить сессию',
+        edit_session: 'Изменить',
+        del_session: 'Удалить',
+        del_session_confirm: 'Удалить эту сессию?',
+        stats_done: 'выполнено',
+        stats_left: 'осталось',
+        stats_end: 'Завершение',
+        new_time: 'Время',
+        new_dur: 'Длительность',
+        hours_unit: 'ч',
+        mins_unit: 'мин'
       },
       kechqurun: {
         title: 'Итог дня',
@@ -1012,7 +1044,15 @@
         tarix_prev_month: 'Пред. месяц',
         tarix_tasks_head: 'История задач',
         tarix_tasks_sub: 'Календарь по каждой задаче',
-        months_short: "['янв','фев','мар','апр','май','июн','июл','авг','сен','окт','ноя','дек']",
+        months_short: ['янв','фев','мар','апр','май','июн','июл','авг','сен','окт','ноя','дек'],
+        months_long: ['Январь','Февраль','Март','Апрель','Май','Июнь','Июль','Август','Сентябрь','Октябрь','Ноябрь','Декабрь'],
+        tarix_aria_open_cal: 'Открыть календарь',
+        tarix_empty: 'Пока нет запланированных задач.',
+        tarix_unit_days: 'дн',
+        tarix_unit_done: 'выполнено',
+        tarix_modal_marked: 'дн отмечено',
+        tarix_modal_done: 'дн выполнено',
+        tarix_modal_focus_hours: 'ч фокуса',
         subtitle: 'Выполненные дела',
         tab_day: 'День',
         tab_week: 'Неделя',
@@ -1417,8 +1457,8 @@
         loading: 'Loading...',
         error: 'Error',
         and: 'and',
-        months_short: "['JAN','FEB','MAR','APR','MAY','JUN','JUL','AUG','SEP','OCT','NOV','DEC']",
-        weekdays_long: "['SUNDAY','MONDAY','TUESDAY','WEDNESDAY','THURSDAY','FRIDAY','SATURDAY']"
+        months_short: ['JAN','FEB','MAR','APR','MAY','JUN','JUL','AUG','SEP','OCT','NOV','DEC'],
+        weekdays_long: ['SUNDAY','MONDAY','TUESDAY','WEDNESDAY','THURSDAY','FRIDAY','SATURDAY']
       },
       brand: {
         tagline: 'your discipline companion'
@@ -1651,7 +1691,19 @@
         days_unit: 'days',
         days_left: 'days left',
         done_lbl: 'Done',
-        del_confirm: 'Delete this goal? It will also be removed from your calendar.'
+        del_confirm: 'Delete this goal? It will also be removed from your calendar.',
+        sessions_lbl: 'Sessions',
+        add_session: '+ Add session',
+        edit_session: 'Edit',
+        del_session: 'Delete',
+        del_session_confirm: 'Delete this session?',
+        stats_done: 'done',
+        stats_left: 'left',
+        stats_end: 'Finish',
+        new_time: 'Time',
+        new_dur: 'Duration',
+        hours_unit: 'h',
+        mins_unit: 'min'
       },
       kechqurun: {
         title: 'Day summary',
@@ -1697,7 +1749,15 @@
         tarix_prev_month: 'Prev month',
         tarix_tasks_head: 'Task history',
         tarix_tasks_sub: 'Calendar per task',
-        months_short: "['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec']",
+        months_short: ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'],
+        months_long: ['January','February','March','April','May','June','July','August','September','October','November','December'],
+        tarix_aria_open_cal: 'Open calendar',
+        tarix_empty: 'No planned tasks yet.',
+        tarix_unit_days: 'days',
+        tarix_unit_done: 'done',
+        tarix_modal_marked: 'days marked',
+        tarix_modal_done: 'days done',
+        tarix_modal_focus_hours: 'h focus',
         subtitle: 'Completed tasks',
         tab_day: 'Day',
         tab_week: 'Week',

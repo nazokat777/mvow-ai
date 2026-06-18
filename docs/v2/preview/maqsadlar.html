@@ -292,6 +292,9 @@
     grid-template-columns: 1fr 1fr;
     gap: 8px;
   }
+  /* `hidden` atributi `display:grid`dan kuchsiz qoladi — buni aniq bekor qilamiz,
+     aks holda qo'shish formasi har doim ochiq turadi. */
+  .gs-add-form[hidden] { display: none; }
   .gs-add-form input,
   .gs-add-form select {
     background: var(--void-soft);
@@ -419,10 +422,10 @@
   <a class="cta" href="settings.html" data-i18n="common.continue">Davom</a>
 </div>
 
-<script src="i18n.js?v=28.3.0"></script>
-<script src="lang-switcher.js?v=28.3.0" defer></script>
-<script src="data.js?v=28.3.0" defer></script>
-<script src="nav-overlay.js?v=28.3.0" defer></script>
+<script src="i18n.js?v=28.4.0"></script>
+<script src="lang-switcher.js?v=28.4.0" defer></script>
+<script src="data.js?v=28.4.0" defer></script>
+<script src="nav-overlay.js?v=28.4.0" defer></script>
 <script>
   function _t(key, fb) { return (window.I18N ? I18N.t(key, fb) : fb); }
   const DURATION_INFO = {
@@ -577,9 +580,22 @@
   }
 
   function fmtHours(mins) {
+    const hu = _t('maqsadlar.hours_unit', 'soat');
     const h = mins / 60;
-    if (h >= 10) return Math.round(h) + ' soat';
-    return (Math.round(h * 10) / 10).toString().replace('.0', '') + ' soat';
+    if (h >= 10) return Math.round(h) + ' ' + hu;
+    return (Math.round(h * 10) / 10).toString().replace('.0', '') + ' ' + hu;
+  }
+  // Saqlangan davomiylik ("1 soat", "30 daq") ekranda tanlangan tilga moslanadi.
+  // Saqlash formati o'zbekcha qoladi — parseDurMins shu format bilan ishlaydi.
+  function dispDur(s) {
+    const mins = parseDurMins(s);
+    const hu = _t('maqsadlar.hours_unit', 'soat');
+    const mu = _t('maqsadlar.mins_unit', 'daq');
+    const h = Math.floor(mins / 60);
+    const m = mins % 60;
+    if (h && m) return h + ' ' + hu + ' ' + m + ' ' + mu;
+    if (h) return h + ' ' + hu;
+    return m + ' ' + mu;
   }
   function fmtDateShort(iso) {
     if (!iso) return '—';
@@ -691,8 +707,8 @@
       const lblAddSession = _t('maqsadlar.add_session', "+ Yana sessiya qo'sh");
       const lblEditSession = _t('maqsadlar.edit_session', 'Tahrirlash');
       const lblDelSession = _t('maqsadlar.del_session', "O'chirish");
-      const lblStatsDone = _t('maqsadlar.stats_done', 'soat bajarildi');
-      const lblStatsLeft = _t('maqsadlar.stats_left', 'soat qoldi');
+      const lblStatsDone = _t('maqsadlar.stats_done', 'bajarildi');
+      const lblStatsLeft = _t('maqsadlar.stats_left', 'qoldi');
       const lblStatsEnd  = _t('maqsadlar.stats_end',  'Tugatish');
       const lblNewTime = _t('maqsadlar.new_time', 'Vaqt');
       const lblNewDur  = _t('maqsadlar.new_dur',  'Davomiyligi');
@@ -715,7 +731,7 @@
           <span class="gs-dur"
                 data-edit-dur="${escapeHtml(s.sid)}"
                 data-current="${escapeHtml(s.dur)}"
-                title="${escapeHtml(lblEditSession)}">${escapeHtml(s.dur)}</span>
+                title="${escapeHtml(lblEditSession)}">${escapeHtml(dispDur(s.dur))}</span>
           <button class="gs-edit" data-edit-time="${escapeHtml(s.sid)}"
                   data-current="${escapeHtml(s.time)}"
                   type="button" aria-label="${escapeHtml(lblEditSession)}">&#9998;</button>
@@ -733,7 +749,7 @@
             <div class="goal-badge ${info.cls}">${info.label}</div>
           </div>
           <div class="goal-meta">
-            ${escapeHtml(lblEveryDay)} <span class="em">${escapeHtml(g.time)}</span> · ${escapeHtml(g.dur)}
+            ${escapeHtml(lblEveryDay)} <span class="em">${escapeHtml(g.time)}</span> · ${escapeHtml(dispDur(g.dur))}
           </div>
           <div class="progress-bar"><div class="progress-fill" style="width:${timePct}%"></div></div>
           <div class="progress-text">
@@ -756,12 +772,12 @@
             <form class="gs-add-form" data-add-form="${g.id}" hidden>
               <input type="time" name="time" required value="07:00" aria-label="${escapeHtml(lblNewTime)}">
               <select name="dur" aria-label="${escapeHtml(lblNewDur)}">
-                <option value="15 daq">15 daq</option>
-                <option value="30 daq" selected>30 daq</option>
-                <option value="45 daq">45 daq</option>
-                <option value="60 daq">1 soat</option>
-                <option value="1 soat 30 daq">1 soat 30 daq</option>
-                <option value="2 soat">2 soat</option>
+                <option value="15 daq">${escapeHtml(dispDur('15 daq'))}</option>
+                <option value="30 daq" selected>${escapeHtml(dispDur('30 daq'))}</option>
+                <option value="45 daq">${escapeHtml(dispDur('45 daq'))}</option>
+                <option value="60 daq">${escapeHtml(dispDur('60 daq'))}</option>
+                <option value="1 soat 30 daq">${escapeHtml(dispDur('1 soat 30 daq'))}</option>
+                <option value="2 soat">${escapeHtml(dispDur('2 soat'))}</option>
               </select>
               <div class="gs-add-actions">
                 <button type="button" class="gs-add-cancel" data-add-cancel="${g.id}">${escapeHtml(lblCancel)}</button>
