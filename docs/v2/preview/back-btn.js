@@ -7,7 +7,7 @@
  * Bosh/launcher sahifalarda (index, menu, gallery) bu tugmalar kerak emas.
  */
 (function () {
-  var NO_NAV = ['', 'index.html', 'menu.html', 'gallery.html'];
+  var NO_NAV = ['', 'index.html', 'menu.html', 'gallery.html', 'app.html', 'intro.html'];
 
   function t(key, fb) {
     return (window.I18N && typeof I18N.t === 'function') ? I18N.t(key, fb) : fb;
