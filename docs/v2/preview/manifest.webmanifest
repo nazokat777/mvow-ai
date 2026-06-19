@@ -1,7 +1,7 @@
 {
   "name": "Daywarden — Sizning intizom do'stingiz",
   "short_name": "Daywarden",
-  "description": "Daywarden — sizning intizom do'stingiz. MNSM AI Specialist tomonidan.",
+  "description": "Daywarden — sizning intizom do'stingiz. Just AI It mahsuloti.",
   "start_url": "./app.html",
   "scope": "./",
   "display": "standalone",
