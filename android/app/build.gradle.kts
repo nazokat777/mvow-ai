@@ -112,6 +112,8 @@ dependencies {
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.lifecycle.runtime.ktx)
     implementation(libs.androidx.lifecycle.viewmodel.compose)
+    // LifecycleService (FocusGuardService uchun) — Hilt @AndroidEntryPoint Service'ni tanishi uchun
+    implementation("androidx.lifecycle:lifecycle-service:2.8.7")
     implementation(libs.androidx.activity.compose)
 
     // Compose
