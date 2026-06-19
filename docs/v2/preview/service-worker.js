@@ -22,7 +22,6 @@ const ASSETS = [
   './about.html',
   './royhat.html',
   './assets/mnsm-logo.png',
-  './assets/intro-cinematic.mp4',
   // 17 ekran SEQ tartibida
   './intro.html',             // 1
   './anketa.html',            // 2
