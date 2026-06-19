@@ -87,7 +87,12 @@
         loading: 'Yuklanmoqda',
         fallback_title: 'Vaqt — sizning eng qimmat boyligingiz',
         fallback_body: "Daywarden — sizning intizom do'stingiz. Maqsadlaringizni kunlik harakatga aylantiramiz.",
-        fallback_cta: 'Boshlaymiz ›'
+        fallback_cta: 'Boshlaymiz ›',
+        poem1: 'VAQT — insonning eng qimmat boyligi',
+        poem2: "Uni qaytarib bo'lmaydi",
+        poem3: 'Lekin u bilan OLIY maqsadlarga yetishish mumkin',
+        poem4: 'EY odam bolasi, Sen vaqtdan iboratsan, UNUTMA…',
+        poemCta: "Maqsadlaringizni yozing, qolgan yo'l xaritasini biz yaratamiz. Boshladikmi?…"
       },
       welcome: {
         name_ph: 'ismingizni yozing',
@@ -810,7 +815,12 @@
         loading: 'Загрузка',
         fallback_title: 'Время — ваше самое ценное богатство',
         fallback_body: 'Daywarden — ваш друг по дисциплине. Превратим ваши цели в ежедневные действия.',
-        fallback_cta: 'Начнём ›'
+        fallback_cta: 'Начнём ›',
+        poem1: 'ВРЕМЯ — самое ценное богатство человека',
+        poem2: 'Его не вернуть',
+        poem3: 'Но с ним можно достичь ВЫСШИХ целей',
+        poem4: 'О, сын человеческий, ты состоишь из времени, ПОМНИ…',
+        poemCta: 'Запишите свои цели — остальную карту пути создадим мы. Начнём?…'
       },
       welcome: {
         name_ph: 'ваше имя',
@@ -1520,7 +1530,12 @@
         loading: 'Loading',
         fallback_title: 'Time is your most precious wealth',
         fallback_body: 'Daywarden — your discipline companion. Turn your goals into daily action.',
-        fallback_cta: 'Let\'s start ›'
+        fallback_cta: 'Let\'s start ›',
+        poem1: "TIME — a human's most precious wealth",
+        poem2: 'It can never be brought back',
+        poem3: 'But with it, the HIGHEST goals can be reached',
+        poem4: 'O child of man, you are made of time, REMEMBER…',
+        poemCta: "Write your goals — we'll build the rest of the roadmap. Shall we begin?…"
       },
       welcome: {
         name_ph: 'your name',

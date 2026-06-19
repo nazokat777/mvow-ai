@@ -194,6 +194,36 @@ body {
   .fallback h2 { font-size: 26px; }
   .fallback p { font-size: 14px; }
 }
+
+/* ===== Vaqtli intro matni ===== */
+.intro-poem {
+  position: fixed; z-index: 5; pointer-events: none;
+  left: max(24px, env(safe-area-inset-left, 22px));
+  top: 50%; transform: translateY(-50%);
+  max-width: min(72%, 540px);
+}
+.intro-poem .line {
+  font-family: 'Cormorant Garamond', Georgia, serif;
+  color: #F5F2EC; font-size: clamp(19px, 5vw, 32px); font-weight: 500;
+  line-height: 1.3; margin-bottom: 16px;
+  opacity: 0; transform: translateY(10px);
+  transition: opacity .9s ease, transform .9s ease;
+  text-shadow: 0 2px 18px rgba(0,0,0,.78);
+}
+.intro-poem .line.show { opacity: 1; transform: none; }
+.intro-poem.hide { opacity: 0; transition: opacity .6s ease; }
+.intro-cta-text {
+  position: fixed; z-index: 5; pointer-events: none;
+  left: 24px; right: 24px;
+  bottom: max(96px, calc(env(safe-area-inset-bottom, 0px) + 96px));
+  text-align: center;
+  font-family: 'Inter', sans-serif; color: #F5F2EC;
+  font-size: clamp(18px, 5.2vw, 26px); font-weight: 500; line-height: 1.45;
+  text-shadow: 0 2px 18px rgba(0,0,0,.82);
+  opacity: 0; transform: translateY(12px);
+  transition: opacity .9s ease, transform .9s ease;
+}
+.intro-cta-text.show { opacity: 1; transform: none; }
 </style>
 <link rel="stylesheet" href="theme.css">
 </head>
@@ -201,6 +231,14 @@ body {
 
 <video id="cinematic" autoplay muted playsinline preload="auto"></video>
 <div class="vignette"></div>
+
+<div class="intro-poem" id="introPoem">
+  <p class="line" id="ln1" data-i18n="intro.poem1">VAQT — insonning eng qimmat boyligi</p>
+  <p class="line" id="ln2" data-i18n="intro.poem2">Uni qaytarib bo'lmaydi</p>
+  <p class="line" id="ln3" data-i18n="intro.poem3">Lekin u bilan OLIY maqsadlarga yetishish mumkin</p>
+  <p class="line" id="ln4" data-i18n="intro.poem4">EY odam bolasi, Sen vaqtdan iboratsan, UNUTMA…</p>
+</div>
+<div class="intro-cta-text" id="introCta" data-i18n="intro.poemCta">Maqsadlaringizni yozing, qolgan yo'l xaritasini biz yaratamiz. Boshladikmi?…</div>
 
 <div class="loading" id="loading">
   <span data-i18n="intro.loading">Yuklanmoqda</span>
@@ -276,6 +314,20 @@ body {
   // ===== VIDEO — ekran formatiga qarab (9:16 telefon / 16:9 keng ekran) =====
   var isPortrait = window.matchMedia('(orientation: portrait)').matches;
   video.src = isPortrait ? 'assets/intro-portrait.mp4' : 'assets/intro-landscape.mp4';
+
+  // ===== Vaqtli matn (chap poem + pastki CTA) =====
+  var poem = document.getElementById('introPoem');
+  var cta = document.getElementById('introCta');
+  var ln1 = document.getElementById('ln1'), ln2 = document.getElementById('ln2');
+  var ln3 = document.getElementById('ln3'), ln4 = document.getElementById('ln4');
+  video.addEventListener('timeupdate', function() {
+    var t = video.currentTime;
+    if (t >= 1) ln1.classList.add('show');
+    if (t >= 2) ln2.classList.add('show');
+    if (t >= 3) ln3.classList.add('show');
+    if (t >= 5) ln4.classList.add('show');
+    if (t >= 11) { poem.classList.add('hide'); cta.classList.add('show'); }
+  });
 
   video.addEventListener('loadeddata', function() { loading.classList.add('hide'); });
   video.addEventListener('canplay', function() { loading.classList.add('hide'); });
