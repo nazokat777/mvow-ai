@@ -119,6 +119,54 @@
     text-align: center; text-decoration: none;
     cursor: pointer; min-height: 52px;
   }
+
+  /* ===== Desktop (web) ko'rinishi — telefon ramkasi ichida ilova ===== */
+  .dt-shell { display: none; }
+  body.dt-mode { overflow: hidden; }
+  body.dt-mode .stage, body.dt-mode .cta-row { display: none !important; }
+  body.dt-mode .dt-shell {
+    display: flex; align-items: center; justify-content: center; gap: 72px;
+    position: fixed; inset: 0; z-index: 100; padding: 40px;
+    background:
+      radial-gradient(55% 55% at 28% 32%, rgba(212,175,55,.12), transparent 60%),
+      radial-gradient(50% 50% at 82% 78%, rgba(124,108,255,.10), transparent 60%),
+      var(--void);
+  }
+  .dt-side { max-width: 360px; }
+  .dt-side .dt-logo {
+    width: 76px; height: 76px; display: block; margin-bottom: 22px;
+    background: url('assets/company-logo.png') center/contain no-repeat;
+    filter: drop-shadow(0 0 18px rgba(124,108,255,.4));
+  }
+  .dt-side .dt-name {
+    font-family: 'Cormorant Garamond', serif; font-weight: 600;
+    font-size: 56px; letter-spacing: 4px; color: var(--text); line-height: 1;
+  }
+  .dt-side .dt-tag {
+    font-family: 'Cormorant Garamond', serif; font-style: italic;
+    font-size: 19px; color: var(--text-mid); margin-top: 10px;
+  }
+  .dt-side .dt-note {
+    margin-top: 30px; padding: 16px 18px; border-radius: 14px;
+    border: 1px solid rgba(212,175,55,.28); background: rgba(212,175,55,.05);
+    color: var(--text-mid); font-size: 14px; line-height: 1.6;
+  }
+  .dt-side .dt-note b { color: var(--accent); }
+  .dt-phone {
+    flex-shrink: 0; width: 392px; height: min(92vh, 844px);
+    background: #000; border: 11px solid #14161c; border-radius: 48px;
+    box-shadow: 0 40px 110px rgba(0,0,0,.65), 0 0 0 1px rgba(255,255,255,.05);
+    overflow: hidden; position: relative;
+  }
+  .dt-phone iframe {
+    width: 100%; height: 100%; border: none; display: block;
+    border-radius: 37px; background: var(--void);
+  }
+  @media (max-width: 1040px) {
+    body.dt-mode .dt-shell { gap: 40px; }
+    .dt-side { max-width: 260px; }
+    .dt-side .dt-name { font-size: 42px; }
+  }
 </style>
 <link rel="stylesheet" href="theme.css">
 </head>
@@ -144,13 +192,33 @@
   <a class="cta" id="goBtn" href="royhat.html">Boshlaymiz</a>
 </div>
 
+<!-- Desktop (web) ko'rinishi: telefon ramkasi ichida ilova ishlaydi -->
+<div class="dt-shell" id="dtShell">
+  <div class="dt-side">
+    <div class="dt-logo"></div>
+    <div class="dt-name">Daywarden</div>
+    <div class="dt-tag">sizning intizom do'stingiz</div>
+    <div class="dt-note">📱 Eng qulay tajriba — telefonда.<br>Brauzerда oching va o'rnating:<br><b>daywarden.vercel.app</b></div>
+  </div>
+  <div class="dt-phone">
+    <iframe id="dtFrame" title="Daywarden" allow="autoplay"></iframe>
+  </div>
+</div>
+
 <script src="i18n.js?v=28.4.0"></script>
 <script src="lang-switcher.js?v=28.4.0" defer></script>
 <script>
   // Web ham, telefon ham — BIR XIL ilova (galereya yo'q).
   // Qaytuvchi foydalanuvchi -> to'g'ridan-to'g'ri uy; yangi -> shu kirish sahifasi
   const hasUser = !!localStorage.getItem('mvow.userName') || !!localStorage.getItem('mvow.email');
-  if (hasUser) {
+  const isDesktop = window.matchMedia('(min-width: 900px)').matches
+                 && !/Mobi|Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
+  if (isDesktop) {
+    // Web: telefon ramkasi ichida ilovani ko'rsatamiz (galereya emas, haqiqiy ilova)
+    document.body.classList.add('dt-mode');
+    var dtf = document.getElementById('dtFrame');
+    if (dtf && !dtf.getAttribute('src')) dtf.setAttribute('src', 'app.html');
+  } else if (hasUser) {
     location.replace('home.html');
   }
 
