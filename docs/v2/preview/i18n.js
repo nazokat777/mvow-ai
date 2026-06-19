@@ -2274,3 +2274,10 @@
   setTimeout(applyAll, 100);
   setTimeout(applyAll, 500);
 })();
+
+// ===== PWA: service worker ro'yxatdan o'tkazish (Android/Chrome o'rnatish uchun ZARUR) =====
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', function() {
+    navigator.serviceWorker.register('service-worker.js').catch(function(){});
+  });
+}
