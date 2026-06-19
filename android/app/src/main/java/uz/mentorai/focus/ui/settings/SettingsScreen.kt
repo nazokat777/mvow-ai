@@ -32,6 +32,18 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import android.Manifest
+import android.app.AlarmManager
+import android.content.Context
+import android.content.Intent
+import android.content.pm.PackageManager
+import android.os.Build
+import android.provider.Settings
+import android.widget.Toast
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
+import androidx.compose.ui.platform.LocalContext
+import androidx.core.content.ContextCompat
 import androidx.hilt.navigation.compose.hiltViewModel
 import uz.mentorai.focus.data.language.Language
 import uz.mentorai.focus.i18n.UiStrings
@@ -102,8 +114,89 @@ fun SettingsScreen(viewModel: SettingsViewModel = hiltViewModel()) {
                 ToggleRow("Misol yechish (javobsiz o'chmasin)", mathOn) { viewModel.setAlarmMath(it) }
             }
 
+            Spacer(Modifier.height(20.dp))
+            TestAlarmButton(onFire = { viewModel.scheduleTestAlarm(10) })
+            Spacer(Modifier.height(10.dp))
+            Text(
+                text = "Bosing → ruxsatlarni bering → telefonni qulflang. 10 soniyadan keyin budilnik jiringlashi kerak.",
+                color = MentorColors.TextMuted,
+                fontSize = 12.sp,
+                lineHeight = 18.sp
+            )
+
             Spacer(Modifier.height(48.dp))
         }
+    }
+}
+
+@Composable
+private fun TestAlarmButton(onFire: () -> Unit) {
+    val context = LocalContext.current
+
+    fun fireWithChecks() {
+        // Aniq budilnik ruxsati (Android 12+) — bo'lmasa sozlamani ochamiz
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+            val am = context.getSystemService(Context.ALARM_SERVICE) as AlarmManager
+            if (!am.canScheduleExactAlarms()) {
+                runCatching {
+                    context.startActivity(
+                        Intent(Settings.ACTION_REQUEST_SCHEDULE_EXACT_ALARM)
+                            .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+                    )
+                }
+                Toast.makeText(
+                    context,
+                    "\"Aniq budilnik / Alarms & reminders\"ga ruxsat bering, keyin qaytadan bosing",
+                    Toast.LENGTH_LONG
+                ).show()
+                return
+            }
+        }
+        onFire()
+        Toast.makeText(
+            context,
+            "10 soniyadan keyin jiringlaydi — telefonni qulflang yoki kuting",
+            Toast.LENGTH_LONG
+        ).show()
+    }
+
+    val notifLauncher = rememberLauncherForActivityResult(
+        ActivityResultContracts.RequestPermission()
+    ) { granted ->
+        if (granted) fireWithChecks()
+        else Toast.makeText(
+            context,
+            "Bildirishnoma ruxsati kerak — busiz budilnik ko'rinmaydi/eshitilmaydi",
+            Toast.LENGTH_LONG
+        ).show()
+    }
+
+    fun onClick() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU &&
+            ContextCompat.checkSelfPermission(context, Manifest.permission.POST_NOTIFICATIONS)
+            != PackageManager.PERMISSION_GRANTED
+        ) {
+            notifLauncher.launch(Manifest.permission.POST_NOTIFICATIONS)
+        } else {
+            fireWithChecks()
+        }
+    }
+
+    Box(
+        modifier = Modifier
+            .fillMaxWidth()
+            .clip(RoundedCornerShape(8.dp))
+            .background(MentorColors.AccentIron)
+            .clickable { onClick() }
+            .padding(vertical = 16.dp),
+        contentAlignment = Alignment.Center
+    ) {
+        Text(
+            text = "🔔  Budilnikni hozir sinash (10 soniya)",
+            color = MentorColors.SurfaceVoid,
+            fontSize = 15.sp,
+            fontWeight = FontWeight.Bold
+        )
     }
 }
 
