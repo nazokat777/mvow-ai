@@ -68,7 +68,9 @@ fun CalendarScreen(viewModel: CalendarViewModel = hiltViewModel()) {
             Spacer(Modifier.height(24.dp))
 
             if (sessions.isEmpty()) {
-                EmptyState()
+                Box(modifier = Modifier.fillMaxWidth().weight(1f)) {
+                    EmptyState()
+                }
             } else {
                 LazyColumn(
                     verticalArrangement = Arrangement.spacedBy(8.dp),
