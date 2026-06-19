@@ -31,7 +31,7 @@ object DatabaseModule {
                 // RELEASE'da bu YO'Q — ma'lumot o'chmasligi uchun. Versiya oshganda
                 // .addMigrations(MIGRATION_n_n1) bilan migration yozish SHART.
                 if (BuildConfig.DEBUG) {
-                    fallbackToDestructiveMigration(true)
+                    fallbackToDestructiveMigration()
                 }
             }
             .build()

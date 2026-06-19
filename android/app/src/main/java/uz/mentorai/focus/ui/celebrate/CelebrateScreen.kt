@@ -48,7 +48,7 @@ import kotlin.math.sin
 enum class CelebrateVariant(
     val label: String,
     val pre: String,
-    val name: String,
+    val title: String,
     val accent: Color,
     val deep: Color,
     val letter: String,
@@ -175,7 +175,7 @@ private fun Headline(variant: CelebrateVariant) {
         )
         Spacer(Modifier.height(6.dp))
         Text(
-            variant.name,
+            variant.title,
             color = variant.accent,
             fontSize = 13.sp,
             fontStyle = FontStyle.Italic,

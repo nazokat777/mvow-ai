@@ -73,7 +73,7 @@ class SttEngine @Inject constructor(
         }
 
         override fun onBeginningOfSpeech() {
-            _state.value = SttState.Speaking
+            _state.value = SttState.Speaking()
         }
 
         override fun onRmsChanged(rmsdB: Float) {
