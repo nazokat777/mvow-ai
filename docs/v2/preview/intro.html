@@ -85,8 +85,9 @@ body {
 }
 .skip-btn { right: 20px; }
 .back-btn { left: 20px; }
-/* Intro tozalandi — ortiqcha back/skip olib tashlandi (faqat til + "Boshlaymiz ›" tugmasi qoladi) */
-.skip-btn, .back-btn { display: none; }
+/* Intro: orqaga yashirin; skip pastда markazда (til tugmasi bilan ustma-ust bo'lmasin) */
+.back-btn { display: none; }
+.skip-btn { top: auto; bottom: max(24px, env(safe-area-inset-bottom, 24px)); left: 50%; right: auto; transform: translateX(-50%); }
 .skip-btn:hover, .skip-btn:focus-visible,
 .back-btn:hover, .back-btn:focus-visible {
   background: rgba(245, 215, 110, 0.20);
@@ -198,7 +199,7 @@ body {
 </head>
 <body>
 
-<!-- Qum soat videosi olib tashlandi — intro matnli ko'rinishda -->
+<video id="cinematic" autoplay muted playsinline preload="auto"></video>
 <div class="vignette"></div>
 
 <div class="loading" id="loading">
@@ -238,6 +239,7 @@ body {
   if (pref || intensity === 'minimal') { setSeen(); go('anketa.html'); return; }
 
   // ===== ELEMENTS =====
+  var video = document.getElementById('cinematic');
   var loading = document.getElementById('loading');
   var fallback = document.getElementById('fallback');
   var veil = document.getElementById('veil');
@@ -249,6 +251,7 @@ body {
     navigated = true;
     veil.classList.add('show');
     if (save !== false) setSeen();
+    try { video.pause(); } catch(e) {}
     setTimeout(function() { go(target); }, 480);
   }
 
@@ -270,9 +273,33 @@ body {
     if (e.key === 'Escape' || e.key === 'Enter') navigate('anketa.html', true);
   });
 
-  // ===== VIDEOSIZ — darhol matnli intro ko'rsatamiz (video keyin qo'shiladi) =====
-  loading.classList.add('hide');
-  fallback.classList.add('show');
+  // ===== VIDEO — ekran formatiga qarab (9:16 telefon / 16:9 keng ekran) =====
+  var isPortrait = window.matchMedia('(orientation: portrait)').matches;
+  video.src = isPortrait ? 'assets/intro-portrait.mp4' : 'assets/intro-landscape.mp4';
+
+  video.addEventListener('loadeddata', function() { loading.classList.add('hide'); });
+  video.addEventListener('canplay', function() { loading.classList.add('hide'); });
+  video.addEventListener('ended', function() { navigate('anketa.html', true); });
+  video.addEventListener('error', function() {
+    loading.classList.add('hide');
+    fallback.classList.add('show');
+  });
+
+  video.play().catch(function() {
+    // Autoplay bloklansa — birinchi bosishda o'ynatamiz
+    document.addEventListener('pointerdown', function resume() {
+      video.play().catch(function(){});
+      document.removeEventListener('pointerdown', resume);
+    }, { once: true });
+  });
+
+  // 8 soniyada yuklanmasa — matnli fallback
+  setTimeout(function() {
+    if (video.readyState < 2 && !navigated) {
+      loading.classList.add('hide');
+      fallback.classList.add('show');
+    }
+  }, 8000);
 
 })();
 </script>
