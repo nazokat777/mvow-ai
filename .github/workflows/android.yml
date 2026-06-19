@@ -1,0 +1,51 @@
+name: Build APK
+
+on:
+  push:
+    branches: [ main ]
+    paths:
+      - 'android/**'
+      - '.github/workflows/android.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up JDK 17
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'temurin'
+          java-version: '17'
+
+      - name: Set up Android SDK
+        uses: android-actions/setup-android@v3
+
+      - name: Build debug APK
+        working-directory: android
+        run: |
+          chmod +x ./gradlew
+          ./gradlew assembleDebug --no-daemon --stacktrace
+
+      - name: Upload APK artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: Daywarden-debug-apk
+          path: android/app/build/outputs/apk/debug/*.apk
+          if-no-files-found: error
+
+      - name: Publish to Releases (easy download)
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: debug-latest
+          name: Daywarden — debug APK (eng yangi)
+          body: |
+            Eng yangi debug APK. Android telefonga o'rnatish uchun pastdagi `.apk` faylni yuklab oling.
+            (Sozlamalar → "Noma'lum manbalar"ga ruxsat berish kerak bo'lishi mumkin.)
+          files: android/app/build/outputs/apk/debug/*.apk
