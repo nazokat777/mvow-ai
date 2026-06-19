@@ -13,13 +13,13 @@
   "categories": ["productivity", "lifestyle", "health"],
   "icons": [
     {
-      "src": "assets/mnsm-logo.png",
+      "src": "assets/mnsm-logo.png?v=2",
       "sizes": "192x192",
       "type": "image/png",
       "purpose": "any"
     },
     {
-      "src": "assets/mnsm-logo.png",
+      "src": "assets/mnsm-logo.png?v=2",
       "sizes": "512x512",
       "type": "image/png",
       "purpose": "any maskable"
