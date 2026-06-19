@@ -122,6 +122,9 @@ dependencies {
     implementation(libs.androidx.compose.material3)
     implementation(libs.androidx.compose.material.icons)
 
+    // Material Components — XML temalar uchun (Theme.Material3.DayNight.*)
+    implementation("com.google.android.material:material:1.12.0")
+
     // Navigation
     implementation(libs.androidx.navigation.compose)
 
