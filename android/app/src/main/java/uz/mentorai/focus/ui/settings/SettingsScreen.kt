@@ -13,11 +13,15 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Check
 import androidx.compose.material3.Icon
+import androidx.compose.material3.Switch
+import androidx.compose.material3.SwitchDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
@@ -38,6 +42,9 @@ import uz.mentorai.focus.ui.theme.MentorColors
 @Composable
 fun SettingsScreen(viewModel: SettingsViewModel = hiltViewModel()) {
     val current by viewModel.currentLanguage.collectAsState()
+    val soundOn by viewModel.alarmSound.collectAsState()
+    val vibrationOn by viewModel.alarmVibration.collectAsState()
+    val mathOn by viewModel.alarmMath.collectAsState()
     val lang = LocalLanguage.current
 
     Box(
@@ -46,7 +53,11 @@ fun SettingsScreen(viewModel: SettingsViewModel = hiltViewModel()) {
             .background(MentorColors.SurfaceVoid)
             .padding(horizontal = 24.dp)
     ) {
-        Column(modifier = Modifier.fillMaxSize()) {
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .verticalScroll(rememberScrollState())
+        ) {
             Spacer(Modifier.height(48.dp))
             MentorSectionLabel(text = UiStrings.settingsLabel(lang).uppercase())
             Spacer(Modifier.height(8.dp))
@@ -71,7 +82,63 @@ fun SettingsScreen(viewModel: SettingsViewModel = hiltViewModel()) {
                     )
                 }
             }
+
+            // Budilnik seksiyasi
+            Spacer(Modifier.height(32.dp))
+            MentorSectionLabel(text = "BUDILNIK")
+            Spacer(Modifier.height(8.dp))
+            Text(
+                text = "Vaqt kelganda budilnik jiringlaydi va ekranda misol chiqadi. " +
+                    "Misolni yechmaguncha o'chmaydi — bu sizni chinakam uyg'otadi.",
+                color = MentorColors.TextMuted,
+                fontSize = 13.sp,
+                lineHeight = 20.sp
+            )
+            Spacer(Modifier.height(12.dp))
+
+            Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
+                ToggleRow("Ovoz", soundOn) { viewModel.setAlarmSound(it) }
+                ToggleRow("Vibratsiya", vibrationOn) { viewModel.setAlarmVibration(it) }
+                ToggleRow("Misol yechish (javobsiz o'chmasin)", mathOn) { viewModel.setAlarmMath(it) }
+            }
+
+            Spacer(Modifier.height(48.dp))
         }
+    }
+}
+
+@Composable
+private fun ToggleRow(
+    label: String,
+    checked: Boolean,
+    onCheckedChange: (Boolean) -> Unit
+) {
+    Row(
+        verticalAlignment = Alignment.CenterVertically,
+        modifier = Modifier
+            .fillMaxWidth()
+            .clip(RoundedCornerShape(4.dp))
+            .background(MentorColors.SurfaceSteel)
+            .border(1.dp, MentorColors.TextGhost, RoundedCornerShape(4.dp))
+            .padding(start = 20.dp, end = 12.dp, top = 6.dp, bottom = 6.dp)
+    ) {
+        Text(
+            text = label,
+            color = MentorColors.TextPrimary,
+            fontSize = 16.sp,
+            fontWeight = FontWeight.Medium,
+            modifier = Modifier.weight(1f)
+        )
+        Switch(
+            checked = checked,
+            onCheckedChange = onCheckedChange,
+            colors = SwitchDefaults.colors(
+                checkedThumbColor = MentorColors.SurfaceVoid,
+                checkedTrackColor = MentorColors.AccentIron,
+                uncheckedThumbColor = MentorColors.TextMuted,
+                uncheckedTrackColor = MentorColors.SurfaceSteel
+            )
+        )
     }
 }
 

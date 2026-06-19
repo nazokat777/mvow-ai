@@ -18,6 +18,8 @@
 
     <!-- Wake & lock screen -->
     <uses-permission android:name="android.permission.WAKE_LOCK" />
+    <!-- Budilnik vibratsiyasi -->
+    <uses-permission android:name="android.permission.VIBRATE" />
     <uses-permission android:name="android.permission.DISABLE_KEYGUARD" />
     <uses-permission android:name="android.permission.SCHEDULE_EXACT_ALARM" />
     <uses-permission android:name="android.permission.USE_EXACT_ALARM" />
