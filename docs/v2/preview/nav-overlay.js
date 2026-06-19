@@ -13,7 +13,7 @@
       .notif-orb.mentor, .core-well-logo, .timer-logo, .invite .orb,
       .gen-orb, .day-progress .orb {
         background: transparent !important;
-        background-image: url('assets/mnsm-logo.png') !important;
+        background-image: url('assets/company-logo.png') !important;
         background-size: contain !important;
         background-repeat: no-repeat !important;
         background-position: center !important;
