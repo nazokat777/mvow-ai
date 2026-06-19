@@ -92,7 +92,8 @@
         poem2: "Uni qaytarib bo'lmaydi",
         poem3: 'Lekin u bilan OLIY maqsadlarga yetishish mumkin',
         poem4: 'EY odam bolasi, Sen vaqtdan iboratsan, UNUTMA…',
-        poemCta: "Maqsadlaringizni yozing, qolgan yo'l xaritasini biz yaratamiz. Boshladikmi?…"
+        poemCta: "Maqsadlaringizni yozing, qolgan yo'l xaritasini biz yaratamiz. Boshladikmi?…",
+        tap_hint: 'teginib davom eting'
       },
       welcome: {
         name_ph: 'ismingizni yozing',
@@ -820,7 +821,8 @@
         poem2: 'Его не вернуть',
         poem3: 'Но с ним можно достичь ВЫСШИХ целей',
         poem4: 'О, сын человеческий, ты состоишь из времени, ПОМНИ…',
-        poemCta: 'Запишите свои цели — остальную карту пути создадим мы. Начнём?…'
+        poemCta: 'Запишите свои цели — остальную карту пути создадим мы. Начнём?…',
+        tap_hint: 'нажмите, чтобы продолжить'
       },
       welcome: {
         name_ph: 'ваше имя',
@@ -1535,7 +1537,8 @@
         poem2: 'It can never be brought back',
         poem3: 'But with it, the HIGHEST goals can be reached',
         poem4: 'O child of man, you are made of time, REMEMBER…',
-        poemCta: "Write your goals — we'll build the rest of the roadmap. Shall we begin?…"
+        poemCta: "Write your goals — we'll build the rest of the roadmap. Shall we begin?…",
+        tap_hint: 'tap to continue'
       },
       welcome: {
         name_ph: 'your name',
