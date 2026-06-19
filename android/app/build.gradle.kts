@@ -1,3 +1,5 @@
+import java.util.Properties
+
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
@@ -23,7 +25,7 @@ android {
         val apiKey: String = run {
             val propsFile = rootProject.file("local.properties")
             if (propsFile.exists()) {
-                val props = java.util.Properties()
+                val props = Properties()
                 props.load(propsFile.inputStream())
                 props.getProperty("ANTHROPIC_API_KEY", "")
             } else ""
@@ -41,7 +43,7 @@ android {
             //   MVOW_RELEASE_KEY_PASSWORD=...
             val propsFile = rootProject.file("local.properties")
             if (propsFile.exists()) {
-                val props = java.util.Properties().apply { load(propsFile.inputStream()) }
+                val props = Properties().apply { load(propsFile.inputStream()) }
                 val storeFilePath = props.getProperty("MVOW_RELEASE_STORE_FILE", "")
                 if (storeFilePath.isNotEmpty()) {
                     storeFile = file(storeFilePath)
