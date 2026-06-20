@@ -202,6 +202,7 @@
       </div>
       <div class="title" data-i18n="session.done_a">Bajardingiz</div>
       <div class="task-name" id="completedTaskName">—</div>
+      <div class="completed-note" id="completedNote" style="display:none;font-family:'Cormorant Garamond',serif;font-style:italic;font-size:15px;color:var(--accent,#d4af37);margin-top:8px;line-height:1.4;"></div>
     </div>
 
     <!-- Bugungi progress mini -->
@@ -260,11 +261,19 @@
 
     // Hozirgina bajarilgan vazifa nomi (history'dagi eng oxirgi yozuv)
     let justCompletedName = '—';
+    let justCompletedNote = '';
     if (history.length) {
       const latest = history.slice().sort((a,b) => (b.completedAt||0) - (a.completedAt||0))[0];
       justCompletedName = latest.name || '—';
+      justCompletedNote = (latest.note || '').trim();
     }
     document.getElementById('completedTaskName').textContent = justCompletedName;
+    // Foydalanuvchi yozgan izohni ko'rsatamiz — saqlanganiga darrov tasdiq
+    const _noteEl = document.getElementById('completedNote');
+    if (_noteEl) {
+      if (justCompletedNote) { _noteEl.textContent = '“' + justCompletedNote + '”'; _noteEl.style.display = 'block'; }
+      else { _noteEl.style.display = 'none'; }
+    }
 
     // Motion: quiet confirm pulse on the just-completed task name
     try {

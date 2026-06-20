@@ -284,6 +284,15 @@ document.addEventListener('DOMContentLoaded', function () {
   }
   const DEFAULT_TASK_NAME = (window.I18N ? I18N.t('hardlock.default_task', 'Ish') : 'Ish');
   const DEFAULT_DUR = (window.I18N ? I18N.t('hardlock.dur_fallback', '25 daq') : '25 daq');
+  // 3) Hali ham topilmasa — birinchi maqsad nomini ishlatamiz (taymerda "Ish" emas, maqsad ko'rinsin)
+  if (!current && window.MVOW_DATA && typeof MVOW_DATA.loadGoals === 'function') {
+    try {
+      var _g = MVOW_DATA.loadGoals();
+      if (_g && _g.length && _g[0] && _g[0].text) {
+        current = { name: _g[0].text, time: _g[0].time || '', dur: _g[0].dur || DEFAULT_DUR };
+      }
+    } catch (e) {}
+  }
   if (!current) current = { name: DEFAULT_TASK_NAME, time: '', dur: DEFAULT_DUR };
 
   document.getElementById('tname').textContent = current.name;
