@@ -12,6 +12,21 @@ import android.os.VibratorManager
 import android.view.WindowManager
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.compose.animation.core.FastOutSlowInEasing
+import androidx.compose.animation.core.RepeatMode
+import androidx.compose.animation.core.animateFloat
+import androidx.compose.animation.core.infiniteRepeatable
+import androidx.compose.animation.core.rememberInfiniteTransition
+import androidx.compose.animation.core.tween
+import androidx.compose.foundation.border
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.ui.draw.alpha
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.scale
+import androidx.compose.ui.graphics.Brush
+import androidx.compose.ui.graphics.Color
 import androidx.compose.foundation.background
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
@@ -213,30 +228,79 @@ private fun SessionStartContent(
     var answer by remember { mutableStateOf("") }
     val solved = !mathEnabled || answer.trim().toIntOrNull() == challenge.answer
 
-    Column(
+    val timeStr = remember {
+        java.time.LocalTime.now().format(java.time.format.DateTimeFormatter.ofPattern("HH:mm"))
+    }
+    val gold = Color(0xFFD4AF37)
+    val infinite = rememberInfiniteTransition()
+    val pulse by infinite.animateFloat(
+        initialValue = 1f, targetValue = 1.18f,
+        animationSpec = infiniteRepeatable(tween(850, easing = FastOutSlowInEasing), RepeatMode.Reverse)
+    )
+    val glowAlpha by infinite.animateFloat(
+        initialValue = 0.22f, targetValue = 0.55f,
+        animationSpec = infiniteRepeatable(tween(850, easing = FastOutSlowInEasing), RepeatMode.Reverse)
+    )
+
+    Box(
         modifier = Modifier
             .fillMaxSize()
-            .background(MentorColors.SurfaceVoid)
-            .verticalScroll(rememberScrollState())
-            .padding(24.dp),
-        horizontalAlignment = Alignment.CenterHorizontally
+            .background(
+                Brush.verticalGradient(
+                    listOf(Color(0xFF1B1408), MentorColors.SurfaceVoid, MentorColors.SurfaceVoid)
+                )
+            )
     ) {
-        Spacer(Modifier.height(48.dp))
-        Text(
-            text = severityLabel(scheduled.severity),
-            color = MentorColors.AccentBrass,
-            fontSize = 11.sp,
-            letterSpacing = 4.sp,
-            fontWeight = FontWeight.Bold
+        // Pulslanuvchi oltin nur — budilnik energiyasi
+        Box(
+            modifier = Modifier
+                .align(Alignment.TopCenter)
+                .padding(top = 40.dp)
+                .size(300.dp)
+                .scale(pulse)
+                .alpha(glowAlpha)
+                .background(Brush.radialGradient(listOf(gold, Color(0x00D4AF37))), CircleShape)
         )
-        Spacer(Modifier.height(28.dp))
-        Text(
-            text = "VAQT KELDI",
-            color = MentorColors.TextPrimary,
-            fontSize = 32.sp,
-            fontWeight = FontWeight.Bold,
-            letterSpacing = 4.sp
-        )
+
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .verticalScroll(rememberScrollState())
+                .padding(24.dp),
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+            Spacer(Modifier.height(52.dp))
+            Text(
+                text = timeStr,
+                color = gold,
+                fontSize = 66.sp,
+                fontWeight = FontWeight.Bold,
+                letterSpacing = 2.sp
+            )
+            Spacer(Modifier.height(10.dp))
+            Box(
+                modifier = Modifier
+                    .clip(RoundedCornerShape(50))
+                    .background(Color(0x22D4AF37))
+                    .border(1.dp, Color(0x55D4AF37), RoundedCornerShape(50))
+                    .padding(horizontal = 16.dp, vertical = 6.dp)
+            ) {
+                Text(
+                    text = severityLabel(scheduled.severity),
+                    color = MentorColors.AccentBrass,
+                    fontSize = 11.sp,
+                    letterSpacing = 3.sp,
+                    fontWeight = FontWeight.Bold
+                )
+            }
+            Spacer(Modifier.height(26.dp))
+            Text(
+                text = "VAQT KELDI",
+                color = MentorColors.TextPrimary,
+                fontSize = 36.sp,
+                fontWeight = FontWeight.Black,
+                letterSpacing = 6.sp
+            )
         Spacer(Modifier.height(20.dp))
         Text(
             text = scheduled.title,
@@ -321,6 +385,7 @@ private fun SessionStartContent(
             )
         }
         Spacer(Modifier.height(24.dp))
+        }
     }
 }
 
