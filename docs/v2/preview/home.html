@@ -514,7 +514,7 @@
         const completedKeys = (window.MVOW_DATA ? MVOW_DATA.getCompletedKeysToday() : new Set());
         const overdueTxt = T('home.overdue_reminder', "Vaqti o'tdi — hali kech emas, bugun baribir bajaring");
         const sorted = [...plan].sort((a,b) => tKey(a.time) - tKey(b.time));
-        tasksList.innerHTML = sorted.map((t, i) => {
+        tasksList.innerHTML = '<div style="font-size:11px;color:var(--text-dim);text-align:center;margin:0 0 8px;font-family:Inter,sans-serif;">' + T('home.edit_tip', '✎ tahrirlash uchun vazifaga teging') + '</div>' + sorted.map((t, i) => {
           const taskKey = window.MVOW_DATA && t.time && t.name ? MVOW_DATA.taskKey(MVOW_DATA.today.iso, t.time, t.name) : '';
           const state = window.MVOW_DATA ? MVOW_DATA.getTaskState(taskKey) : { status: 'pending' };
           const isDone = completedKeys.has(taskKey) || state.status === 'done';
@@ -533,7 +533,7 @@
           else if (isOverdue) { cls = 'overdue'; icon = '·'; }
           else if (isActive) { cls = 'active'; icon = '·'; }
           return `<div class="t-item">
-            <div class="t-row ${cls}">
+            <div class="t-row ${cls}" data-key="${escapeHtmlH(taskKey)}" data-time="${escapeHtmlH(t.time || '')}" data-dur="${escapeHtmlH(t.dur || '')}" data-name="${escapeHtmlH(t.name || '')}" style="cursor:pointer">
               <span class="ord">${i+1}</span>
               <span class="ttime">${escapeHtmlH(t.time || '—')}</span>
               <span class="tname">${escapeHtmlH(t.name || T('today.ish_lbl', 'reja'))}</span>
@@ -545,6 +545,67 @@
       }
     }
     renderTasks();
+
+    // ── Vazifa vaqti/davomiyligini tahrirlash (qatorga bosib o'zgartirish) ──
+    (function wireEditTask() {
+      if (!window.MVOW_DATA || !tasksList) return;
+      var TT = function (k, def) { return window.I18N ? I18N.t(k, def) : def; };
+      var ov = document.createElement('div');
+      ov.style.cssText = 'position:fixed;inset:0;z-index:200;display:none;align-items:center;justify-content:center;background:rgba(0,0,0,.62);padding:24px;';
+      var btn = 'flex:1;padding:9px 0;background:transparent;border:1px solid rgba(212,175,55,.3);border-radius:8px;color:#D4AF37;font-size:13px;cursor:pointer;';
+      var inp = 'width:100%;margin:6px 0 14px;padding:12px;background:#0C0F16;border:1px solid rgba(255,255,255,.1);border-radius:10px;color:#F5F2EC;font-size:16px;box-sizing:border-box;';
+      var lbl = 'font-size:11px;letter-spacing:1px;color:#9CA0A8;text-transform:uppercase;';
+      ov.innerHTML =
+        '<div style="width:100%;max-width:330px;background:#11151E;border:1px solid rgba(212,175,55,.3);border-radius:16px;padding:22px;font-family:Inter,sans-serif;">'
+        + '<div id="etTitle" style="font-size:16px;color:#F5F2EC;font-weight:600;"></div>'
+        + '<div style="font-size:12px;color:#9CA0A8;margin:4px 0 16px;">' + TT('home.edit_sub', "Vaqt va davomiylikni o'zgartiring") + '</div>'
+        + '<label style="' + lbl + '">' + TT('home.edit_time_lbl', 'Vaqt') + '</label>'
+        + '<input id="etTime" type="time" style="' + inp + '">'
+        + '<label style="' + lbl + '">' + TT('home.edit_dur_lbl', 'Davomiyligi (daqiqa)') + '</label>'
+        + '<input id="etDur" type="number" min="5" max="600" step="5" inputmode="numeric" style="' + inp.replace('14px', '6px') + '">'
+        + '<div style="display:flex;gap:8px;margin-top:4px;">'
+        +   '<button type="button" data-min="30" style="' + btn + '">30</button>'
+        +   '<button type="button" data-min="60" style="' + btn + '">60</button>'
+        +   '<button type="button" data-min="90" style="' + btn + '">90</button>'
+        +   '<button type="button" data-min="120" style="' + btn + '">120</button>'
+        + '</div>'
+        + '<div style="display:flex;gap:10px;margin-top:20px;">'
+        +   '<button id="etCancel" type="button" style="flex:1;padding:13px;background:transparent;border:1px solid rgba(255,255,255,.15);border-radius:10px;color:#B8BBC2;font-size:14px;cursor:pointer;">' + TT('common.cancel', 'Bekor') + '</button>'
+        +   '<button id="etSave" type="button" style="flex:1;padding:13px;background:linear-gradient(180deg,#E8C766,#D4AF37);border:none;border-radius:10px;color:#04060B;font-size:14px;font-weight:600;cursor:pointer;">' + TT('common.save', 'Saqlash') + '</button>'
+        + '</div></div>';
+      document.body.appendChild(ov);
+
+      var curKey = null;
+      var etTime = ov.querySelector('#etTime'), etDur = ov.querySelector('#etDur');
+      function closeOv() { ov.style.display = 'none'; curKey = null; }
+      function openOv(key, time, dur, name) {
+        curKey = key;
+        ov.querySelector('#etTitle').textContent = name || 'Vazifa';
+        var t = String(time || '');
+        if (/^\d:\d{2}$/.test(t)) t = '0' + t;
+        etTime.value = /^\d{2}:\d{2}$/.test(t) ? t : '';
+        etDur.value = (MVOW_DATA.parseDurMins(dur) || 60);
+        ov.style.display = 'flex';
+      }
+      ov.addEventListener('click', function (e) { if (e.target === ov) closeOv(); });
+      ov.querySelector('#etCancel').addEventListener('click', closeOv);
+      ov.querySelectorAll('button[data-min]').forEach(function (b) {
+        b.addEventListener('click', function () { etDur.value = b.getAttribute('data-min'); });
+      });
+      ov.querySelector('#etSave').addEventListener('click', function () {
+        var time = etTime.value.trim();
+        var mins = parseInt(etDur.value, 10);
+        if (!/^\d{2}:\d{2}$/.test(time) || !mins || mins < 5) return;
+        MVOW_DATA.updateTaskTime(curKey, { time: time, dur: mins + ' daq' });
+        closeOv();
+        renderTasks();
+      });
+      tasksList.addEventListener('click', function (e) {
+        var row = e.target.closest('.t-row');
+        if (!row || !row.dataset.key) return;
+        openOv(row.dataset.key, row.dataset.time, row.dataset.dur, row.dataset.name);
+      });
+    })();
 
     // ── "+ vazifa qo'shish" — inline add ──
     (function wireAddTask() {

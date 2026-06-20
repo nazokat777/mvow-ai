@@ -634,6 +634,23 @@
     return true;
   };
 
+  // ── Bugungi rejada vazifa vaqti/davomiyligini tahrirlash (faqat bugungi reja) ──
+  DATA.updateTaskTime = function (taskKey, patch) {
+    const todayIso = DATA.today.iso;
+    const arr = DATA.getTodayPlan();
+    let changed = false;
+    for (const t of arr) {
+      if (DATA.taskKey(todayIso, t.time, t.name) === taskKey) {
+        if (patch && patch.time) t.time = patch.time;
+        if (patch && patch.dur)  t.dur  = patch.dur;
+        changed = true;
+        break;
+      }
+    }
+    if (changed) DATA.setTodayPlan(arr);
+    return changed;
+  };
+
   // ── Goal nomini almashtirish + history.goalId backfill (rename fragility mitigation) ──
   DATA.renameGoal = function (goalId, newText) {
     if (!newText || !String(newText).trim()) return;
