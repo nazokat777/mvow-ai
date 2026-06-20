@@ -217,6 +217,50 @@ h1, h2, h3, h4, h5, h6,
   color: inherit;
 }
 
+/* === INTERAKTIV TUGMALAR (global) — bosishda tactile + oltin nur + kreativ shine === */
+button, .cta, .submit, .google-btn, .continue-btn, .lang-btn,
+a.cta, [role="button"], .t-add-row, .choice-card, .opt {
+  transition: transform var(--dur-quick) var(--ease-enter),
+              box-shadow var(--dur-normal) ease,
+              filter var(--dur-normal) ease,
+              background var(--dur-quick) ease,
+              border-color var(--dur-quick) ease,
+              opacity var(--dur-quick) ease;
+  -webkit-tap-highlight-color: transparent;
+}
+/* Bosilganda — tactile his (biroz kichrayadi) */
+button:active, .cta:active, .submit:active, .google-btn:active,
+.continue-btn:active, .lang-btn:active, a.cta:active,
+[role="button"]:active, .t-add-row:active, .choice-card:active, .opt:active {
+  transform: scale(0.96);
+}
+
+/* Asosiy oltin tugmalar — hover lift + nur + kreativ shine sweep */
+.cta, .submit, .continue-btn {
+  position: relative;
+  overflow: hidden;
+  isolation: isolate;
+}
+.cta::after, .submit::after, .continue-btn::after {
+  content: '';
+  position: absolute; top: 0; left: -130%;
+  width: 70%; height: 100%;
+  background: linear-gradient(105deg, transparent, rgba(255, 255, 255, 0.26), transparent);
+  transform: skewX(-18deg);
+  pointer-events: none;
+  z-index: 1;
+  transition: left 0.7s ease;
+}
+.cta:hover, .submit:hover, .continue-btn:hover {
+  filter: brightness(1.04);
+  box-shadow: 0 6px 22px rgba(212, 175, 55, 0.26);
+}
+.cta:hover::after, .submit:hover::after, .continue-btn:hover::after { left: 140%; }
+/* Mobil (hover yo'q) — shine bosishda yuradi */
+@media (hover: none) {
+  .cta:active::after, .submit:active::after, .continue-btn:active::after { left: 140%; }
+}
+
 /* === REDUCED MOTION === */
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after {
