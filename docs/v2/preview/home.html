@@ -569,18 +569,20 @@
         +   '<button type="button" data-min="90" style="' + btn + '">90</button>'
         +   '<button type="button" data-min="120" style="' + btn + '">120</button>'
         + '</div>'
-        + '<div style="display:flex;gap:10px;margin-top:20px;">'
-        +   '<button id="etCancel" type="button" style="flex:1;padding:13px;background:transparent;border:1px solid rgba(255,255,255,.15);border-radius:10px;color:#B8BBC2;font-size:14px;cursor:pointer;">' + TT('common.cancel', 'Bekor') + '</button>'
-        +   '<button id="etSave" type="button" style="flex:1;padding:13px;background:linear-gradient(180deg,#E8C766,#D4AF37);border:none;border-radius:10px;color:#04060B;font-size:14px;font-weight:600;cursor:pointer;">' + TT('common.save', 'Saqlash') + '</button>'
+        + '<button id="etStart" type="button" style="width:100%;margin-top:18px;padding:14px;background:linear-gradient(180deg,#E8C766,#D4AF37);border:none;border-radius:10px;color:#04060B;font-size:15px;font-weight:700;cursor:pointer;">▶ ' + TT('home.start_task', 'Shu vazifani boshlash') + '</button>'
+        + '<div style="display:flex;gap:10px;margin-top:10px;">'
+        +   '<button id="etCancel" type="button" style="flex:1;padding:12px;background:transparent;border:1px solid rgba(255,255,255,.15);border-radius:10px;color:#B8BBC2;font-size:13px;cursor:pointer;">' + TT('common.cancel', 'Bekor') + '</button>'
+        +   '<button id="etSave" type="button" style="flex:1;padding:12px;background:transparent;border:1px solid rgba(212,175,55,.4);border-radius:10px;color:#D4AF37;font-size:13px;cursor:pointer;">' + TT('common.save', 'Saqlash') + '</button>'
         + '</div></div>';
       document.body.appendChild(ov);
 
-      var curKey = null;
+      var curKey = null, curName = '';
       var etTime = ov.querySelector('#etTime'), etDur = ov.querySelector('#etDur');
       function closeOv() { ov.style.display = 'none'; curKey = null; }
       function openOv(key, time, dur, name) {
         curKey = key;
-        ov.querySelector('#etTitle').textContent = name || 'Vazifa';
+        curName = name || 'Vazifa';
+        ov.querySelector('#etTitle').textContent = curName;
         var t = String(time || '');
         if (/^\d:\d{2}$/.test(t)) t = '0' + t;
         etTime.value = /^\d{2}:\d{2}$/.test(t) ? t : '';
@@ -599,6 +601,14 @@
         MVOW_DATA.updateTaskTime(curKey, { time: time, dur: mins + ' daq' });
         closeOv();
         renderTasks();
+      });
+      ov.querySelector('#etStart').addEventListener('click', function () {
+        var time = etTime.value.trim();
+        var mins = parseInt(etDur.value, 10);
+        if (!/^\d{2}:\d{2}$/.test(time) || !mins || mins < 5) return;
+        MVOW_DATA.updateTaskTime(curKey, { time: time, dur: mins + ' daq' });
+        try { localStorage.setItem('mvow.activeTask', JSON.stringify({ name: curName, time: time, dur: mins + ' daq' })); } catch (e) {}
+        location.href = 'hard-lock.html';
       });
       tasksList.addEventListener('click', function (e) {
         var row = e.target.closest('.t-row');

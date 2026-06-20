@@ -269,7 +269,14 @@ document.addEventListener('DOMContentLoaded', function () {
   // '25 daq' fallback'iga tushardi. Endi DOMContentLoaded ichida — data.js
   // defer bilan yuklanib bo'lgan paytda ishlaydi.
   let current = null;
-  if (window.MVOW_DATA) {
+  // 1) Foydalanuvchi home'da "Boshlash" bosib tanlagan ANIQ vazifa (nomi/vaqti/davomiyligi bilan)
+  try {
+    var _sel = JSON.parse(localStorage.getItem('mvow.activeTask') || 'null');
+    if (_sel && _sel.name) current = _sel;
+    localStorage.removeItem('mvow.activeTask'); // bir martalik — o'qigach tozalaymiz
+  } catch (e) {}
+  // 2) Aks holda — joriy vaqt bo'yicha rejadan taxmin
+  if (!current && window.MVOW_DATA) {
     current = MVOW_DATA.currentTaskFromPlan();
   }
   if (!current && window.MVOW_DATA) {
