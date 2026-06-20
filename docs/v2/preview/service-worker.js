@@ -3,7 +3,7 @@
  * after first load. Caches all preview HTML files + the logo.
  */
 
-const CACHE_NAME = 'daywarden-v28.5.1';
+const CACHE_NAME = 'daywarden-v28.5.2';
 const ASSETS = [
   './',
   // Asosiy infratuzilma

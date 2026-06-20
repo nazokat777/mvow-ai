@@ -643,6 +643,10 @@
       if (DATA.taskKey(todayIso, t.time, t.name) === taskKey) {
         if (patch && patch.time) t.time = patch.time;
         if (patch && patch.dur)  t.dur  = patch.dur;
+        // Maqsad sessiyasiga ham yozamiz — reja qayta tuzilsa ham o'zgarish saqlansin
+        if (t.goalId && t.sessionSid && typeof DATA.updateGoalSession === 'function') {
+          try { DATA.updateGoalSession(t.goalId, t.sessionSid, { time: t.time, dur: t.dur }); } catch (e) {}
+        }
         changed = true;
         break;
       }

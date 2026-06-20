@@ -568,7 +568,7 @@
         + '<label style="' + lbl + '">' + TT('home.edit_time_lbl', 'Vaqt') + '</label>'
         + '<input id="etTime" type="time" style="' + inp + '">'
         + '<label style="' + lbl + '">' + TT('home.edit_dur_lbl', 'Davomiyligi (daqiqa)') + '</label>'
-        + '<input id="etDur" type="number" min="5" max="600" step="5" inputmode="numeric" style="' + inp.replace('14px', '6px') + '">'
+        + '<input id="etDur" type="number" min="1" max="600" step="1" inputmode="numeric" style="' + inp.replace('14px', '6px') + '">'
         + '<div style="display:flex;gap:8px;margin-top:4px;">'
         +   '<button type="button" data-min="30" style="' + btn + '">30</button>'
         +   '<button type="button" data-min="60" style="' + btn + '">60</button>'
@@ -603,17 +603,22 @@
       ov.querySelector('#etSave').addEventListener('click', function () {
         var time = etTime.value.trim();
         var mins = parseInt(etDur.value, 10);
-        if (!/^\d{2}:\d{2}$/.test(time) || !mins || mins < 5) return;
-        MVOW_DATA.updateTaskTime(curKey, { time: time, dur: mins + ' daq' });
+        if (!mins || mins < 1) return;                 // faqat davomiylik (1+ daqiqa); vaqt ixtiyoriy
+        var patch = { dur: mins + ' daq' };
+        if (/^\d{2}:\d{2}$/.test(time)) patch.time = time;
+        MVOW_DATA.updateTaskTime(curKey, patch);
         closeOv();
         renderTasks();
       });
       ov.querySelector('#etStart').addEventListener('click', function () {
         var time = etTime.value.trim();
         var mins = parseInt(etDur.value, 10);
-        if (!/^\d{2}:\d{2}$/.test(time) || !mins || mins < 5) return;
-        MVOW_DATA.updateTaskTime(curKey, { time: time, dur: mins + ' daq' });
-        try { localStorage.setItem('mvow.activeTask', JSON.stringify({ name: curName, time: time, dur: mins + ' daq' })); } catch (e) {}
+        if (!mins || mins < 1) return;                 // 1+ daqiqa yetarli; vaqt ixtiyoriy
+        var hasTime = /^\d{2}:\d{2}$/.test(time);
+        var patch = { dur: mins + ' daq' };
+        if (hasTime) patch.time = time;
+        MVOW_DATA.updateTaskTime(curKey, patch);
+        try { localStorage.setItem('mvow.activeTask', JSON.stringify({ name: curName, time: hasTime ? time : '', dur: mins + ' daq' })); } catch (e) {}
         location.href = 'hard-lock.html';
       });
       tasksList.addEventListener('click', function (e) {
