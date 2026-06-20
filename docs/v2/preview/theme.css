@@ -261,6 +261,30 @@ button:active, .cta:active, .submit:active, .google-btn:active,
   .cta:active::after, .submit:active::after, .continue-btn:active::after { left: 140%; }
 }
 
+/* === SAHIFA O'TISHI — oltin "scan-line" reveal (noodatiy + minimalist) ===
+   html::before = qoraytirilgan parda (yuqoridan pastga siljib ketadi -> kontent ochiladi)
+   html::after  = oltin chiziq, reveal chetiда yuradi (WOW detal)
+   pseudo-elementlar => sahifaдagi position:fixed (video/taymer) buzilmaydi */
+html::before {
+  content: ''; position: fixed; inset: 0; z-index: 100000;
+  background: var(--bg); pointer-events: none;
+  animation: pageCurtain 0.7s var(--ease-enter) forwards;
+}
+@keyframes pageCurtain { to { transform: translateY(100%); } }
+html::after {
+  content: ''; position: fixed; left: 0; right: 0; top: 0; height: 2px; z-index: 100001;
+  background: linear-gradient(90deg, transparent, var(--accent-bright) 50%, transparent);
+  box-shadow: 0 0 22px 1px var(--accent-glow);
+  pointer-events: none; opacity: 0;
+  animation: pageScan 0.7s var(--ease-enter) forwards;
+}
+@keyframes pageScan {
+  0%   { transform: translateY(0);     opacity: 0; }
+  12%  { opacity: 1; }
+  85%  { opacity: 1; }
+  100% { transform: translateY(100vh); opacity: 0; }
+}
+
 /* === REDUCED MOTION === */
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after {
