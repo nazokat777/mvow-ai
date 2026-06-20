@@ -450,6 +450,7 @@
         ish: 'reja',
         // CTA variantlari (smart logic)
         cta_add_goal: "Maqsad qo'shing",
+        more_goal: "Yana maqsad qo'shish",
         cta_evening: 'Kun yakuni',
         cta_start: 'Boshlayman',
         cta_today_plan: 'Bugungi reja',
@@ -1183,6 +1184,7 @@
         soat: 'ч',
         ish: 'дел',
         cta_add_goal: 'Добавить цель',
+        more_goal: 'Добавить ещё цель',
         cta_evening: 'Итог дня',
         cta_start: 'Начинаю',
         cta_today_plan: 'План на сегодня',
@@ -1904,6 +1906,7 @@
         soat: 'h',
         ish: 'tasks',
         cta_add_goal: 'Add a goal',
+        more_goal: 'Add another goal',
         cta_evening: 'Day summary',
         cta_start: 'Start',
         cta_today_plan: 'Today\'s plan',
