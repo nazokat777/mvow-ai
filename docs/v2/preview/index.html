@@ -219,7 +219,8 @@
     var dtf = document.getElementById('dtFrame');
     if (dtf && !dtf.getAttribute('src')) dtf.setAttribute('src', 'app.html');
   } else if (hasUser) {
-    location.replace('home.html');
+    var _g = []; try { _g = JSON.parse(localStorage.getItem('mvow.goals') || '[]'); } catch (e) {}
+    location.replace((Array.isArray(_g) && _g.length) ? 'home.html' : 'maqsadlar.html');
   }
 
   const TAGLINES = {

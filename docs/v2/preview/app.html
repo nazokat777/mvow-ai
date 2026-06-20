@@ -26,13 +26,19 @@
     <div class="d">Yuklanmoqda…</div>
   </div>
   <script>
-    // Aqlli kirish: onboarding qilgan bo'lsa -> home, aks holda -> intro
+    // Aqlli kirish: maqsad bor -> home (reja o'zi tuziladi); ro'yxatdan o'tган, maqsad yo'q -> maqsad yozish; yangi -> intro
     (function () {
+      function go(u){ try { location.replace(u); } catch(e){ location.href = u; } }
       try {
-        var onboarded = localStorage.getItem('mvow.userName') || localStorage.getItem('mvow.goals');
-        location.replace(onboarded ? 'home.html' : 'intro.html');
+        var goals = [];
+        try { goals = JSON.parse(localStorage.getItem('mvow.goals') || '[]'); } catch (e) {}
+        var hasGoals = Array.isArray(goals) && goals.length > 0;
+        var hasName = !!localStorage.getItem('mvow.userName') || !!localStorage.getItem('mvow.email');
+        if (hasGoals) go('home.html');           // maqsad bor -> kunlik reja avtomatik
+        else if (hasName) go('maqsadlar.html');  // ro'yxatdan o'tган, maqsad yo'q -> AVVAL maqsad yozsin
+        else go('intro.html');                   // butunlay yangi foydalanuvchi
       } catch (e) {
-        location.replace('intro.html');
+        go('intro.html');
       }
     })();
   </script>

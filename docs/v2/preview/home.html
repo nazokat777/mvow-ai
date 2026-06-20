@@ -507,8 +507,8 @@
       plan.sort((a,b) => tKey(a.time) - tKey(b.time));
 
       if (!plan.length) {
-        tasksList.innerHTML = '<div style="text-align:center;padding:14px;font-family:\'Cormorant Garamond\',serif;font-style:italic;font-size:13px;color:var(--text-dim);">'
-          + T('home.no_plan', "birinchi qadamingizni qo'ying") + '</div>';
+        tasksList.innerHTML = '<a href="maqsadlar.html" style="display:block;text-align:center;padding:18px 16px;text-decoration:none;font-family:\'Cormorant Garamond\',serif;font-style:italic;font-size:15px;line-height:1.5;color:var(--accent,#D4AF37);border:1px solid rgba(212,175,55,.32);border-radius:12px;background:rgba(212,175,55,.05);">'
+          + T('home.no_plan', "Avval maqsadingizni yozing — biz uni kunlik rejaga aylantiramiz") + ' →</a>';
         tasksPrompt.style.display = 'none';
       } else {
         const completedKeys = (window.MVOW_DATA ? MVOW_DATA.getCompletedKeysToday() : new Set());
