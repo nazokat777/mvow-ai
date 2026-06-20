@@ -763,6 +763,15 @@
     } else {
       cta.textContent = Ti('home.cta_start', 'Boshlash');
       cta.href = 'hard-lock.html';
+      // Umumiy "Boshlash" ham aniq vazifani (nomi/vaqti/davomiyligi bilan) taymerga uzatsin
+      cta.addEventListener('click', function () {
+        try {
+          if (window.MVOW_DATA) {
+            var _t = MVOW_DATA.currentTaskFromPlan();
+            if (_t && _t.name) localStorage.setItem('mvow.activeTask', JSON.stringify({ name: _t.name, time: _t.time || '', dur: _t.dur || '' }));
+          }
+        } catch (e) {}
+      });
     }
 
     // ── STREAK MILESTONE PROGRESS (1 / 7 / 30 / 100 / 365) ──
