@@ -253,6 +253,26 @@ button:active, .cta:active, .submit:active, .google-btn:active,
   box-shadow: none;
 }
 
+/* Asosiy oltin tugmalar — DOIMIY oltin nur + sekin shimmer (tinch holatda ham ko'rinadi) */
+.cta, .submit, .continue-btn {
+  position: relative;
+  overflow: hidden;
+  box-shadow: 0 6px 26px rgba(212, 175, 55, 0.40);
+}
+.cta::after, .submit::after, .continue-btn::after {
+  content: '';
+  position: absolute; top: 0; left: -85%;
+  width: 55%; height: 100%;
+  background: linear-gradient(105deg, transparent, rgba(255, 255, 255, 0.32), transparent);
+  transform: skewX(-18deg);
+  pointer-events: none;
+  animation: btnShine 4.2s ease-in-out infinite;
+}
+@keyframes btnShine {
+  0%        { left: -85%; }
+  55%, 100% { left: 155%; }
+}
+
 /* === SAHIFA O'TISHI — oltin "scan-line" reveal (noodatiy + minimalist) ===
    html::before = qoraytirilgan parda (yuqoridan pastga siljib ketadi -> kontent ochiladi)
    html::after  = oltin chiziq, reveal chetiда yuradi (WOW detal)
