@@ -258,6 +258,13 @@ button:active, .cta:active, .submit:active, .google-btn:active,
   position: relative;
   overflow: hidden;
   box-shadow: 0 6px 26px rgba(212, 175, 55, 0.40);
+  animation: blobMorph 7s ease-in-out infinite;
+}
+/* Shakl sekin "nafas oladi" — burchaklar organik o'zgaradi (kreativ animatsiyali shakl) */
+@keyframes blobMorph {
+  0%, 100% { border-radius: 22px; }
+  33%      { border-radius: 44px 16px 44px 16px; }
+  66%      { border-radius: 16px 44px 16px 44px; }
 }
 .cta::after, .submit::after, .continue-btn::after {
   content: '';
