@@ -217,48 +217,40 @@ h1, h2, h3, h4, h5, h6,
   color: inherit;
 }
 
-/* === INTERAKTIV TUGMALAR (global) — bosishda tactile + oltin nur + kreativ shine === */
+/* === INTERAKTIV TUGMALAR — "Magnit ko'tarilish" + shakl o'zgarishi (pill + squish) === */
 button, .cta, .submit, .google-btn, .continue-btn, .lang-btn,
-a.cta, [role="button"], .t-add-row, .choice-card, .opt {
-  transition: transform var(--dur-quick) var(--ease-enter),
+a.cta, [role="button"], .t-add-row, .choice-card, .opt, .ghost {
+  transition: transform var(--dur-normal) var(--ease-enter),
               box-shadow var(--dur-normal) ease,
+              border-radius var(--dur-normal) var(--ease-enter),
               filter var(--dur-normal) ease,
               background var(--dur-quick) ease,
-              border-color var(--dur-quick) ease,
-              opacity var(--dur-quick) ease;
+              border-color var(--dur-quick) ease;
   -webkit-tap-highlight-color: transparent;
 }
-/* Bosilganda — tactile his (biroz kichrayadi) */
-button:active, .cta:active, .submit:active, .google-btn:active,
-.continue-btn:active, .lang-btn:active, a.cta:active,
-[role="button"]:active, .t-add-row:active, .choice-card:active, .opt:active {
-  transform: scale(0.96);
+
+/* Hover (kompyuter) — yumshoq ko'tariladi + shakl yumaloqlanadi (pill) */
+@media (hover: hover) {
+  button:hover, .lang-btn:hover, a.cta:hover, [role="button"]:hover,
+  .t-add-row:hover, .choice-card:hover, .opt:hover, .ghost:hover {
+    transform: translateY(-2px);
+    border-radius: 999px;
+  }
+  .cta:hover, .submit:hover, .continue-btn:hover {
+    transform: translateY(-3px);
+    border-radius: 999px;
+    box-shadow: 0 10px 30px rgba(212, 175, 55, 0.30), 0 4px 12px rgba(0, 0, 0, 0.32);
+    filter: brightness(1.04);
+  }
 }
 
-/* Asosiy oltin tugmalar — hover lift + nur + kreativ shine sweep */
-.cta, .submit, .continue-btn {
-  position: relative;
-  overflow: hidden;
-  isolation: isolate;
-}
-.cta::after, .submit::after, .continue-btn::after {
-  content: '';
-  position: absolute; top: 0; left: -130%;
-  width: 70%; height: 100%;
-  background: linear-gradient(105deg, transparent, rgba(255, 255, 255, 0.26), transparent);
-  transform: skewX(-18deg);
-  pointer-events: none;
-  z-index: 1;
-  transition: left 0.7s ease;
-}
-.cta:hover, .submit:hover, .continue-btn:hover {
-  filter: brightness(1.04);
-  box-shadow: 0 6px 22px rgba(212, 175, 55, 0.26);
-}
-.cta:hover::after, .submit:hover::after, .continue-btn:hover::after { left: 140%; }
-/* Mobil (hover yo'q) — shine bosishda yuradi */
-@media (hover: none) {
-  .cta:active::after, .submit:active::after, .continue-btn:active::after { left: 140%; }
+/* Bosilganda — shakl o'zgaradi: pillga + vertikal siqilish (squish) + pastga */
+button:active, .cta:active, .submit:active, .google-btn:active,
+.continue-btn:active, .lang-btn:active, a.cta:active,
+[role="button"]:active, .t-add-row:active, .choice-card:active, .opt:active, .ghost:active {
+  transform: translateY(1px) scaleY(0.90);
+  border-radius: 999px;
+  box-shadow: none;
 }
 
 /* === SAHIFA O'TISHI — oltin "scan-line" reveal (noodatiy + minimalist) ===
