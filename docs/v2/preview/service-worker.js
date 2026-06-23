@@ -3,7 +3,7 @@
  * after first load. Caches all preview HTML files + the logo.
  */
 
-const CACHE_NAME = 'daywarden-v28.5.3';
+const CACHE_NAME = 'daywarden-v28.6.0';
 const ASSETS = [
   './',
   // Asosiy infratuzilma
@@ -83,7 +83,7 @@ self.addEventListener('fetch', event => {
   // Images/manifest cache-first (fast, rarely change).
   if (url.origin === location.origin) {
     const path = url.pathname;
-    const isHtmlOrJs = path.endsWith('.html') || path.endsWith('.js') || path === '/' || path.endsWith('/');
+    const isHtmlOrJs = path.endsWith('.html') || path.endsWith('.js') || path.endsWith('.css') || path === '/' || path.endsWith('/');
 
     if (isHtmlOrJs) {
       // Network first — updates appear instantly
@@ -96,7 +96,7 @@ self.addEventListener('fetch', event => {
             }
             return response;
           })
-          .catch(() => caches.match(event.request).then(c => c || caches.match('./gallery.html')))
+          .catch(() => caches.match(event.request).then(c => c || caches.match('./app.html')))
       );
     } else {
       // Static assets (images, manifest) — cache first for speed
