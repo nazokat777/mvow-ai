@@ -122,7 +122,7 @@
     grid-template-columns: auto 1fr;
     align-items: center;
     gap: 18px;
-    padding: 13px 24px 13px 18px;
+    padding: 16px 24px 16px 18px;
     background: linear-gradient(180deg, rgba(var(--c),.50), rgba(var(--c),.16));
     border: 1px solid rgba(var(--c),.60);
     border-radius: 999px;          /* KAPSULA shakl */
@@ -133,18 +133,18 @@
     position: relative;
     transition: transform .4s cubic-bezier(.2,.9,.25,1.25),
                 box-shadow .35s ease, background .35s ease, border-color .3s ease;
-    min-height: 76px;
+    min-height: 92px;
     user-select: none;
     -webkit-tap-highlight-color: transparent;
   }
   /* Raqam bloki (01/02/03...) — 3D, o'z rangida */
   .ch-num {
     position: relative;
-    width: 58px; height: 58px; border-radius: 17px;
+    width: 62px; height: 62px; border-radius: 18px;
     display: flex; align-items: center; justify-content: center;
     background: linear-gradient(180deg, rgba(var(--c),1), rgba(var(--c),.50));
     color: #fff;
-    font-family: 'Cormorant Garamond', serif; font-size: 31px; font-weight: 700;
+    font-family: 'Cormorant Garamond', serif; font-size: 33px; font-weight: 700;
     flex-shrink: 0;
     box-shadow: 0 6px 16px rgba(var(--c),.5),
                 inset 0 2px 1px rgba(255,255,255,.45),
@@ -163,7 +163,7 @@
     content: ''; width: 10px; height: 10px; border-radius: 50%;
     background: linear-gradient(180deg, rgba(var(--c),1), rgba(var(--c),.6));
   }
-  .ch-label { font-size: 16px; font-weight: 500; line-height: 1.3; }
+  .ch-label { font-size: 17px; font-weight: 500; line-height: 1.4; }
   .choice:hover { transform: translateY(-3px) scale(1.02); }
   .choice:active { transform: scale(0.97); }
   .choice.on {
@@ -266,7 +266,7 @@
 <link rel="stylesheet" href="theme.css">
 </head>
 <body>
-<div style="position:fixed;top:3px;left:7px;z-index:99999;font:700 10px Inter,sans-serif;color:#D4AF37;opacity:.9;letter-spacing:.5px;">dizayn v6 ✦</div>
+<div style="position:fixed;top:3px;left:7px;z-index:99999;font:700 10px Inter,sans-serif;color:#D4AF37;opacity:.9;letter-spacing:.5px;">dizayn v7 ✦</div>
 
 <div class="top">
   <div class="progress"><div class="progress-fill" id="progFill" style="width:0%"></div></div>
