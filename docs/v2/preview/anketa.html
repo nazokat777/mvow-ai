@@ -123,9 +123,12 @@
     align-items: center;
     gap: 16px;
     padding: 11px 26px 11px 11px;
-    background: linear-gradient(135deg, rgba(var(--c),.20), rgba(var(--c),.05));
-    border: 1px solid rgba(var(--c),.38);
+    background: linear-gradient(180deg, rgba(var(--c),.32), rgba(var(--c),.07));
+    border: 1px solid rgba(var(--c),.42);
     border-radius: 999px;          /* KAPSULA shakl */
+    box-shadow: 0 12px 26px rgba(0,0,0,.45),
+                inset 0 1.5px 0 rgba(255,255,255,.20),
+                inset 0 -4px 10px rgba(0,0,0,.30);  /* 3D chuqurlik */
     color: var(--text);
     cursor: pointer;
     position: relative;
@@ -140,21 +143,25 @@
   .ch-badge {
     width: 48px; height: 48px; border-radius: 50%;
     display: flex; align-items: center; justify-content: center;
-    background: linear-gradient(135deg, rgba(var(--c),1), rgba(var(--c),.70));
+    background: linear-gradient(180deg, rgba(var(--c),1), rgba(var(--c),.60));
     color: #fff;
     font-family: 'Cormorant Garamond', serif; font-size: 22px; font-weight: 700;
     flex-shrink: 0;
-    box-shadow: 0 4px 14px rgba(var(--c),.45);
+    box-shadow: 0 5px 14px rgba(var(--c),.5),
+                inset 0 1.5px 1px rgba(255,255,255,.50),
+                inset 0 -3px 5px rgba(0,0,0,.30);  /* 3D doira */
     transition: transform .45s cubic-bezier(.2,.9,.25,1.5);
   }
   .ch-label { font-size: 16px; font-weight: 500; line-height: 1.3; }
   .choice:hover { transform: translateY(-3px) scale(1.02); }
   .choice:active { transform: scale(0.97); }
   .choice.on {
-    background: linear-gradient(135deg, rgba(var(--c),.38), rgba(var(--c),.12));
+    background: linear-gradient(180deg, rgba(var(--c),.52), rgba(var(--c),.16));
     border-color: rgba(var(--c),.95);
-    box-shadow: 0 14px 40px rgba(var(--c),.40);
-    transform: translateY(-4px) scale(1.04);
+    box-shadow: 0 18px 44px rgba(var(--c),.48),
+                inset 0 1.5px 0 rgba(255,255,255,.30),
+                inset 0 -4px 10px rgba(0,0,0,.26);
+    transform: translateY(-5px) scale(1.045);
   }
   .choice.on .ch-badge { transform: scale(1.12) rotate(-5deg); }
 
