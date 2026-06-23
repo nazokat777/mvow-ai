@@ -116,41 +116,57 @@
     align-items: center;
     gap: 16px;
     padding: 18px 22px;
-    background: var(--card);
-    border: 1px solid rgba(255,255,255,.06);
-    border-radius: 14px;
+    background: linear-gradient(135deg, rgba(255,255,255,.05), rgba(255,255,255,.015));
+    border: 1px solid rgba(255,255,255,.08);
+    border-radius: 16px;
     color: var(--text);
     font-size: 16px;
     cursor: pointer;
-    transition: all .15s;
+    position: relative;
+    overflow: hidden;
+    transition: transform .4s cubic-bezier(.2,.9,.25,1.25),
+                border-color .3s ease, box-shadow .35s ease, background .35s ease;
     min-height: 60px;
     user-select: none;
     -webkit-tap-highlight-color: transparent;
   }
-  .choice:hover, .choice:active {
-    border-color: rgba(212,175,55,.25);
-    background: rgba(212,175,55,.04);
+  .choice:hover {
+    transform: translateY(-2px) scale(1.015);
+    border-color: rgba(212,175,55,.3);
   }
+  .choice:active { transform: scale(0.97); }
   .choice.on {
     border-color: var(--accent);
-    background: rgba(212,175,55,.06);
+    background: linear-gradient(135deg, rgba(212,175,55,.18), rgba(212,175,55,.04));
+    box-shadow: 0 10px 30px rgba(212,175,55,.22);
+    transform: translateY(-3px) scale(1.025);
+  }
+  /* Tanlanganda — chap chetda oltin chiziq (accent bar) */
+  .choice.on::before {
+    content: '';
+    position: absolute; left: 0; top: 0; bottom: 0; width: 4px;
+    background: linear-gradient(180deg, var(--accent-bright), var(--accent));
   }
   .choice .radio {
     width: 22px; height: 22px;
     border-radius: 50%;
-    border: 1.5px solid rgba(255,255,255,.15);
+    border: 1.5px solid rgba(255,255,255,.18);
     display: flex; align-items: center; justify-content: center;
-    transition: border-color .15s;
+    transition: border-color .25s ease, background .25s ease;
+    flex-shrink: 0;
   }
   .choice.on .radio {
     border-color: var(--accent);
+    background: rgba(212,175,55,.12);
   }
   .choice.on .radio::after {
     content: '';
     width: 12px; height: 12px;
     border-radius: 50%;
     background: var(--accent);
+    animation: radioPop .35s cubic-bezier(.2,.9,.3,1.6);
   }
+  @keyframes radioPop { from { transform: scale(0); } to { transform: scale(1); } }
 
   .footer-note {
     margin-top: 28px;
