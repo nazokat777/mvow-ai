@@ -110,72 +110,72 @@
     display: flex; flex-direction: column;
     gap: 12px;
   }
-  /* Har kartaga o'z rangi (infografika uslubi) */
-  .choices .choice { --c: 212,175,55; }
-  .choices .choice:nth-child(2) { --c: 43,182,163; }
-  .choices .choice:nth-child(3) { --c: 232,131,58; }
-  .choices .choice:nth-child(4) { --c: 224,85,110; }
+  /* Har kartaga o'z rangi (rasmga mos: teal/amber/to'q sariq/pushti/binafsha) */
+  .choices .choice { --c: 26,188,156; }
+  .choices .choice:nth-child(2) { --c: 243,156,18; }
+  .choices .choice:nth-child(3) { --c: 230,126,34; }
+  .choices .choice:nth-child(4) { --c: 233,76,110; }
   .choices .choice:nth-child(5) { --c: 155,108,240; }
   .choices .choice:nth-child(6) { --c: 90,158,232; }
   .choice {
-    display: grid;
-    grid-template-columns: auto 1fr;
-    align-items: center;
-    gap: 18px;
-    padding: 16px 24px 16px 18px;
-    background: linear-gradient(180deg, rgba(var(--c),.50), rgba(var(--c),.16));
-    border: 1px solid rgba(var(--c),.60);
+    display: flex;
+    align-items: stretch;
     border-radius: 999px;          /* KAPSULA shakl */
-    box-shadow: 0 12px 28px rgba(0,0,0,.48),
-                inset 0 1.5px 0 rgba(255,255,255,.22);
-    color: var(--text);
+    overflow: hidden;
+    min-height: 84px;
     cursor: pointer;
     position: relative;
-    transition: transform .4s cubic-bezier(.2,.9,.25,1.25),
-                box-shadow .35s ease, background .35s ease, border-color .3s ease;
-    min-height: 92px;
+    box-shadow: 0 12px 26px rgba(0,0,0,.45);
+    transition: transform .4s cubic-bezier(.2,.9,.25,1.25), box-shadow .35s ease;
     user-select: none;
     -webkit-tap-highlight-color: transparent;
   }
-  /* Raqam bloki (01/02/03...) — 3D, o'z rangida */
-  .ch-num {
-    position: relative;
-    width: 62px; height: 62px; border-radius: 18px;
+  /* CHAP — OQ zona + ikonka (rasmdagidek) */
+  .ch-cap {
+    width: 76px; flex-shrink: 0;
+    background: linear-gradient(180deg, #ffffff, #eceef0);
     display: flex; align-items: center; justify-content: center;
-    background: linear-gradient(180deg, rgba(var(--c),1), rgba(var(--c),.50));
+  }
+  .ch-ico {
+    width: 38px; height: 38px; border-radius: 50%;
+    background: #fff;
+    box-shadow: 0 2px 7px rgba(0,0,0,.18);
+    position: relative;
+  }
+  .ch-ico::after {
+    content: ''; position: absolute; inset: 9px; border-radius: 50%;
+    background: linear-gradient(180deg, rgba(var(--c),1), rgba(var(--c),.62));
+  }
+  /* O'NG — rangli tana + KATTA oq raqam */
+  .ch-body {
+    flex: 1; min-width: 0;
+    display: flex; align-items: center; gap: 16px;
+    padding: 10px 24px 10px 18px;
+    background: linear-gradient(180deg, rgba(var(--c),1), rgba(var(--c),.80));
     color: #fff;
-    font-family: 'Cormorant Garamond', serif; font-size: 33px; font-weight: 700;
-    flex-shrink: 0;
-    box-shadow: 0 6px 16px rgba(var(--c),.5),
-                inset 0 2px 1px rgba(255,255,255,.45),
-                inset 0 -3px 6px rgba(0,0,0,.30);
+  }
+  .ch-num {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 40px; font-weight: 700; line-height: 1;
+    color: #fff; flex-shrink: 0;
+    text-shadow: 0 2px 6px rgba(0,0,0,.22);
     transition: transform .45s cubic-bezier(.2,.9,.25,1.5);
   }
-  /* OQ doira — ustki qavat (2-qavat effekti, rasmdagidek) */
-  .ch-dot {
-    position: absolute; top: -8px; left: -8px;
-    width: 26px; height: 26px; border-radius: 50%;
-    background: #fff;
-    box-shadow: 0 3px 9px rgba(0,0,0,.40);
-    display: flex; align-items: center; justify-content: center;
-  }
-  .ch-dot::after {
-    content: ''; width: 10px; height: 10px; border-radius: 50%;
-    background: linear-gradient(180deg, rgba(var(--c),1), rgba(var(--c),.6));
-  }
-  .ch-label { display: flex; flex-direction: column; gap: 3px; min-width: 0; }
-  .ch-head { font-size: 17px; font-weight: 600; line-height: 1.25; color: var(--text); }
-  .ch-desc { font-size: 12.5px; font-weight: 400; line-height: 1.3; color: rgba(245,245,245,.72); }
-  .choice:hover { transform: translateY(-3px) scale(1.02); }
-  .choice:active { transform: scale(0.97); }
+  .ch-label { display: flex; flex-direction: column; gap: 2px; min-width: 0; }
+  .ch-head { font-size: 16px; font-weight: 700; line-height: 1.2; color: #fff; }
+  .ch-desc { font-size: 12px; font-weight: 400; line-height: 1.3; color: rgba(255,255,255,.82); }
+  .choice:hover { transform: translateY(-3px) scale(1.015); }
+  .choice:active { transform: scale(0.98); }
   .choice.on {
-    background: linear-gradient(180deg, rgba(var(--c),.52), rgba(var(--c),.16));
-    border-color: rgba(var(--c),.95);
-    box-shadow: 0 18px 44px rgba(var(--c),.48),
-                inset 0 1.5px 0 rgba(255,255,255,.30);
-    transform: translateY(-5px) scale(1.045);
+    box-shadow: 0 18px 44px rgba(var(--c),.55);
+    transform: translateY(-5px) scale(1.04);
   }
-  .choice.on .ch-num { transform: scale(1.08) rotate(-4deg); }
+  .choice.on::after {
+    content: ''; position: absolute; inset: 0; border-radius: 999px;
+    box-shadow: inset 0 0 0 3px rgba(255,255,255,.65);
+    pointer-events: none;
+  }
+  .choice.on .ch-num { transform: scale(1.08); }
 
   .footer-note {
     margin-top: 28px;
@@ -268,7 +268,7 @@
 <link rel="stylesheet" href="theme.css">
 </head>
 <body>
-<div style="position:fixed;top:3px;left:7px;z-index:99999;font:700 10px Inter,sans-serif;color:#D4AF37;opacity:.9;letter-spacing:.5px;">dizayn v8 ✦</div>
+<div style="position:fixed;top:3px;left:7px;z-index:99999;font:700 10px Inter,sans-serif;color:#D4AF37;opacity:.9;letter-spacing:.5px;">dizayn v9 ✦</div>
 
 <div class="top">
   <div class="progress"><div class="progress-fill" id="progFill" style="width:0%"></div></div>
@@ -469,8 +469,11 @@
         }
         const num = String(oi + 1).padStart(2, '0');
         html += `<div class="choice ${on ? 'on' : ''}" data-v="${escapeHtml(opt.v)}" role="radio" tabindex="0" aria-checked="${on}">
-          <span class="ch-num"><i class="ch-dot"></i>${num}</span>
-          <span class="ch-label"><b class="ch-head">${escapeHtml(head)}</b>${sub ? `<small class="ch-desc">${escapeHtml(sub)}</small>` : ''}</span>
+          <span class="ch-cap"><i class="ch-ico"></i></span>
+          <span class="ch-body">
+            <span class="ch-num">${num}</span>
+            <span class="ch-label"><b class="ch-head">${escapeHtml(head)}</b>${sub ? `<small class="ch-desc">${escapeHtml(sub)}</small>` : ''}</span>
+          </span>
         </div>`;
         oi++;
       }
