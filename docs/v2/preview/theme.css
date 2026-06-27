@@ -14,9 +14,9 @@
   --card-bg: #16161a;
   --card-bg-elevated: #1c1c20;
 
-  --accent: #6C5CE7;
-  --accent-bright: #8B7CF0;
-  --accent-deep: #5546C9;
+  --accent: #F97316;
+  --accent-bright: #FB923C;
+  --accent-deep: #EA580C;
   --accent-gradient: linear-gradient(135deg, var(--accent), var(--accent-deep));
 
   --text: #f5f5f5;
@@ -24,14 +24,14 @@
   --text-faint: #555;
 
   /* === SEMANTIC TRANSPARENT VARIANTS === */
-  --accent-soft: rgba(108, 92, 231, 0.10);
-  --accent-medium: rgba(108, 92, 231, 0.25);
-  --accent-strong: rgba(108, 92, 231, 0.45);
-  --accent-glow: rgba(139, 124, 240, 0.55);
+  --accent-soft: rgba(249, 115, 22, 0.10);
+  --accent-medium: rgba(249, 115, 22, 0.25);
+  --accent-strong: rgba(249, 115, 22, 0.45);
+  --accent-glow: rgba(251, 146, 60, 0.55);
 
   --border-subtle: rgba(245, 245, 245, 0.06);
   --border-default: rgba(245, 245, 245, 0.10);
-  --border-strong: rgba(108, 92, 231, 0.30);
+  --border-strong: rgba(249, 115, 22, 0.30);
 
   --overlay-light: rgba(0, 0, 0, 0.4);
   --overlay-strong: rgba(0, 0, 0, 0.7);
@@ -184,7 +184,7 @@ h1, h2, h3, h4, h5, h6,
 
 /* Selection styling — gold */
 ::selection {
-  background: rgba(108, 92, 231, 0.35);
+  background: rgba(249, 115, 22, 0.35);
   color: var(--text);
 }
 
@@ -228,9 +228,9 @@ h1, h2, h3, h4, h5, h6,
   gap: 6px;
   padding: 8px 12px;
   min-height: 38px;
-  background: rgba(108, 92, 231, 0.10);
+  background: rgba(249, 115, 22, 0.10);
   color: var(--accent-bright);
-  border: 1.5px solid rgba(108, 92, 231, 0.35);
+  border: 1.5px solid rgba(249, 115, 22, 0.35);
   border-radius: var(--radius-pill);
   font-size: 15px;
   font-weight: 600;
@@ -244,8 +244,8 @@ h1, h2, h3, h4, h5, h6,
 }
 .lang-switcher__btn:hover,
 .lang-switcher__btn:focus-visible {
-  background: rgba(108, 92, 231, 0.18);
-  border-color: rgba(108, 92, 231, 0.55);
+  background: rgba(249, 115, 22, 0.18);
+  border-color: rgba(249, 115, 22, 0.55);
   outline: none;
 }
 .lang-switcher__icon {
@@ -295,11 +295,11 @@ h1, h2, h3, h4, h5, h6,
 }
 .lang-switcher__item:hover,
 .lang-switcher__item:focus-visible {
-  background: rgba(108, 92, 231, 0.10);
+  background: rgba(249, 115, 22, 0.10);
   outline: none;
 }
 .lang-switcher__item.is-active {
-  background: rgba(108, 92, 231, 0.16);
+  background: rgba(249, 115, 22, 0.16);
   color: var(--accent-bright);
 }
 .lang-switcher__item-code {
@@ -336,7 +336,7 @@ a.cta, [role="button"], .t-add-row, .choice-card, .opt, .ghost {
   }
   .cta:hover, .submit:hover, .continue-btn:hover {
     transform: translateY(-2px);
-    box-shadow: 0 8px 22px rgba(108, 92, 231, 0.26);
+    box-shadow: 0 8px 22px rgba(249, 115, 22, 0.26);
     filter: brightness(1.03);
   }
 }
