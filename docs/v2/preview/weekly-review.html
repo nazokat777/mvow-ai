@@ -226,21 +226,33 @@
   }
   .tasks-list { display: flex; flex-direction: column; gap: 8px; }
   .task-row {
-    display: grid;
-    grid-template-columns: 1fr auto auto;
+    display: flex;
     align-items: center;
-    gap: 12px;
-    padding: 14px 14px 14px 16px;
+    gap: 14px;
+    padding: 14px 16px;
     background: var(--void-soft);
-    border-radius: 12px;
-    border: 1px solid transparent;
-    transition: border-color .18s, background .18s;
+    border-radius: 18px;
+    border: 1px solid var(--border-default, rgba(255,255,255,.06));
+    box-shadow: 0 6px 16px rgba(0,0,0,.18);
+    margin-bottom: 12px;
+    transition: transform .15s, border-color .18s, box-shadow .2s;
   }
-  .task-row:hover { background: var(--card); border-color: rgba(108, 92, 231,.18); }
+  .task-row:active { transform: scale(.99); }
+  .task-row .tr-num {
+    width: 44px; height: 44px; flex-shrink: 0;
+    border-radius: 50%;
+    background: linear-gradient(135deg, rgba(var(--tc),1), rgba(var(--tc),.78));
+    color: #fff;
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 23px; font-weight: 700;
+    display: flex; align-items: center; justify-content: center;
+    box-shadow: 0 4px 12px rgba(var(--tc),.40);
+  }
+  .task-row .tr-body { flex: 1; min-width: 0; }
   .task-row .name {
     font-family: 'Cormorant Garamond', serif;
-    font-weight: 500;
-    font-size: 21px;
+    font-weight: 600;
+    font-size: 22px;
     color: var(--text);
     overflow: hidden;
     text-overflow: ellipsis;
@@ -250,10 +262,11 @@
     font-size: 15px;
     color: var(--text-mid);
     letter-spacing: 0.2px;
-    text-align: right;
+    text-align: left;
     white-space: nowrap;
+    margin-top: 3px;
   }
-  .task-row .stats .em { color: var(--accent); font-weight: 600; }
+  .task-row .stats .em { color: var(--accent); font-weight: 700; }
   .task-row .stats .dot { color: var(--text-dim); margin: 0 5px; }
   .cal-btn {
     width: 44px;
@@ -875,14 +888,19 @@
     const lblDone = (window.I18N ? I18N.t('weekly-review.tarix_unit_done', 'bajarildi') : 'bajarildi');
     const ariaCal = (window.I18N ? I18N.t('weekly-review.tarix_aria_open_cal', 'Kalendarni ochish') : 'Kalendarni ochish');
 
-    wrap.innerHTML = names.map(name => {
+    const TASK_COLORS = ['108, 92, 231', '20, 184, 166', '243, 156, 18', '233, 76, 110', '90, 158, 232'];
+    wrap.innerHTML = names.map((name, idx) => {
       const entry = _taskIndex[name];
       const plannedDays = entry.plannedByDate.size;
       const doneDays = entry.doneByDate.size;
+      const color = TASK_COLORS[idx % TASK_COLORS.length];
       return `
-        <div class="task-row" data-task="${escapeHtml(name)}">
-          <div class="name">${escapeHtml(name)}</div>
-          <div class="stats"><span class="em">${plannedDays}</span> ${lblDays}<span class="dot">·</span><span class="em">${doneDays}</span> ${lblDone}</div>
+        <div class="task-row" data-task="${escapeHtml(name)}" style="--tc:${color}">
+          <span class="tr-num">${idx + 1}</span>
+          <div class="tr-body">
+            <div class="name">${escapeHtml(name)}</div>
+            <div class="stats"><span class="em">${plannedDays}</span> ${lblDays}<span class="dot">·</span><span class="em">${doneDays}</span> ${lblDone}</div>
+          </div>
           <button class="cal-btn" data-open-cal="${escapeHtml(name)}" aria-label="${escapeHtml(ariaCal)}">
             <svg viewBox="0 0 24 24" aria-hidden="true">
               <rect x="3" y="5" width="18" height="16" rx="2"></rect>
