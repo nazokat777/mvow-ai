@@ -18,23 +18,23 @@
   body { background: var(--void); font-family:'Inter',sans-serif; color: var(--text); min-height: 100vh; padding: 40px 24px 40px; -webkit-font-smoothing: antialiased; }
   .wrap { max-width: 1100px; margin: 0 auto; }
   .h { text-align:center; margin-bottom: 48px; }
-  .h .title { font-family:'Cormorant Garamond',serif; font-size: 36px; font-weight: 500; }
-  .h .sub { font-size: 11px; letter-spacing: 4px; color: var(--text-mid); text-transform: uppercase; margin-top: 8px; }
+  .h .title { font-family:'Cormorant Garamond',serif; font-size: 41px; font-weight: 500; }
+  .h .sub { font-size: 13px; letter-spacing: 4px; color: var(--text-mid); text-transform: uppercase; margin-top: 8px; }
   .section { margin-bottom: 56px; }
-  .section .lbl { font-size: 11px; letter-spacing: 4px; color: var(--text-dim); text-transform: uppercase; padding: 0 4px 16px; }
+  .section .lbl { font-size: 13px; letter-spacing: 4px; color: var(--text-dim); text-transform: uppercase; padding: 0 4px 16px; }
   .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 16px; }
   .card { background: var(--void-soft); border-radius: 12px; overflow: hidden; text-decoration: none; color: var(--text); transition: transform .15s, box-shadow .15s; display: flex; flex-direction: column; }
   .card:hover { transform: translateY(-2px); box-shadow: 0 8px 24px rgba(108, 92, 231,.12); }
   .thumb { height: 400px; background: #000; overflow: hidden; position: relative; }
   .thumb iframe { border: 0; width: 380px; height: 800px; transform: scale(0.5); transform-origin: top left; pointer-events: none; }
   .card .lbl-row { padding: 14px 14px 16px; display: flex; align-items: baseline; gap: 10px; }
-  .card .num { font-size: 12px; color: var(--accent); }
-  .card .name { font-size: 14px; font-weight: 500; }
+  .card .num { font-size: 14px; color: var(--accent); }
+  .card .name { font-size: 16px; font-weight: 500; }
   @media (max-width: 480px) {
     .grid { grid-template-columns: 1fr 1fr; gap: 12px; }
     .thumb { height: 260px; }
     .thumb iframe { transform: scale(0.32); }
-    .card .name { font-size: 12px; }
+    .card .name { font-size: 14px; }
   }
 </style>
 <link rel="stylesheet" href="theme.css">

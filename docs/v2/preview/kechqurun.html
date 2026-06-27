@@ -32,7 +32,7 @@
   }
   .top-stamp {
     text-align: center;
-    font-size: 11px;
+    font-size: 13px;
     letter-spacing: 4px;
     color: var(--text-dim);
     text-transform: uppercase;
@@ -41,7 +41,7 @@
   .title {
     font-family: 'Cormorant Garamond', serif;
     font-weight: 500;
-    font-size: 32px;
+    font-size: 36px;
     line-height: 1.2;
     text-align: center;
     margin-bottom: 28px;
@@ -52,7 +52,7 @@
     margin-bottom: 32px;
   }
   .section-head {
-    font-size: 11px;
+    font-size: 13px;
     letter-spacing: 3px;
     color: var(--accent);
     text-transform: uppercase;
@@ -80,15 +80,15 @@
     flex-shrink: 0;
   }
   .win .check svg { width: 12px; height: 12px; stroke: var(--void); }
-  .win .name { font-size: 15px; color: var(--text); }
-  .win .dur { font-size: 12px; color: var(--text-dim); }
+  .win .name { font-size: 17px; color: var(--text); }
+  .win .dur { font-size: 14px; color: var(--text-dim); }
 
   .no-wins {
     text-align: center;
     padding: 24px 16px;
     font-family: 'Cormorant Garamond', serif;
     font-style: italic;
-    font-size: 14px;
+    font-size: 16px;
     color: var(--text-mid);
     line-height: 1.5;
   }
@@ -102,7 +102,7 @@
     color: var(--text);
     padding: 14px 16px;
     font-family: 'Inter', sans-serif;
-    font-size: 14px;
+    font-size: 16px;
     outline: none;
     resize: none;
     min-height: 90px;
@@ -122,7 +122,7 @@
     border: 1px solid rgba(108, 92, 231,.25);
     border-radius: 999px;
     color: var(--accent);
-    font-size: 12px;
+    font-size: 14px;
     cursor: pointer;
     transition: all .15s;
   }
@@ -142,7 +142,7 @@
     border-radius: 10px;
   }
   .wake-row label {
-    font-size: 14px;
+    font-size: 16px;
     color: var(--text);
   }
   .wake-row input[type="time"] {
@@ -150,7 +150,7 @@
     border: none;
     color: var(--accent);
     font-family: 'Inter', sans-serif;
-    font-size: 17px;
+    font-size: 19px;
     font-weight: 500;
     text-align: right;
     outline: none;
@@ -167,8 +167,8 @@
     border-radius: 10px;
     margin-top: 8px;
   }
-  .alarm-toggle .lbl { font-size: 14px; color: var(--text); }
-  .alarm-toggle .why { font-size: 12px; color: var(--text-dim); margin-top: 2px; }
+  .alarm-toggle .lbl { font-size: 16px; color: var(--text); }
+  .alarm-toggle .why { font-size: 14px; color: var(--text-dim); margin-top: 2px; }
   .toggle {
     width: 44px; height: 26px;
     background: rgba(255,255,255,.08);
@@ -206,11 +206,11 @@
   .stat .v {
     font-family: 'Cormorant Garamond', serif;
     font-weight: 500;
-    font-size: 22px;
+    font-size: 25px;
     color: var(--accent);
   }
   .stat .l {
-    font-size: 9px;
+    font-size: 10px;
     letter-spacing: 2px;
     color: var(--text-dim);
     text-transform: uppercase;
@@ -234,7 +234,7 @@
     background: linear-gradient(180deg, var(--accent), var(--accent-soft));
     color: var(--void);
     font-family: 'Inter', sans-serif;
-    font-size: 14px;
+    font-size: 16px;
     font-weight: 600;
     letter-spacing: 2px;
     text-transform: uppercase;
@@ -280,18 +280,18 @@
     <!-- Completion progress -->
     <div id="reportProgress" style="background:var(--card);border-radius:12px;padding:16px 18px;margin-bottom:14px;">
       <div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:10px;">
-        <span style="font-family:'Cormorant Garamond',serif;font-style:italic;font-size:15px;color:var(--text-mid);" data-i18n="kechqurun.report_completion">Bajarish foizi</span>
-        <span style="font-family:'Cormorant Garamond',serif;font-size:24px;font-weight:500;" id="reportPct">0%</span>
+        <span style="font-family:'Cormorant Garamond',serif;font-style:italic;font-size:17px;color:var(--text-mid);" data-i18n="kechqurun.report_completion">Bajarish foizi</span>
+        <span style="font-family:'Cormorant Garamond',serif;font-size:27px;font-weight:500;" id="reportPct">0%</span>
       </div>
       <div style="height:6px;background:rgba(255,255,255,.06);border-radius:3px;overflow:hidden;">
         <div id="reportBar" style="height:100%;background:linear-gradient(90deg,var(--accent),var(--accent-soft));border-radius:3px;width:0;transition:width .8s ease;"></div>
       </div>
-      <div id="reportSummary" style="font-size:11px;color:var(--text-dim);margin-top:8px;letter-spacing:0.5px;"></div>
+      <div id="reportSummary" style="font-size:13px;color:var(--text-dim);margin-top:8px;letter-spacing:0.5px;"></div>
     </div>
 
     <!-- Bajarilgan ishlar (wins) -->
     <div id="winsBlock">
-      <div style="font-size:10px;letter-spacing:2px;color:var(--accent);text-transform:uppercase;margin-bottom:8px;padding-left:4px;" data-i18n="kechqurun.wins_head">Bugungi muvaffaqiyatlar</div>
+      <div style="font-size:11px;letter-spacing:2px;color:var(--accent);text-transform:uppercase;margin-bottom:8px;padding-left:4px;" data-i18n="kechqurun.wins_head">Bugungi muvaffaqiyatlar</div>
       <div class="wins" id="winsList">
         <div class="no-wins">—</div>
       </div>
@@ -299,12 +299,12 @@
 
     <!-- Bajarilmagan ishlar (missed) — agar bo'lsa -->
     <div id="missedBlock" style="display:none;margin-top:16px;">
-      <div style="font-size:10px;letter-spacing:2px;color:#FF8E97;text-transform:uppercase;margin-bottom:8px;padding-left:4px;" data-i18n="kechqurun.missed_head">Bajarilmagan</div>
+      <div style="font-size:11px;letter-spacing:2px;color:#FF8E97;text-transform:uppercase;margin-bottom:8px;padding-left:4px;" data-i18n="kechqurun.missed_head">Bajarilmagan</div>
       <div id="missedList" style="display:flex;flex-direction:column;gap:6px;"></div>
     </div>
 
     <!-- Sermahsul vaqt -->
-    <div id="insightBlock" style="display:none;margin-top:14px;padding:12px 14px;background:var(--card);border-radius:10px;font-size:12px;color:var(--text-mid);text-align:center;">
+    <div id="insightBlock" style="display:none;margin-top:14px;padding:12px 14px;background:var(--card);border-radius:10px;font-size:14px;color:var(--text-mid);text-align:center;">
       <span data-i18n="kechqurun.insight_lead">Sermahsul vaqt:</span>
       <span id="insightTime" style="color:var(--accent);font-weight:500;letter-spacing:0.5px;">—</span>
     </div>
@@ -429,10 +429,10 @@
       });
       if (missed.length) {
         missedList.innerHTML = missed.map(t => `
-          <div style="display:grid;grid-template-columns:60px 1fr auto;gap:10px;align-items:center;padding:8px 12px;background:rgba(255,71,87,0.05);border:1px solid rgba(255,71,87,0.18);border-radius:8px;font-size:12px;">
+          <div style="display:grid;grid-template-columns:60px 1fr auto;gap:10px;align-items:center;padding:8px 12px;background:rgba(255,71,87,0.05);border:1px solid rgba(255,71,87,0.18);border-radius:8px;font-size:14px;">
             <span style="color:#FF8E97;font-weight:500;">${escapeHtml(t.time || '—')}</span>
             <span style="color:var(--text-mid);">${escapeHtml(t.name || '—')}</span>
-            <span style="color:var(--text-dim);font-size:11px;">${escapeHtml(t.dur || '')}</span>
+            <span style="color:var(--text-dim);font-size:13px;">${escapeHtml(t.dur || '')}</span>
           </div>
         `).join('');
         missedBlock.style.display = 'block';
@@ -502,10 +502,10 @@
 
       // Tasdiq toast
       const toast = document.createElement('div');
-      toast.style.cssText = 'position:fixed;left:50%;top:30%;transform:translate(-50%,-50%);background:#11151E;border:1px solid rgba(108, 92, 231,.4);border-radius:14px;padding:24px 28px;color:var(--accent-bright);font-family:Inter,sans-serif;font-size:16px;text-align:center;z-index:9999;box-shadow:0 20px 60px rgba(0,0,0,.6);';
+      toast.style.cssText = 'position:fixed;left:50%;top:30%;transform:translate(-50%,-50%);background:#11151E;border:1px solid rgba(108, 92, 231,.4);border-radius:14px;padding:24px 28px;color:var(--accent-bright);font-family:Inter,sans-serif;font-size:18px;text-align:center;z-index:9999;box-shadow:0 20px 60px rgba(0,0,0,.6);';
       const toastMain = window.I18N ? I18N.t('kechqurun.toast_main', 'Xayrli tun') : 'Xayrli tun';
       const toastAlarm = window.I18N ? I18N.tWith('kechqurun.toast_alarm', { time: wakeInput.value }) : ('budilnik ' + wakeInput.value);
-      toast.innerHTML = '✓ ' + toastMain + '<br><span style="font-size:12px;color:#9CA0A8;letter-spacing:1px;text-transform:uppercase;margin-top:8px;display:block;">' + toastAlarm + '</span>';
+      toast.innerHTML = '✓ ' + toastMain + '<br><span style="font-size:14px;color:#9CA0A8;letter-spacing:1px;text-transform:uppercase;margin-top:8px;display:block;">' + toastAlarm + '</span>';
       document.body.appendChild(toast);
 
       setTimeout(() => { window.location.href = 'home.html'; }, 1500);

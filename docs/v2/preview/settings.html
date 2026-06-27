@@ -19,8 +19,8 @@
   .container { padding: 80px 32px 100px; }
 
   .me { text-align:center; margin-bottom: 48px; }
-  .me .name { font-family:'Cormorant Garamond',serif; font-size: 28px; font-weight: 500; }
-  .me .sub { font-size: 11px; letter-spacing: 3px; color: var(--text-mid); text-transform: uppercase; margin-top: 6px; }
+  .me .name { font-family:'Cormorant Garamond',serif; font-size: 32px; font-weight: 500; }
+  .me .sub { font-size: 13px; letter-spacing: 3px; color: var(--text-mid); text-transform: uppercase; margin-top: 6px; }
   .me .sub .em { color: var(--accent); }
 
   .row {
@@ -31,13 +31,13 @@
     padding: 16px 0;
     border-bottom: 1px solid rgba(255,255,255,.04);
   }
-  .row .lbl { font-size: 14px; color: var(--text); }
-  .row .val { font-size: 13px; color: var(--accent); cursor: pointer; }
+  .row .lbl { font-size: 16px; color: var(--text); }
+  .row .val { font-size: 15px; color: var(--accent); cursor: pointer; }
   .row select {
     background: transparent;
     border: none;
     color: var(--accent);
-    font-size: 13px;
+    font-size: 15px;
     text-align: right;
     cursor: pointer;
     outline: none;
@@ -53,7 +53,7 @@
     background: transparent;
     border: none;
     color: var(--accent);
-    font-size: 13px;
+    font-size: 15px;
     text-align: right;
     outline: none;
     font-family: 'Inter', sans-serif;
@@ -80,7 +80,7 @@
   .toggle.on::after { transform: translateX(18px); background: var(--void); }
 
   .section-lbl {
-    font-size: 10px;
+    font-size: 11px;
     letter-spacing: 4px;
     color: var(--text-dim);
     text-transform: uppercase;
@@ -97,7 +97,7 @@
     background: transparent;
     color: #B8334A;
     font-family: 'Inter', sans-serif;
-    font-size: 12px;
+    font-size: 14px;
     letter-spacing: 2px;
     text-transform: uppercase;
     border: 1px solid rgba(184,51,74,.3);
@@ -116,13 +116,13 @@
     font-weight: 600;
   }
 
-  .footer { margin-top: 32px; text-align: center; font-size: 11px; letter-spacing: 2px; color: var(--text-dim); text-transform: uppercase; }
+  .footer { margin-top: 32px; text-align: center; font-size: 13px; letter-spacing: 2px; color: var(--text-dim); text-transform: uppercase; }
   .footer .em { color: var(--text-mid); }
 
   @media (max-width: 480px) { body { padding: 0; } .phone { width: 100vw; min-height: 100vh; border-radius: 0; box-shadow: none; } }
 
   /* Celebration intensity + replay intro pills */
-  .intensity-pill { flex:1; padding:10px 8px; background:rgba(255,255,255,.03); border:1px solid rgba(255,255,255,.08); color:var(--text-mid); border-radius:8px; font-size:11px; letter-spacing:1px; text-transform:uppercase; cursor:pointer; font-family:'Inter',sans-serif; }
+  .intensity-pill { flex:1; padding:10px 8px; background:rgba(255,255,255,.03); border:1px solid rgba(255,255,255,.08); color:var(--text-mid); border-radius:8px; font-size:13px; letter-spacing:1px; text-transform:uppercase; cursor:pointer; font-family:'Inter',sans-serif; }
   .intensity-pill.active { background:rgba(108, 92, 231,.12); border-color:var(--accent); color:var(--accent); }
 </style>
 <link rel="stylesheet" href="theme.css">
@@ -180,15 +180,15 @@
       <div class="toggle" data-toggle="negotiation" role="switch" tabindex="0" data-i18n-aria="settings.negotiation" aria-label="Diqqat sinovi" aria-checked="false"></div>
     </div>
 
-    <button id="testNotifBtn" type="button" data-i18n="settings.test_notif_btn" style="margin-top:16px;width:100%;padding:14px;background:transparent;border:1px solid rgba(108, 92, 231,.25);border-radius:8px;color:var(--accent);font-family:'Inter',sans-serif;font-size:12px;letter-spacing:2px;text-transform:uppercase;cursor:pointer;min-height:48px;">Bildirishnoma sinovi</button>
-    <div id="testNotifStatus" style="text-align:center;font-size:11px;color:var(--text-mid);margin-top:8px;letter-spacing:1px;"></div>
+    <button id="testNotifBtn" type="button" data-i18n="settings.test_notif_btn" style="margin-top:16px;width:100%;padding:14px;background:transparent;border:1px solid rgba(108, 92, 231,.25);border-radius:8px;color:var(--accent);font-family:'Inter',sans-serif;font-size:14px;letter-spacing:2px;text-transform:uppercase;cursor:pointer;min-height:48px;">Bildirishnoma sinovi</button>
+    <div id="testNotifStatus" style="text-align:center;font-size:13px;color:var(--text-mid);margin-top:8px;letter-spacing:1px;"></div>
 
     <div class="section" style="margin-top:24px;">
       <button class="intensity-pill" type="button" id="replayIntro" data-i18n="settings.replay_intro" style="width:100%;">Tanishuv ko'rinishini qayta ko'rsatish</button>
     </div>
 
     <div class="row" style="margin-top:24px;">
-      <a href="about.html" data-i18n="settings.about_link" style="font-size:14px;color:var(--text);text-decoration:none;">Bu ilov haqida</a>
+      <a href="about.html" data-i18n="settings.about_link" style="font-size:16px;color:var(--text);text-decoration:none;">Bu ilov haqida</a>
       <span style="color:var(--text-dim);">›</span>
     </div>
 
@@ -200,7 +200,7 @@
 </div>
 
 <div class="page-cta-bar" style="position:fixed;bottom:0;left:0;right:0;padding:16px 24px env(safe-area-inset-bottom, 20px);background:linear-gradient(180deg,transparent,#04060B 40%);z-index:50;">
-  <a href="home.html" data-i18n="common.continue" style="display:block;max-width:380px;margin:0 auto;padding:16px;background:linear-gradient(180deg,var(--accent),var(--accent-deep));color:#fff;font-family:'Inter',sans-serif;font-size:13px;font-weight:600;letter-spacing:2px;text-transform:uppercase;border-radius:999px;text-align:center;text-decoration:none;min-height:52px;">Davom</a>
+  <a href="home.html" data-i18n="common.continue" style="display:block;max-width:380px;margin:0 auto;padding:16px;background:linear-gradient(180deg,var(--accent),var(--accent-deep));color:#fff;font-family:'Inter',sans-serif;font-size:15px;font-weight:600;letter-spacing:2px;text-transform:uppercase;border-radius:999px;text-align:center;text-decoration:none;min-height:52px;">Davom</a>
 </div>
 
 <script src="i18n.js?v=28.4.0"></script>

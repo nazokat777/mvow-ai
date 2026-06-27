@@ -24,8 +24,8 @@
   .container { flex:1; display:flex; flex-direction: column; align-items:center; justify-content:center; padding: 60px 32px 100px; gap: 22px; }
 
   .task { text-align: center; }
-  .task .name { font-family:'Cormorant Garamond',serif; font-size: 22px; font-weight: 500; }
-  .task .time { font-size: 11px; letter-spacing: 3px; color: var(--text-mid); text-transform: uppercase; margin-top: 8px; }
+  .task .name { font-family:'Cormorant Garamond',serif; font-size: 25px; font-weight: 500; }
+  .task .time { font-size: 13px; letter-spacing: 3px; color: var(--text-mid); text-transform: uppercase; margin-top: 8px; }
 
   /* Choice modal (Taymer bilan / Taymersiz) */
   .choice-overlay {
@@ -48,17 +48,17 @@
   @keyframes chIn { from { opacity: 0; transform: translateY(20px) scale(.96); } to { opacity: 1; transform: translateY(0) scale(1); } }
   .choice-card .ctitle {
     font-family: 'Cormorant Garamond', serif;
-    font-style: italic; font-size: 22px;
+    font-style: italic; font-size: 25px;
     line-height: 1.3; color: var(--text);
     margin-bottom: 6px;
   }
   .choice-card .ctask {
-    font-size: 13px; color: var(--accent);
+    font-size: 15px; color: var(--accent);
     margin-bottom: 18px;
     font-weight: 500;
   }
   .choice-card .csub {
-    font-size: 12px; color: var(--text-dim);
+    font-size: 14px; color: var(--text-dim);
     line-height: 1.5;
     margin-bottom: 22px;
   }
@@ -67,7 +67,7 @@
     padding: 14px 10px;
     border: none; border-radius: 999px;
     font-family: 'Inter', sans-serif;
-    font-size: 12px; font-weight: 600;
+    font-size: 14px; font-weight: 600;
     letter-spacing: 1px; text-transform: uppercase;
     cursor: pointer; min-height: 48px;
   }
@@ -80,8 +80,8 @@
   .ring-track { fill: none; stroke: rgba(255,255,255,.06); stroke-width: 3; }
   .ring-prog { fill: none; stroke: var(--accent); stroke-width: 3; stroke-linecap: round; transition: stroke-dashoffset 1s linear; }
   .ring-center { position: absolute; inset: 0; display: flex; flex-direction: column; align-items:center; justify-content:center; gap: 6px; }
-  .digits { font-size: 44px; font-weight: 500; color: var(--accent); letter-spacing: 1px; font-feature-settings: "tnum"; }
-  .sub { font-size: 9px; letter-spacing: 3px; color: var(--text-dim); text-transform: uppercase; }
+  .digits { font-size: 50px; font-weight: 500; color: var(--accent); letter-spacing: 1px; font-feature-settings: "tnum"; }
+  .sub { font-size: 10px; letter-spacing: 3px; color: var(--text-dim); text-transform: uppercase; }
 
   /* Taymersiz katta tugma */
   .no-timer-area { display: none; text-align: center; gap: 18px; }
@@ -89,13 +89,13 @@
   .no-timer-elapsed {
     font-family: 'Cormorant Garamond', serif;
     font-weight: 500;
-    font-size: 56px;
+    font-size: 64px;
     color: var(--accent);
     line-height: 1;
     font-feature-settings: "tnum";
   }
   .no-timer-lbl {
-    font-size: 10px;
+    font-size: 11px;
     letter-spacing: 3px;
     color: var(--text-dim);
     text-transform: uppercase;
@@ -107,7 +107,7 @@
     color: var(--void);
     border: none; border-radius: 999px;
     font-family: 'Inter', sans-serif;
-    font-size: 13px; font-weight: 600;
+    font-size: 15px; font-weight: 600;
     letter-spacing: 2px; text-transform: uppercase;
     cursor: pointer; min-height: 52px;
   }
@@ -129,7 +129,7 @@
   .timer-area.hidden { display: none; }
 
   .bottom-bar { padding: 18px 32px env(safe-area-inset-bottom, 18px); }
-  .cta { display:block; width:100%; padding:14px; background: transparent; color: var(--text-mid); font-size:12px; letter-spacing:2px; text-transform: uppercase; border:1px solid rgba(255,255,255,.1); border-radius:6px; text-align:center; text-decoration:none; }
+  .cta { display:block; width:100%; padding:14px; background: transparent; color: var(--text-mid); font-size:14px; letter-spacing:2px; text-transform: uppercase; border:1px solid rgba(255,255,255,.1); border-radius:6px; text-align:center; text-decoration:none; }
 
   @media (max-width: 480px) { body { padding: 0; } .phone { width: 100vw; min-height: 100vh; border-radius: 0; box-shadow: none; } }
 </style>
@@ -182,19 +182,19 @@
   <div class="choice-card">
     <div class="ctitle" data-i18n="hardlock.choice_title">Qanday boshlaymiz?</div>
     <div class="ctask" id="cTaskName" data-i18n="hardlock.default_task">Ish</div>
-    <div id="cTaskMeta" style="font-size:11px;color:#9CA0A8;letter-spacing:1px;text-transform:uppercase;margin-bottom:14px;">— · —</div>
+    <div id="cTaskMeta" style="font-size:13px;color:#9CA0A8;letter-spacing:1px;text-transform:uppercase;margin-bottom:14px;">— · —</div>
     <div style="display:flex;flex-direction:column;gap:8px;">
       <button class="choice-btn secondary" id="chNoTimer" type="button" style="text-align:left;padding:14px 16px;">
         <span style="display:block;font-weight:600;margin-bottom:2px;" data-i18n="hardlock.opt_notimer">Taymersiz</span>
-        <span style="display:block;font-size:10px;color:#9CA0A8;letter-spacing:0.5px;text-transform:none;font-weight:500;" data-i18n="hardlock.opt_notimer_desc">Siz tayyor bo'lganda "Bajardim" deysiz</span>
+        <span style="display:block;font-size:11px;color:#9CA0A8;letter-spacing:0.5px;text-transform:none;font-weight:500;" data-i18n="hardlock.opt_notimer_desc">Siz tayyor bo'lganda "Bajardim" deysiz</span>
       </button>
       <button class="choice-btn secondary" id="chTimer" type="button" style="text-align:left;padding:14px 16px;border-color:rgba(108, 92, 231,.35);">
         <span style="display:block;font-weight:600;margin-bottom:2px;color:var(--accent-bright);" data-i18n="hardlock.opt_timer">Oddiy taymer</span>
-        <span style="display:block;font-size:10px;color:#9CA0A8;letter-spacing:0.5px;text-transform:none;font-weight:500;" id="chTimerDur" data-i18n="hardlock.opt_timer_desc">Vazifa davomiyligi bo'yicha</span>
+        <span style="display:block;font-size:11px;color:#9CA0A8;letter-spacing:0.5px;text-transform:none;font-weight:500;" id="chTimerDur" data-i18n="hardlock.opt_timer_desc">Vazifa davomiyligi bo'yicha</span>
       </button>
       <button class="choice-btn primary" id="chPomo" type="button" style="text-align:left;padding:14px 16px;">
         <span style="display:block;font-weight:600;margin-bottom:2px;" data-i18n="hardlock.opt_pomo">Pomodoro</span>
-        <span style="display:block;font-size:10px;color:#fff;opacity:0.7;letter-spacing:0.5px;text-transform:none;font-weight:500;" id="chPomoDur" data-i18n="hardlock.opt_pomo_desc">25 daq ish + 5 daq dam sikllari</span>
+        <span style="display:block;font-size:11px;color:#fff;opacity:0.7;letter-spacing:0.5px;text-transform:none;font-weight:500;" id="chPomoDur" data-i18n="hardlock.opt_pomo_desc">25 daq ish + 5 daq dam sikllari</span>
       </button>
     </div>
   </div>
@@ -219,7 +219,7 @@
   <div id="dlTime" style="
     font-family:'Inter',sans-serif;
     font-weight:500;
-    font-size:64px;
+    font-size:73px;
     color:var(--accent-bright);
     letter-spacing:0.02em;
     margin-bottom:24px;
@@ -228,7 +228,7 @@
   <div data-i18n="hardlock.deep_lock_hint" style="
     font-family:'Cormorant Garamond',serif;
     font-style:italic;
-    font-size:18px;
+    font-size:21px;
     color:rgba(245,242,236,0.55);
     margin-bottom:40px;
     max-width:300px;
@@ -236,7 +236,7 @@
   ">Telefon qulflandi. Fokusda bo'ling.</div>
   <div data-i18n="hardlock.deep_lock_tap" style="
     font-family:'Inter',sans-serif;
-    font-size:11px;
+    font-size:13px;
     letter-spacing:0.18em;
     text-transform:uppercase;
     color:rgba(245,242,236,0.3);
@@ -249,7 +249,7 @@
     <div class="ctitle" data-i18n="hardlock.ask_title">Bajardingizmi?</div>
     <div class="ctask" id="aTaskName" data-i18n="hardlock.default_task">Ish</div>
     <div class="csub"><span data-i18n="hardlock.ask_done_prefix">Tugadi. Vaqt —</span> <span id="aDur" data-i18n="hardlock.dur_fallback">25 daq</span>.</div>
-    <input id="hlNote" type="text" maxlength="60" placeholder="Qisqa izoh (mas. speaking)" data-i18n-placeholder="hardlock.note_ph" style="width:100%;margin-bottom:14px;background:#0C0F16;border:1px solid rgba(255,255,255,.1);border-radius:8px;padding:10px 12px;color:#F5F2EC;font-family:'Inter',sans-serif;font-size:13px;outline:none;">
+    <input id="hlNote" type="text" maxlength="60" placeholder="Qisqa izoh (mas. speaking)" data-i18n-placeholder="hardlock.note_ph" style="width:100%;margin-bottom:14px;background:#0C0F16;border:1px solid rgba(255,255,255,.1);border-radius:8px;padding:10px 12px;color:#F5F2EC;font-family:'Inter',sans-serif;font-size:15px;outline:none;">
     <div class="choice-grid">
       <button class="choice-btn secondary" id="askNo" type="button" data-i18n="hardlock.ans_no">Yo'q</button>
       <button class="choice-btn primary" id="askYes" type="button" data-i18n="hardlock.ans_yes">Ha</button>
