@@ -22,7 +22,7 @@
       height: '44px',
       background: 'transparent',
       border: 'none',
-      color: '#8B7CF0',
+      color: '#fff',
       fontSize: '22px',
       fontWeight: '500',
       lineHeight: '1',
@@ -35,7 +35,7 @@
       transition: 'background .15s'
     };
     for (var k in s) b.style[k] = s[k];
-    b.addEventListener('mousedown', function () { b.style.background = 'rgba(108,92,231,0.16)'; });
+    b.addEventListener('mousedown', function () { b.style.background = 'rgba(255,255,255,0.18)'; });
     b.addEventListener('mouseup', function () { b.style.background = 'transparent'; });
     b.addEventListener('mouseleave', function () { b.style.background = 'transparent'; });
     return b;
@@ -55,8 +55,8 @@
       left: '12px',
       display: 'flex',
       alignItems: 'center',
-      background: 'rgba(8,8,12,0.85)',
-      border: '1px solid rgba(108, 92, 231, 0.55)',
+      background: 'rgba(255,255,255,0.10)',
+      border: '1px solid rgba(255,255,255,0.22)',
       borderRadius: '999px',
       backdropFilter: 'blur(8px)',
       WebkitBackdropFilter: 'blur(8px)',
@@ -80,7 +80,7 @@
 
     // Ajratuvchi chiziq
     var divider = document.createElement('span');
-    divider.style.cssText = 'width:1px;height:22px;background:rgba(108,92,231,0.35);flex-shrink:0;';
+    divider.style.cssText = 'width:1px;height:22px;background:rgba(255,255,255,0.22);flex-shrink:0;';
 
     // ☰ Mundarija
     var ml = t('common.menu', 'Mundarija');

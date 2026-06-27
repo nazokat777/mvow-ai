@@ -229,7 +229,7 @@
   opacity: 0;
   transform: translateY(6px);
   will-change: opacity, transform;
-  font-family: 'Anton', Georgia, serif;
+  font-family: 'Inter', Georgia, serif;
   font-style: normal;
   font-size: 18px;
   letter-spacing: .2px;
@@ -421,7 +421,7 @@
 }
 
 .mvw-recoverymoment-title {
-  font-family: 'Anton', serif;
+  font-family: 'Inter', sans-serif;
   font-style: normal;
   font-weight: 500;
   font-size: clamp(28px, 6vw, 42px);
@@ -670,7 +670,7 @@
   top: calc(50% + 130px);
   left: 50%;
   transform: translateX(-50%) translateY(6px);
-  font-family: 'Anton', Georgia, serif;
+  font-family: 'Inter', Georgia, serif;
   font-style: normal;
   font-weight: 500;
   font-size: 44px;
