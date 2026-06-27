@@ -159,10 +159,19 @@ body::before {
   background-repeat: no-repeat !important;
 }
 
-/* Headings use serif */
+/* Sarlavhalar — qalin siqilgan KATTA HARF (Anton), referensga mos. Indigo gradient emas — oq/qora */
 h1, h2, h3, h4, h5, h6,
-.heading, .title {
-  font-family: var(--font-heading);
+.heading, .title, .question, .big {
+  font-family: 'Anton', sans-serif !important;
+  font-weight: 400 !important;
+  font-style: normal !important;
+  text-transform: uppercase;
+  letter-spacing: 0.01em;
+  line-height: 1.06;
+  background: none !important;
+  -webkit-text-fill-color: currentColor !important;
+  color: var(--text) !important;
+  animation: none !important;
 }
 
 /* Selection styling — gold */
