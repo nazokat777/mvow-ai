@@ -55,10 +55,14 @@
     text-align: center;
     padding: 60px 24px;
     background: var(--card);
-    border: 1px solid rgba(255,255,255,.06);
-    border-radius: 14px;
+    border: 1px solid var(--border-default, rgba(255,255,255,.06));
+    border-radius: 18px;
     margin-bottom: 20px;
+    cursor: pointer;
+    transition: transform .15s, border-color .2s, box-shadow .2s;
   }
+  .empty:hover { border-color: var(--accent); }
+  .empty:active { transform: scale(.99); }
   .empty .ic {
     width: 60px; height: 60px;
     margin: 0 auto 16px;
@@ -677,14 +681,17 @@
     const empty = document.getElementById('emptyState');
     const sub = document.getElementById('countSub');
 
+    var addBtnEl = document.getElementById('addBtn');
     if (!goals.length) {
       list.style.display = 'none';
       empty.style.display = 'block';
+      if (addBtnEl) addBtnEl.style.display = 'none';
       sub.textContent = (window.I18N ? I18N.tWith('maqsadlar.count', { n: 0 }) : '0 ta maqsad');
       return;
     }
     empty.style.display = 'none';
     list.style.display = 'flex';
+    if (addBtnEl) addBtnEl.style.display = '';
     sub.textContent = (window.I18N ? I18N.tWith('maqsadlar.count', { n: goals.length }) : goals.length + ' ta maqsad');
 
     // History — har maqsad uchun bajarilgan kunlar sonini hisoblash uchun
@@ -977,6 +984,8 @@
   document.getElementById('addBtn').addEventListener('click', () => {
     window.location.href = 'maqsad.html';
   });
+  var emptyClick = document.getElementById('emptyState');
+  if (emptyClick) emptyClick.addEventListener('click', () => { window.location.href = 'maqsad.html'; });
 
   render();
 </script>
