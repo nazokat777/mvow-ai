@@ -81,7 +81,19 @@
 
   --overlay-light: rgba(0, 0, 0, 0.22);
   --overlay-strong: rgba(0, 0, 0, 0.45);
+
+  /* Sahifalar lokal nomlarni qattiq yozadi (--void:#04060B...) — yorug'da ham majburan almashtirish */
+  --void: #f3f4f7;
+  --void-soft: #ffffff;
+  --card: #ffffff;
+  --text-mid: #5b6068;
 }
+/* Yorug' rejim — sahifalar qattiq yozgan qora fon/oq-chiziq ranglarni ham almashtirish */
+:root[data-theme="light"] body,
+:root[data-theme="light"] .phone,
+:root[data-theme="light"] .wrap,
+:root[data-theme="light"] .container { background: #f3f4f7 !important; color: #15171c; }
+:root[data-theme="light"] .phone { box-shadow: 0 0 0 8px #e2e5ea, 0 30px 80px rgba(0,0,0,.18) !important; }
 /* Tema almashganda yumshoq o'tish */
 html, body { transition: background 0.3s ease, color 0.3s ease; }
 
