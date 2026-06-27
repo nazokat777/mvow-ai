@@ -147,7 +147,12 @@ body::before {
   background:
     radial-gradient(90% 50% at 50% -6%, var(--accent-medium), transparent 60%),
     radial-gradient(75% 55% at 105% 102%, var(--accent-soft), transparent 55%);
+  animation: dwGlow 9s ease-in-out infinite;
 }
+/* Nozik nafas — atmosfera nuri sekin jonlanadi */
+@keyframes dwGlow { 0%, 100% { opacity: 0.6; } 50% { opacity: 1; } }
+/* Katta gradient sarlavhalar uchun sekin shimmer */
+@keyframes dwShimmer { 0%, 100% { background-position: 0% 50%; } 50% { background-position: 100% 50%; } }
 /* .phone ekranlar (home...) — fon ustiga rang nuri */
 .phone {
   background-image: radial-gradient(95% 42% at 50% 0%, var(--accent-medium), transparent 58%) !important;
