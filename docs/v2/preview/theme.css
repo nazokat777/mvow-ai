@@ -157,6 +157,10 @@ body::before {
 @keyframes dwGlow { 0%, 100% { opacity: 0.6; } 50% { opacity: 1; } }
 /* Katta gradient sarlavhalar uchun sekin shimmer */
 @keyframes dwShimmer { 0%, 100% { background-position: 0% 50%; } 50% { background-position: 100% 50%; } }
+/* Kreativ — kontent yumshoq ko'tarilib chiqadi (premium kirish, minimal) */
+@keyframes dwEnter { from { opacity: 0; transform: translateY(18px); } to { opacity: 1; transform: none; } }
+.wrap, .phone .container { animation: dwEnter 0.5s cubic-bezier(0.16, 0.84, 0.32, 1) both; }
+@media (prefers-reduced-motion: reduce) { .wrap, .phone .container { animation: none !important; } }
 /* .phone ekranlar (home...) — fon ustiga rang nuri */
 .phone {
   background-image: radial-gradient(95% 42% at 50% 0%, var(--accent-medium), transparent 58%) !important;
