@@ -85,6 +85,32 @@
 /* Tema almashganda yumshoq o'tish */
 html, body { transition: background 0.3s ease, color 0.3s ease; }
 
+/* === YORUG' REJIM — tepa navigatsiya + til tugmalari moslashadi (aks holda qora qoladi) === */
+:root[data-theme="light"] #globalBackBtn,
+:root[data-theme="light"] #globalMenuBtn {
+  background: rgba(255, 255, 255, 0.92) !important;
+  border-color: rgba(0, 0, 0, 0.14) !important;
+  color: #15171c !important;
+}
+:root[data-theme="light"] .seq-btn {
+  background: rgba(255, 255, 255, 0.92);
+  border-color: rgba(0, 0, 0, 0.14);
+  color: #15171c;
+}
+:root[data-theme="light"] .seq-btn:active { background: rgba(0, 0, 0, 0.06); }
+:root[data-theme="light"] .seq-progress-meta { color: #5b6068; }
+:root[data-theme="light"] .seq-progress-meta .pos { color: #15171c; }
+:root[data-theme="light"] .seq-progress { background: rgba(0, 0, 0, 0.10); }
+:root[data-theme="light"] .lang-switcher__btn {
+  background: rgba(0, 0, 0, 0.04);
+  color: #15171c;
+  border-color: rgba(0, 0, 0, 0.14);
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.10);
+}
+:root[data-theme="light"] .phone .bottom-bar {
+  background: linear-gradient(180deg, transparent, #f3f4f7 30%) !important;
+}
+
 /* === BASE STYLES === */
 html, body {
   background: var(--bg);
