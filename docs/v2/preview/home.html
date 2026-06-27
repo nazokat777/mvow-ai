@@ -58,74 +58,85 @@
   }
   /* BUGUNGI VAZIFALAR — har bir vazifa qatori */
   .t-row {
-    display: grid;
-    grid-template-columns: 18px 56px 1fr 20px;
-    gap: 10px;
+    display: flex;
     align-items: center;
-    padding: 10px 12px;
+    gap: 14px;
+    padding: 15px 16px;
     background: var(--void-soft);
-    border-radius: 8px;
-    transition: opacity .2s;
+    border: 1px solid var(--border-default, rgba(255,255,255,.06));
+    border-radius: 18px;
+    box-shadow: 0 6px 16px rgba(0,0,0,.20);
+    transition: transform .15s, opacity .2s, box-shadow .2s;
   }
+  .t-row:active { transform: scale(.99); }
   .t-row .ord {
-    font-size: 15px;
-    color: var(--text-dim);
-    text-align: center;
-    font-feature-settings: "tnum";
+    width: 46px; height: 46px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, rgba(var(--tc),1), rgba(var(--tc),.78));
+    color: #fff;
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 25px; font-weight: 700;
+    display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0;
+    box-shadow: 0 4px 12px rgba(var(--tc),.40);
   }
-  .t-row .ttime {
-    font-size: 16px;
-    color: var(--accent);
-    font-weight: 500;
-    letter-spacing: 0.3px;
-  }
+  .t-row .tbody { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 3px; }
   .t-row .tname {
-    font-size: 17px;
+    font-size: 19px;
+    font-weight: 600;
     color: var(--text);
-    line-height: 1.3;
+    line-height: 1.2;
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
   }
+  .t-row .ttime {
+    font-size: 15px;
+    color: var(--accent);
+    font-weight: 600;
+    letter-spacing: 0.3px;
+  }
   .t-row .tstat {
-    width: 18px; height: 18px;
+    width: 26px; height: 26px;
     border-radius: 50%;
     display: flex; align-items: center; justify-content: center;
     flex-shrink: 0;
   }
   /* ✓ done */
-  .t-row.done { opacity: 0.6; }
+  .t-row.done { opacity: 0.55; }
   .t-row.done .tname { text-decoration: line-through; color: var(--text-mid); }
+  .t-row.done .ord { background: linear-gradient(135deg, var(--accent-bright), var(--accent-deep)); }
   .t-row.done .tstat { background: var(--accent); }
   .t-row.done .tstat::after {
     content: '';
-    width: 8px; height: 5px;
-    border-left: 2px solid var(--void);
-    border-bottom: 2px solid var(--void);
+    width: 9px; height: 5px;
+    border-left: 2px solid #fff;
+    border-bottom: 2px solid #fff;
     transform: rotate(-45deg) translate(1px, -1px);
   }
   /* ✗ missed */
   .t-row.missed .tname { color: var(--text-mid); }
+  .t-row.missed .ord { background: linear-gradient(135deg, #FF6B7A, #E03048); }
   .t-row.missed .ttime { color: #FF8E97; opacity: 0.85; }
   .t-row.missed .tstat { background: #FF4757; font-size: 16px; color: #fff; line-height: 1; font-weight: 600; }
   /* . pending */
   .t-row.pending .tstat { border: 1.5px solid rgba(255,255,255,.18); background: transparent; }
   /* ⏰ overdue — bugun vaqti o'tdi, lekin hali bajarish mumkin (jazo emas, eslatma) */
   .t-item { display: flex; flex-direction: column; }
+  .t-row.overdue .ord { background: linear-gradient(135deg, #FFD98A, #E0A23C); }
   .t-row.overdue .ttime { color: #F5C26B; }
   .t-row.overdue .tstat { border: 1.5px solid rgba(245,194,107,.5); background: transparent; }
   .t-note {
-    margin: 5px 12px 2px 40px;
+    margin: 6px 14px 2px 16px;
     font-family: 'Cormorant Garamond', serif;
     font-style: italic;
-    font-size: 11.5px;
+    font-size: 14px;
     color: #F5C26B;
     line-height: 1.45;
   }
   /* active — hozir ishlayotgan */
-  .t-row.active { border: 1px solid rgba(108, 92, 231,.35); background: rgba(108, 92, 231,.04); }
-  .t-row.active .ttime { color: var(--accent); }
-  .t-row.active .tstat { background: rgba(108, 92, 231,.4); animation: pulse 1.6s ease-in-out infinite; }
+  .t-row.active { border: 1.5px solid rgba(108, 92, 231,.5); box-shadow: 0 6px 20px rgba(108, 92, 231,.30); }
+  .t-row.active .tstat { background: rgba(108, 92, 231,.5); animation: pulse 1.6s ease-in-out infinite; }
   @keyframes pulse { 0%,100% { transform: scale(1); } 50% { transform: scale(1.18); } }
   .next .lbl { font-size: 14px; letter-spacing: 4px; color: var(--text-dim); text-transform: uppercase; margin-bottom: 8px; }
   .next .row {
@@ -164,30 +175,32 @@
 
   /* "+ vazifa qo'shish" — ghost ROW matching .t-row grid */
   .t-add-row {
-    display: grid;
-    grid-template-columns: 18px 56px 1fr 20px;
-    gap: 10px;
+    display: flex;
     align-items: center;
+    gap: 14px;
     width: 100%;
-    padding: 10px 12px;
-    margin-top: 6px;
+    padding: 14px 16px;
+    margin-top: 4px;
     background: transparent;
-    border: 1px dashed rgba(108, 92, 231,.22);
-    border-radius: 8px;
+    border: 1.5px dashed rgba(108, 92, 231,.30);
+    border-radius: 18px;
     cursor: pointer;
     color: var(--text-mid);
     font-family: 'Inter', sans-serif;
     text-align: left;
     transition: border-color .18s, background .18s, color .18s;
   }
-  .t-add-row:hover { border-color: var(--accent-medium); background: var(--accent-soft); color: var(--text); }
+  .t-add-row:hover, .t-add-row:active { border-color: var(--accent); background: var(--accent-soft); color: var(--text); }
   .t-add-row .t-add-plus {
-    font-size: 20px; line-height: 1; color: var(--accent);
-    text-align: center; font-weight: 500;
+    width: 46px; height: 46px; flex-shrink: 0;
+    border-radius: 50%;
+    border: 1.5px dashed rgba(108, 92, 231,.40);
+    font-size: 26px; line-height: 1; color: var(--accent);
+    display: flex; align-items: center; justify-content: center;
+    font-weight: 400;
   }
   .t-add-row .t-add-label {
-    grid-column: 3 / span 2;
-    font-size: 16px; letter-spacing: 0.4px;
+    font-size: 18px; font-weight: 600; letter-spacing: 0.3px;
   }
 
   /* Inline form — appears in place of the button */
@@ -520,6 +533,7 @@
         const completedKeys = (window.MVOW_DATA ? MVOW_DATA.getCompletedKeysToday() : new Set());
         const overdueTxt = T('home.overdue_reminder', "Vaqti o'tdi — hali kech emas, bugun baribir bajaring");
         const sorted = [...plan].sort((a,b) => tKey(a.time) - tKey(b.time));
+        const TASK_COLORS = ['108, 92, 231', '20, 184, 166', '243, 156, 18', '233, 76, 110', '90, 158, 232'];
         tasksList.innerHTML = '<div style="font-size:15px;color:var(--text-dim);text-align:center;margin:0 0 8px;font-family:Inter,sans-serif;">' + T('home.edit_tip', '✎ tahrirlash uchun vazifaga teging') + '</div>' + sorted.map((t, i) => {
           const taskKey = window.MVOW_DATA && t.time && t.name ? MVOW_DATA.taskKey(MVOW_DATA.today.iso, t.time, t.name) : '';
           const state = window.MVOW_DATA ? MVOW_DATA.getTaskState(taskKey) : { status: 'pending' };
@@ -538,11 +552,14 @@
           else if (isExplicitMissed) { cls = 'missed'; icon = '✗'; }
           else if (isOverdue) { cls = 'overdue'; icon = '·'; }
           else if (isActive) { cls = 'active'; icon = '·'; }
+          const tColor = TASK_COLORS[i % TASK_COLORS.length];
           return `<div class="t-item">
-            <div class="t-row ${cls}" data-key="${escapeHtmlH(taskKey)}" data-time="${escapeHtmlH(t.time || '')}" data-dur="${escapeHtmlH(t.dur || '')}" data-name="${escapeHtmlH(t.name || '')}" style="cursor:pointer">
+            <div class="t-row ${cls}" data-key="${escapeHtmlH(taskKey)}" data-time="${escapeHtmlH(t.time || '')}" data-dur="${escapeHtmlH(t.dur || '')}" data-name="${escapeHtmlH(t.name || '')}" style="--tc:${tColor};cursor:pointer">
               <span class="ord">${i+1}</span>
-              <span class="ttime">${escapeHtmlH(t.time || '—')}</span>
-              <span class="tname">${escapeHtmlH(t.name || T('today.ish_lbl', 'reja'))}</span>
+              <div class="tbody">
+                <span class="tname">${escapeHtmlH(t.name || T('today.ish_lbl', 'reja'))}</span>
+                <span class="ttime">${escapeHtmlH(t.time || '—')}</span>
+              </div>
               <span class="tstat">${icon === '·' ? '' : icon}</span>
             </div>${isOverdue ? `<div class="t-note">⏰ ${escapeHtmlH(overdueTxt)}</div>` : ''}
           </div>`;
