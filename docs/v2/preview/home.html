@@ -281,7 +281,9 @@
 
   .actions { display: flex; flex-direction: column; gap: 10px; margin-top: 8px; }
   .cta { display: block; width: 100%; padding: 16px; background: linear-gradient(180deg, var(--accent), var(--accent-soft)); color: #fff; font-size: 17px; font-weight: 600; letter-spacing: 2px; text-transform: uppercase; border: none; border-radius: 6px; text-align: center; text-decoration: none; }
-  .ghost { display: block; width: 100%; padding: 12px; background: transparent; color: var(--text-mid); font-size: 15px; letter-spacing: 2px; text-transform: uppercase; border: 1px solid rgba(255,255,255,.08); border-radius: 6px; text-align: center; text-decoration: none; }
+  .ghost { display: flex; align-items: center; justify-content: center; gap: 9px; width: 100%; padding: 16px 12px; background: linear-gradient(135deg, rgba(var(--bc,108,92,231),1), rgba(var(--bc,108,92,231),.80)); color: #fff; font-size: 15px; font-weight: 700; letter-spacing: 1.5px; text-transform: uppercase; border: none; border-radius: 16px; text-align: center; text-decoration: none; box-shadow: 0 8px 20px rgba(var(--bc,108,92,231),.32); transition: transform .15s, box-shadow .2s; }
+  .ghost:active { transform: scale(.97); }
+  .ghost .gi { font-size: 19px; line-height: 1; }
 
   @media (max-width: 480px) {
     body { padding: 0; }
@@ -433,8 +435,8 @@
 
       <!-- Tanlovlar — istalganini bos -->
       <div id="tileGrid" style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:6px;">
-        <a class="ghost" href="maqsadlar.html" style="margin:0;" data-i18n="home.tile_goals">Maqsadlar</a>
-        <a class="ghost" href="weekly-review.html" style="margin:0;" data-i18n="home.tile_history">Tarix</a>
+        <a class="ghost" href="maqsadlar.html" style="margin:0;--bc:232,93,60;"><span class="gi">🎯</span><span data-i18n="home.tile_goals">Maqsadlar</span></a>
+        <a class="ghost" href="weekly-review.html" style="margin:0;--bc:217,130,26;"><span class="gi">📊</span><span data-i18n="home.tile_history">Tarix</span></a>
       </div>
     </div>
 
