@@ -24,8 +24,10 @@
   .hero .big {
     font-family:'Cormorant Garamond',serif;
     font-weight: 600;
-    font-size: 77px;
-    color: var(--accent);
+    font-size: clamp(64px, 20vw, 88px);
+    background: linear-gradient(120deg, var(--accent-bright), var(--accent), var(--accent-deep));
+    -webkit-background-clip: text; background-clip: text;
+    -webkit-text-fill-color: transparent; color: transparent;
     letter-spacing: 2px;
     line-height: 1;
     margin-bottom: 12px;

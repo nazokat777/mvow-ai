@@ -83,11 +83,13 @@
   .question {
     font-family: 'Cormorant Garamond', serif;
     font-style: italic;
-    font-weight: 500;
-    font-size: 49px;
-    line-height: 1.18;
-    color: var(--text);
+    font-weight: 600;
+    font-size: clamp(44px, 13vw, 62px);
+    line-height: 1.1;
     margin-bottom: 32px;
+    background: linear-gradient(120deg, var(--accent-bright), var(--accent), var(--accent-deep));
+    -webkit-background-clip: text; background-clip: text;
+    -webkit-text-fill-color: transparent; color: transparent;
   }
 
   /* Text input */
@@ -251,9 +253,12 @@
   .done .title {
     font-family: 'Cormorant Garamond', serif;
     font-style: italic;
-    font-weight: 500;
-    font-size: 41px;
+    font-weight: 600;
+    font-size: clamp(38px, 11vw, 52px);
     margin-bottom: 12px;
+    background: linear-gradient(120deg, var(--accent-bright), var(--accent), var(--accent-deep));
+    -webkit-background-clip: text; background-clip: text;
+    -webkit-text-fill-color: transparent; color: transparent;
   }
   .done .sub {
     font-size: 18px;
@@ -265,7 +270,6 @@
 <link rel="stylesheet" href="theme.css">
 </head>
 <body>
-<div style="position:fixed;top:3px;left:7px;z-index:99999;font:700 10px Inter,sans-serif;color:#6C5CE7;opacity:.9;letter-spacing:.5px;">dizayn v10 ✦</div>
 
 <div class="top">
   <div class="progress"><div class="progress-fill" id="progFill" style="width:0%"></div></div>
