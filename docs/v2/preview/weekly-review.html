@@ -132,7 +132,7 @@
     user-select: none;
     transition: background .15s;
   }
-  .group-head:hover { background: rgba(249, 115, 22,.04); }
+  .group-head:hover { background: rgba(244, 132, 95,.04); }
   .group-name {
     font-family: 'Inter', sans-serif;
     font-weight: 500;
@@ -162,7 +162,7 @@
   .group-body {
     display: none;
     padding: 0 16px 12px;
-    border-top: 1px solid rgba(249, 115, 22,.1);
+    border-top: 1px solid rgba(244, 132, 95,.1);
   }
   .group.open .group-body { display: block; animation: accIn .25s ease; }
   @keyframes accIn { from { opacity: 0; transform: translateY(-4px); } to { opacity: 1; transform: translateY(0); } }
@@ -275,7 +275,7 @@
     align-items: center;
     justify-content: center;
     background: transparent;
-    border: 1px solid rgba(249, 115, 22,.35);
+    border: 1px solid rgba(244, 132, 95,.35);
     color: var(--accent);
     border-radius: 10px;
     cursor: pointer;
@@ -283,7 +283,7 @@
     padding: 0;
   }
   .cal-btn:hover, .cal-btn:focus-visible {
-    background: rgba(249, 115, 22,.08);
+    background: rgba(244, 132, 95,.08);
     border-color: var(--accent);
     outline: none;
   }
@@ -311,7 +311,7 @@
     width: 100%;
     max-width: 360px;
     background: var(--card);
-    border: 1px solid rgba(249, 115, 22,.35);
+    border: 1px solid rgba(244, 132, 95,.35);
     border-radius: 18px;
     padding: 20px 18px 18px;
     box-shadow: 0 30px 80px rgba(0,0,0,.65), 0 0 0 1px rgba(139, 124, 240,.06);
@@ -360,7 +360,7 @@
     letter-spacing: 0.3px;
     margin-bottom: 16px;
     padding-bottom: 14px;
-    border-bottom: 1px solid rgba(249, 115, 22,.12);
+    border-bottom: 1px solid rgba(244, 132, 95,.12);
   }
   .cal-stats .em { color: var(--accent); font-weight: 600; }
   .cal-stats .sep { color: var(--text-dim); }
@@ -382,7 +382,7 @@
     width: 32px;
     height: 32px;
     background: transparent;
-    border: 1px solid rgba(249, 115, 22,.25);
+    border: 1px solid rgba(244, 132, 95,.25);
     color: var(--accent);
     border-radius: 8px;
     cursor: pointer;
@@ -393,7 +393,7 @@
     justify-content: center;
     transition: background .15s, border-color .15s;
   }
-  .cal-nav button:hover { background: rgba(249, 115, 22,.08); border-color: var(--accent); }
+  .cal-nav button:hover { background: rgba(244, 132, 95,.08); border-color: var(--accent); }
 
   .cal-week {
     display: grid;
@@ -434,9 +434,9 @@
   .cal-cell .v { font-size: 14px; line-height: 1; margin-top: 2px; letter-spacing: 0.2px; }
   /* Planned but not done */
   .cal-cell.planned {
-    border-color: rgba(249, 115, 22,.35);
+    border-color: rgba(244, 132, 95,.35);
     color: var(--text-mid);
-    background: rgba(249, 115, 22,.04);
+    background: rgba(244, 132, 95,.04);
   }
   /* Completed — filled gold */
   .cal-cell.done {
@@ -465,7 +465,7 @@
   }
   .cal-legend .li { display: inline-flex; align-items: center; gap: 6px; }
   .cal-legend .sw { width: 10px; height: 10px; border-radius: 3px; display: inline-block; }
-  .cal-legend .sw.planned { border: 1px solid rgba(249, 115, 22,.5); background: rgba(249, 115, 22,.06); }
+  .cal-legend .sw.planned { border: 1px solid rgba(244, 132, 95,.5); background: rgba(244, 132, 95,.06); }
   .cal-legend .sw.done { background: var(--accent); }
   .cal-legend .sw.missed { border: 1px solid rgba(255,71,87,.6); background: rgba(255,71,87,.08); }
 
@@ -888,7 +888,7 @@
     const lblDone = (window.I18N ? I18N.t('weekly-review.tarix_unit_done', 'bajarildi') : 'bajarildi');
     const ariaCal = (window.I18N ? I18N.t('weekly-review.tarix_aria_open_cal', 'Kalendarni ochish') : 'Kalendarni ochish');
 
-    const TASK_COLORS = ['249, 115, 22'];
+    const TASK_COLORS = ['244, 132, 95', '107, 191, 122', '232, 130, 180', '110, 181, 255'];
     wrap.innerHTML = names.map((name, idx) => {
       const entry = _taskIndex[name];
       const plannedDays = entry.plannedByDate.size;

@@ -69,7 +69,7 @@
     gap: 14px;
     padding: 15px 18px;
     background: var(--card);
-    border: 1px solid rgba(249, 115, 22,.18);
+    border: 1px solid rgba(244, 132, 95,.18);
     border-radius: 16px;
   }
   .win .check {
@@ -119,7 +119,7 @@
   .quick-chip {
     padding: 8px 12px;
     background: transparent;
-    border: 1px solid rgba(249, 115, 22,.25);
+    border: 1px solid rgba(244, 132, 95,.25);
     border-radius: 999px;
     color: var(--accent);
     font-size: 16px;
@@ -127,7 +127,7 @@
     transition: all .15s;
   }
   .quick-chip:hover, .quick-chip:active {
-    background: rgba(249, 115, 22,.06);
+    background: rgba(244, 132, 95,.06);
   }
 
   /* Wake time */
@@ -503,7 +503,7 @@
 
       // Tasdiq toast
       const toast = document.createElement('div');
-      toast.style.cssText = 'position:fixed;left:50%;top:30%;transform:translate(-50%,-50%);background:#11151E;border:1px solid rgba(249, 115, 22,.4);border-radius:14px;padding:24px 28px;color:var(--accent-bright);font-family:Inter,sans-serif;font-size:20px;text-align:center;z-index:9999;box-shadow:0 20px 60px rgba(0,0,0,.6);';
+      toast.style.cssText = 'position:fixed;left:50%;top:30%;transform:translate(-50%,-50%);background:#11151E;border:1px solid rgba(244, 132, 95,.4);border-radius:14px;padding:24px 28px;color:var(--accent-bright);font-family:Inter,sans-serif;font-size:20px;text-align:center;z-index:9999;box-shadow:0 20px 60px rgba(0,0,0,.6);';
       const toastMain = window.I18N ? I18N.t('kechqurun.toast_main', 'Xayrli tun') : 'Xayrli tun';
       const toastAlarm = window.I18N ? I18N.tWith('kechqurun.toast_alarm', { time: wakeInput.value }) : ('budilnik ' + wakeInput.value);
       toast.innerHTML = '✓ ' + toastMain + '<br><span style="font-size:16px;color:#9CA0A8;letter-spacing:1px;text-transform:uppercase;margin-top:8px;display:block;">' + toastAlarm + '</span>';
