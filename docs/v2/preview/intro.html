@@ -260,6 +260,13 @@ body {
     return { transform: 'translateX(-50%) scale(1)', filter: 'blur(2px)', opacity: 0.85, z: 10, left: lr, height: m ? '16%' : '28%', bottom: m ? '32%' : '12%' };
   }
 
+  function fitGhost() {
+    ghostWord.style.fontSize = '200px';
+    var w = ghostWord.scrollWidth || 1;
+    var size = Math.min(380, (window.innerWidth * 0.92) / w * 200);
+    ghostWord.style.fontSize = size + 'px';
+  }
+
   function render() {
     hero.style.backgroundColor = IMAGES[activeIndex].bg;
     if (themeMeta) themeMeta.setAttribute('content', IMAGES[activeIndex].bg);
@@ -289,6 +296,7 @@ body {
       void ghostWord.offsetWidth;
       ghostWord.style.animation = 'ghostSwap 650ms cubic-bezier(0.4, 0, 0.2, 1)';
     }
+    fitGhost();
   }
 
   function navigate(dir) {
@@ -326,6 +334,7 @@ body {
   window.addEventListener('resize', function () {
     var m = window.innerWidth < 640;
     if (m !== isMobile) { isMobile = m; render(); }
+    fitGhost();
   });
 
   render();
