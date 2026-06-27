@@ -3,7 +3,7 @@
  * after first load. Caches all preview HTML files + the logo.
  */
 
-const CACHE_NAME = 'daywarden-v28.16.0';
+const CACHE_NAME = 'daywarden-v28.17.0';
 const ASSETS = [
   './',
   // Asosiy infratuzilma
@@ -22,6 +22,10 @@ const ASSETS = [
   './about.html',
   './royhat.html',
   './assets/mnsm-logo.png',
+  './assets/toon-1.webp',
+  './assets/toon-2.webp',
+  './assets/toon-3.webp',
+  './assets/toon-4.webp',
   // 17 ekran SEQ tartibida
   './intro.html',             // 1
   './anketa.html',            // 2
