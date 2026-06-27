@@ -68,7 +68,11 @@
     max-width: 600px;
     margin: 0 auto;
     padding: 8px 28px 140px;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
   }
+  #step { margin: auto 0; width: 100%; }
 
   .section-lbl {
     font-size: 16px;
@@ -97,14 +101,16 @@
     width: 100%;
     background: var(--card);
     border: 2px solid var(--accent);
-    border-radius: 12px;
+    border-radius: 16px;
     color: var(--text);
-    padding: 16px 18px;
+    padding: 20px 22px;
     font-family: 'Inter', sans-serif;
-    font-size: 21px;
+    font-size: 22px;
     outline: none;
-    transition: border-color .15s;
+    transition: border-color .15s, box-shadow .2s;
+    box-shadow: 0 10px 34px var(--accent-soft);
   }
+  .text-input:focus { box-shadow: 0 10px 40px var(--accent-medium); }
   .text-input::placeholder { color: var(--text-dim); }
 
   /* Choice cards */
