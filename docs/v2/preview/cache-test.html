@@ -14,15 +14,15 @@
     margin: 0;
     line-height: 1.5;
   }
-  h1 { color: #6C5CE7; font-size: 21px; margin-top: 0; }
-  h2 { color: #6C5CE7; font-size: 16px; margin-top: 24px; border-top: 1px solid #333; padding-top: 14px; }
+  h1 { color: #6C5CE7; font-size: 24px; margin-top: 0; }
+  h2 { color: #6C5CE7; font-size: 18px; margin-top: 24px; border-top: 1px solid #333; padding-top: 14px; }
   .row {
     margin: 6px 0;
     padding: 10px;
     background: #16161a;
     border-radius: 4px;
     word-break: break-all;
-    font-size: 15px;
+    font-size: 17px;
   }
   .key { color: #6C5CE7; font-weight: bold; }
   .val { color: #5ae08b; }
@@ -34,7 +34,7 @@
     color: #0a0a0a;
     border: none;
     border-radius: 4px;
-    font-size: 16px;
+    font-size: 18px;
     font-weight: 600;
     cursor: pointer;
     font-family: inherit;
@@ -45,12 +45,12 @@
 </head>
 <body>
 <h1>CACHE TEST · v28.2.9</h1>
-<p style="color:#888;font-size:14px;">Bu diagnostika sahifasi. Hammasini screenshot olib menga jo'nating.</p>
+<p style="color:#888;font-size:16px;">Bu diagnostika sahifasi. Hammasini screenshot olib menga jo'nating.</p>
 
 <h2>Asosiy holat</h2>
 <div class="row"><span class="key">VERSION:</span> <span class="val">v28.2.9</span></div>
 <div class="row"><span class="key">URL:</span> <span class="val" id="url">…</span></div>
-<div class="row"><span class="key">User-Agent:</span> <span class="val" id="ua" style="font-size:11px;">…</span></div>
+<div class="row"><span class="key">User-Agent:</span> <span class="val" id="ua" style="font-size:14px;">…</span></div>
 
 <h2>Til holati (localStorage)</h2>
 <div class="row"><span class="key">localStorage.mvow.lang:</span> <span class="val" id="lsLang">…</span></div>
@@ -71,7 +71,7 @@
 
 <h2>Service Worker holati</h2>
 <div class="row"><span class="key">SW Registrations:</span> <span class="val" id="swStatus">…</span></div>
-<div class="row"><span class="key">Caches:</span> <span class="val" id="cacheList" style="font-size:13px;">…</span></div>
+<div class="row"><span class="key">Caches:</span> <span class="val" id="cacheList" style="font-size:15px;">…</span></div>
 <div class="btn-row">
   <button onclick="purgeAll()">HAMMASINI TOZALASH + reload</button>
 </div>

@@ -258,7 +258,7 @@
       backdrop-filter: blur(8px);
       -webkit-backdrop-filter: blur(8px);
       color: var(--accent-bright);
-      font-size: 25px;
+      font-size: 28px;
       font-weight: 500;
       display: flex; align-items: center; justify-content: center;
       cursor: pointer;
@@ -282,7 +282,7 @@
       display: flex; justify-content: space-between;
       align-items: baseline;
       font-family: 'Inter', sans-serif;
-      font-size: 11px;
+      font-size: 14px;
       color: #E0E0E0;
       letter-spacing: 1.5px;
       text-transform: uppercase;
@@ -342,12 +342,12 @@
 
     /* === Tipografik shkala (universal) === */
     :root {
-      --fs-h1: 32px;
-      --fs-h2: 25px;
-      --fs-h3: 19px;
-      --fs-body: 17px;
-      --fs-helper: 15px;
-      --fs-meta: 13px;
+      --fs-h1: 36px;
+      --fs-h2: 28px;
+      --fs-h3: 21px;
+      --fs-body: 19px;
+      --fs-helper: 17px;
+      --fs-meta: 15px;
       --text-on-dark: #F5F2EC;
       --text-mid-aa: #B8BBC2;
       --text-dim-aa: #9CA0A8;
@@ -456,17 +456,17 @@
         animation: askIn .35s cubic-bezier(.16,.84,.32,1);
       }
       @keyframes askIn { from { opacity: 0; transform: translateY(20px) scale(.96); } to { opacity: 1; transform: scale(1); } }
-      .ask-q-title { font-family: 'Cormorant Garamond', serif; font-style: italic; font-size: 25px; line-height: 1.3; color: #F5F2EC; margin-bottom: 6px; }
-      .ask-q-task { font-size: 16px; color: var(--accent); font-weight: 500; margin-bottom: 4px; }
-      .ask-q-meta { font-size: 13px; color: #9CA0A8; letter-spacing: 1px; text-transform: uppercase; margin-bottom: 18px; }
-      .ask-q-round { font-size: 11px; color: #9CA0A8; letter-spacing: 2px; margin-bottom: 14px; }
+      .ask-q-title { font-family: 'Cormorant Garamond', serif; font-style: italic; font-size: 28px; line-height: 1.3; color: #F5F2EC; margin-bottom: 6px; }
+      .ask-q-task { font-size: 18px; color: var(--accent); font-weight: 500; margin-bottom: 4px; }
+      .ask-q-meta { font-size: 15px; color: #9CA0A8; letter-spacing: 1px; text-transform: uppercase; margin-bottom: 18px; }
+      .ask-q-round { font-size: 14px; color: #9CA0A8; letter-spacing: 2px; margin-bottom: 14px; }
       .ask-q-btns { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
       .ask-q-btns.three { grid-template-columns: 1fr 1fr 1fr; }
       .ask-q-btn {
         padding: 14px 8px;
         border: none; border-radius: 999px;
         font-family: 'Inter', sans-serif;
-        font-size: 13px; font-weight: 600;
+        font-size: 15px; font-weight: 600;
         letter-spacing: 1px; text-transform: uppercase;
         cursor: pointer; min-height: 46px;
       }
@@ -478,7 +478,7 @@
         padding-top: 14px; border-top: 1px solid rgba(255,255,255,.06);
       }
       .ask-snooze.show { display: flex; }
-      .ask-snooze .lbl { font-size: 11px; color: #9CA0A8; letter-spacing: 2px; text-transform: uppercase; margin-bottom: 4px; }
+      .ask-snooze .lbl { font-size: 14px; color: #9CA0A8; letter-spacing: 2px; text-transform: uppercase; margin-bottom: 4px; }
       .ask-snooze-row { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 6px; }
       .ask-snooze-opt {
         padding: 10px 4px;
@@ -486,7 +486,7 @@
         border: 1px solid rgba(108, 92, 231,.25);
         border-radius: 8px;
         color: var(--accent-bright);
-        font-size: 14px;
+        font-size: 16px;
         cursor: pointer;
       }
       .ask-custom-time {
@@ -501,14 +501,14 @@
         padding: 10px;
         color: #F5F2EC;
         font-family: 'Inter', sans-serif;
-        font-size: 15px;
+        font-size: 17px;
         outline: none;
       }
       .ask-custom-time button {
         padding: 10px 14px;
         background: var(--accent); color: #04060B;
         border: none; border-radius: 8px;
-        font-size: 13px; font-weight: 600;
+        font-size: 15px; font-weight: 600;
         cursor: pointer; letter-spacing: 1px;
         text-transform: uppercase;
       }
@@ -523,7 +523,7 @@
         <div class="ask-q-title">Bajardingizmi?</div>
         <div class="ask-q-task" id="askTask">—</div>
         <div class="ask-q-meta" id="askMeta">07:00 · 1 soat</div>
-        <input id="askNote" type="text" maxlength="60" placeholder="Qisqa izoh (mas. speaking)" style="width:100%;margin-bottom:14px;background:#0C0F16;border:1px solid rgba(255,255,255,.1);border-radius:8px;padding:10px 12px;color:#F5F2EC;font-family:'Inter',sans-serif;font-size:15px;outline:none;">
+        <input id="askNote" type="text" maxlength="60" placeholder="Qisqa izoh (mas. speaking)" style="width:100%;margin-bottom:14px;background:#0C0F16;border:1px solid rgba(255,255,255,.1);border-radius:8px;padding:10px 12px;color:#F5F2EC;font-family:'Inter',sans-serif;font-size:17px;outline:none;">
         <div class="ask-q-btns three" id="askBtns">
           <button class="ask-q-btn no" id="askNo">Yo'q</button>
           <button class="ask-q-btn later" id="askLater">Keyinroq</button>

@@ -18,19 +18,19 @@
   .phone { width: 380px; min-height: 800px; background: var(--void); border-radius: 40px; overflow: hidden; position: relative; box-shadow: 0 0 0 8px #1a1d24, 0 30px 80px rgba(0,0,0,.7); display:flex; flex-direction:column; }
   .container { flex:1; padding: 80px 32px 120px; display:flex; flex-direction:column; gap: 48px; }
 
-  .stamp { text-align:center; font-size: 11px; letter-spacing: 4px; color: var(--text-dim); text-transform: uppercase; }
+  .stamp { text-align:center; font-size: 14px; letter-spacing: 4px; color: var(--text-dim); text-transform: uppercase; }
 
   .hero { text-align:center; }
   .hero .big {
     font-family:'Cormorant Garamond',serif;
     font-weight: 600;
-    font-size: 68px;
+    font-size: 77px;
     color: var(--accent);
     letter-spacing: 2px;
     line-height: 1;
     margin-bottom: 12px;
   }
-  .hero .sub { font-family:'Cormorant Garamond',serif; font-style:italic; font-size: 18px; color: var(--text-mid); }
+  .hero .sub { font-family:'Cormorant Garamond',serif; font-style:italic; font-size: 20px; color: var(--text-mid); }
   .hero { position: relative; } /* anchor for milestoneMark overlay so injected DOM is contained, not pushed into page flow */
   .hero .big { position: relative; z-index: 1; } /* keep the +70% numeral above any mark overlay */
   @media (prefers-reduced-motion: reduce) { .hero [data-milestone-mark] { animation: none !important; opacity: 1 !important; } }
@@ -45,12 +45,12 @@
     padding: 16px 0;
     border-bottom: 1px solid rgba(255,255,255,.04);
   }
-  .chain .name { font-size: 16px; color: var(--text); }
-  .chain .days { font-size: 15px; color: var(--accent); letter-spacing: 1px; }
-  .chain .days .em { font-family:'Cormorant Garamond',serif; font-size: 23px; font-weight: 500; }
+  .chain .name { font-size: 18px; color: var(--text); }
+  .chain .days { font-size: 17px; color: var(--accent); letter-spacing: 1px; }
+  .chain .days .em { font-family:'Cormorant Garamond',serif; font-size: 26px; font-weight: 500; }
 
   .bottom-bar { padding: 24px 32px env(safe-area-inset-bottom, 24px); background: linear-gradient(180deg, transparent, var(--void) 30%); }
-  .cta { display:block; width:100%; padding:16px; background: linear-gradient(180deg, var(--accent), var(--accent-soft)); color: #fff; font-size:15px; font-weight:600; letter-spacing:2px; text-transform: uppercase; border:none; border-radius:6px; text-align:center; text-decoration:none; }
+  .cta { display:block; width:100%; padding:16px; background: linear-gradient(180deg, var(--accent), var(--accent-soft)); color: #fff; font-size:17px; font-weight:600; letter-spacing:2px; text-transform: uppercase; border:none; border-radius:6px; text-align:center; text-decoration:none; }
   @media (max-width: 480px) { body { padding: 0; } .phone { width: 100vw; min-height: 100vh; border-radius: 0; box-shadow: none; } }
 </style>
 <link rel="stylesheet" href="theme.css">

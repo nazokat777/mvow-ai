@@ -32,7 +32,7 @@
   }
 
   .step-lbl {
-    font-size: 14px;
+    font-size: 16px;
     letter-spacing: 4px;
     color: var(--accent);
     text-transform: uppercase;
@@ -44,7 +44,7 @@
     font-family: 'Cormorant Garamond', serif;
     font-style: italic;
     font-weight: 500;
-    font-size: 36px;
+    font-size: 41px;
     line-height: 1.3;
     text-align: center;
     margin-bottom: 6px;
@@ -52,7 +52,7 @@
   .sub {
     text-align: center;
     color: var(--text-mid);
-    font-size: 16px;
+    font-size: 18px;
     margin-bottom: 32px;
   }
 
@@ -68,7 +68,7 @@
     border: 1px solid rgba(255,255,255,.06);
     border-radius: 12px;
     color: var(--text);
-    font-size: 18px;
+    font-size: 20px;
     cursor: pointer;
     transition: all .15s;
     min-height: 58px;
@@ -87,8 +87,8 @@
     content: ''; width: 12px; height: 12px; border-radius: 50%; background: var(--accent);
   }
   .opt .lbl { display: flex; flex-direction: column; gap: 2px; }
-  .opt .lbl-main { font-size: 18px; }
-  .opt .lbl-sub { font-size: 14px; color: var(--text-dim); }
+  .opt .lbl-main { font-size: 20px; }
+  .opt .lbl-sub { font-size: 16px; color: var(--text-dim); }
 
   /* Step 2: goal text */
   .panel { display: none; animation: fadeIn .4s ease; }
@@ -106,7 +106,7 @@
     color: var(--text);
     padding: 16px 18px;
     font-family: 'Inter', sans-serif;
-    font-size: 18px;
+    font-size: 20px;
     line-height: 1.5;
     outline: none;
     resize: none;
@@ -125,7 +125,7 @@
     margin-bottom: 16px;
   }
   .examples .lbl {
-    font-size: 13px;
+    font-size: 15px;
     letter-spacing: 2px;
     color: var(--accent);
     text-transform: uppercase;
@@ -134,7 +134,7 @@
   .examples .ex {
     font-family: 'Cormorant Garamond', serif;
     font-style: italic;
-    font-size: 16px;
+    font-size: 18px;
     color: var(--text);
     line-height: 1.6;
     padding: 4px 0;
@@ -152,7 +152,7 @@
     margin-bottom: 24px;
   }
   .time-input label {
-    font-size: 15px;
+    font-size: 17px;
     color: var(--text-mid);
   }
   .time-input input {
@@ -160,7 +160,7 @@
     border: none;
     color: var(--accent);
     font-family: 'Inter', sans-serif;
-    font-size: 17px;
+    font-size: 19px;
     font-weight: 500;
     text-align: right;
     outline: none;
@@ -183,7 +183,7 @@
     background: linear-gradient(180deg, var(--accent), var(--accent-soft));
     color: var(--void);
     font-family: 'Inter', sans-serif;
-    font-size: 16px;
+    font-size: 18px;
     font-weight: 600;
     letter-spacing: 2px;
     text-transform: uppercase;
@@ -199,7 +199,7 @@
     display: block;
     text-align: center;
     margin-top: 12px;
-    font-size: 14px;
+    font-size: 16px;
     color: var(--text-mid);
     text-decoration: none;
     letter-spacing: 1px;
@@ -259,8 +259,8 @@
 
     <!-- Band vaqtlar (boshqa maqsadlardan) -->
     <div id="occupiedHint" style="display:none;background:rgba(108, 92, 231,.05);border:1px solid rgba(108, 92, 231,.18);border-radius:10px;padding:10px 14px;margin:8px 0 4px;">
-      <div style="font-size:11px;color:var(--text-dim);letter-spacing:2px;text-transform:uppercase;margin-bottom:6px;" data-i18n="maqsad.occupied_lbl">Band vaqtlar</div>
-      <div id="occupiedList" style="font-size:14px;color:var(--text-mid);line-height:1.6;"></div>
+      <div style="font-size:14px;color:var(--text-dim);letter-spacing:2px;text-transform:uppercase;margin-bottom:6px;" data-i18n="maqsad.occupied_lbl">Band vaqtlar</div>
+      <div id="occupiedList" style="font-size:16px;color:var(--text-mid);line-height:1.6;"></div>
     </div>
 
     <div class="time-input">
@@ -274,7 +274,7 @@
     </div>
 
     <!-- Konflikt xabari -->
-    <div id="conflictMsg" style="display:none;background:rgba(255,71,87,.08);border:1px solid rgba(255,71,87,.35);border-radius:10px;padding:12px 14px;margin-top:10px;font-size:14px;color:#FF8E97;line-height:1.5;">
+    <div id="conflictMsg" style="display:none;background:rgba(255,71,87,.08);border:1px solid rgba(255,71,87,.35);border-radius:10px;padding:12px 14px;margin-top:10px;font-size:16px;color:#FF8E97;line-height:1.5;">
       <span id="conflictText" data-i18n="maqsad.conflict_default">Bu vaqt allaqachon band.</span>
     </div>
   </div>
@@ -545,11 +545,11 @@
 
       // Tasdiq toast — falsafiy aniqlik
       const toast = document.createElement('div');
-      toast.style.cssText = 'position:fixed;left:50%;top:30%;transform:translate(-50%,-50%);background:#11151E;border:1px solid rgba(108, 92, 231,.4);border-radius:14px;padding:26px 30px;color:var(--accent-bright);font-family:Inter,sans-serif;font-size:17px;text-align:center;z-index:9999;box-shadow:0 20px 60px rgba(0,0,0,.6);max-width:300px;';
+      toast.style.cssText = 'position:fixed;left:50%;top:30%;transform:translate(-50%,-50%);background:#11151E;border:1px solid rgba(108, 92, 231,.4);border-radius:14px;padding:26px 30px;color:var(--accent-bright);font-family:Inter,sans-serif;font-size:19px;text-align:center;z-index:9999;box-shadow:0 20px 60px rgba(0,0,0,.6);max-width:300px;';
       const toastHead = (window.I18N ? I18N.t('maqsad.toast_head', 'Maqsad tizimga<br>aylantirildi') : 'Maqsad tizimga<br>aylantirildi');
       const toastMeta = (window.I18N ? I18N.tWith('maqsad.toast_meta', { days: selectedDays, time: time }) : (selectedDays + ' kun · har kuni ' + time));
       const toastFoot = (window.I18N ? I18N.t('maqsad.toast_foot', 'har kungi reja avtomatik chiqadi') : 'har kungi reja avtomatik chiqadi');
-      toast.innerHTML = '<div style="font-family:\'Cormorant Garamond\',serif;font-style:italic;font-size:21px;color:#F5F2EC;margin-bottom:10px;line-height:1.3;">' + toastHead + '</div><div style="font-size:13px;color:#9CA0A8;letter-spacing:1.5px;text-transform:uppercase;margin-bottom:4px;">' + toastMeta + '</div><div style="font-size:13px;color:var(--accent-bright);letter-spacing:1px;">' + toastFoot + '</div>';
+      toast.innerHTML = '<div style="font-family:\'Cormorant Garamond\',serif;font-style:italic;font-size:24px;color:#F5F2EC;margin-bottom:10px;line-height:1.3;">' + toastHead + '</div><div style="font-size:15px;color:#9CA0A8;letter-spacing:1.5px;text-transform:uppercase;margin-bottom:4px;">' + toastMeta + '</div><div style="font-size:15px;color:var(--accent-bright);letter-spacing:1px;">' + toastFoot + '</div>';
       document.body.appendChild(toast);
 
       setTimeout(() => { window.location.href = 'maqsadlar.html'; }, 1400);

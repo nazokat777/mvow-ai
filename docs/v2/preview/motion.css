@@ -231,7 +231,7 @@
   will-change: opacity, transform;
   font-family: 'Cormorant Garamond', Georgia, serif;
   font-style: italic;
-  font-size: 16px;
+  font-size: 18px;
   letter-spacing: .2px;
   color: var(--text-mid);
   margin-top: 10px;
@@ -441,7 +441,7 @@
 .mvw-recoverymoment-sub {
   font-family: 'Inter', sans-serif;
   font-weight: 500;
-  font-size: 16px;
+  font-size: 18px;
   letter-spacing: 0.08em;
   text-transform: uppercase;
   color: var(--text-dim, #9CA0A8);
@@ -460,7 +460,7 @@
   left: 50%;
   transform: translate3d(-50%, 0, 0);
   font-family: 'Inter', sans-serif;
-  font-size: 14px;
+  font-size: 16px;
   letter-spacing: 0.12em;
   text-transform: uppercase;
   color: var(--text-dim, #9CA0A8);
@@ -673,7 +673,7 @@
   font-family: 'Cormorant Garamond', Georgia, serif;
   font-style: italic;
   font-weight: 500;
-  font-size: 39px;
+  font-size: 44px;
   letter-spacing: 0.04em;
   color: var(--text, #F5F2EC);
   opacity: 0;
