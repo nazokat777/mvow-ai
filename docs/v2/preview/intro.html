@@ -5,465 +5,332 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <title>Daywarden — Tanishuv</title>
 <link rel="manifest" href="manifest.webmanifest">
-<meta name="theme-color" content="#04060B">
+<meta name="theme-color" content="#F4845F">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <link rel="apple-touch-icon" href="assets/mnsm-logo.png?v=2">
 <link rel="icon" type="image/png" href="assets/mnsm-logo.png?v=2">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;1,500&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+<link rel="preconnect" href="https://fifth-gentle-45902158.figma.site" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Anton&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
 * { box-sizing: border-box; margin: 0; padding: 0; }
-:root {
-  --void: #04060B;
-  --gold: #D4AF37;
-  --gold-bright: #F5D76E;
-  --text: #F5F2EC;
-  --text-dim: rgba(245, 242, 236, 0.55);
-}
-html, body {
-  background: var(--void);
-  color: var(--text);
-  height: 100%;
-  overflow: hidden;
-  font-family: 'Inter', system-ui, sans-serif;
+html, body { height: 100%; }
+body {
+  font-family: 'Inter', sans-serif;
   -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
   user-select: none;
   -webkit-tap-highlight-color: transparent;
-}
-body {
-  position: fixed;
-  inset: 0;
-  display: flex;
-  align-items: center;
-  justify-content: center;
+  overflow: hidden;
+  background: #F4845F;
 }
 
-#cinematic {
-  position: fixed;
-  inset: 0;
-  width: 100vw;
-  height: 100vh;
-  object-fit: cover;
-  background: var(--void);
-  z-index: 1;
-}
-
-/* Subtle vignette over video */
-.vignette {
-  position: fixed;
-  inset: 0;
-  background: radial-gradient(ellipse at center, transparent 60%, rgba(0, 0, 0, 0.35) 100%);
-  pointer-events: none;
-  z-index: 2;
-}
-
-.skip-btn, .back-btn {
-  position: fixed;
-  top: max(20px, env(safe-area-inset-top, 20px));
-  padding: 12px 18px;
-  background: rgba(245, 215, 110, 0.10);
-  color: var(--gold-bright);
+#hero {
+  position: fixed; inset: 0;
+  width: 100%;
+  overflow: hidden;
   font-family: 'Inter', sans-serif;
-  font-size: 11px;
-  font-weight: 600;
-  letter-spacing: 0.22em;
-  text-transform: uppercase;
-  border: 1.5px solid rgba(245, 215, 110, 0.35);
-  border-radius: 999px;
-  z-index: 50;
-  cursor: pointer;
-  min-height: 44px;
-  -webkit-backdrop-filter: blur(14px);
-  backdrop-filter: blur(14px);
-  transition: all 220ms ease;
-  text-decoration: none;
-  display: inline-flex;
-  align-items: center;
-  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.4);
+  background-color: #F4845F;
+  transition: background-color 650ms cubic-bezier(0.4, 0, 0.2, 1);
 }
-.skip-btn { right: 20px; }
-.back-btn { left: 20px; }
-/* Intro: orqaga + "o'tkazib yuborish" butunlay yashirin (foydalanuvchi teginib o'tadi) */
-.back-btn, .skip-btn { display: none !important; }
-.skip-btn:hover, .skip-btn:focus-visible,
-.back-btn:hover, .back-btn:focus-visible {
-  background: rgba(245, 215, 110, 0.20);
-  border-color: rgba(245, 215, 110, 0.6);
-  outline: none;
-}
-.skip-btn:focus-visible, .back-btn:focus-visible {
-  box-shadow: 0 0 0 2px rgba(245, 215, 110, 0.5);
+#stage { position: relative; width: 100%; height: 100vh; height: 100dvh; overflow: hidden; }
+
+/* 1. Grain */
+.grain {
+  position: absolute; inset: 0; pointer-events: none; z-index: 50;
+  opacity: 0.4;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.08'/%3E%3C/svg%3E");
+  background-size: 200px 200px;
+  background-repeat: repeat;
 }
 
-.loading {
-  position: fixed;
-  left: 50%;
-  top: 50%;
-  transform: translate(-50%, -50%);
-  z-index: 30;
-  font-family: 'Cormorant Garamond', serif;
-  font-style: italic;
-  font-size: 18px;
-  color: var(--gold-bright);
-  letter-spacing: 0.08em;
-  pointer-events: none;
+/* 2. Giant ghost word */
+.ghost {
+  position: absolute; left: 0; right: 0; top: 18%;
+  display: flex; align-items: center; justify-content: center;
+  pointer-events: none; user-select: none; z-index: 2;
+}
+.ghost span {
+  font-family: 'Anton', sans-serif;
+  font-size: clamp(90px, 28vw, 380px);
+  font-weight: 900;
+  color: #ffffff;
   opacity: 1;
-  transition: opacity 400ms;
-}
-.loading.hide { opacity: 0; pointer-events: none; }
-.loading-dot {
-  display: inline-block;
-  width: 6px;
-  height: 6px;
-  background: var(--gold);
-  border-radius: 50%;
-  margin: 0 3px;
-  animation: dotPulse 1.4s ease-in-out infinite;
-}
-.loading-dot:nth-child(2) { animation-delay: 0.2s; }
-.loading-dot:nth-child(3) { animation-delay: 0.4s; }
-@keyframes dotPulse {
-  0%, 80%, 100% { opacity: 0.3; transform: scale(0.8); }
-  40% { opacity: 1; transform: scale(1.2); }
-}
-
-.fallback {
-  position: fixed;
-  inset: 0;
-  display: none;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  background: var(--void);
-  color: var(--text);
-  text-align: center;
-  padding: 32px;
-  z-index: 40;
-}
-.fallback.show { display: flex; }
-.fallback h2 {
-  font-family: 'Cormorant Garamond', serif;
-  font-style: italic;
-  font-weight: 500;
-  font-size: 32px;
-  color: var(--gold-bright);
-  margin-bottom: 16px;
-  letter-spacing: 0.02em;
-}
-.fallback p {
-  font-family: 'Inter', sans-serif;
-  font-weight: 500;
-  font-size: 15px;
-  color: var(--text-dim);
-  margin-bottom: 32px;
-  max-width: 360px;
-  line-height: 1.5;
-}
-.fallback .continue-btn {
-  padding: 16px 36px;
-  background: linear-gradient(180deg, var(--gold-bright), var(--gold));
-  color: var(--void);
-  font-family: 'Inter', sans-serif;
-  font-size: 12px;
-  font-weight: 600;
-  letter-spacing: 0.28em;
+  line-height: 1;
   text-transform: uppercase;
-  border: none;
-  border-radius: 999px;
-  cursor: pointer;
-  min-height: 48px;
-  min-width: 220px;
+  letter-spacing: -0.02em;
+  white-space: nowrap;
+}
+@keyframes ghostSwap {
+  from { opacity: 0; transform: scale(0.94); }
+  to   { opacity: 1; transform: scale(1); }
 }
 
-.veil {
-  position: fixed;
-  inset: 0;
-  background: var(--void);
-  z-index: 100;
-  opacity: 0;
-  pointer-events: none;
-  transition: opacity 500ms cubic-bezier(.4, 0, .2, 1);
+/* 3. Brand */
+.brand {
+  position: absolute; top: 24px; left: 16px; z-index: 60;
+  font-size: 12px; font-weight: 600; text-transform: uppercase;
+  color: #ffffff; opacity: 0.9; letter-spacing: 0.18em;
 }
+@media (min-width: 640px) { .brand { left: 32px; } }
+
+/* 4. Carousel */
+.carousel { position: absolute; inset: 0; z-index: 3; }
+.fig {
+  position: absolute;
+  aspect-ratio: 0.6 / 1;
+  transition:
+    transform 650ms cubic-bezier(0.4, 0, 0.2, 1),
+    filter 650ms cubic-bezier(0.4, 0, 0.2, 1),
+    opacity 650ms cubic-bezier(0.4, 0, 0.2, 1),
+    left 650ms cubic-bezier(0.4, 0, 0.2, 1),
+    bottom 650ms cubic-bezier(0.4, 0, 0.2, 1),
+    height 650ms cubic-bezier(0.4, 0, 0.2, 1);
+  will-change: transform, filter, opacity;
+}
+.fig img {
+  width: 100%; height: 100%;
+  object-fit: contain; object-position: bottom center;
+  display: block;
+}
+
+/* 5. Bottom-left */
+.bl { position: absolute; bottom: 24px; left: 16px; z-index: 60; max-width: 320px; }
+@media (min-width: 640px) { .bl { bottom: 80px; left: 96px; } }
+.bl-title {
+  font-weight: 700; text-transform: uppercase; letter-spacing: 0.02em;
+  color: #ffffff; opacity: 0.95; margin-bottom: 8px; font-size: 16px;
+}
+@media (min-width: 640px) { .bl-title { font-size: 22px; margin-bottom: 12px; } }
+.bl-desc {
+  font-size: 12px; color: #ffffff; opacity: 0.85; line-height: 1.6; margin-bottom: 16px;
+}
+@media (max-width: 639px) { .bl-desc { display: none; } }
+@media (min-width: 640px) { .bl-desc { font-size: 14px; margin-bottom: 20px; } }
+.nav { display: flex; gap: 12px; }
+.navbtn {
+  width: 48px; height: 48px; border-radius: 999px;
+  background: transparent; border: 2px solid #ffffff; color: #ffffff;
+  display: flex; align-items: center; justify-content: center; cursor: pointer;
+  transition: transform 150ms, background-color 150ms;
+}
+@media (min-width: 640px) { .navbtn { width: 64px; height: 64px; } }
+.navbtn:hover { transform: scale(1.08); background-color: rgba(255, 255, 255, 0.12); }
+.navbtn:active { transform: scale(0.96); }
+.navbtn svg { width: 26px; height: 26px; }
+
+/* 6. Bottom-right link */
+.br {
+  position: absolute; bottom: 24px; right: 16px; z-index: 60;
+  display: flex; align-items: center; gap: 6px;
+  font-family: 'Anton', sans-serif;
+  font-size: clamp(20px, 4vw, 56px); font-weight: 400;
+  color: #ffffff; opacity: 0.95;
+  letter-spacing: -0.02em; line-height: 1;
+  text-transform: uppercase; text-decoration: none;
+  transition: opacity 200ms;
+}
+@media (min-width: 640px) { .br { bottom: 80px; right: 40px; } }
+.br:hover { opacity: 1; }
+.br svg { width: 20px; height: 20px; }
+@media (min-width: 640px) { .br svg { width: 32px; height: 32px; } }
+
+/* Exit veil */
+.veil { position: fixed; inset: 0; background: #000; z-index: 100; opacity: 0; pointer-events: none; transition: opacity 400ms ease; }
 .veil.show { opacity: 1; }
 
-@media (max-width: 480px) {
-  .loading { font-size: 16px; }
-  .fallback h2 { font-size: 26px; }
-  .fallback p { font-size: 14px; }
-}
-
-/* ===== Intro matni — markazда, elegant kursiv (Cormorant) + yozuvda fon hira ===== */
-.scrim {
-  position: fixed; inset: 0; z-index: 3; pointer-events: none;
-  background: radial-gradient(130% 100% at 50% 50%, rgba(0,0,0,0) 38%, rgba(0,0,0,.42) 100%);
-}
-.dim {
-  position: fixed; inset: 0; z-index: 4; pointer-events: none;
-  background: #000; opacity: 0; transition: opacity .8s ease;
-}
-.dim.on { opacity: .58; }
-.intro-poem { position: fixed; inset: 0; z-index: 5; pointer-events: none; }
-.intro-poem .line {
-  position: absolute; left: 50%; top: 50%; margin: 0;
-  width: min(88%, 660px); text-align: center;
-  font-family: 'Cormorant Garamond', Georgia, serif;
-  font-style: italic; font-weight: 500;
-  font-size: clamp(32px, 8.6vw, 58px); line-height: 1.18; letter-spacing: .3px;
-  background: linear-gradient(105deg, #FFF6E2 0%, #F6E2AE 28%, #FFFFFF 50%, #F0D793 72%, #D7AE52 100%);
-  background-size: 220% 100%;
-  -webkit-background-clip: text; background-clip: text;
-  -webkit-text-fill-color: transparent; color: transparent;
-  filter: drop-shadow(0 2px 16px rgba(0,0,0,.9)) drop-shadow(0 0 34px rgba(212,175,55,.28));
-  opacity: 0; transform: translate(-50%, -50%) translateY(34px) scale(.97);
-  transition: opacity 1.1s cubic-bezier(.16,1,.3,1), transform 1.1s cubic-bezier(.16,1,.3,1);
-  animation: introShine 7s ease-in-out infinite;
-}
-.intro-poem .line::after {
-  content: ''; display: block; width: 54px; height: 2px; margin: 28px auto 0;
-  background: linear-gradient(90deg, transparent, rgba(232,199,102,.95), transparent);
-  opacity: 0; transform: scaleX(.3);
-  transition: opacity 1s ease .3s, transform 1s ease .3s;
-}
-.intro-poem .line.show { opacity: 1; transform: translate(-50%, -50%) scale(1); }
-.intro-poem .line.show::after { opacity: 1; transform: scaleX(1); }
-.intro-poem .line.gone { opacity: 0; transform: translate(-50%, -50%) translateY(-34px) scale(.97); }
-@keyframes introShine { 0%,100% { background-position: 0% 50%; } 50% { background-position: 100% 50%; } }
-.intro-cta-text {
-  position: fixed; z-index: 5; pointer-events: none;
-  left: 50%; top: 50%; width: min(88%, 660px);
-  transform: translate(-50%, -50%) translateY(34px);
-  text-align: center; margin: 0;
-  font-family: 'Cormorant Garamond', Georgia, serif;
-  font-style: italic; font-weight: 500;
-  font-size: clamp(28px, 7.4vw, 48px); line-height: 1.22; letter-spacing: .3px;
-  background: linear-gradient(105deg, #FFF6E2 0%, #F6E2AE 28%, #FFFFFF 50%, #F0D793 72%, #D7AE52 100%);
-  background-size: 220% 100%;
-  -webkit-background-clip: text; background-clip: text;
-  -webkit-text-fill-color: transparent; color: transparent;
-  filter: drop-shadow(0 2px 16px rgba(0,0,0,.9)) drop-shadow(0 0 34px rgba(212,175,55,.28));
-  opacity: 0;
-  transition: opacity 1.1s cubic-bezier(.16,1,.3,1), transform 1.1s cubic-bezier(.16,1,.3,1);
-  animation: introShine 7s ease-in-out infinite;
-}
-.intro-cta-text::after {
-  content: ''; display: block; width: 54px; height: 2px; margin: 28px auto 0;
-  background: linear-gradient(90deg, transparent, rgba(232,199,102,.95), transparent);
-  opacity: 0; transform: scaleX(.3);
-  transition: opacity 1s ease .35s, transform 1s ease .35s;
-}
-.intro-cta-text.show { opacity: 1; transform: translate(-50%, -50%); }
-.intro-cta-text.show::after { opacity: 1; transform: scaleX(1); }
-.tap-hint {
-  position: fixed; z-index: 6; left: 0; right: 0;
-  bottom: max(46px, calc(env(safe-area-inset-bottom, 0px) + 46px));
-  text-align: center; pointer-events: none;
-  font-family: 'Inter', sans-serif; font-size: 11.5px; font-weight: 600;
-  letter-spacing: 3px; text-transform: uppercase; color: rgba(251,239,211,.82);
-  text-shadow: 0 1px 8px rgba(0,0,0,.9);
-  opacity: 0; transition: opacity .5s ease;
-}
-.tap-hint.on { opacity: 1; animation: hint-bob 1.7s ease-in-out infinite; }
-@keyframes hint-bob { 0%,100% { transform: translateY(0); opacity:.5; } 50% { transform: translateY(6px); opacity:1; } }
+/* Til tugmasini oq qilamiz (rangli fon ustida) */
+.lang-switcher__btn { background: rgba(255,255,255,0.14) !important; color: #fff !important; border-color: rgba(255,255,255,0.5) !important; }
 </style>
 <link rel="stylesheet" href="theme.css">
 </head>
 <body>
 
-<video id="cinematic" autoplay muted playsinline preload="auto"></video>
-<div class="vignette"></div>
-<div class="scrim"></div>
-<div class="dim" id="dim"></div>
+<div id="hero">
+  <div id="stage">
 
-<div class="intro-poem" id="introPoem">
-  <p class="line" id="ln1" data-i18n="intro.poem1">VAQT — insonning eng qimmat boyligi</p>
-  <p class="line" id="ln2" data-i18n="intro.poem2">Uni qaytarib bo'lmaydi</p>
-  <p class="line" id="ln3" data-i18n="intro.poem3">Lekin u bilan OLIY maqsadlarga yetishish mumkin</p>
-  <p class="line" id="ln4" data-i18n="intro.poem4">EY odam bolasi, Sen vaqtdan iboratsan, UNUTMA…</p>
+    <!-- 1. Grain -->
+    <div class="grain"></div>
+
+    <!-- 2. Ghost word -->
+    <div class="ghost"><span id="ghostWord">INTIZOM</span></div>
+
+    <!-- 3. Brand -->
+    <div class="brand">DAYWARDEN</div>
+
+    <!-- 4. Carousel (items injected by JS) -->
+    <div class="carousel" id="carousel"></div>
+
+    <!-- 5. Bottom-left: tagline + desc + nav -->
+    <div class="bl">
+      <p class="bl-title" data-i18n="intro.hero_tagline">SIZNING INTIZOM DO'STINGIZ</p>
+      <p class="bl-desc" data-i18n="intro.hero_desc">Vaqtingiz — eng qimmat boyligingiz. Maqsad qo'ying, biz uni kunlik rejaga aylantiramiz.</p>
+      <div class="nav">
+        <button class="navbtn" id="prevBtn" type="button" aria-label="Oldingi">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.25" stroke-linecap="round" stroke-linejoin="round"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg>
+        </button>
+        <button class="navbtn" id="nextBtn" type="button" aria-label="Keyingi">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.25" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+        </button>
+      </div>
+    </div>
+
+    <!-- 6. Bottom-right: start -->
+    <a class="br" id="ctaLink" href="anketa.html">
+      <span data-i18n="intro.hero_cta">BOSHLASH</span>
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.25" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+    </a>
+
+  </div>
 </div>
-<div class="intro-cta-text" id="introCta" data-i18n="intro.poemCta">Maqsadlaringizni yozing, qolgan yo'l xaritasini biz yaratamiz. Boshladikmi?…</div>
-<div class="tap-hint" id="tapHint" data-i18n="intro.tap_hint">teginib davom eting</div>
 
-<div class="loading" id="loading">
-  <span data-i18n="intro.loading">Yuklanmoqda</span>
-  <span class="loading-dot"></span>
-  <span class="loading-dot"></span>
-  <span class="loading-dot"></span>
-</div>
-
-<div class="fallback" id="fallback">
-  <h2 data-i18n="intro.fallback_title">Vaqt — sizning eng qimmat boyligingiz</h2>
-  <p data-i18n="intro.fallback_body">Daywarden — sizning intizom do'stingiz. Maqsadlaringizni kunlik harakatga aylantiramiz.</p>
-  <button class="continue-btn" id="continueBtn" type="button" data-i18n="intro.fallback_cta">Boshlaymiz ›</button>
-</div>
-
-<button class="back-btn" id="backBtn" type="button" data-i18n="intro.back">‹ Orqaga</button>
-<button class="skip-btn" id="skipBtn" type="button" data-i18n="intro.skip">O'tkazib yuborish ›</button>
 <div class="veil" id="veil"></div>
 
 <script src="i18n.js?v=28.4.0"></script>
 <script src="lang-switcher.js?v=28.4.0" defer></script>
 <script>
-(function() {
+(function () {
   'use strict';
 
-  // ===== EARLY GUARDS =====
+  // ===== Guards (avvalgidek) =====
   var INTRO_SEEN = 'mvow.motion.introSeen';
-  function go(u) { try { location.replace(u); } catch(e) { location.href = u; } }
-  function setSeen() { try { localStorage.setItem(INTRO_SEEN, '1'); } catch(e) {} }
-  function clearSeen() { try { localStorage.removeItem(INTRO_SEEN); } catch(e) {} }
+  function go(u) { try { location.replace(u); } catch (e) { location.href = u; } }
+  function setSeen() { try { localStorage.setItem(INTRO_SEEN, '1'); } catch (e) {} }
 
-  try { if (localStorage.getItem(INTRO_SEEN)) { go('anketa.html'); return; } } catch(e) {}
-
+  try { if (localStorage.getItem(INTRO_SEEN)) { go('anketa.html'); return; } } catch (e) {}
   var pref = matchMedia('(prefers-reduced-motion: reduce)').matches;
   var intensity = '';
-  try { intensity = localStorage.getItem('mvow.motion.intensity') || ''; } catch(e) {}
+  try { intensity = localStorage.getItem('mvow.motion.intensity') || ''; } catch (e) {}
   if (pref || intensity === 'minimal') { setSeen(); go('anketa.html'); return; }
 
-  // ===== ELEMENTS =====
-  var video = document.getElementById('cinematic');
-  var loading = document.getElementById('loading');
-  var fallback = document.getElementById('fallback');
-  var veil = document.getElementById('veil');
+  // ===== Data =====
+  var IMAGES = [
+    { src: 'https://fifth-gentle-45902158.figma.site/_components/v2/4de492f6d9cf8244ad5293233e5c6f52407d42fc/1.02464a56.png', bg: '#F4845F', panel: '#F79B7F' },
+    { src: 'https://fifth-gentle-45902158.figma.site/_components/v2/4de492f6d9cf8244ad5293233e5c6f52407d42fc/2.b977faab.png', bg: '#6BBF7A', panel: '#85CC92' },
+    { src: 'https://fifth-gentle-45902158.figma.site/_components/v2/4de492f6d9cf8244ad5293233e5c6f52407d42fc/3.4df853b4.png', bg: '#E882B4', panel: '#ED9DC4' },
+    { src: 'https://fifth-gentle-45902158.figma.site/_components/v2/4de492f6d9cf8244ad5293233e5c6f52407d42fc/4.4457fbce.png', bg: '#6EB5FF', panel: '#8DC4FF' }
+  ];
+  // Preload
+  IMAGES.forEach(function (im) { var i = new Image(); i.src = im.src; });
 
-  // ===== NAVIGATION =====
+  function T(k, d) { return (window.I18N && I18N.t) ? I18N.t(k, d) : d; }
+  function WORDS() {
+    return [
+      T('intro.word1', 'INTIZOM'),
+      T('intro.word2', 'FOKUS'),
+      T('intro.word3', 'MAQSAD'),
+      T('intro.word4', "G'ALABA")
+    ];
+  }
+
+  // ===== Elements =====
+  var hero = document.getElementById('hero');
+  var carousel = document.getElementById('carousel');
+  var ghostWord = document.getElementById('ghostWord');
+  var themeMeta = document.querySelector('meta[name="theme-color"]');
+
+  // ===== State =====
+  var activeIndex = 0;
+  var isAnimating = false;
+  var isMobile = window.innerWidth < 640;
+
+  // Build figure nodes
+  var items = IMAGES.map(function (im) {
+    var d = document.createElement('div');
+    d.className = 'fig';
+    var img = document.createElement('img');
+    img.src = im.src;
+    img.alt = '';
+    img.draggable = false;
+    d.appendChild(img);
+    carousel.appendChild(d);
+    return d;
+  });
+
+  function styleFor(role) {
+    var m = isMobile;
+    if (role === 'center') {
+      return { transform: 'translateX(-50%) scale(' + (m ? 1.25 : 1.68) + ')', filter: 'none', opacity: 1, z: 20, left: '50%', height: m ? '60%' : '92%', bottom: m ? '22%' : '0' };
+    }
+    if (role === 'back') {
+      return { transform: 'translateX(-50%) scale(1)', filter: 'blur(4px)', opacity: 1, z: 5, left: '50%', height: m ? '13%' : '22%', bottom: m ? '32%' : '12%' };
+    }
+    // left / right
+    var lr = (role === 'left') ? (m ? '20%' : '30%') : (m ? '80%' : '70%');
+    return { transform: 'translateX(-50%) scale(1)', filter: 'blur(2px)', opacity: 0.85, z: 10, left: lr, height: m ? '16%' : '28%', bottom: m ? '32%' : '12%' };
+  }
+
+  function render() {
+    hero.style.backgroundColor = IMAGES[activeIndex].bg;
+    if (themeMeta) themeMeta.setAttribute('content', IMAGES[activeIndex].bg);
+
+    var center = activeIndex;
+    var left = (activeIndex + 3) % 4;
+    var right = (activeIndex + 1) % 4;
+    var back = (activeIndex + 2) % 4;
+    var roleOf = {};
+    roleOf[center] = 'center'; roleOf[left] = 'left'; roleOf[right] = 'right'; roleOf[back] = 'back';
+
+    items.forEach(function (el, i) {
+      var s = styleFor(roleOf[i]);
+      el.style.transform = s.transform;
+      el.style.filter = s.filter;
+      el.style.opacity = s.opacity;
+      el.style.zIndex = s.z;
+      el.style.left = s.left;
+      el.style.height = s.height;
+      el.style.bottom = s.bottom;
+    });
+
+    var w = WORDS()[activeIndex];
+    if (ghostWord.textContent !== w) {
+      ghostWord.textContent = w;
+      ghostWord.style.animation = 'none';
+      void ghostWord.offsetWidth;
+      ghostWord.style.animation = 'ghostSwap 650ms cubic-bezier(0.4, 0, 0.2, 1)';
+    }
+  }
+
+  function navigate(dir) {
+    if (isAnimating) return;
+    isAnimating = true;
+    activeIndex = (dir === 'next') ? (activeIndex + 1) % 4 : (activeIndex + 3) % 4;
+    render();
+    setTimeout(function () { isAnimating = false; }, 650);
+  }
+
+  document.getElementById('prevBtn').addEventListener('click', function () { navigate('prev'); });
+  document.getElementById('nextBtn').addEventListener('click', function () { navigate('next'); });
+
+  // ===== Start → anketa =====
+  var veil = document.getElementById('veil');
   var navigated = false;
-  function navigate(target, save) {
+  function startApp(e) {
+    if (e) e.preventDefault();
     if (navigated) return;
     navigated = true;
+    setSeen();
     veil.classList.add('show');
-    if (save !== false) setSeen();
-    try { video.pause(); } catch(e) {}
-    setTimeout(function() { go(target); }, 480);
+    setTimeout(function () { go('anketa.html'); }, 380);
   }
+  document.getElementById('ctaLink').addEventListener('click', startApp);
 
-  // ===== BUTTONS =====
-  document.getElementById('skipBtn').addEventListener('click', function() {
-    navigate('anketa.html', true);
+  // ===== Keyboard =====
+  document.addEventListener('keydown', function (e) {
+    if (e.key === 'ArrowRight') navigate('next');
+    else if (e.key === 'ArrowLeft') navigate('prev');
+    else if (e.key === 'Enter') startApp();
   });
 
-  document.getElementById('backBtn').addEventListener('click', function() {
-    clearSeen();
-    navigate('gallery.html', false);
+  // ===== Resize =====
+  window.addEventListener('resize', function () {
+    var m = window.innerWidth < 640;
+    if (m !== isMobile) { isMobile = m; render(); }
   });
 
-  document.getElementById('continueBtn').addEventListener('click', function() {
-    navigate('anketa.html', true);
-  });
-
-  document.addEventListener('keydown', function(e) {
-    if (e.key === 'Escape' || e.key === 'Enter') navigate('anketa.html', true);
-  });
-
-  // ===== VIDEO — ekran formatiga qarab (9:16 telefon / 16:9 keng ekran) =====
-  var isPortrait = window.matchMedia('(orientation: portrait)').matches;
-  video.src = isPortrait ? 'assets/intro-portrait.mp4' : 'assets/intro-landscape.mp4';
-
-  // ===== Matn =====
-  var cta = document.getElementById('introCta');
-  var hint = document.getElementById('tapHint');
-  var dim = document.getElementById('dim');
-  var poemLines = [
-    document.getElementById('ln1'), document.getElementById('ln2'),
-    document.getElementById('ln3'), document.getElementById('ln4')
-  ];
-
-  // 1-matn 1-soniyada. Video O'YNAGANDA matn yo'qoladi; har to'xtashда (3/6/10s+oxir) yangi matn.
-  var STOPS = [3, 6, 10, 999]; // 999 = oxir (metadata kelganда aniqlanadi)
-  var nextStop = 0, atEnd = false, started = false, noVideo = false, shownLine = -1, text1Shown = false;
-
-  video.addEventListener('loadedmetadata', function() {
-    if (video.duration && isFinite(video.duration)) STOPS[3] = video.duration - 0.1;
-  });
-
-  function showLine(i) {
-    if (i === shownLine) return;
-    if (shownLine >= 0 && poemLines[shownLine]) {
-      poemLines[shownLine].classList.remove('show'); poemLines[shownLine].classList.add('gone');
-    }
-    shownLine = i;
-    if (poemLines[i]) { poemLines[i].classList.remove('gone'); poemLines[i].classList.add('show'); }
-    dimOn();
-  }
-  function hidePoem() {
-    if (shownLine >= 0 && poemLines[shownLine]) {
-      poemLines[shownLine].classList.remove('show'); poemLines[shownLine].classList.add('gone');
-    }
-    shownLine = -1;
-  }
-  function showHint() { if (hint) hint.classList.add('on'); }
-  function hideHint() { if (hint) hint.classList.remove('on'); }
-  function dimOn() { if (dim) dim.classList.add('on'); }
-  function dimOff() { if (dim) dim.classList.remove('on'); }
-
-  // Har to'xtashда: stop0(3s)->2-matn, stop1(6s)->3-matn, stop2(10s)->4-matn, stop3(oxir)->CTA
-  function onStop(i) {
-    if (i === 0) showLine(1);
-    else if (i === 1) showLine(2);
-    else if (i === 2) showLine(3);
-    else { atEnd = true; hidePoem(); cta.classList.add('show'); dimOn(); }
-    showHint();
-  }
-
-  video.addEventListener('timeupdate', function() {
-    var t = video.currentTime;
-    if (!text1Shown && t >= 1) { text1Shown = true; showLine(0); } // 1-matn 1-soniyada
-    if (!atEnd && nextStop < STOPS.length && t >= STOPS[nextStop]) {
-      try { video.pause(); } catch(e) {}
-      onStop(nextStop); nextStop++;
-    }
-  });
-  video.addEventListener('ended', function() {
-    if (atEnd) return;
-    atEnd = true; hidePoem(); cta.classList.add('show'); dimOn(); showHint();
-  });
-
-  // Video O'YNAGANDA matn yo'qoladi va fon yorishadi (to'xtashlar orasiда matn yo'q)
-  video.addEventListener('play', function() { hideHint(); hidePoem(); dimOff(); });
-
-  function start() { if (started) return; started = true; loading.classList.add('hide'); }
-  video.addEventListener('canplay', start);
-  video.addEventListener('loadeddata', start);
-  video.addEventListener('error', function() {
-    noVideo = true; start();
-    if (!text1Shown) { text1Shown = true; showLine(0); showHint(); }
-  });
-
-  video.play().catch(function(){});
-
-  // Zaxira: autoplay bloklansa ham 1.5s da 1-matn chiqsin
-  setTimeout(function() {
-    start();
-    if (!text1Shown && shownLine < 0 && !atEnd) { text1Shown = true; showLine(0); }
-  }, 1500);
-
-  // ===== Boshqaruv: teginish/skroll → davom (matn yo'qoladi → keyingi to'xtashда yangi matn) =====
-  function tap() {
-    if (navigated) return;
-    if (atEnd) { navigate('anketa.html', true); return; }
-    if (noVideo) {
-      hideHint();
-      if (nextStop < STOPS.length) { onStop(nextStop); nextStop++; }
-      return;
-    }
-    if (video.paused) { video.play().catch(function(){}); }            // resume → 'play' matnni yashiradi
-    else if (nextStop < STOPS.length) { try { video.currentTime = STOPS[nextStop]; } catch(e) {} }
-  }
-  document.addEventListener('pointerdown', function(e) {
-    if (e.target.closest('button, a, select, input, label, [data-lang], [class*="lang"]')) return;
-    tap();
-  });
-  var wheelLock = false;
-  window.addEventListener('wheel', function(e) {
-    if (wheelLock || Math.abs(e.deltaY) < 8) return;
-    wheelLock = true; tap();
-    setTimeout(function(){ wheelLock = false; }, 500);
-  }, { passive: true });
-  document.addEventListener('keydown', function(e) {
-    if (e.key === 'ArrowDown' || e.key === ' ') { e.preventDefault(); tap(); }
-  });
-
+  render();
 })();
 </script>
 <script src="back-btn.js?v=28.4.0"></script>

@@ -96,7 +96,14 @@
         poem3: 'Lekin u bilan OLIY maqsadlarga yetishish mumkin',
         poem4: 'EY odam bolasi, Sen vaqtdan iboratsan, UNUTMA…',
         poemCta: "Maqsadlaringizni yozing, qolgan yo'l xaritasini biz yaratamiz. Boshladikmi?…",
-        tap_hint: 'teginib davom eting'
+        tap_hint: 'teginib davom eting',
+        hero_tagline: "SIZNING INTIZOM DO'STINGIZ",
+        hero_desc: "Vaqtingiz — eng qimmat boyligingiz. Maqsad qo'ying, biz uni kunlik rejaga aylantiramiz.",
+        hero_cta: 'BOSHLASH',
+        word1: 'INTIZOM',
+        word2: 'FOKUS',
+        word3: 'MAQSAD',
+        word4: "G'ALABA"
       },
       welcome: {
         name_ph: 'ismingizni yozing',
@@ -833,7 +840,14 @@
         poem3: 'Но с ним можно достичь ВЫСШИХ целей',
         poem4: 'О, сын человеческий, ты состоишь из времени, ПОМНИ…',
         poemCta: 'Запишите свои цели — остальную карту пути создадим мы. Начнём?…',
-        tap_hint: 'нажмите, чтобы продолжить'
+        tap_hint: 'нажмите, чтобы продолжить',
+        hero_tagline: 'ВАШ ДРУГ ДИСЦИПЛИНЫ',
+        hero_desc: 'Ваше время — самое ценное. Поставьте цель — мы превратим её в ежедневный план.',
+        hero_cta: 'НАЧАТЬ',
+        word1: 'ДИСЦИПЛИНА',
+        word2: 'ФОКУС',
+        word3: 'ЦЕЛЬ',
+        word4: 'ПОБЕДА'
       },
       welcome: {
         name_ph: 'ваше имя',
@@ -1557,7 +1571,14 @@
         poem3: 'But with it, the HIGHEST goals can be reached',
         poem4: 'O child of man, you are made of time, REMEMBER…',
         poemCta: "Write your goals — we'll build the rest of the roadmap. Shall we begin?…",
-        tap_hint: 'tap to continue'
+        tap_hint: 'tap to continue',
+        hero_tagline: 'YOUR DISCIPLINE FRIEND',
+        hero_desc: 'Your time is your most valuable asset. Set a goal — we turn it into a daily plan.',
+        hero_cta: 'GET STARTED',
+        word1: 'DISCIPLINE',
+        word2: 'FOCUS',
+        word3: 'GOAL',
+        word4: 'VICTORY'
       },
       welcome: {
         name_ph: 'your name',
