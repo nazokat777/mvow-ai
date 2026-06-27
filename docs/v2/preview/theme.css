@@ -110,6 +110,9 @@ html, body { transition: background 0.3s ease, color 0.3s ease; }
 :root[data-theme="light"] .phone .bottom-bar {
   background: linear-gradient(180deg, transparent, #f3f4f7 30%) !important;
 }
+:root[data-theme="light"] .page-cta-bar {
+  background: linear-gradient(180deg, transparent, #f3f4f7 40%) !important;
+}
 
 /* === BASE STYLES === */
 html, body {
