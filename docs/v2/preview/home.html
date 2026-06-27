@@ -61,40 +61,39 @@
     display: flex;
     align-items: center;
     gap: 14px;
-    padding: 16px 18px;
-    background: linear-gradient(135deg, rgba(var(--tc),0.16), rgba(var(--tc),0.04));
-    border: 1px solid rgba(var(--tc),0.22);
-    border-left: 4px solid rgba(var(--tc),1);
-    border-radius: 16px;
-    box-shadow: 0 8px 22px rgba(var(--tc),0.16);
+    padding: 14px 18px;
+    background: linear-gradient(135deg, rgba(var(--tc),1), rgba(var(--tc),0.80));
+    border: none;
+    border-radius: 999px;
+    box-shadow: 0 8px 22px rgba(var(--tc),0.42);
     transition: transform .15s, opacity .2s, box-shadow .2s;
   }
-  .t-row:active { transform: scale(.99); }
+  .t-row:active { transform: scale(.98); }
   .t-row .ord {
     width: 46px; height: 46px;
     border-radius: 50%;
-    background: linear-gradient(135deg, rgba(var(--tc),1), rgba(var(--tc),.78));
-    color: #fff;
-    font-family: 'Inter', sans-serif;
-    font-size: 25px; font-weight: 700;
+    background: #fff;
+    color: rgba(var(--tc),1);
+    font-family: 'Anton', sans-serif;
+    font-size: 24px; font-weight: 400;
     display: flex; align-items: center; justify-content: center;
     flex-shrink: 0;
-    box-shadow: 0 4px 12px rgba(var(--tc),.40);
+    box-shadow: 0 2px 8px rgba(0,0,0,.18);
   }
-  .t-row .tbody { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 3px; }
+  .t-row .tbody { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 2px; }
   .t-row .tname {
-    font-size: 19px;
-    font-weight: 600;
-    color: var(--text);
+    font-size: 18px;
+    font-weight: 700;
+    color: #fff;
     line-height: 1.2;
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
   }
   .t-row .ttime {
-    font-size: 15px;
-    color: rgba(var(--tc),1);
-    font-weight: 700;
+    font-size: 14px;
+    color: rgba(255,255,255,0.88);
+    font-weight: 600;
     letter-spacing: 0.3px;
   }
   .t-row .tstat {
@@ -104,29 +103,24 @@
     flex-shrink: 0;
   }
   /* ✓ done */
-  .t-row.done { opacity: 0.55; }
-  .t-row.done .tname { text-decoration: line-through; color: var(--text-mid); }
-  .t-row.done .ord { background: linear-gradient(135deg, var(--accent-bright), var(--accent-deep)); }
-  .t-row.done .tstat { background: var(--accent); }
+  .t-row.done { opacity: 0.5; }
+  .t-row.done .tname { text-decoration: line-through; }
+  .t-row.done .tstat { background: #fff; }
   .t-row.done .tstat::after {
     content: '';
     width: 9px; height: 5px;
-    border-left: 2px solid #fff;
-    border-bottom: 2px solid #fff;
+    border-left: 2px solid rgba(var(--tc),1);
+    border-bottom: 2px solid rgba(var(--tc),1);
     transform: rotate(-45deg) translate(1px, -1px);
   }
   /* ✗ missed */
-  .t-row.missed .tname { color: var(--text-mid); }
-  .t-row.missed .ord { background: linear-gradient(135deg, #FF6B7A, #E03048); }
-  .t-row.missed .ttime { color: #FF8E97; opacity: 0.85; }
-  .t-row.missed .tstat { background: #FF4757; font-size: 16px; color: #fff; line-height: 1; font-weight: 600; }
+  .t-row.missed { opacity: 0.82; }
+  .t-row.missed .tstat { background: #fff; color: #E03048; font-size: 16px; line-height: 1; font-weight: 700; }
   /* . pending */
-  .t-row.pending .tstat { border: 1.5px solid rgba(255,255,255,.18); background: transparent; }
-  /* ⏰ overdue — bugun vaqti o'tdi, lekin hali bajarish mumkin (jazo emas, eslatma) */
+  .t-row.pending .tstat { border: 2px solid rgba(255,255,255,.6); background: transparent; }
+  /* ⏰ overdue */
   .t-item { display: flex; flex-direction: column; }
-  .t-row.overdue .ord { background: linear-gradient(135deg, #FFD98A, #E0A23C); }
-  .t-row.overdue .ttime { color: #F5C26B; }
-  .t-row.overdue .tstat { border: 1.5px solid rgba(245,194,107,.5); background: transparent; }
+  .t-row.overdue .tstat { border: 2px solid rgba(255,255,255,.6); background: transparent; }
   .t-note {
     margin: 6px 14px 2px 16px;
     font-family: 'Inter', sans-serif;
@@ -136,8 +130,8 @@
     line-height: 1.45;
   }
   /* active — hozir ishlayotgan */
-  .t-row.active { border: 1.5px solid rgba(108, 92, 231,.5); box-shadow: 0 6px 20px rgba(108, 92, 231,.30); }
-  .t-row.active .tstat { background: rgba(108, 92, 231,.5); animation: pulse 1.6s ease-in-out infinite; }
+  .t-row.active { box-shadow: 0 0 0 2px rgba(255,255,255,.7), 0 8px 26px rgba(var(--tc),0.55); }
+  .t-row.active .tstat { background: rgba(255,255,255,.92); animation: pulse 1.6s ease-in-out infinite; }
   @keyframes pulse { 0%,100% { transform: scale(1); } 50% { transform: scale(1.18); } }
   .next .lbl { font-size: 14px; letter-spacing: 4px; color: var(--text-dim); text-transform: uppercase; margin-bottom: 8px; }
   .next .row {
@@ -539,7 +533,7 @@
         const completedKeys = (window.MVOW_DATA ? MVOW_DATA.getCompletedKeysToday() : new Set());
         const overdueTxt = T('home.overdue_reminder', "Vaqti o'tdi — hali kech emas, bugun baribir bajaring");
         const sorted = [...plan].sort((a,b) => tKey(a.time) - tKey(b.time));
-        const TASK_COLORS = ['99, 102, 241'];
+        const TASK_COLORS = ['26, 188, 156', '243, 156, 18', '230, 126, 34', '233, 76, 110', '155, 108, 240', '90, 158, 232'];
         tasksList.innerHTML = sorted.map((t, i) => {
           const taskKey = window.MVOW_DATA && t.time && t.name ? MVOW_DATA.taskKey(MVOW_DATA.today.iso, t.time, t.name) : '';
           const state = window.MVOW_DATA ? MVOW_DATA.getTaskState(taskKey) : { status: 'pending' };
