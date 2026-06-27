@@ -220,64 +220,35 @@ h1, h2, h3, h4, h5, h6,
 /* === INTERAKTIV TUGMALAR — "Magnit ko'tarilish" + shakl o'zgarishi (pill + squish) === */
 button, .cta, .submit, .google-btn, .continue-btn, .lang-btn,
 a.cta, [role="button"], .t-add-row, .choice-card, .opt, .ghost {
-  transition: transform var(--dur-normal) var(--ease-enter),
+  transition: transform var(--dur-quick) var(--ease-enter),
               box-shadow var(--dur-normal) ease,
-              border-radius var(--dur-normal) var(--ease-enter),
-              filter var(--dur-normal) ease,
-              background var(--dur-quick) ease,
-              border-color var(--dur-quick) ease;
+              filter var(--dur-quick) ease;
   -webkit-tap-highlight-color: transparent;
 }
 
-/* Hover (kompyuter) — yumshoq ko'tariladi + shakl yumaloqlanadi (pill) */
+/* Hover (kompyuter) — yumshoq ko'tariladi (minimalist) */
 @media (hover: hover) {
   button:hover, .lang-btn:hover, a.cta:hover, [role="button"]:hover,
   .t-add-row:hover, .choice-card:hover, .opt:hover, .ghost:hover {
     transform: translateY(-2px);
-    border-radius: 999px;
   }
   .cta:hover, .submit:hover, .continue-btn:hover {
-    transform: translateY(-3px);
-    border-radius: 999px;
-    box-shadow: 0 10px 30px rgba(212, 175, 55, 0.30), 0 4px 12px rgba(0, 0, 0, 0.32);
-    filter: brightness(1.04);
+    transform: translateY(-2px);
+    box-shadow: 0 8px 22px rgba(212, 175, 55, 0.26);
+    filter: brightness(1.03);
   }
 }
 
-/* Bosilganda — shakl o'zgaradi: pillga + vertikal siqilish (squish) + pastga */
+/* Bosilganda — yengil bosilish (minimalist) */
 button:active, .cta:active, .submit:active, .google-btn:active,
 .continue-btn:active, .lang-btn:active, a.cta:active,
 [role="button"]:active, .t-add-row:active, .choice-card:active, .opt:active, .ghost:active {
-  transform: translateY(1px) scaleY(0.90);
-  border-radius: 999px;
-  box-shadow: none;
+  transform: scale(0.97);
 }
 
-/* Asosiy oltin tugmalar — DOIMIY oltin nur + sekin shimmer (tinch holatda ham ko'rinadi) */
+/* Asosiy oltin tugmalar — yumshoq nur (minimalist, harakatsiz) */
 .cta, .submit, .continue-btn {
-  position: relative;
-  overflow: hidden;
-  box-shadow: 0 6px 26px rgba(212, 175, 55, 0.40);
-  animation: blobMorph 7s ease-in-out infinite;
-}
-/* Shakl sekin "nafas oladi" — burchaklar organik o'zgaradi (kreativ animatsiyali shakl) */
-@keyframes blobMorph {
-  0%, 100% { border-radius: 22px; }
-  33%      { border-radius: 44px 16px 44px 16px; }
-  66%      { border-radius: 16px 44px 16px 44px; }
-}
-.cta::after, .submit::after, .continue-btn::after {
-  content: '';
-  position: absolute; top: 0; left: -85%;
-  width: 55%; height: 100%;
-  background: linear-gradient(105deg, transparent, rgba(255, 255, 255, 0.32), transparent);
-  transform: skewX(-18deg);
-  pointer-events: none;
-  animation: btnShine 4.2s ease-in-out infinite;
-}
-@keyframes btnShine {
-  0%        { left: -85%; }
-  55%, 100% { left: 155%; }
+  box-shadow: 0 4px 16px rgba(212, 175, 55, 0.20);
 }
 
 /* === SAHIFA O'TISHI — oltin "scan-line" reveal (noodatiy + minimalist) ===
