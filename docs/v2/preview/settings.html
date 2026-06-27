@@ -137,6 +137,13 @@
       <div class="sub"><span class="em" id="streakN">0</span> <span data-i18n="settings.sub">kun yo'l</span></div>
     </div>
 
+    <div class="section-lbl" data-i18n="settings.sec_appearance">Ko'rinish</div>
+
+    <div class="row">
+      <div class="lbl" data-i18n="settings.light_mode">Yorug' rejim</div>
+      <div class="toggle" id="themeToggle" role="switch" tabindex="0" aria-label="Yorug' rejim" aria-checked="false"></div>
+    </div>
+
     <div class="section-lbl" data-i18n="settings.sec_permissions">Ruxsatlar</div>
 
     <div class="row">
@@ -197,6 +204,26 @@
 </div>
 
 <script src="i18n.js?v=28.4.0"></script>
+<script>
+  /* Ko'rinish (yorug'/qorong'u) tugmasi */
+  (function(){
+    var btn = document.getElementById('themeToggle');
+    if (!btn) return;
+    function cur(){ return document.documentElement.getAttribute('data-theme') === 'light' ? 'light' : 'dark'; }
+    function apply(t){
+      document.documentElement.setAttribute('data-theme', t);
+      try { localStorage.setItem('mvow.theme', t); } catch(e){}
+      btn.classList.toggle('on', t === 'light');
+      btn.setAttribute('aria-checked', t === 'light' ? 'true' : 'false');
+      var meta = document.querySelector('meta[name="theme-color"]');
+      if (meta) meta.setAttribute('content', t === 'light' ? '#f3f4f7' : '#04060B');
+    }
+    apply(cur());
+    function toggle(){ apply(cur() === 'light' ? 'dark' : 'light'); }
+    btn.addEventListener('click', toggle);
+    btn.addEventListener('keydown', function(e){ if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); toggle(); } });
+  })();
+</script>
 <script src="lang-switcher.js?v=28.4.0" defer></script>
 <script src="data.js?v=28.4.0" defer></script>
 <script src="nav-overlay.js?v=28.4.0" defer></script>

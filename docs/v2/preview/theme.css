@@ -65,6 +65,26 @@
   --dur-slow: 400ms;
 }
 
+/* === YORUG' (LIGHT) PALITRA — Sozlamalardagi tugma bilan yoqiladi === */
+:root[data-theme="light"] {
+  --bg: #f3f4f7;
+  --bg-soft: #ffffff;
+  --card-bg: #ffffff;
+  --card-bg-elevated: #ffffff;
+
+  --text: #15171c;
+  --text-dim: #5b6068;
+  --text-faint: #9aa0aa;
+
+  --border-subtle: rgba(0, 0, 0, 0.06);
+  --border-default: rgba(0, 0, 0, 0.12);
+
+  --overlay-light: rgba(0, 0, 0, 0.22);
+  --overlay-strong: rgba(0, 0, 0, 0.45);
+}
+/* Tema almashganda yumshoq o'tish */
+html, body { transition: background 0.3s ease, color 0.3s ease; }
+
 /* === BASE STYLES === */
 html, body {
   background: var(--bg);

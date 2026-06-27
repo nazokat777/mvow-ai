@@ -1,3 +1,6 @@
+/* Theme (yorug'/qorong'u) — sahifa ochilishi bilan darhol qo'llash (flash bo'lmasin) */
+(function(){try{var t=localStorage.getItem('mvow.theme');if(t==='light'||t==='dark')document.documentElement.setAttribute('data-theme',t);}catch(e){}})();
+
 /**
  * Daywarden — i18n (O'zbekcha / Русский / English)
  *
@@ -403,6 +406,8 @@
         reset_confirm: 'Aniqmisiz? Bosing',
         reset_done: 'Tozalandi · qaytamiz',
         language: 'Til',
+        sec_appearance: "Ko'rinish",
+        light_mode: "Yorug' rejim",
         sec_permissions: 'Ruxsatlar',
         sec_wake: "Uyg'onish",
         perm_screen_time: 'Ekran vaqti',
@@ -1138,6 +1143,8 @@
         reset_confirm: 'Уверены? Нажмите',
         reset_done: 'Очищено · возвращаемся',
         language: 'Язык',
+        sec_appearance: 'Внешний вид',
+        light_mode: 'Светлая тема',
         sec_permissions: 'Разрешения',
         sec_wake: 'Пробуждение',
         perm_screen_time: 'Экранное время',
@@ -1860,6 +1867,8 @@
         reset_confirm: 'Sure? Tap',
         reset_done: 'Cleared · going back',
         language: 'Language',
+        sec_appearance: 'Appearance',
+        light_mode: 'Light mode',
         sec_permissions: 'Permissions',
         sec_wake: 'Wake up',
         perm_screen_time: 'Screen time',
