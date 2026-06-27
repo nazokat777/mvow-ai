@@ -51,7 +51,7 @@
   --radius-pill: 999px;
 
   /* === TYPOGRAPHY === */
-  --font-heading: 'Cormorant Garamond', 'Playfair Display', Georgia, 'Times New Roman', serif;
+  --font-heading: 'Anton', 'Playfair Display', Georgia, 'Times New Roman', serif;
   --font-body: 'Inter', system-ui, -apple-system, 'Segoe UI', sans-serif;
   --font-mono: ui-monospace, 'SF Mono', Menlo, monospace;
 
@@ -98,12 +98,16 @@
 html, body { transition: background 0.3s ease, color 0.3s ease; }
 
 /* === YORUG' REJIM — tepa navigatsiya + til tugmalari moslashadi (aks holda qora qoladi) === */
-:root[data-theme="light"] #globalBackBtn,
-:root[data-theme="light"] #globalMenuBtn {
+:root[data-theme="light"] #globalNavCaps {
   background: rgba(255, 255, 255, 0.92) !important;
   border-color: rgba(0, 0, 0, 0.14) !important;
+}
+:root[data-theme="light"] #globalBackBtn,
+:root[data-theme="light"] #globalMenuBtn {
   color: #15171c !important;
 }
+/* Sarlavhalar ihcham (juda katta/qo'pol emas) */
+.question, .title { font-size: clamp(24px, 6vw, 36px) !important; }
 :root[data-theme="light"] .seq-btn {
   background: rgba(255, 255, 255, 0.92);
   border-color: rgba(0, 0, 0, 0.14);
@@ -203,7 +207,7 @@ h1, h2, h3, h4, h5, h6,
 /* Italic serif emphasis */
 .serif-italic {
   font-family: var(--font-heading);
-  font-style: italic;
+  font-style: normal;
 }
 
 /* === LANGUAGE SWITCHER === */

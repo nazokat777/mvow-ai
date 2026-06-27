@@ -41,8 +41,8 @@
     text-align: center;
   }
   .title {
-    font-family: 'Cormorant Garamond', serif;
-    font-style: italic;
+    font-family: 'Anton', serif;
+    font-style: normal;
     font-weight: 500;
     font-size: 41px;
     line-height: 1.3;
@@ -136,8 +136,8 @@
     margin-bottom: 10px;
   }
   .examples .ex {
-    font-family: 'Cormorant Garamond', serif;
-    font-style: italic;
+    font-family: 'Anton', serif;
+    font-style: normal;
     font-size: 18px;
     color: var(--text);
     line-height: 1.6;
@@ -533,7 +533,7 @@
       const toastHead = (window.I18N ? I18N.t('maqsad.toast_head', 'Maqsad tizimga<br>aylantirildi') : 'Maqsad tizimga<br>aylantirildi');
       const toastMeta = (window.I18N ? I18N.tWith('maqsad.toast_meta', { days: selectedDays, time: time }) : (selectedDays + ' kun · har kuni ' + time));
       const toastFoot = (window.I18N ? I18N.t('maqsad.toast_foot', 'har kungi reja avtomatik chiqadi') : 'har kungi reja avtomatik chiqadi');
-      toast.innerHTML = '<div style="font-family:\'Cormorant Garamond\',serif;font-style:italic;font-size:24px;color:#F5F2EC;margin-bottom:10px;line-height:1.3;">' + toastHead + '</div><div style="font-size:15px;color:#9CA0A8;letter-spacing:1.5px;text-transform:uppercase;margin-bottom:4px;">' + toastMeta + '</div><div style="font-size:15px;color:var(--accent-bright);letter-spacing:1px;">' + toastFoot + '</div>';
+      toast.innerHTML = '<div style="font-family:\'Cormorant Garamond\',serif;font-style:normal;font-size:24px;color:#F5F2EC;margin-bottom:10px;line-height:1.3;">' + toastHead + '</div><div style="font-size:15px;color:#9CA0A8;letter-spacing:1.5px;text-transform:uppercase;margin-bottom:4px;">' + toastMeta + '</div><div style="font-size:15px;color:var(--accent-bright);letter-spacing:1px;">' + toastFoot + '</div>';
       document.body.appendChild(toast);
 
       setTimeout(() => { window.location.href = 'maqsadlar.html'; }, 1400);

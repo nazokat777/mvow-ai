@@ -18,7 +18,7 @@
   .phone { width: 380px; min-height: 800px; background: var(--void); border-radius: 40px; overflow: hidden; position: relative; box-shadow: 0 0 0 8px #1a1d24, 0 30px 80px rgba(0,0,0,.7); }
   .container { padding: 60px 28px 80px; }
 
-  .title { font-family: 'Cormorant Garamond', serif; font-weight: 500; font-size: 41px; text-align: center; margin-bottom: 4px; }
+  .title { font-family: 'Anton', serif; font-weight: 500; font-size: 41px; text-align: center; margin-bottom: 4px; }
   .subtitle { text-align: center; font-size: 15px; letter-spacing: 3px; color: var(--text-dim); text-transform: uppercase; margin-bottom: 22px; }
 
   .tabs { display:flex; gap: 4px; padding: 4px; background: var(--void-soft); border-radius: 8px; margin-bottom: 18px; }
@@ -41,7 +41,7 @@
   /* milestoneMark anchor — ensure transforms/filters from MVOW_MOTION don't get clipped */
   .hero-num { position: relative; transform-origin: left center; will-change: transform, filter; }
   .hero-num {
-    font-family: 'Cormorant Garamond', serif;
+    font-family: 'Anton', serif;
     font-weight: 500;
     font-size: 49px;
     color: var(--accent);
@@ -134,7 +134,7 @@
   }
   .group-head:hover { background: rgba(108, 92, 231,.04); }
   .group-name {
-    font-family: 'Cormorant Garamond', serif;
+    font-family: 'Anton', serif;
     font-weight: 500;
     font-size: 21px;
     color: var(--text);
@@ -177,7 +177,7 @@
   }
   .h-entry:last-child { border-bottom: none; }
   .h-entry .date { font-size: 16px; color: var(--accent); font-weight: 500; letter-spacing: 0.3px; }
-  .h-entry .note { font-size: 17px; color: var(--text); font-style: italic; font-family: 'Cormorant Garamond', serif; line-height: 1.3; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .h-entry .note { font-size: 17px; color: var(--text); font-style: normal; font-family: 'Anton', serif; line-height: 1.3; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
   .h-entry .note.empty { color: var(--text-dim); font-family: 'Inter', sans-serif; font-style: normal; font-size: 15px; letter-spacing: 1px; text-transform: uppercase; }
   .h-entry .dur { font-size: 16px; color: var(--text-mid); font-weight: 500; text-align: right; }
 
@@ -190,8 +190,8 @@
     margin-top: 12px;
   }
   .empty .lbl {
-    font-family: 'Cormorant Garamond', serif;
-    font-style: italic;
+    font-family: 'Anton', serif;
+    font-style: normal;
     font-size: 21px;
     color: var(--text-mid);
     margin-bottom: 6px;
@@ -212,7 +212,7 @@
     margin: 26px 0 10px;
   }
   .tasks-head .h {
-    font-family: 'Cormorant Garamond', serif;
+    font-family: 'Anton', serif;
     font-weight: 500;
     font-size: 26px;
     color: var(--text);
@@ -243,14 +243,14 @@
     border-radius: 50%;
     background: linear-gradient(135deg, rgba(var(--tc),1), rgba(var(--tc),.78));
     color: #fff;
-    font-family: 'Cormorant Garamond', serif;
+    font-family: 'Anton', serif;
     font-size: 23px; font-weight: 700;
     display: flex; align-items: center; justify-content: center;
     box-shadow: 0 4px 12px rgba(var(--tc),.40);
   }
   .task-row .tr-body { flex: 1; min-width: 0; }
   .task-row .name {
-    font-family: 'Cormorant Garamond', serif;
+    font-family: 'Anton', serif;
     font-weight: 600;
     font-size: 22px;
     color: var(--text);
@@ -327,7 +327,7 @@
     margin-bottom: 14px;
   }
   .cal-mhead .t {
-    font-family: 'Cormorant Garamond', serif;
+    font-family: 'Anton', serif;
     font-weight: 500;
     font-size: 28px;
     color: var(--text);
@@ -372,7 +372,7 @@
     margin-bottom: 10px;
   }
   .cal-nav .month {
-    font-family: 'Cormorant Garamond', serif;
+    font-family: 'Anton', serif;
     font-weight: 500;
     font-size: 20px;
     color: var(--accent);
@@ -731,9 +731,9 @@
         const lblAvg = (window.I18N ? I18N.t('weekly-review.insight_avg_completion', "O'rtacha bajarish") : "O'rtacha bajarish");
         const lblPeak = (window.I18N ? I18N.t('weekly-review.insight_peak_time', 'Sermahsul vaqt') : 'Sermahsul vaqt');
         let html = '';
-        html += `<div style="display:flex;justify-content:space-between;align-items:baseline;"><span style="color:var(--text-mid);">${lblBest}</span><span style="color:var(--accent);font-weight:600;"><span style="font-family:'Cormorant Garamond',serif;font-size:20px;font-style:italic;">${b.best.day}</span> · ${b.best.completion}%</span></div>`;
+        html += `<div style="display:flex;justify-content:space-between;align-items:baseline;"><span style="color:var(--text-mid);">${lblBest}</span><span style="color:var(--accent);font-weight:600;"><span style="font-family:'Anton',serif;font-size:20px;font-style:normal;">${b.best.day}</span> · ${b.best.completion}%</span></div>`;
         if (b.worst.day !== b.best.day) {
-          html += `<div style="display:flex;justify-content:space-between;align-items:baseline;"><span style="color:var(--text-mid);">${lblWorst}</span><span style="color:#FF8E97;font-weight:600;"><span style="font-family:'Cormorant Garamond',serif;font-size:20px;font-style:italic;">${b.worst.day}</span> · ${b.worst.completion}%</span></div>`;
+          html += `<div style="display:flex;justify-content:space-between;align-items:baseline;"><span style="color:var(--text-mid);">${lblWorst}</span><span style="color:#FF8E97;font-weight:600;"><span style="font-family:'Anton',serif;font-size:20px;font-style:normal;">${b.worst.day}</span> · ${b.worst.completion}%</span></div>`;
         }
         html += `<div style="display:flex;justify-content:space-between;align-items:baseline;"><span style="color:var(--text-mid);">${lblAvg}</span><span style="color:${gradeColor(b.avg)};font-weight:600;">${b.avg}%</span></div>`;
         if (b.peakRange) {

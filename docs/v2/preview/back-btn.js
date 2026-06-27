@@ -1,10 +1,9 @@
 /**
- * Universal navigatsiya tugmalari — HAR sahifaga qo'yiladi (tepa-chap):
+ * Universal navigatsiya — HAR sahifaga (tepa-chap) BITTA kapsula ichida:
  *   ‹  — orqaga (ichki tarix bo'lsa history.back(), aks holda home.html)
- *   ☰  — mundarija (barcha ekranlar ro'yxati: menu.html)
+ *   ☰  — mundarija (menu.html)
  * Til tugmasi tepa-o'ngda turadi.
- *
- * Bosh/launcher sahifalarda (index, menu, gallery) bu tugmalar kerak emas.
+ * Bosh/launcher sahifalarda (index, menu, gallery, app, intro) kerak emas.
  */
 (function () {
   var NO_NAV = ['', 'index.html', 'menu.html', 'gallery.html', 'app.html', 'intro.html'];
@@ -13,18 +12,16 @@
     return (window.I18N && typeof I18N.t === 'function') ? I18N.t(key, fb) : fb;
   }
 
-  function baseStyle(btn, leftPx) {
-    var css = {
-      position: 'fixed',
-      top: 'max(12px, env(safe-area-inset-top, 12px))',
-      left: leftPx + 'px',
-      width: '44px',
+  function makeBtn(content, label, tag) {
+    var b = document.createElement(tag);
+    b.setAttribute('aria-label', label);
+    b.title = label;
+    b.textContent = content;
+    var s = {
+      width: '48px',
       height: '44px',
-      borderRadius: '50%',
-      border: '1px solid rgba(108, 92, 231,0.55)',
-      background: 'rgba(8,8,12,0.85)',
-      backdropFilter: 'blur(8px)',
-      WebkitBackdropFilter: 'blur(8px)',
+      background: 'transparent',
+      border: 'none',
       color: '#8B7CF0',
       fontSize: '22px',
       fontWeight: '500',
@@ -34,49 +31,68 @@
       justifyContent: 'center',
       cursor: 'pointer',
       textDecoration: 'none',
-      zIndex: '100000',
       WebkitTapHighlightColor: 'transparent',
-      transition: 'transform .12s, background .15s'
+      transition: 'background .15s'
     };
-    for (var k in css) btn.style[k] = css[k];
+    for (var k in s) b.style[k] = s[k];
+    b.addEventListener('mousedown', function () { b.style.background = 'rgba(108,92,231,0.16)'; });
+    b.addEventListener('mouseup', function () { b.style.background = 'transparent'; });
+    b.addEventListener('mouseleave', function () { b.style.background = 'transparent'; });
+    return b;
   }
 
   function init() {
     var file = (location.pathname.split('/').pop() || '').toLowerCase();
     if (NO_NAV.indexOf(file) !== -1) return;
+    if (document.getElementById('globalNavCaps')) return;
+
+    // Kapsula (pill) — ‹ | ☰
+    var caps = document.createElement('div');
+    caps.id = 'globalNavCaps';
+    var capStyle = {
+      position: 'fixed',
+      top: 'max(12px, env(safe-area-inset-top, 12px))',
+      left: '12px',
+      display: 'flex',
+      alignItems: 'center',
+      background: 'rgba(8,8,12,0.85)',
+      border: '1px solid rgba(108, 92, 231, 0.55)',
+      borderRadius: '999px',
+      backdropFilter: 'blur(8px)',
+      WebkitBackdropFilter: 'blur(8px)',
+      overflow: 'hidden',
+      zIndex: '100000',
+      boxShadow: '0 4px 14px rgba(0,0,0,0.40)'
+    };
+    for (var k in capStyle) caps.style[k] = capStyle[k];
 
     // ‹ Orqaga
-    if (!document.getElementById('globalBackBtn')) {
-      var back = document.createElement('button');
-      back.id = 'globalBackBtn';
-      back.type = 'button';
-      var bl = t('common.back', 'Orqaga');
-      back.setAttribute('aria-label', bl);
-      back.title = bl;
-      back.textContent = '‹';
-      baseStyle(back, 12);
-      back.addEventListener('click', function (e) {
-        e.preventDefault();
-        var ref = document.referrer || '';
-        if (ref && ref.indexOf(location.origin) === 0 && window.history.length > 1) history.back();
-        else location.href = 'home.html';
-      });
-      document.body.appendChild(back);
-    }
+    var bl = t('common.back', 'Orqaga');
+    var back = makeBtn('‹', bl, 'button');
+    back.id = 'globalBackBtn';
+    back.type = 'button';
+    back.addEventListener('click', function (e) {
+      e.preventDefault();
+      var ref = document.referrer || '';
+      if (ref && ref.indexOf(location.origin) === 0 && window.history.length > 1) history.back();
+      else location.href = 'home.html';
+    });
 
-    // ☰ Mundarija (barcha ekranlar)
-    if (!document.getElementById('globalMenuBtn')) {
-      var menu = document.createElement('a');
-      menu.id = 'globalMenuBtn';
-      menu.href = 'menu.html';
-      var ml = t('common.menu', 'Mundarija');
-      menu.setAttribute('aria-label', ml);
-      menu.title = ml;
-      menu.textContent = '☰'; // ☰
-      baseStyle(menu, 64);
-      menu.style.fontSize = '18px';
-      document.body.appendChild(menu);
-    }
+    // Ajratuvchi chiziq
+    var divider = document.createElement('span');
+    divider.style.cssText = 'width:1px;height:22px;background:rgba(108,92,231,0.35);flex-shrink:0;';
+
+    // ☰ Mundarija
+    var ml = t('common.menu', 'Mundarija');
+    var menu = makeBtn('☰', ml, 'a');
+    menu.id = 'globalMenuBtn';
+    menu.href = 'menu.html';
+    menu.style.fontSize = '18px';
+
+    caps.appendChild(back);
+    caps.appendChild(divider);
+    caps.appendChild(menu);
+    document.body.appendChild(caps);
   }
 
   if (document.readyState === 'loading') {

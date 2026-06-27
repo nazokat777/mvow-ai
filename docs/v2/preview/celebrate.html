@@ -22,7 +22,7 @@
 
   .hero { text-align:center; }
   .hero .big {
-    font-family:'Cormorant Garamond',serif;
+    font-family:'Anton',serif;
     font-weight: 600;
     font-size: clamp(64px, 20vw, 88px);
     background: linear-gradient(120deg, var(--accent-bright), var(--accent), var(--accent-deep));
@@ -32,7 +32,7 @@
     line-height: 1;
     margin-bottom: 12px;
   }
-  .hero .sub { font-family:'Cormorant Garamond',serif; font-style:italic; font-size: 20px; color: var(--text-mid); }
+  .hero .sub { font-family:'Anton',serif; font-style:normal; font-size: 20px; color: var(--text-mid); }
   .hero { position: relative; } /* anchor for milestoneMark overlay so injected DOM is contained, not pushed into page flow */
   .hero .big { position: relative; z-index: 1; } /* keep the +70% numeral above any mark overlay */
   @media (prefers-reduced-motion: reduce) { .hero [data-milestone-mark] { animation: none !important; opacity: 1 !important; } }
@@ -49,7 +49,7 @@
   }
   .chain .name { font-size: 18px; color: var(--text); }
   .chain .days { font-size: 17px; color: var(--accent); letter-spacing: 1px; }
-  .chain .days .em { font-family:'Cormorant Garamond',serif; font-size: 26px; font-weight: 500; }
+  .chain .days .em { font-family:'Anton',serif; font-size: 26px; font-weight: 500; }
 
   .bottom-bar { padding: 24px 32px env(safe-area-inset-bottom, 24px); background: linear-gradient(180deg, transparent, var(--void) 30%); }
   .cta { display:block; width:100%; padding:16px; background: linear-gradient(180deg, var(--accent), var(--accent-soft)); color: #fff; font-size:17px; font-weight:600; letter-spacing:2px; text-transform: uppercase; border:none; border-radius:6px; text-align:center; text-decoration:none; }
