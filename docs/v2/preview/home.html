@@ -123,9 +123,9 @@
     line-height: 1.45;
   }
   /* active — hozir ishlayotgan */
-  .t-row.active { border: 1px solid rgba(212,175,55,.35); background: rgba(212,175,55,.04); }
+  .t-row.active { border: 1px solid rgba(108, 92, 231,.35); background: rgba(108, 92, 231,.04); }
   .t-row.active .ttime { color: var(--accent); }
-  .t-row.active .tstat { background: rgba(212,175,55,.4); animation: pulse 1.6s ease-in-out infinite; }
+  .t-row.active .tstat { background: rgba(108, 92, 231,.4); animation: pulse 1.6s ease-in-out infinite; }
   @keyframes pulse { 0%,100% { transform: scale(1); } 50% { transform: scale(1.18); } }
   .next .lbl { font-size: 10px; letter-spacing: 4px; color: var(--text-dim); text-transform: uppercase; margin-bottom: 8px; }
   .next .row {
@@ -172,7 +172,7 @@
     padding: 10px 12px;
     margin-top: 6px;
     background: transparent;
-    border: 1px dashed rgba(212,175,55,.22);
+    border: 1px dashed rgba(108, 92, 231,.22);
     border-radius: 8px;
     cursor: pointer;
     color: var(--text-mid);
@@ -264,7 +264,7 @@
   }
 
   .actions { display: flex; flex-direction: column; gap: 10px; margin-top: 8px; }
-  .cta { display: block; width: 100%; padding: 16px; background: linear-gradient(180deg, var(--accent), var(--accent-soft)); color: var(--void); font-size: 13px; font-weight: 600; letter-spacing: 2px; text-transform: uppercase; border: none; border-radius: 6px; text-align: center; text-decoration: none; }
+  .cta { display: block; width: 100%; padding: 16px; background: linear-gradient(180deg, var(--accent), var(--accent-soft)); color: #fff; font-size: 13px; font-weight: 600; letter-spacing: 2px; text-transform: uppercase; border: none; border-radius: 6px; text-align: center; text-decoration: none; }
   .ghost { display: block; width: 100%; padding: 12px; background: transparent; color: var(--text-mid); font-size: 11px; letter-spacing: 2px; text-transform: uppercase; border: 1px solid rgba(255,255,255,.08); border-radius: 6px; text-align: center; text-decoration: none; }
 
   @media (max-width: 480px) {
@@ -286,7 +286,7 @@
     <h1 class="greet"><span id="greetWord">Assalomu alaykum</span>, <span class="em" id="userName" data-i18n="home.addressee">do'stim</span>.</h1>
 
     <!-- AI Murabbiy — kontekstli xabar (kerakli holatda chiqadi) -->
-    <div id="murabbiyBox" style="display:none;background:rgba(212,175,55,.06);border:1px solid rgba(212,175,55,.18);border-radius:12px;padding:14px 16px;font-family:'Cormorant Garamond',serif;font-style:italic;font-size:14px;line-height:1.5;color:var(--text);text-align:center;">
+    <div id="murabbiyBox" style="display:none;background:rgba(108, 92, 231,.06);border:1px solid rgba(108, 92, 231,.18);border-radius:12px;padding:14px 16px;font-family:'Cormorant Garamond',serif;font-style:italic;font-size:14px;line-height:1.5;color:var(--text);text-align:center;">
       <div id="murabbiyText"></div>
     </div>
 
@@ -357,7 +357,7 @@
     </div>
 
     <!-- BAJARGANDA: Identity (shaxs shakllanmoqda) — streak >= 7 -->
-    <div id="identityBox" style="display:none;background:rgba(212,175,55,.04);border-radius:12px;padding:14px 18px;text-align:center;">
+    <div id="identityBox" style="display:none;background:rgba(108, 92, 231,.04);border-radius:12px;padding:14px 18px;text-align:center;">
       <div style="font-family:'Cormorant Garamond',serif;font-style:italic;font-size:15px;line-height:1.55;color:var(--text);" id="identityText"></div>
     </div>
 
@@ -394,7 +394,7 @@
     </div>
 
     <!-- Yana maqsad qo'shish -->
-    <a href="maqsadlar.html" id="moreGoalBtn" role="button" style="display:flex;align-items:center;justify-content:center;gap:8px;margin:12px 0 4px;padding:14px;text-decoration:none;border:1px dashed rgba(212,175,55,.38);border-radius:12px;color:var(--accent);font-family:'Inter',sans-serif;font-size:13px;font-weight:500;letter-spacing:.4px;background:rgba(212,175,55,.04);">
+    <a href="maqsadlar.html" id="moreGoalBtn" role="button" style="display:flex;align-items:center;justify-content:center;gap:8px;margin:12px 0 4px;padding:14px;text-decoration:none;border:1px dashed rgba(108, 92, 231,.38);border-radius:12px;color:var(--accent);font-family:'Inter',sans-serif;font-size:13px;font-weight:500;letter-spacing:.4px;background:rgba(108, 92, 231,.04);">
       <span style="font-size:17px;line-height:1;">+</span>
       <span data-i18n="home.more_goal">Yana maqsad qo'shish</span>
     </a>
@@ -513,7 +513,7 @@
       plan.sort((a,b) => tKey(a.time) - tKey(b.time));
 
       if (!plan.length) {
-        tasksList.innerHTML = '<a href="maqsadlar.html" style="display:block;text-align:center;padding:18px 16px;text-decoration:none;font-family:\'Cormorant Garamond\',serif;font-style:italic;font-size:15px;line-height:1.5;color:var(--accent,#D4AF37);border:1px solid rgba(212,175,55,.32);border-radius:12px;background:rgba(212,175,55,.05);">'
+        tasksList.innerHTML = '<a href="maqsadlar.html" style="display:block;text-align:center;padding:18px 16px;text-decoration:none;font-family:\'Cormorant Garamond\',serif;font-style:italic;font-size:15px;line-height:1.5;color:var(--accent,#6C5CE7);border:1px solid rgba(108, 92, 231,.32);border-radius:12px;background:rgba(108, 92, 231,.05);">'
           + T('home.no_plan', "Avval maqsadingizni yozing — biz uni kunlik rejaga aylantiramiz") + ' →</a>';
         tasksPrompt.style.display = 'none';
       } else {
@@ -558,11 +558,11 @@
       var TT = function (k, def) { return window.I18N ? I18N.t(k, def) : def; };
       var ov = document.createElement('div');
       ov.style.cssText = 'position:fixed;inset:0;z-index:200;display:none;align-items:center;justify-content:center;background:rgba(0,0,0,.62);padding:24px;';
-      var btn = 'flex:1;padding:9px 0;background:transparent;border:1px solid rgba(212,175,55,.3);border-radius:8px;color:#D4AF37;font-size:13px;cursor:pointer;';
+      var btn = 'flex:1;padding:9px 0;background:transparent;border:1px solid rgba(108, 92, 231,.3);border-radius:8px;color:#6C5CE7;font-size:13px;cursor:pointer;';
       var inp = 'width:100%;margin:6px 0 14px;padding:12px;background:#0C0F16;border:1px solid rgba(255,255,255,.1);border-radius:10px;color:#F5F2EC;font-size:16px;box-sizing:border-box;';
       var lbl = 'font-size:11px;letter-spacing:1px;color:#9CA0A8;text-transform:uppercase;';
       ov.innerHTML =
-        '<div style="width:100%;max-width:330px;background:#11151E;border:1px solid rgba(212,175,55,.3);border-radius:16px;padding:22px;font-family:Inter,sans-serif;">'
+        '<div style="width:100%;max-width:330px;background:#11151E;border:1px solid rgba(108, 92, 231,.3);border-radius:16px;padding:22px;font-family:Inter,sans-serif;">'
         + '<div id="etTitle" style="font-size:16px;color:#F5F2EC;font-weight:600;"></div>'
         + '<div style="font-size:12px;color:#9CA0A8;margin:4px 0 16px;">' + TT('home.edit_sub', "Vaqt va davomiylikni o'zgartiring") + '</div>'
         + '<label style="' + lbl + '">' + TT('home.edit_time_lbl', 'Vaqt') + '</label>'
@@ -575,10 +575,10 @@
         +   '<button type="button" data-min="90" style="' + btn + '">90</button>'
         +   '<button type="button" data-min="120" style="' + btn + '">120</button>'
         + '</div>'
-        + '<button id="etStart" type="button" style="width:100%;margin-top:18px;padding:14px;background:linear-gradient(180deg,#E8C766,#D4AF37);border:none;border-radius:10px;color:#04060B;font-size:15px;font-weight:700;cursor:pointer;">▶ ' + TT('home.start_task', 'Shu vazifani boshlash') + '</button>'
+        + '<button id="etStart" type="button" style="width:100%;margin-top:18px;padding:14px;background:linear-gradient(180deg,#E8C766,#6C5CE7);border:none;border-radius:10px;color:#fff;font-size:15px;font-weight:700;cursor:pointer;">▶ ' + TT('home.start_task', 'Shu vazifani boshlash') + '</button>'
         + '<div style="display:flex;gap:10px;margin-top:10px;">'
         +   '<button id="etCancel" type="button" style="flex:1;padding:12px;background:transparent;border:1px solid rgba(255,255,255,.15);border-radius:10px;color:#B8BBC2;font-size:13px;cursor:pointer;">' + TT('common.cancel', 'Bekor') + '</button>'
-        +   '<button id="etSave" type="button" style="flex:1;padding:12px;background:transparent;border:1px solid rgba(212,175,55,.4);border-radius:10px;color:#D4AF37;font-size:13px;cursor:pointer;">' + TT('common.save', 'Saqlash') + '</button>'
+        +   '<button id="etSave" type="button" style="flex:1;padding:12px;background:transparent;border:1px solid rgba(108, 92, 231,.4);border-radius:10px;color:#6C5CE7;font-size:13px;cursor:pointer;">' + TT('common.save', 'Saqlash') + '</button>'
         + '</div></div>';
       document.body.appendChild(ov);
 

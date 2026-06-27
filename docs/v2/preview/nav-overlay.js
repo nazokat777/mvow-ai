@@ -20,7 +20,7 @@
         box-shadow: none !important;
         border: none !important;
         animation: none !important;
-        filter: drop-shadow(0 0 12px rgba(212,175,55,0.55));
+        filter: drop-shadow(0 0 12px rgba(108, 92, 231,0.55));
       }
       .mentor-orb *, .avatar *, .orb-core *, .header-orb *, .portal-core * {
         opacity: 0 !important;
@@ -35,7 +35,7 @@
         filter: saturate(1.1) !important;
       }
       .seq-nav-pos img {
-        filter: drop-shadow(0 0 4px rgba(212,175,55,.5)) !important;
+        filter: drop-shadow(0 0 4px rgba(108, 92, 231,.5)) !important;
       }
 
       /* === Universal mikro-animatsiyalar === */
@@ -253,7 +253,7 @@
       pointer-events: auto;
       width: 44px; height: 44px;
       border-radius: 50%;
-      border: 1px solid rgba(212,175,55,0.55);
+      border: 1px solid rgba(108, 92, 231,0.55);
       background: rgba(8,8,12,0.85);
       backdrop-filter: blur(8px);
       -webkit-backdrop-filter: blur(8px);
@@ -268,7 +268,7 @@
       transition: transform .12s, background .15s, opacity .15s;
       flex-shrink: 0;
     }
-    .seq-btn:active { transform: scale(0.93); background: rgba(212,175,55,0.18); }
+    .seq-btn:active { transform: scale(0.93); background: rgba(108, 92, 231,0.18); }
     .seq-btn.disabled { opacity: 0.22; pointer-events: none; }
 
     .seq-progress-wrap {
@@ -291,7 +291,7 @@
     .seq-progress {
       width: 100%;
       height: 3px;
-      background: rgba(212,175,55,0.12);
+      background: rgba(108, 92, 231,0.12);
       border-radius: 2px;
       overflow: hidden;
     }
@@ -396,7 +396,7 @@
         right: ${TIMER_PAGES.includes(file) ? 60 : 112}px;
         width: 44px; height: 44px;
         border-radius: 50%;
-        border: 1px solid rgba(212,175,55,0.45);
+        border: 1px solid rgba(108, 92, 231,0.45);
         background: rgba(8,8,12,0.85);
         backdrop-filter: blur(8px);
         -webkit-backdrop-filter: blur(8px);
@@ -408,7 +408,7 @@
         z-index: 99999;
         transition: transform .12s, background .15s;
       }
-      .seq-history:active { transform: scale(0.93); background: rgba(212,175,55,0.18); }
+      .seq-history:active { transform: scale(0.93); background: rgba(108, 92, 231,0.18); }
       .seq-history svg { width: 22px; height: 22px; }
     `;
     document.head.appendChild(hStyle);
@@ -449,7 +449,7 @@
       .ask-q-card {
         width: 100%; max-width: 340px;
         background: #11151E;
-        border: 1px solid rgba(212,175,55,.2);
+        border: 1px solid rgba(108, 92, 231,.2);
         border-radius: 16px;
         padding: 26px 22px;
         text-align: center;
@@ -482,8 +482,8 @@
       .ask-snooze-row { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 6px; }
       .ask-snooze-opt {
         padding: 10px 4px;
-        background: rgba(212,175,55,.06);
-        border: 1px solid rgba(212,175,55,.25);
+        background: rgba(108, 92, 231,.06);
+        border: 1px solid rgba(108, 92, 231,.25);
         border-radius: 8px;
         color: var(--accent-bright);
         font-size: 12px;

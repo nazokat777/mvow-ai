@@ -74,8 +74,8 @@
     min-height: 58px;
     user-select: none;
   }
-  .opt:hover { border-color: rgba(212,175,55,.3); background: rgba(212,175,55,.04); }
-  .opt.on { border-color: var(--accent); background: rgba(212,175,55,.08); }
+  .opt:hover { border-color: rgba(108, 92, 231,.3); background: rgba(108, 92, 231,.04); }
+  .opt.on { border-color: var(--accent); background: rgba(108, 92, 231,.08); }
   .opt .radio {
     width: 22px; height: 22px;
     border-radius: 50%;
@@ -118,8 +118,8 @@
   textarea::placeholder { color: var(--text-dim); }
 
   .examples {
-    background: rgba(212,175,55,.04);
-    border: 1px solid rgba(212,175,55,.15);
+    background: rgba(108, 92, 231,.04);
+    border: 1px solid rgba(108, 92, 231,.15);
     border-radius: 10px;
     padding: 14px;
     margin-bottom: 16px;
@@ -258,7 +258,7 @@
     </div>
 
     <!-- Band vaqtlar (boshqa maqsadlardan) -->
-    <div id="occupiedHint" style="display:none;background:rgba(212,175,55,.05);border:1px solid rgba(212,175,55,.18);border-radius:10px;padding:10px 14px;margin:8px 0 4px;">
+    <div id="occupiedHint" style="display:none;background:rgba(108, 92, 231,.05);border:1px solid rgba(108, 92, 231,.18);border-radius:10px;padding:10px 14px;margin:8px 0 4px;">
       <div style="font-size:10px;color:var(--text-dim);letter-spacing:2px;text-transform:uppercase;margin-bottom:6px;" data-i18n="maqsad.occupied_lbl">Band vaqtlar</div>
       <div id="occupiedList" style="font-size:12px;color:var(--text-mid);line-height:1.6;"></div>
     </div>
@@ -545,7 +545,7 @@
 
       // Tasdiq toast — falsafiy aniqlik
       const toast = document.createElement('div');
-      toast.style.cssText = 'position:fixed;left:50%;top:30%;transform:translate(-50%,-50%);background:#11151E;border:1px solid rgba(212,175,55,.4);border-radius:14px;padding:26px 30px;color:var(--accent-bright);font-family:Inter,sans-serif;font-size:15px;text-align:center;z-index:9999;box-shadow:0 20px 60px rgba(0,0,0,.6);max-width:300px;';
+      toast.style.cssText = 'position:fixed;left:50%;top:30%;transform:translate(-50%,-50%);background:#11151E;border:1px solid rgba(108, 92, 231,.4);border-radius:14px;padding:26px 30px;color:var(--accent-bright);font-family:Inter,sans-serif;font-size:15px;text-align:center;z-index:9999;box-shadow:0 20px 60px rgba(0,0,0,.6);max-width:300px;';
       const toastHead = (window.I18N ? I18N.t('maqsad.toast_head', 'Maqsad tizimga<br>aylantirildi') : 'Maqsad tizimga<br>aylantirildi');
       const toastMeta = (window.I18N ? I18N.tWith('maqsad.toast_meta', { days: selectedDays, time: time }) : (selectedDays + ' kun · har kuni ' + time));
       const toastFoot = (window.I18N ? I18N.t('maqsad.toast_foot', 'har kungi reja avtomatik chiqadi') : 'har kungi reja avtomatik chiqadi');

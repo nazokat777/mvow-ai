@@ -39,7 +39,7 @@
   .choice-card {
     width: 100%; max-width: 340px;
     background: var(--card);
-    border: 1px solid rgba(212,175,55,.2);
+    border: 1px solid rgba(108, 92, 231,.2);
     border-radius: 16px;
     padding: 26px 22px;
     text-align: center;
@@ -71,7 +71,7 @@
     letter-spacing: 1px; text-transform: uppercase;
     cursor: pointer; min-height: 48px;
   }
-  .choice-btn.primary { background: linear-gradient(180deg, var(--accent), var(--accent-soft)); color: var(--void); }
+  .choice-btn.primary { background: linear-gradient(180deg, var(--accent), var(--accent-soft)); color: #fff; }
   .choice-btn.secondary { background: transparent; color: var(--text-mid); border: 1px solid rgba(255,255,255,.12); }
 
   /* Timer-on ring */
@@ -188,13 +188,13 @@
         <span style="display:block;font-weight:600;margin-bottom:2px;" data-i18n="hardlock.opt_notimer">Taymersiz</span>
         <span style="display:block;font-size:10px;color:#9CA0A8;letter-spacing:0.5px;text-transform:none;font-weight:400;" data-i18n="hardlock.opt_notimer_desc">Siz tayyor bo'lganda "Bajardim" deysiz</span>
       </button>
-      <button class="choice-btn secondary" id="chTimer" type="button" style="text-align:left;padding:14px 16px;border-color:rgba(212,175,55,.35);">
+      <button class="choice-btn secondary" id="chTimer" type="button" style="text-align:left;padding:14px 16px;border-color:rgba(108, 92, 231,.35);">
         <span style="display:block;font-weight:600;margin-bottom:2px;color:var(--accent-bright);" data-i18n="hardlock.opt_timer">Oddiy taymer</span>
         <span style="display:block;font-size:10px;color:#9CA0A8;letter-spacing:0.5px;text-transform:none;font-weight:400;" id="chTimerDur" data-i18n="hardlock.opt_timer_desc">Vazifa davomiyligi bo'yicha</span>
       </button>
       <button class="choice-btn primary" id="chPomo" type="button" style="text-align:left;padding:14px 16px;">
         <span style="display:block;font-weight:600;margin-bottom:2px;" data-i18n="hardlock.opt_pomo">Pomodoro</span>
-        <span style="display:block;font-size:10px;color:#04060B;opacity:0.7;letter-spacing:0.5px;text-transform:none;font-weight:400;" id="chPomoDur" data-i18n="hardlock.opt_pomo_desc">25 daq ish + 5 daq dam sikllari</span>
+        <span style="display:block;font-size:10px;color:#fff;opacity:0.7;letter-spacing:0.5px;text-transform:none;font-weight:400;" id="chPomoDur" data-i18n="hardlock.opt_pomo_desc">25 daq ish + 5 daq dam sikllari</span>
       </button>
     </div>
   </div>
@@ -223,7 +223,7 @@
     color:var(--accent-bright);
     letter-spacing:0.02em;
     margin-bottom:24px;
-    text-shadow:0 0 30px rgba(245,215,110,0.4);
+    text-shadow:0 0 30px rgba(139, 124, 240,0.4);
   ">00:00</div>
   <div data-i18n="hardlock.deep_lock_hint" style="
     font-family:'Cormorant Garamond',serif;
