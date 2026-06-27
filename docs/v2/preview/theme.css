@@ -311,10 +311,10 @@ button:active, .cta:active, .submit:active, .google-btn:active,
 
 /* WOW — asosiy tugmalar: jonli rang-barang gradient (kirishga moslab) */
 .cta, .submit, .continue-btn {
-  background-image: var(--accent-gradient) !important;
+  background-image: linear-gradient(135deg, #F97316, #C2410C) !important;
   color: #fff !important;
   border: none !important;
-  box-shadow: 0 8px 22px rgba(0, 0, 0, 0.30);
+  box-shadow: 0 8px 24px rgba(249, 115, 22, 0.34);
 }
 /* WOW — kapsula raqamlari Anton (qalin display, kirishdagidek) */
 .ch-num, .goal-num, .t-row .ord, .tr-num {
