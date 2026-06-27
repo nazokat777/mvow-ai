@@ -435,8 +435,8 @@
 
       <!-- Tanlovlar — istalganini bos -->
       <div id="tileGrid" style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:6px;">
-        <a class="ghost" href="maqsadlar.html" style="margin:0;--bc:232,93,60;"><span class="gi">🎯</span><span data-i18n="home.tile_goals">Maqsadlar</span></a>
-        <a class="ghost" href="weekly-review.html" style="margin:0;--bc:217,130,26;"><span class="gi">📊</span><span data-i18n="home.tile_history">Tarix</span></a>
+        <a class="ghost" href="maqsadlar.html" style="margin:0;--bc:249,115,22;"><span class="gi">🎯</span><span data-i18n="home.tile_goals">Maqsadlar</span></a>
+        <a class="ghost" href="weekly-review.html" style="margin:0;--bc:217,119,6;"><span class="gi">📊</span><span data-i18n="home.tile_history">Tarix</span></a>
       </div>
     </div>
 
@@ -538,7 +538,7 @@
         const completedKeys = (window.MVOW_DATA ? MVOW_DATA.getCompletedKeysToday() : new Set());
         const overdueTxt = T('home.overdue_reminder', "Vaqti o'tdi — hali kech emas, bugun baribir bajaring");
         const sorted = [...plan].sort((a,b) => tKey(a.time) - tKey(b.time));
-        const TASK_COLORS = ['108, 92, 231', '20, 184, 166', '243, 156, 18', '233, 76, 110', '90, 158, 232'];
+        const TASK_COLORS = ['99, 102, 241', '20, 184, 166', '249, 115, 22', '244, 63, 94', '59, 130, 246'];
         tasksList.innerHTML = sorted.map((t, i) => {
           const taskKey = window.MVOW_DATA && t.time && t.name ? MVOW_DATA.taskKey(MVOW_DATA.today.iso, t.time, t.name) : '';
           const state = window.MVOW_DATA ? MVOW_DATA.getTaskState(taskKey) : { status: 'pending' };

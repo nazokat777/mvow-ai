@@ -3,17 +3,17 @@
   try { var t = localStorage.getItem('mvow.theme'); if (t === 'light' || t === 'dark') document.documentElement.setAttribute('data-theme', t); } catch (e) {}
   try {
     var SA = {
-      'anketa.html':             ['#0EA5A5', '#34D399', '#0B7E7E'],
-      'vada.html':               ['#8B5CF6', '#A78BFA', '#6D28D9'],
-      'maqsadlar.html':          ['#E85D3C', '#F4845F', '#C2441F'],
-      'maqsad.html':             ['#E85D3C', '#F4845F', '#C2441F'],
-      'home.html':               ['#3B82E8', '#60A5FA', '#2563C9'],
-      'settings.html':           ['#6C5CE7', '#8B7CF0', '#5546C9'],
-      'hard-lock.html':          ['#DB5C9A', '#F2A9CE', '#B83C7A'],
-      'session-reflection.html': ['#2FA15A', '#5BC683', '#1F7D43'],
-      'kechqurun.html':          ['#6E5CE0', '#9D8DF0', '#5340C0'],
-      'weekly-review.html':      ['#D9821A', '#F5A623', '#B0660C'],
-      'celebrate.html':          ['#DB5C9A', '#F2A9CE', '#B83C7A']
+      'anketa.html':             ['#14B8A6', '#2DD4BF', '#0D9488'],
+      'vada.html':               ['#8B5CF6', '#A78BFA', '#7C3AED'],
+      'maqsadlar.html':          ['#F97316', '#FB923C', '#EA580C'],
+      'maqsad.html':             ['#F97316', '#FB923C', '#EA580C'],
+      'home.html':               ['#6366F1', '#818CF8', '#4F46E5'],
+      'settings.html':           ['#3B82F6', '#60A5FA', '#2563EB'],
+      'hard-lock.html':          ['#F43F5E', '#FB7185', '#E11D48'],
+      'session-reflection.html': ['#10B981', '#34D399', '#059669'],
+      'kechqurun.html':          ['#06B6D4', '#22D3EE', '#0891B2'],
+      'weekly-review.html':      ['#D97706', '#F59E0B', '#B45309'],
+      'celebrate.html':          ['#EC4899', '#F472B6', '#DB2777']
     };
     var f = (location.pathname.split('/').pop() || '').toLowerCase();
     var a = SA[f];
