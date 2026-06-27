@@ -172,6 +172,9 @@
     display: none;
   }
   .bio.show { display: block; }
+  /* Soddalashtirildi — ortiqcha bo'limlar olib tashlandi (sodda, lo'nda) */
+  .greet, .streak, .bio { display: none !important; }
+  #tasksPrompt { display: none !important; }
 
   /* "+ vazifa qo'shish" — ghost ROW matching .t-row grid */
   .t-add-row {
@@ -534,7 +537,7 @@
         const overdueTxt = T('home.overdue_reminder', "Vaqti o'tdi — hali kech emas, bugun baribir bajaring");
         const sorted = [...plan].sort((a,b) => tKey(a.time) - tKey(b.time));
         const TASK_COLORS = ['108, 92, 231', '20, 184, 166', '243, 156, 18', '233, 76, 110', '90, 158, 232'];
-        tasksList.innerHTML = '<div style="font-size:15px;color:var(--text-dim);text-align:center;margin:0 0 8px;font-family:Inter,sans-serif;">' + T('home.edit_tip', '✎ tahrirlash uchun vazifaga teging') + '</div>' + sorted.map((t, i) => {
+        tasksList.innerHTML = sorted.map((t, i) => {
           const taskKey = window.MVOW_DATA && t.time && t.name ? MVOW_DATA.taskKey(MVOW_DATA.today.iso, t.time, t.name) : '';
           const state = window.MVOW_DATA ? MVOW_DATA.getTaskState(taskKey) : { status: 'pending' };
           const isDone = completedKeys.has(taskKey) || state.status === 'done';
