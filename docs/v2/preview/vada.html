@@ -39,13 +39,15 @@
   .question {
     font-family: 'Cormorant Garamond', serif;
     font-style: italic;
-    font-weight: 500;
-    font-size: 38px;
-    line-height: 1.4;
+    font-weight: 600;
+    font-size: clamp(40px, 11vw, 56px);
+    line-height: 1.22;
     text-align: center;
-    color: var(--text);
     margin-bottom: 50px;
     padding: 0 8px;
+    background: linear-gradient(120deg, var(--accent-bright), var(--accent), var(--accent-deep));
+    -webkit-background-clip: text; background-clip: text;
+    -webkit-text-fill-color: transparent; color: transparent;
   }
   .question .em {
     color: var(--accent);
@@ -58,21 +60,21 @@
     max-width: 380px;
     margin: 0 auto;
     padding: 18px;
-    background: linear-gradient(180deg, var(--accent), var(--accent-soft));
-    color: var(--void);
+    background: var(--accent-gradient);
+    color: #fff;
     font-family: 'Inter', sans-serif;
     font-size: 19px;
-    font-weight: 600;
+    font-weight: 700;
     letter-spacing: 3px;
     text-transform: uppercase;
     border: none;
     border-radius: 999px;
     cursor: pointer;
     transition: transform .15s, box-shadow .25s;
-    box-shadow: 0 0 32px rgba(108, 92, 231,.2);
-    min-height: 60px;
+    box-shadow: 0 10px 30px var(--accent-strong);
+    min-height: 62px;
   }
-  .yes-btn:hover { box-shadow: 0 0 44px rgba(108, 92, 231,.35); }
+  .yes-btn:hover { box-shadow: 0 14px 40px var(--accent-strong); }
   .yes-btn:active { transform: scale(0.97); }
 
   .confirmed { display: none; text-align: center; }
