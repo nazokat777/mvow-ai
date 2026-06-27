@@ -1,36 +1,6 @@
-/* Theme (yorug'/qorong'u) + har ekran o'z rangi — sahifa ochilishi bilan darhol qo'llash */
+/* Theme (yorug'/qorong'u) — sahifa ochilishi bilan darhol qo'llash. Ilova ranglari: indigo + orange (theme.css) */
 (function () {
   try { var t = localStorage.getItem('mvow.theme'); if (t === 'light' || t === 'dark') document.documentElement.setAttribute('data-theme', t); } catch (e) {}
-  try {
-    var SA = {
-      'anketa.html':             ['#14B8A6', '#2DD4BF', '#0D9488'],
-      'vada.html':               ['#8B5CF6', '#A78BFA', '#7C3AED'],
-      'maqsadlar.html':          ['#F97316', '#FB923C', '#EA580C'],
-      'maqsad.html':             ['#F97316', '#FB923C', '#EA580C'],
-      'home.html':               ['#6366F1', '#818CF8', '#4F46E5'],
-      'settings.html':           ['#3B82F6', '#60A5FA', '#2563EB'],
-      'hard-lock.html':          ['#F43F5E', '#FB7185', '#E11D48'],
-      'session-reflection.html': ['#10B981', '#34D399', '#059669'],
-      'kechqurun.html':          ['#06B6D4', '#22D3EE', '#0891B2'],
-      'weekly-review.html':      ['#D97706', '#F59E0B', '#B45309'],
-      'celebrate.html':          ['#EC4899', '#F472B6', '#DB2777']
-    };
-    var f = (location.pathname.split('/').pop() || '').toLowerCase();
-    var a = SA[f];
-    if (a) {
-      var s = document.documentElement.style;
-      s.setProperty('--accent', a[0]);
-      s.setProperty('--accent-bright', a[1]);
-      s.setProperty('--accent-deep', a[2]);
-      var h = a[0].replace('#', '');
-      var c = parseInt(h.slice(0, 2), 16) + ', ' + parseInt(h.slice(2, 4), 16) + ', ' + parseInt(h.slice(4, 6), 16);
-      s.setProperty('--accent-soft', 'rgba(' + c + ', 0.10)');
-      s.setProperty('--accent-medium', 'rgba(' + c + ', 0.25)');
-      s.setProperty('--accent-strong', 'rgba(' + c + ', 0.45)');
-      s.setProperty('--accent-glow', 'rgba(' + c + ', 0.50)');
-      s.setProperty('--border-strong', 'rgba(' + c + ', 0.30)');
-    }
-  } catch (e) {}
 })();
 
 /**

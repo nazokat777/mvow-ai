@@ -888,7 +888,7 @@
     const lblDone = (window.I18N ? I18N.t('weekly-review.tarix_unit_done', 'bajarildi') : 'bajarildi');
     const ariaCal = (window.I18N ? I18N.t('weekly-review.tarix_aria_open_cal', 'Kalendarni ochish') : 'Kalendarni ochish');
 
-    const TASK_COLORS = ['99, 102, 241', '20, 184, 166', '249, 115, 22', '244, 63, 94', '59, 130, 246'];
+    const TASK_COLORS = ['99, 102, 241'];
     wrap.innerHTML = names.map((name, idx) => {
       const entry = _taskIndex[name];
       const plannedDays = entry.plannedByDate.size;
