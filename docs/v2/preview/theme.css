@@ -17,7 +17,7 @@
   --accent: #6C5CE7;
   --accent-bright: #8B7CF0;
   --accent-deep: #5546C9;
-  --accent-gradient: linear-gradient(135deg, #6EB5FF, #6C5CE7, #E882B4);
+  --accent-gradient: linear-gradient(135deg, var(--accent), var(--accent-deep));
 
   --text: #f5f5f5;
   --text-dim: #888;
@@ -302,7 +302,7 @@ button:active, .cta:active, .submit:active, .google-btn:active,
   background-image: var(--accent-gradient) !important;
   color: #fff !important;
   border: none !important;
-  box-shadow: 0 8px 26px rgba(108, 92, 231, 0.40);
+  box-shadow: 0 8px 22px rgba(0, 0, 0, 0.30);
 }
 /* WOW — kapsula raqamlari Anton (qalin display, kirishdagidek) */
 .ch-num, .goal-num, .t-row .ord, .tr-num {

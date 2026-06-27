@@ -1,5 +1,37 @@
-/* Theme (yorug'/qorong'u) — sahifa ochilishi bilan darhol qo'llash (flash bo'lmasin) */
-(function(){try{var t=localStorage.getItem('mvow.theme');if(t==='light'||t==='dark')document.documentElement.setAttribute('data-theme',t);}catch(e){}})();
+/* Theme (yorug'/qorong'u) + har ekran o'z rangi — sahifa ochilishi bilan darhol qo'llash */
+(function () {
+  try { var t = localStorage.getItem('mvow.theme'); if (t === 'light' || t === 'dark') document.documentElement.setAttribute('data-theme', t); } catch (e) {}
+  try {
+    var SA = {
+      'anketa.html':             ['#0EA5A5', '#34D399', '#0B7E7E'],
+      'vada.html':               ['#8B5CF6', '#A78BFA', '#6D28D9'],
+      'maqsadlar.html':          ['#E85D3C', '#F4845F', '#C2441F'],
+      'maqsad.html':             ['#E85D3C', '#F4845F', '#C2441F'],
+      'home.html':               ['#3B82E8', '#60A5FA', '#2563C9'],
+      'settings.html':           ['#6C5CE7', '#8B7CF0', '#5546C9'],
+      'hard-lock.html':          ['#DB5C9A', '#F2A9CE', '#B83C7A'],
+      'session-reflection.html': ['#2FA15A', '#5BC683', '#1F7D43'],
+      'kechqurun.html':          ['#6E5CE0', '#9D8DF0', '#5340C0'],
+      'weekly-review.html':      ['#D9821A', '#F5A623', '#B0660C'],
+      'celebrate.html':          ['#DB5C9A', '#F2A9CE', '#B83C7A']
+    };
+    var f = (location.pathname.split('/').pop() || '').toLowerCase();
+    var a = SA[f];
+    if (a) {
+      var s = document.documentElement.style;
+      s.setProperty('--accent', a[0]);
+      s.setProperty('--accent-bright', a[1]);
+      s.setProperty('--accent-deep', a[2]);
+      var h = a[0].replace('#', '');
+      var c = parseInt(h.slice(0, 2), 16) + ', ' + parseInt(h.slice(2, 4), 16) + ', ' + parseInt(h.slice(4, 6), 16);
+      s.setProperty('--accent-soft', 'rgba(' + c + ', 0.10)');
+      s.setProperty('--accent-medium', 'rgba(' + c + ', 0.25)');
+      s.setProperty('--accent-strong', 'rgba(' + c + ', 0.45)');
+      s.setProperty('--accent-glow', 'rgba(' + c + ', 0.50)');
+      s.setProperty('--border-strong', 'rgba(' + c + ', 0.30)');
+    }
+  } catch (e) {}
+})();
 
 /**
  * Daywarden — i18n (O'zbekcha / Русский / English)
