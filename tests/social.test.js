@@ -82,3 +82,24 @@ test('cloud: kalitsiz → false (lokal rejim)', () => {
   const S = load({ 'mvow.myCode': 'ABC123' });
   assert.strictEqual(S.cloud(), false);
 });
+
+test('chat: kalitsiz sendMessage → false (buzilmaydi)', async () => {
+  const S = load({ 'mvow.myCode': 'ABC123' });
+  assert.strictEqual(await S.sendMessage('XYZ789', 'salom'), false);
+});
+
+test('chat: kalitsiz getMessages → bo\'sh massiv', async () => {
+  const S = load({ 'mvow.myCode': 'ABC123' });
+  const r = await S.getMessages('XYZ789');
+  assert.ok(Array.isArray(r) && r.length === 0);
+});
+
+test('chat: subscribeMessages kalitsiz → null', () => {
+  const S = load({ 'mvow.myCode': 'ABC123' });
+  assert.strictEqual(S.subscribeMessages('XYZ789', () => {}), null);
+});
+
+test('chat: bo\'sh xabar yuborilmaydi → false', async () => {
+  const S = load({ 'mvow.myCode': 'ABC123' });
+  assert.strictEqual(await S.sendMessage('XYZ789', '   '), false);
+});

@@ -120,8 +120,39 @@
     }).catch(function () { return localBoard(kind); });
   }
 
+  // ── Chat (suhbat) — bulut rejimida ──
+  function sendMessage(toCode, body) {
+    toCode = (toCode || '').trim().toUpperCase(); body = (body || '').trim();
+    if (!toCode || !body) return Promise.resolve(false);
+    var c = client(); if (!c) return Promise.resolve(false);
+    return c.from('messages').insert({ from_code: myCode(), to_code: toCode, body: body })
+      .then(function () { return true; }, function () { return false; });
+  }
+  function getMessages(withCode) {
+    withCode = (withCode || '').trim().toUpperCase();
+    var c = client(); if (!c || !withCode) return Promise.resolve([]);
+    var me = myCode();
+    var f = 'and(from_code.eq.' + me + ',to_code.eq.' + withCode + '),and(from_code.eq.' + withCode + ',to_code.eq.' + me + ')';
+    return c.from('messages').select('from_code,to_code,body,created_at').or(f).order('created_at', { ascending: true })
+      .then(function (res) { return (res && res.data) || []; }, function () { return []; });
+  }
+  function subscribeMessages(withCode, cb) {
+    withCode = (withCode || '').trim().toUpperCase();
+    var c = client(); if (!c || !withCode) return null;
+    var me = myCode();
+    try {
+      return c.channel('chat-' + me + '-' + withCode)
+        .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'messages' }, function (payload) {
+          var m = payload && payload.new; if (!m) return;
+          if ((m.from_code === me && m.to_code === withCode) || (m.from_code === withCode && m.to_code === me)) cb(m);
+        }).subscribe();
+    } catch (e) { return null; }
+  }
+  function unsubscribe(ch) { var c = client(); if (c && ch) { try { c.removeChannel(ch); } catch (e) {} } }
+
   window.Social = {
     myCode: myCode, myStats: myStats, cloud: cloud, syncStats: syncStats,
-    friends: friends, addFriend: addFriend, removeFriend: removeFriend, leaderboard: leaderboard
+    friends: friends, addFriend: addFriend, removeFriend: removeFriend, leaderboard: leaderboard,
+    sendMessage: sendMessage, getMessages: getMessages, subscribeMessages: subscribeMessages, unsubscribe: unsubscribe
   };
 })();
