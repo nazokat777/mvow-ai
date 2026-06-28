@@ -13,7 +13,7 @@
 <link rel="icon" type="image/png" href="assets/mnsm-logo.png?v=2">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
 <style>
   * { box-sizing: border-box; margin: 0; padding: 0; }
   :root {
@@ -314,15 +314,15 @@
       <div id="diagnosticBox" style="display:none;margin-top:10px;">
         <div style="font-size:16px;color:#9CA0A8;margin-bottom:10px;letter-spacing:0.5px;" data-i18n="home.recovery_diag_q">Sabab nima edi?</div>
         <div id="diagOpts" style="display:flex;flex-direction:column;gap:8px;">
-          <button class="diag-opt" data-fix="reduce" type="button" style="padding:11px 14px;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.12);border-radius:10px;color:#F5F2EC;font-family:'Inter',sans-serif;font-size:16px;text-align:left;cursor:pointer;">
+          <button class="diag-opt" data-fix="reduce" type="button" style="padding:11px 14px;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.12);border-radius:10px;color:var(--text);font-family:'Inter',sans-serif;font-size:16px;text-align:left;cursor:pointer;">
             <span style="display:block;font-weight:500;margin-bottom:2px;" data-i18n="home.recovery_opt_reduce">Vazifa hajmi katta edi</span>
             <span style="font-size:14px;color:#9CA0A8;letter-spacing:0.5px;" data-i18n="home.recovery_opt_reduce_desc">Davomiylikni qisqartirish — siz % tanlaysiz</span>
           </button>
-          <button class="diag-opt" data-fix="time" type="button" style="padding:11px 14px;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.12);border-radius:10px;color:#F5F2EC;font-family:'Inter',sans-serif;font-size:16px;text-align:left;cursor:pointer;">
+          <button class="diag-opt" data-fix="time" type="button" style="padding:11px 14px;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.12);border-radius:10px;color:var(--text);font-family:'Inter',sans-serif;font-size:16px;text-align:left;cursor:pointer;">
             <span style="display:block;font-weight:500;margin-bottom:2px;" data-i18n="home.recovery_opt_time">Vaqt to'g'ri kelmadi</span>
             <span style="font-size:14px;color:#9CA0A8;letter-spacing:0.5px;" data-i18n="home.recovery_opt_time_desc">Maqsadlarni tahrirlash — vaqtni o'zgartiring</span>
           </button>
-          <button class="diag-opt" data-fix="other" type="button" style="padding:11px 14px;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.12);border-radius:10px;color:#F5F2EC;font-family:'Inter',sans-serif;font-size:16px;text-align:left;cursor:pointer;">
+          <button class="diag-opt" data-fix="other" type="button" style="padding:11px 14px;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.12);border-radius:10px;color:var(--text);font-family:'Inter',sans-serif;font-size:16px;text-align:left;cursor:pointer;">
             <span style="display:block;font-weight:500;margin-bottom:2px;" data-i18n="home.recovery_opt_other">Boshqa sabab</span>
             <span style="font-size:14px;color:#9CA0A8;letter-spacing:0.5px;" data-i18n="home.recovery_opt_other_desc">Rejani qolgan kunlarga qayta tarqatish</span>
           </button>
@@ -331,12 +331,12 @@
         <div id="reducePctBox" style="display:none;margin-top:12px;padding-top:12px;border-top:1px solid rgba(255,255,255,.08);">
           <div style="font-size:15px;color:#9CA0A8;margin-bottom:8px;letter-spacing:1px;text-transform:uppercase;text-align:center;" data-i18n="home.recovery_pct_q">Necha foiz qisqartiramiz?</div>
           <div style="display:flex;gap:6px;justify-content:center;flex-wrap:wrap;margin-bottom:8px;">
-            <button class="red-pct" data-pct="15" type="button" style="padding:10px 14px;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.1);border-radius:10px;color:#F5F2EC;font-family:'Inter',sans-serif;font-size:17px;font-weight:600;cursor:pointer;">15%</button>
-            <button class="red-pct" data-pct="30" type="button" style="padding:10px 14px;background:rgba(245,194,107,.18);border:1px solid rgba(245,194,107,.5);border-radius:10px;color:#F5F2EC;font-family:'Inter',sans-serif;font-size:17px;font-weight:600;cursor:pointer;">30% ★</button>
-            <button class="red-pct" data-pct="50" type="button" style="padding:10px 14px;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.1);border-radius:10px;color:#F5F2EC;font-family:'Inter',sans-serif;font-size:17px;font-weight:600;cursor:pointer;">50%</button>
+            <button class="red-pct" data-pct="15" type="button" style="padding:10px 14px;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.1);border-radius:10px;color:var(--text);font-family:'Inter',sans-serif;font-size:17px;font-weight:600;cursor:pointer;">15%</button>
+            <button class="red-pct" data-pct="30" type="button" style="padding:10px 14px;background:rgba(245,194,107,.18);border:1px solid rgba(245,194,107,.5);border-radius:10px;color:var(--text);font-family:'Inter',sans-serif;font-size:17px;font-weight:600;cursor:pointer;">30% ★</button>
+            <button class="red-pct" data-pct="50" type="button" style="padding:10px 14px;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.1);border-radius:10px;color:var(--text);font-family:'Inter',sans-serif;font-size:17px;font-weight:600;cursor:pointer;">50%</button>
           </div>
           <div style="display:flex;gap:6px;align-items:center;">
-            <input type="number" id="reducePctCustom" min="5" max="80" placeholder="Boshqa" data-i18n-placeholder="home.recovery_pct_other" style="flex:1;background:#0C0F16;border:1px solid rgba(255,255,255,.1);border-radius:8px;padding:9px;color:#F5F2EC;font-family:'Inter',sans-serif;font-size:17px;outline:none;">
+            <input type="number" id="reducePctCustom" min="5" max="80" placeholder="Boshqa" data-i18n-placeholder="home.recovery_pct_other" style="flex:1;background:#0C0F16;border:1px solid rgba(255,255,255,.1);border-radius:8px;padding:9px;color:var(--text);font-family:'Inter',sans-serif;font-size:17px;outline:none;">
             <button id="reducePctCustomBtn" type="button" style="padding:9px 12px;background:transparent;border:1px solid rgba(255,255,255,.15);color:var(--text-mid);border-radius:8px;font-family:'Inter',sans-serif;font-size:15px;cursor:pointer;letter-spacing:1px;">%</button>
           </div>
         </div>
@@ -361,7 +361,7 @@
       <div style="font-size:15px;color:var(--text-dim);letter-spacing:1px;text-transform:uppercase;margin-bottom:10px;text-align:center;" data-i18n="home.pattern_choose">Qaysi vaqtga ko'chiramiz?</div>
       <div id="patternTimeOpts" style="display:flex;flex-wrap:wrap;gap:6px;justify-content:center;margin-bottom:10px;"></div>
       <div style="display:flex;gap:6px;margin-bottom:10px;align-items:center;">
-        <input type="time" id="patternCustomTime" style="flex:1;background:#0C0F16;border:1px solid rgba(255,255,255,.1);border-radius:8px;padding:10px;color:#F5F2EC;font-family:'Inter',sans-serif;font-size:17px;outline:none;">
+        <input type="time" id="patternCustomTime" style="flex:1;background:#0C0F16;border:1px solid rgba(255,255,255,.1);border-radius:8px;padding:10px;color:var(--text);font-family:'Inter',sans-serif;font-size:17px;outline:none;">
         <button id="patternCustomBtn" type="button" style="padding:10px 14px;background:#F5C26B;color:#04060B;border:none;border-radius:8px;font-family:'Inter',sans-serif;font-size:15px;font-weight:600;letter-spacing:1px;text-transform:uppercase;cursor:pointer;" data-i18n="home.pattern_custom_label">Belgila</button>
       </div>
       <div style="text-align:center;">
@@ -526,7 +526,7 @@
       plan.sort((a,b) => tKey(a.time) - tKey(b.time));
 
       if (!plan.length) {
-        tasksList.innerHTML = '<a href="maqsadlar.html" style="display:flex;align-items:center;gap:14px;text-align:left;padding:22px 24px;text-decoration:none;font-family:\'Cormorant Garamond\',serif;font-style:normal;font-size:21px;line-height:1.3;color:#fff;border:none;border-radius:22px;background:linear-gradient(135deg,var(--accent),var(--accent-deep));box-shadow:0 12px 30px var(--accent-strong);">'
+        tasksList.innerHTML = '<a href="maqsadlar.html" style="display:flex;align-items:center;gap:14px;text-align:left;padding:22px 24px;text-decoration:none;font-family:\'Inter\',serif;font-style:normal;font-size:21px;line-height:1.3;color:#fff;border:none;border-radius:22px;background:linear-gradient(135deg,var(--accent),var(--accent-deep));box-shadow:0 12px 30px var(--accent-strong);">'
           + '<span style="font-size:30px;flex-shrink:0;">✦</span><span>' + T('home.no_plan', "Avval maqsadingizni yozing — biz uni kunlik rejaga aylantiramiz") + ' →</span></a>';
         tasksPrompt.style.display = 'none';
       } else {
@@ -576,11 +576,11 @@
       var ov = document.createElement('div');
       ov.style.cssText = 'position:fixed;inset:0;z-index:200;display:none;align-items:center;justify-content:center;background:rgba(0,0,0,.62);padding:24px;';
       var btn = 'flex:1;padding:9px 0;background:transparent;border:1px solid rgba(244, 132, 95,.3);border-radius:8px;color:#F4845F;font-size:17px;cursor:pointer;';
-      var inp = 'width:100%;margin:6px 0 14px;padding:12px;background:#0C0F16;border:1px solid rgba(255,255,255,.1);border-radius:10px;color:#F5F2EC;font-size:20px;box-sizing:border-box;';
+      var inp = 'width:100%;margin:6px 0 14px;padding:12px;background:#0C0F16;border:1px solid rgba(255,255,255,.1);border-radius:10px;color:var(--text);font-size:20px;box-sizing:border-box;';
       var lbl = 'font-size:15px;letter-spacing:1px;color:#9CA0A8;text-transform:uppercase;';
       ov.innerHTML =
         '<div style="width:100%;max-width:330px;background:#11151E;border:1px solid rgba(244, 132, 95,.3);border-radius:16px;padding:22px;font-family:Inter,sans-serif;">'
-        + '<div id="etTitle" style="font-size:20px;color:#F5F2EC;font-weight:600;"></div>'
+        + '<div id="etTitle" style="font-size:20px;color:var(--text);font-weight:600;"></div>'
         + '<div style="font-size:16px;color:#9CA0A8;margin:4px 0 16px;">' + TT('home.edit_sub', "Vaqt va davomiylikni o'zgartiring") + '</div>'
         + '<label style="' + lbl + '">' + TT('home.edit_time_lbl', 'Vaqt') + '</label>'
         + '<input id="etTime" type="time" style="' + inp + '">'
@@ -1162,7 +1162,7 @@
       const filtered = opts.filter(o => o.time !== pattern.goal.time);
       const optsEl = document.getElementById('patternTimeOpts');
       optsEl.innerHTML = filtered.map(o => `
-        <button class="pat-time-opt" data-time="${o.time}" type="button" style="padding:10px 14px;background:${o.recommended ? 'rgba(245,194,107,.18)' : 'rgba(255,255,255,.04)'};border:1px solid ${o.recommended ? 'rgba(245,194,107,.5)' : 'rgba(255,255,255,.1)'};border-radius:10px;color:#F5F2EC;font-family:'Inter',sans-serif;font-size:16px;cursor:pointer;">${o.label}${o.recommended ? ' ★' : ''}</button>
+        <button class="pat-time-opt" data-time="${o.time}" type="button" style="padding:10px 14px;background:${o.recommended ? 'rgba(245,194,107,.18)' : 'rgba(255,255,255,.04)'};border:1px solid ${o.recommended ? 'rgba(245,194,107,.5)' : 'rgba(255,255,255,.1)'};border-radius:10px;color:var(--text);font-family:'Inter',sans-serif;font-size:16px;cursor:pointer;">${o.label}${o.recommended ? ' ★' : ''}</button>
       `).join('');
       pBox.style.display = 'block';
       pBox.querySelectorAll('.pat-time-opt').forEach(b => {

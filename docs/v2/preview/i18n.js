@@ -2246,6 +2246,12 @@
   }
   let CURRENT_LANG = detectLang();
 
+  // Brend nomi — {brand} o'rinbosari hamma joyda shu bilan almashadi
+  var BRAND = 'Daywarden';
+  function subBrand(v) {
+    return (typeof v === 'string' && v.indexOf('{brand}') !== -1) ? v.split('{brand}').join(BRAND) : v;
+  }
+
   function resolve(key, lang) {
     const parts = key.split('.');
     let val = DICT[lang || CURRENT_LANG];
@@ -2253,7 +2259,7 @@
       if (val == null) return null;
       val = val[p];
     }
-    return val;
+    return subBrand(val);
   }
 
   // Public API
