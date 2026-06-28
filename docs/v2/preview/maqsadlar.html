@@ -698,12 +698,12 @@
     card.style.cssText = 'background:var(--card,#16161a);color:var(--text,#fff);border-radius:18px;max-width:340px;width:100%;padding:22px;box-shadow:0 20px 60px rgba(0,0,0,.5);font-family:Inter,sans-serif;';
     card.innerHTML = '<div style="font-size:30px;text-align:center;margin-bottom:6px;">⚠️</div>'
       + '<div style="font-weight:700;font-size:17px;text-align:center;margin-bottom:8px;">Vaqt to\'qnashuvi</div>'
-      + '<div style="font-size:14px;color:var(--text-dim,#999);text-align:center;line-height:1.5;margin-bottom:18px;">Bu vaqt band: <b>' + escapeHtml(conf.goal) + '</b> (' + escapeHtml(conf.time) + '). Ikki vazifani <b>bir vaqtda</b> bajarasizmi?</div>';
+      + '<div style="font-size:14px;color:var(--text-dim,#999);text-align:center;line-height:1.5;margin-bottom:18px;">Bu oraliq band: <b>' + escapeHtml(conf.goal) + '</b> (' + escapeHtml(conf.time) + '). Tizim bu vaqtga boshqa vazifani <b>to\'sadi</b> — faqat <b>shart qo\'ysangiz</b> qo\'yiladi.</div>';
     const row = document.createElement('div'); row.style.cssText = 'display:flex;gap:10px;';
     const no = document.createElement('button'); no.type = 'button'; no.textContent = 'Bekor';
-    no.style.cssText = 'flex:1;padding:12px;border-radius:12px;border:1px solid rgba(125,125,125,.3);background:transparent;color:var(--text,#fff);font-weight:700;cursor:pointer;font-family:Inter,sans-serif;';
-    const yes = document.createElement('button'); yes.type = 'button'; yes.textContent = 'Baribir qo\'shish';
-    yes.style.cssText = 'flex:1;padding:12px;border-radius:12px;border:none;background:linear-gradient(135deg,#F4845F,#d9663c);color:#fff;font-weight:700;cursor:pointer;font-family:Inter,sans-serif;';
+    no.style.cssText = 'flex:1;padding:12px;border-radius:12px;border:none;background:linear-gradient(135deg,#F4845F,#d9663c);color:#fff;font-weight:800;cursor:pointer;font-family:Inter,sans-serif;';
+    const yes = document.createElement('button'); yes.type = 'button'; yes.textContent = 'Shart qo\'yaman';
+    yes.style.cssText = 'flex:1;padding:12px;border-radius:12px;border:1px solid rgba(125,125,125,.4);background:transparent;color:var(--text,#fff);font-weight:700;cursor:pointer;font-family:Inter,sans-serif;';
     no.onclick = function () { if (ov.parentNode) document.body.removeChild(ov); };
     yes.onclick = function () { if (ov.parentNode) document.body.removeChild(ov); onYes(); };
     row.appendChild(no); row.appendChild(yes); card.appendChild(row); ov.appendChild(card); document.body.appendChild(ov);
