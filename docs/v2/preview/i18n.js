@@ -102,9 +102,9 @@
         hero_tagline: "SIZNING INTIZOM DO'STINGIZ",
         hero_desc: "Vaqtingiz — eng qimmat boyligingiz. Maqsad qo'ying, biz uni kunlik rejaga aylantiramiz.",
         hero_cta: 'BOSHLASH',
-        word1: 'INTIZOM',
-        word2: 'FOKUS',
-        word3: 'MAQSAD',
+        word1: 'MAQSAD',
+        word2: 'ODAT',
+        word3: 'FOCUS',
         word4: "G'ALABA"
       },
       welcome: {
@@ -848,9 +848,9 @@
         hero_tagline: 'ВАШ ДРУГ ДИСЦИПЛИНЫ',
         hero_desc: 'Ваше время — самое ценное. Поставьте цель — мы превратим её в ежедневный план.',
         hero_cta: 'НАЧАТЬ',
-        word1: 'ДИСЦИПЛИНА',
-        word2: 'ФОКУС',
-        word3: 'ЦЕЛЬ',
+        word1: 'ЦЕЛЬ',
+        word2: 'ПРИВЫЧКА',
+        word3: 'ФОКУС',
         word4: 'ПОБЕДА'
       },
       welcome: {
@@ -1581,9 +1581,9 @@
         hero_tagline: 'YOUR DISCIPLINE FRIEND',
         hero_desc: 'Your time is your most valuable asset. Set a goal — we turn it into a daily plan.',
         hero_cta: 'GET STARTED',
-        word1: 'DISCIPLINE',
-        word2: 'FOCUS',
-        word3: 'GOAL',
+        word1: 'GOAL',
+        word2: 'HABIT',
+        word3: 'FOCUS',
         word4: 'VICTORY'
       },
       welcome: {
