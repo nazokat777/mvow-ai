@@ -274,6 +274,12 @@
     </div>
   </div>
 
+  <!-- AI murabbiy — kun yakuni izohi (intizom do'sti) -->
+  <div id="aiCoach" style="background:var(--card);border-radius:14px;padding:15px 18px;margin-bottom:18px;display:flex;gap:12px;align-items:flex-start;">
+    <div style="font-size:22px;line-height:1.3;flex-shrink:0;">🤖</div>
+    <div id="aiCoachText" style="font-size:16px;line-height:1.5;color:var(--text-mid);">…</div>
+  </div>
+
   <!-- Bugungi hisobot — to'liq -->
   <div class="section">
     <div class="section-head" data-i18n="kechqurun.report_head">Bugungi hisobot</div>
@@ -336,6 +342,7 @@
 <script src="i18n.js?v=28.4.0"></script>
 <script src="lang-switcher.js?v=28.4.0" defer></script>
 <script src="data.js?v=28.4.0" defer></script>
+<script src="ai-coach.js?v=28.51.0" defer></script>
 <script src="nav-overlay.js?v=28.4.0" defer></script>
 <script>
   document.addEventListener('DOMContentLoaded', () => {
@@ -457,6 +464,17 @@
         const peak = hours.reduce((a, b) => byHour[a] > byHour[b] ? a : b);
         insightTime.textContent = String(peak).padStart(2, '0') + ':00 – ' + String((+peak + 2) % 24).padStart(2, '0') + ':00';
         insightBlock.style.display = 'block';
+      }
+    }
+
+    // ── AI murabbiy (intizom do'sti) — kalit bo'lsa Gemini, bo'lmasa shablon ──
+    if (window.AICoach) {
+      const coachEl = document.getElementById('aiCoachText');
+      if (coachEl) {
+        let gkey = '';
+        try { gkey = localStorage.getItem('mvow.geminiKey') || ''; } catch (e) {}
+        AICoach.coach({ done: totalDone, total: totalPlanned, focusH: focusH, streak: streak, pct: pct }, { apiKey: gkey })
+          .then(msg => { coachEl.textContent = msg; });
       }
     }
 
