@@ -13,6 +13,33 @@
   var current = null;       // faol sessiya odati
   var draft = { icon: ICONS[0], color: COLORS[0], hours: 1 };
   var tickTimer = null;
+  var faceDown = false, motionOn = false;
+
+  // ---------- Haptic + ovoz ----------
+  function buzz(p) { try { if (navigator.vibrate) navigator.vibrate(p); } catch (e) {} }
+  function ding() {
+    try {
+      var AC = window.AudioContext || window.webkitAudioContext; if (!AC) return;
+      var ctx = new AC(), o = ctx.createOscillator(), g = ctx.createGain();
+      o.type = 'sine'; o.frequency.value = 880; o.connect(g); g.connect(ctx.destination);
+      g.gain.setValueAtTime(0.0001, ctx.currentTime);
+      g.gain.exponentialRampToValueAtTime(0.25, ctx.currentTime + 0.02);
+      g.gain.exponentialRampToValueAtTime(0.0001, ctx.currentTime + 0.5);
+      o.start(); o.stop(ctx.currentTime + 0.5);
+    } catch (e) {}
+  }
+
+  // ---------- Telefon yuztuban (akselerometr) ----------
+  function onMotion(e) { var a = e.accelerationIncludingGravity; if (a) faceDown = window.FocusMotion.isFaceDown(a.z); }
+  function enableMotion() {
+    if (motionOn) return;
+    var add = function () { window.addEventListener('devicemotion', onMotion); motionOn = true; };
+    try {
+      if (typeof DeviceMotionEvent !== 'undefined' && typeof DeviceMotionEvent.requestPermission === 'function') {
+        DeviceMotionEvent.requestPermission().then(function (r) { if (r === 'granted') add(); }).catch(function () {});
+      } else add();
+    } catch (e) {}
+  }
 
   // ---------- Storage ----------
   function load() {
@@ -132,16 +159,22 @@
     if (!current) return;
     var h = current, t = now();
     $('sessName').textContent = h.icon + '  ' + h.name;
-    $('sessSub').textContent = 'Maqsad: ' + fmtH(h.timer.goalMs);
+    var fm = h.focusMs ? ' · 🎯 ' + Math.round(h.focusMs / 60000) + 'm sof fokus' : '';
+    $('sessSub').textContent = 'Maqsad: ' + fmtH(h.timer.goalMs) + fm;
     var p = T.progress(h.timer, t);
-    var circ = 791.68;
     var fill = $('ringFill');
     fill.style.stroke = 'rgb(' + h.color + ')';
-    fill.setAttribute('stroke-dashoffset', (circ * (1 - p)).toFixed(1));
+    fill.setAttribute('stroke-dashoffset', (791.68 * (1 - p)).toFixed(1));
     $('sessTime').textContent = fmtClock(T.elapsed(h.timer, t));
     $('sessOf').textContent = '/ ' + fmtH(h.timer.goalMs);
     $('sessPct').textContent = Math.round(p * 100) + '%';
     renderControls();
+    // Fokus rejimi — telefon yuztuban
+    var hint = $('focusHint'), ring = $('bigring');
+    if (T.isRunning(h.timer)) {
+      if (faceDown) { hint.textContent = '📵 Telefon qo\'yildi — chuqur fokusdasiz!'; hint.classList.add('active'); ring.classList.add('focusing'); }
+      else { hint.textContent = '💡 Telefonni yuztuban qo\'ying — chuqur fokus'; hint.classList.remove('active'); ring.classList.remove('focusing'); }
+    } else { hint.textContent = ''; hint.classList.remove('active'); ring.classList.remove('focusing'); }
     // 100% — g'alaba
     if (T.isComplete(h.timer, t) && !h.timer.done) winSession();
   }
@@ -161,24 +194,29 @@
   }
   function bind(id, fn) { var el = $(id); if (el) el.onclick = fn; }
 
-  function startSession() { current.timer = T.start(current.timer, now()); save(); renderSession(); }
-  function pauseSession() { current.timer = T.pause(current.timer, now()); save(); renderSession(); }
-  function finishSession() { current.timer = T.finish(current.timer, now()); save(); renderSession(); }
+  function startSession() { current.timer = T.start(current.timer, now()); buzz(30); enableMotion(); save(); renderSession(); }
+  function pauseSession() { buzz(20); current.timer = T.pause(current.timer, now()); faceDown = false; save(); renderSession(); }
+  function finishSession() { buzz([40, 30, 40]); current.timer = T.finish(current.timer, now()); faceDown = false; save(); renderSession(); }
 
   function winSession() {
     current.timer = T.finish(current.timer, now()); save();
-    $('winText').textContent = current.name + ' — maqsadga yetdingiz! 🎉';
+    buzz([60, 40, 60, 40, 140]); ding();
+    var fm = current.focusMs ? ' 🎯 ' + Math.round(current.focusMs / 60000) + 'm sof fokus!' : '';
+    $('winText').textContent = current.name + ' — maqsadga yetdingiz! 🎉' + fm;
     $('winOverlay').classList.add('show');
     renderControls();
   }
 
-  function goDash() { current = null; stopTick(); renderDashboard(); show('screen-dashboard'); }
+  function goDash() { if (current) save(); current = null; faceDown = false; stopTick(); renderDashboard(); show('screen-dashboard'); }
 
   // ---------- Tick (faqat ko'rsatish; manba = timestamp) ----------
   function startTick() {
     stopTick();
     tickTimer = setInterval(function () {
-      if ($('screen-session').classList.contains('active') && current) renderSession();
+      if ($('screen-session').classList.contains('active') && current) {
+        if (T.isRunning(current.timer) && faceDown) current.focusMs = (current.focusMs || 0) + 250;
+        renderSession();
+      }
     }, 250);
   }
   function stopTick() { if (tickTimer) { clearInterval(tickTimer); tickTimer = null; } }

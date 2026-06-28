@@ -153,6 +153,8 @@
 
   .focus-hint { margin-top: 26px; font-size:14px; color:var(--text-dim); line-height:1.5; min-height: 20px; }
   .focus-hint.active { color: rgb(var(--c2)); font-weight:700; }
+  .bigring.focusing svg { filter: drop-shadow(0 0 18px rgba(var(--c2),.55)); }
+  .bigring svg { transition: filter .4s; }
 
   /* Win overlay */
   .win { position:fixed; inset:0; z-index:100; background: rgba(0,0,0,.6); display:none; align-items:center; justify-content:center; padding:24px; }
@@ -325,6 +327,7 @@
 </div>
 
 <script src="timer.js"></script>
+<script src="motion.js"></script>
 <script src="app.js"></script>
 </body>
 </html>
