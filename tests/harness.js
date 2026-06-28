@@ -31,12 +31,26 @@ function makeNoopProxy() {
   return proxy;
 }
 
+// navigator stub — navigator.language ni boshqarish mumkin (til aniqlash testi uchun)
+function makeNavigator(lang) {
+  return new Proxy({}, {
+    get(_t, prop) {
+      if (prop === 'language') return lang;
+      if (prop === 'languages') return [lang];
+      return makeNoopProxy();
+    }
+  });
+}
+
 /**
- * data.js ni toza kontekstda yuklaydi.
+ * Skriptlarni toza kontekstda yuklaydi.
+ * @param {string[]} files - yuklanadigan JS fayllar
  * @param {object} seed - localStorage boshlang'ich qiymatlari (obyektlar JSON qilinadi)
- * @returns {{DATA, localStorage, store, window}}
+ * @param {object} [opts] - { navLang } — navigator.language qiymati
+ * @returns {{sandbox, localStorage, store, window}}
  */
-function loadScripts(files, seed) {
+function loadScripts(files, seed, opts) {
+  opts = opts || {};
   const store = new Map();
   if (seed) {
     for (const k of Object.keys(seed)) {
@@ -56,7 +70,7 @@ function loadScripts(files, seed) {
     console,
     localStorage,
     document: makeNoopProxy(),
-    navigator: makeNoopProxy(),
+    navigator: makeNavigator(opts.navLang || 'en'),
     matchMedia: () => ({ matches: false, addEventListener() {}, removeEventListener() {}, addListener() {} }),
     location: { pathname: '/home.html', href: '', search: '', hash: '', replace() {}, assign() {}, reload() {} },
     setTimeout: () => 0,
@@ -86,14 +100,14 @@ function loadScripts(files, seed) {
 }
 
 // data.js yuklab MVOW_DATA ni qaytaradi
-function loadData(seed) {
-  const r = loadScripts(['data.js'], seed);
+function loadData(seed, opts) {
+  const r = loadScripts(['data.js'], seed, opts);
   return { DATA: r.sandbox.MVOW_DATA, localStorage: r.localStorage, store: r.store, window: r.sandbox };
 }
 
 // i18n.js yuklab I18N ni qaytaradi
-function loadI18N(seed) {
-  const r = loadScripts(['i18n.js'], seed);
+function loadI18N(seed, opts) {
+  const r = loadScripts(['i18n.js'], seed, opts);
   return { I18N: r.sandbox.I18N, localStorage: r.localStorage, store: r.store, window: r.sandbox };
 }
 

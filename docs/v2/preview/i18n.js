@@ -1,6 +1,6 @@
 /* Theme (yorug'/qorong'u) — sahifa ochilishi bilan darhol qo'llash. Ilova ranglari: indigo + orange (theme.css) */
 (function () {
-  try { var t = localStorage.getItem('mvow.theme'); if (t === 'light' || t === 'dark') document.documentElement.setAttribute('data-theme', t); } catch (e) {}
+  try { var t = localStorage.getItem('mvow.theme'); document.documentElement.setAttribute('data-theme', t === 'dark' ? 'dark' : 'light'); } catch (e) {}
 })();
 
 /**
@@ -2240,8 +2240,8 @@
   function detectLang() {
     const stored = localStorage.getItem('mvow.lang');
     if (stored && DICT[stored]) return stored;
-    const browserLang = (navigator.language || 'uz').slice(0,2);
-    if (DICT[browserLang]) return browserLang;
+    // Aniq tanlov bo'lmasa — default UZ (Uzbek-first; til-tugmasi ham UZ ko'rsatadi).
+    // Brauzer tili AVTO ishlatilmaydi: aks holda tugma "UZ" deydi-yu matn ru/en chiqadi.
     return 'uz';
   }
   let CURRENT_LANG = detectLang();

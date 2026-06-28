@@ -8,6 +8,18 @@ const fs = require('fs');
 const path = require('path');
 const { loadI18N } = require('./harness');
 
+// FIX (til) — aniq tanlov bo'lmasa default UZ (brauzer ru/en bo'lsa ham),
+// til-tugmasi ham UZ ko'rsatadi → mos. Aniq localStorage tanlovi hurmat qilinadi.
+test('i18n: aniq tanlov yo\'q + brauzer ru → default UZ (tugma bilan mos)', () => {
+  const { I18N } = loadI18N(undefined, { navLang: 'ru' });
+  assert.equal(I18N.lang, 'uz');
+});
+
+test('i18n: aniq localStorage tanlovi hurmat qilinadi (brauzer boshqa bo\'lsa ham)', () => {
+  assert.equal(loadI18N({ 'mvow.lang': 'ru' }).I18N.lang, 'ru');
+  assert.equal(loadI18N({ 'mvow.lang': 'en' }, { navLang: 'ru' }).I18N.lang, 'en');
+});
+
 const DIR = path.join(__dirname, '..', 'docs', 'v2', 'preview');
 
 function htmlKeys() {
