@@ -1,9 +1,10 @@
 'use strict';
 /**
- * Daywarden — ijtimoiy qatlam (do'st musobaqasi + ustoz/ota-ona nazorati).
- * 1-bosqich: LOCAL — sizning haqiqiy bugungi stat'ingiz; do'stlar kodi saqlanadi.
- * 2-bosqich (keyin): Supabase backend — do'stlarning real natijalari + chat.
- * Reyting: fokus vaqti (asosiy) + bajarilgan odatlar bo'yicha.
+ * Daywarden — ijtimoiy qatlam.
+ * Supabase ulansa (window.SB_KEY to'ldirilgan) → real reyting + nazorat (qurilmalararo).
+ * Ulanmasa → lokal rejim (ilova hech qachon buzilmaydi).
+ * Reyting: fokus vaqti (asosiy) + bajarilgan odatlar.
+ * Identifikator: qurilmada yaratilgan KOD (auth yo'q — sodda).
  */
 (function () {
   var CODE_KEY = 'mvow.myCode';
@@ -21,13 +22,16 @@
     if (!c) { c = gen(); try { localStorage.setItem(CODE_KEY, c); } catch (e) {} }
     return c;
   }
-
-  // Bugungi shaxsiy stat — fokus daqiqalari + bajarilgan odatlar (tarixdan)
+  function todayIso() {
+    try { if (window.MVOW_DATA && MVOW_DATA.today) return MVOW_DATA.today.iso; } catch (e) {}
+    var d = new Date();
+    return d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0');
+  }
   function myStats() {
     var mins = 0, habits = 0;
     try {
       if (window.MVOW_DATA && MVOW_DATA.getHistory) {
-        var h = MVOW_DATA.getHistory().filter(function (x) { return x.dateIso === MVOW_DATA.today.iso; });
+        var h = MVOW_DATA.getHistory().filter(function (x) { return x.dateIso === todayIso(); });
         habits = h.length;
         mins = h.reduce(function (s, x) { return s + (x.actualMins || 0); }, 0);
       }
@@ -35,45 +39,89 @@
     return { focusMins: mins, habits: habits, focusH: Math.round(mins / 60 * 10) / 10 };
   }
 
-  function friends() {
-    try { return JSON.parse(localStorage.getItem(FRIENDS_KEY) || '[]'); } catch (e) { return []; }
+  // ── Supabase klient (bo'lmasa null) ──
+  var sb;
+  function client() {
+    if (sb !== undefined) return sb;
+    sb = null;
+    try {
+      if (window.supabase && window.SB_URL && window.SB_KEY) {
+        sb = window.supabase.createClient(window.SB_URL, window.SB_KEY);
+      }
+    } catch (e) { sb = null; }
+    return sb;
   }
+  function cloud() { return !!client(); }
+
+  function ensureProfile() {
+    var c = client(); if (!c) return Promise.resolve();
+    return c.from('profiles').upsert({ code: myCode() }, { onConflict: 'code' }).then(function () {}, function () {});
+  }
+  function syncStats() {
+    var c = client(); if (!c) return Promise.resolve();
+    var s = myStats();
+    return c.from('daily_stats').upsert(
+      { code: myCode(), d: todayIso(), focus_mins: s.focusMins, habits: s.habits, updated_at: new Date().toISOString() },
+      { onConflict: 'code,d' }
+    ).then(function () {}, function () {});
+  }
+
+  // ── Do'stlar (lokal ro'yxat doim saqlanadi; bulutда links ham) ──
+  function friends() { try { return JSON.parse(localStorage.getItem(FRIENDS_KEY) || '[]'); } catch (e) { return []; } }
   function saveFriends(f) { try { localStorage.setItem(FRIENDS_KEY, JSON.stringify(f)); } catch (e) {} }
 
-  // role: 'friend' | 'mentor' (ustoz/ota-ona)
-  function addFriend(code, role) {
-    code = (code || '').trim().toUpperCase();
-    if (!code || code === myCode()) return false;
-    if (!/^[A-Z]{3}[0-9]{3}$/.test(code)) return false;
+  function addFriend(code, kind) {
+    code = (code || '').trim().toUpperCase(); kind = kind || 'friend';
+    if (!code || code === myCode() || !/^[A-Z]{3}[0-9]{3}$/.test(code)) return Promise.resolve(false);
     var f = friends();
-    if (f.some(function (x) { return x.code === code && x.role === (role || 'friend'); })) return false;
-    f.push({ code: code, role: role || 'friend' });
-    saveFriends(f);
-    return true;
+    if (f.some(function (x) { return x.code === code && x.role === kind; })) return Promise.resolve(false);
+    f.push({ code: code, role: kind }); saveFriends(f);
+    var c = client();
+    if (c) return c.from('links').upsert({ follower: myCode(), target_code: code, kind: kind }, { onConflict: 'follower,target_code,kind' })
+      .then(function () { return true; }, function () { return true; });
+    return Promise.resolve(true);
   }
-  function removeFriend(code, role) {
-    saveFriends(friends().filter(function (x) { return !(x.code === code && x.role === (role || 'friend')); }));
+  function removeFriend(code, kind) {
+    kind = kind || 'friend';
+    saveFriends(friends().filter(function (x) { return !(x.code === code && x.role === kind); }));
+    var c = client();
+    if (c) c.from('links').delete().match({ follower: myCode(), target_code: code, kind: kind }).then(function () {}, function () {});
   }
 
-  // Reyting — fokus daqiqasi bo'yicha kamayuvchi (teng bo'lsa odatlar bo'yicha).
-  // 1-bosqich: faqat "Siz" real; do'stlar "kutilmoqda" (backend ulanganda real bo'ladi).
-  function leaderboard(role) {
-    role = role || 'friend';
+  function localBoard(kind) {
     var me = myStats();
     var list = [{ code: myCode(), name: 'Siz', me: true, focusMins: me.focusMins, focusH: me.focusH, habits: me.habits }];
-    friends().filter(function (x) { return x.role === role; }).forEach(function (x) {
+    friends().filter(function (x) { return x.role === kind; }).forEach(function (x) {
       list.push({ code: x.code, name: x.code, me: false, pending: true, focusMins: -1, focusH: 0, habits: 0 });
     });
-    list.sort(function (a, b) {
-      if (b.focusMins !== a.focusMins) return b.focusMins - a.focusMins;
-      return (b.habits || 0) - (a.habits || 0);
-    });
+    list.sort(function (a, b) { return (b.focusMins - a.focusMins) || ((b.habits || 0) - (a.habits || 0)); });
     return list;
   }
 
+  // Reyting — har doim Promise qaytaradi (async).
+  function leaderboard(kind) {
+    kind = kind || 'friend';
+    var c = client();
+    if (!c) return Promise.resolve(localBoard(kind));
+    var codes = [myCode()].concat(friends().filter(function (x) { return x.role === kind; }).map(function (x) { return x.code; }));
+    return Promise.all([ensureProfile(), syncStats()]).then(function () {
+      return c.from('daily_stats').select('code,focus_mins,habits').eq('d', todayIso()).in('code', codes);
+    }).then(function (res) {
+      var by = {}; (res && res.data || []).forEach(function (r) { by[r.code] = r; });
+      var list = codes.map(function (cd) {
+        var r = by[cd] || { focus_mins: 0, habits: 0 };
+        return {
+          code: cd, name: cd === myCode() ? 'Siz' : cd, me: cd === myCode(),
+          focusMins: r.focus_mins || 0, focusH: Math.round((r.focus_mins || 0) / 60 * 10) / 10, habits: r.habits || 0
+        };
+      });
+      list.sort(function (a, b) { return (b.focusMins - a.focusMins) || (b.habits - a.habits); });
+      return list;
+    }).catch(function () { return localBoard(kind); });
+  }
+
   window.Social = {
-    myCode: myCode, myStats: myStats,
-    friends: friends, addFriend: addFriend, removeFriend: removeFriend,
-    leaderboard: leaderboard
+    myCode: myCode, myStats: myStats, cloud: cloud, syncStats: syncStats,
+    friends: friends, addFriend: addFriend, removeFriend: removeFriend, leaderboard: leaderboard
   };
 })();

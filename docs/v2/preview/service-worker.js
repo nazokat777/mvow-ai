@@ -3,7 +3,7 @@
  * after first load. Caches all preview HTML files + the logo.
  */
 
-const CACHE_NAME = 'daywarden-v28.56.0';
+const CACHE_NAME = 'daywarden-v28.57.0';
 const ASSETS = [
   './',
   // Asosiy infratuzilma
@@ -11,6 +11,7 @@ const ASSETS = [
   './data.js',
   './ai-coach.js',
   './social.js',
+  './supabase-config.js',
   './dostlar.html',
   './theme.css',
   './motion.css',

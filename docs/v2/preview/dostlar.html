@@ -99,10 +99,12 @@
 
 <div class="toast" id="toast"></div>
 
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="supabase-config.js?v=28.57.0"></script>
 <script src="i18n.js?v=28.54.0"></script>
 <script src="lang-switcher.js?v=28.54.0" defer></script>
 <script src="data.js?v=28.54.0" defer></script>
-<script src="social.js?v=28.54.0" defer></script>
+<script src="social.js?v=28.57.0" defer></script>
 <script src="nav-overlay.js?v=28.54.0" defer></script>
 <script>
   (function () {
@@ -113,26 +115,27 @@
     function render() {
       if (!window.Social) return;
       $('myCode').textContent = Social.myCode();
-      var list = Social.leaderboard(role);
-      var el = $('lbList');
-      var hasFriends = list.length > 1;
-      var html = '';
-      list.forEach(function (r, i) {
-        var top = i === 0 && r.focusMins > 0;
-        var stat = r.pending
-          ? '<span class="lb-pending">kutilmoqda…</span>'
-          : '<span class="lb-stat">' + (r.focusH || 0) + ' soat <span class="hb">· ' + (r.habits || 0) + ' odat</span></span>';
-        html += '<div class="lb-row' + (r.me ? ' me' : '') + (top ? ' top' : '') + '">'
-          + '<div class="lb-rank">' + (i + 1) + '</div>'
-          + '<div class="lb-name">' + (r.me ? '<span class="you">Siz</span>' : escapeHtml(r.name)) + '</div>'
-          + stat + '</div>';
+      Social.leaderboard(role).then(function (list) {
+        var el = $('lbList');
+        var hasFriends = list.length > 1;
+        var html = '';
+        list.forEach(function (r, i) {
+          var top = i === 0 && r.focusMins > 0;
+          var stat = r.pending
+            ? '<span class="lb-pending">kutilmoqda…</span>'
+            : '<span class="lb-stat">' + (r.focusH || 0) + ' soat <span class="hb">· ' + (r.habits || 0) + ' odat</span></span>';
+          html += '<div class="lb-row' + (r.me ? ' me' : '') + (top ? ' top' : '') + '">'
+            + '<div class="lb-rank">' + (i + 1) + '</div>'
+            + '<div class="lb-name">' + (r.me ? '<span class="you">Siz</span>' : escapeHtml(r.name)) + '</div>'
+            + stat + '</div>';
+        });
+        if (!hasFriends) {
+          html += '<div class="lb-empty">' + (role === 'mentor'
+            ? 'Ustoz yoki ota-onangiz kodini qo\'shing — ular natijangizni ko\'radi.'
+            : 'Hali do\'st yo\'q — kodingizni ulashing va musobaqani boshlang!') + '</div>';
+        }
+        el.innerHTML = html;
       });
-      if (!hasFriends) {
-        html += '<div class="lb-empty">' + (role === 'mentor'
-          ? 'Ustoz yoki ota-onangiz kodini qo\'shing — ular natijangizni ko\'radi.'
-          : 'Hali do\'st yo\'q — kodingizni ulashing va musobaqani boshlang!') + '</div>';
-      }
-      el.innerHTML = html;
     }
     function escapeHtml(s) { return String(s).replace(/[<>&"]/g, function (c) { return ({ '<': '&lt;', '>': '&gt;', '&': '&amp;', '"': '&quot;' })[c]; }); }
 
@@ -150,8 +153,10 @@
       };
       $('addBtn').onclick = function () {
         var v = $('friendInput').value;
-        if (Social.addFriend(v, role)) { $('friendInput').value = ''; render(); toast('Qo\'shildi'); }
-        else { toast('Kod noto\'g\'ri yoki allaqachon bor'); }
+        Social.addFriend(v, role).then(function (ok) {
+          if (ok) { $('friendInput').value = ''; render(); toast('Qo\'shildi'); }
+          else { toast('Kod noto\'g\'ri yoki allaqachon bor'); }
+        });
       };
       var tabs = document.querySelectorAll('.tab');
       for (var i = 0; i < tabs.length; i++) {
