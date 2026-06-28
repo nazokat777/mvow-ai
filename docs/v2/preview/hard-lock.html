@@ -505,6 +505,8 @@ document.addEventListener('DOMContentLoaded', function () {
     WORK_MIN = taskMins; // to'liq vazifa davomiyligi
     TOTAL_CYC = 1;
     choiceOverlay.style.display = 'none';
+    var _nav = document.getElementById('globalNavCaps'); if (_nav) _nav.style.display = 'none';
+    var _lang = document.querySelector('.lang-switcher'); if (_lang) _lang.style.display = 'none';
     enableFaceDown();
     startSimpleTimer();
   });
@@ -515,6 +517,8 @@ document.addEventListener('DOMContentLoaded', function () {
     BREAK_MIN = POMO_BREAK;
     TOTAL_CYC = pomoCycles;
     choiceOverlay.style.display = 'none';
+    var _nav = document.getElementById('globalNavCaps'); if (_nav) _nav.style.display = 'none';
+    var _lang = document.querySelector('.lang-switcher'); if (_lang) _lang.style.display = 'none';
     enableFaceDown();
     startPomodoroTimer();
   });
@@ -522,6 +526,8 @@ document.addEventListener('DOMContentLoaded', function () {
   document.getElementById('chNoTimer').addEventListener('click', () => {
     mode = 'no-timer';
     choiceOverlay.style.display = 'none';
+    var _nav = document.getElementById('globalNavCaps'); if (_nav) _nav.style.display = 'none';
+    var _lang = document.querySelector('.lang-switcher'); if (_lang) _lang.style.display = 'none';
     enableFaceDown();
     timerArea.classList.add('hidden');
     noTimerArea.classList.add('show');
