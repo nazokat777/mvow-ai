@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title data-i18n="dostlar.page_title">{brand} — Do'stlar</title>
+<link rel="manifest" href="manifest.webmanifest">
+<meta name="theme-color" content="#f3f4f7">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<link rel="apple-touch-icon" href="assets/mnsm-logo.png?v=2">
+<link rel="icon" type="image/png" href="assets/mnsm-logo.png?v=2">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Anton&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+  html, body { background: var(--void); color: var(--text); min-height: 100vh; font-family: 'Inter', sans-serif; -webkit-font-smoothing: antialiased; }
+  .wrap { max-width: 540px; margin: 0 auto; padding: 64px 20px 120px; }
+  .title { font-family: 'Anton', sans-serif; font-size: 38px; text-transform: uppercase; letter-spacing: .01em; text-align: center; margin-bottom: 4px; }
+  .sub { text-align: center; color: var(--text-dim); font-size: 14px; margin-bottom: 24px; }
+
+  /* Mening kodim */
+  .code-card { background: linear-gradient(135deg, rgba(244,132,95,1), rgba(217,102,60,1)); border-radius: 20px; padding: 18px 20px; color: #fff; margin-bottom: 16px; box-shadow: 0 12px 30px rgba(244,132,95,.4); }
+  .code-card .lbl { font-size: 12px; letter-spacing: 2px; text-transform: uppercase; opacity: .9; margin-bottom: 4px; }
+  .code-card .row { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+  .code-card .code { font-family: 'Anton', sans-serif; font-size: 40px; letter-spacing: 4px; }
+  .code-card .acts { display: flex; gap: 8px; }
+  .code-card .acts button { background: rgba(255,255,255,.22); border: none; color: #fff; border-radius: 12px; padding: 10px 14px; font-size: 14px; font-weight: 700; cursor: pointer; display: flex; align-items: center; gap: 6px; font-family: 'Inter'; }
+  .code-card .acts button:active { transform: scale(.94); }
+
+  /* Add friend */
+  .add-row { display: flex; gap: 10px; margin-bottom: 14px; }
+  .add-row input { flex: 1; background: var(--card); border: 2px solid var(--border-default, rgba(0,0,0,.12)); border-radius: 14px; color: var(--text); padding: 14px 16px; font-family: 'Inter'; font-size: 16px; font-weight: 600; outline: none; text-transform: uppercase; }
+  .add-row input:focus { border-color: rgb(244,132,95); }
+  .add-row button { background: linear-gradient(135deg, rgb(244,132,95), #d9663c); border: none; color: #fff; border-radius: 14px; padding: 0 20px; font-weight: 700; font-size: 15px; cursor: pointer; font-family: 'Inter'; }
+  .add-row button:active { transform: scale(.96); }
+
+  /* Tabs */
+  .tabs { display: flex; gap: 8px; margin-bottom: 18px; }
+  .tab { flex: 1; padding: 11px; text-align: center; border-radius: 12px; border: 2px solid var(--border-default, rgba(0,0,0,.1)); background: var(--card); color: var(--text-dim); font-weight: 700; font-size: 15px; cursor: pointer; }
+  .tab.on { border-color: rgb(244,132,95); color: rgb(244,132,95); background: rgba(244,132,95,.08); }
+
+  /* Leaderboard */
+  .lb-head { font-size: 13px; letter-spacing: 2px; text-transform: uppercase; color: var(--text-dim); margin-bottom: 10px; padding-left: 4px; }
+  .lb { display: flex; flex-direction: column; gap: 8px; }
+  .lb-empty { color: var(--text-dim); font-size: 15px; text-align: center; padding: 20px; }
+  .lb-row { display: flex; align-items: center; gap: 14px; padding: 14px 16px; background: var(--card); border: 1px solid var(--border-default, rgba(0,0,0,.06)); border-radius: 14px; }
+  .lb-row.me { background: rgba(244,132,95,.10); border-color: rgba(244,132,95,.3); }
+  .lb-rank { width: 26px; height: 26px; border-radius: 50%; background: var(--void-soft, rgba(0,0,0,.06)); color: var(--text-dim); display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 14px; flex-shrink: 0; }
+  .lb-row.top .lb-rank { background: rgb(244,132,95); color: #fff; }
+  .lb-name { flex: 1; font-weight: 700; font-size: 16px; }
+  .lb-name .you { color: rgb(244,132,95); }
+  .lb-stat { font-size: 15px; font-weight: 700; color: var(--text); white-space: nowrap; }
+  .lb-stat .hb { color: var(--text-dim); font-weight: 500; font-size: 13px; }
+  .lb-pending { color: var(--text-dim); font-size: 13px; font-style: normal; }
+
+  .note { margin-top: 20px; text-align: center; font-size: 13px; color: var(--text-dim); line-height: 1.5; }
+  .toast { position: fixed; left: 50%; bottom: 30px; transform: translateX(-50%); background: var(--card); color: var(--text); border: 1px solid rgba(244,132,95,.4); padding: 12px 20px; border-radius: 999px; font-size: 14px; font-weight: 600; box-shadow: 0 10px 30px rgba(0,0,0,.3); opacity: 0; transition: opacity .25s; pointer-events: none; z-index: 999; }
+  .toast.show { opacity: 1; }
+</style>
+<link rel="stylesheet" href="theme.css">
+</head>
+<body>
+
+<div class="wrap">
+  <h1 class="title" data-i18n="dostlar.title">Do'stlar</h1>
+  <p class="sub" data-i18n="dostlar.sub">Birga intizomli bo'ling</p>
+
+  <!-- Mening kodim -->
+  <div class="code-card">
+    <div class="lbl" data-i18n="dostlar.my_code">Mening kodim</div>
+    <div class="row">
+      <div class="code" id="myCode">——————</div>
+      <div class="acts">
+        <button id="copyBtn">⧉ <span data-i18n="dostlar.copy">Nusxa</span></button>
+        <button id="shareBtn">↗ <span data-i18n="dostlar.share">Ulashish</span></button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Do'st qo'shish -->
+  <div class="add-row">
+    <input id="friendInput" maxlength="6" placeholder="Do'st kodini kiriting" autocomplete="off" autocapitalize="characters">
+    <button id="addBtn" data-i18n="dostlar.add">Qo'shish</button>
+  </div>
+
+  <!-- Tabs -->
+  <div class="tabs">
+    <div class="tab on" data-role="friend" data-i18n="dostlar.tab_friend">Do'st</div>
+    <div class="tab" data-role="mentor" data-i18n="dostlar.tab_mentor">Ustoz / Ota-ona</div>
+  </div>
+
+  <!-- Reyting -->
+  <div class="lb-head"><span data-i18n="dostlar.rating">Reyting</span> (<span data-i18n="dostlar.today">bugun</span>)</div>
+  <div class="lb" id="lbList"></div>
+
+  <div class="note" data-i18n="dostlar.note">Reyting fokus vaqti va bajarilgan odatlar bo'yicha. Do'stlaringizning real natijasi server ulanganda ko'rinadi.</div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script src="i18n.js?v=28.54.0"></script>
+<script src="lang-switcher.js?v=28.54.0" defer></script>
+<script src="data.js?v=28.54.0" defer></script>
+<script src="social.js?v=28.54.0" defer></script>
+<script src="nav-overlay.js?v=28.54.0" defer></script>
+<script>
+  (function () {
+    var role = 'friend';
+    function $(id) { return document.getElementById(id); }
+    function toast(msg) { var t = $('toast'); t.textContent = msg; t.classList.add('show'); setTimeout(function () { t.classList.remove('show'); }, 1800); }
+
+    function render() {
+      if (!window.Social) return;
+      $('myCode').textContent = Social.myCode();
+      var list = Social.leaderboard(role);
+      var el = $('lbList');
+      var hasFriends = list.length > 1;
+      var html = '';
+      list.forEach(function (r, i) {
+        var top = i === 0 && r.focusMins > 0;
+        var stat = r.pending
+          ? '<span class="lb-pending">kutilmoqda…</span>'
+          : '<span class="lb-stat">' + (r.focusH || 0) + ' soat <span class="hb">· ' + (r.habits || 0) + ' odat</span></span>';
+        html += '<div class="lb-row' + (r.me ? ' me' : '') + (top ? ' top' : '') + '">'
+          + '<div class="lb-rank">' + (i + 1) + '</div>'
+          + '<div class="lb-name">' + (r.me ? '<span class="you">Siz</span>' : escapeHtml(r.name)) + '</div>'
+          + stat + '</div>';
+      });
+      if (!hasFriends) {
+        html += '<div class="lb-empty">' + (role === 'mentor'
+          ? 'Ustoz yoki ota-onangiz kodini qo\'shing — ular natijangizni ko\'radi.'
+          : 'Hali do\'st yo\'q — kodingizni ulashing va musobaqani boshlang!') + '</div>';
+      }
+      el.innerHTML = html;
+    }
+    function escapeHtml(s) { return String(s).replace(/[<>&"]/g, function (c) { return ({ '<': '&lt;', '>': '&gt;', '&': '&amp;', '"': '&quot;' })[c]; }); }
+
+    function wire() {
+      $('copyBtn').onclick = function () {
+        var c = Social.myCode();
+        try { navigator.clipboard.writeText(c); } catch (e) {}
+        toast('Kod nusxalandi: ' + c);
+      };
+      $('shareBtn').onclick = function () {
+        var c = Social.myCode();
+        var txt = 'Daywarden\'da men bilan intizomda musobaqalashing! Mening kodim: ' + c + ' — daywarden.vercel.app';
+        if (navigator.share) { navigator.share({ title: 'Daywarden', text: txt }).catch(function () {}); }
+        else { try { navigator.clipboard.writeText(txt); } catch (e) {} toast('Taklif nusxalandi'); }
+      };
+      $('addBtn').onclick = function () {
+        var v = $('friendInput').value;
+        if (Social.addFriend(v, role)) { $('friendInput').value = ''; render(); toast('Qo\'shildi'); }
+        else { toast('Kod noto\'g\'ri yoki allaqachon bor'); }
+      };
+      var tabs = document.querySelectorAll('.tab');
+      for (var i = 0; i < tabs.length; i++) {
+        tabs[i].onclick = function () {
+          role = this.getAttribute('data-role');
+          for (var j = 0; j < tabs.length; j++) tabs[j].classList.toggle('on', tabs[j] === this);
+          render();
+        };
+      }
+    }
+
+    function init() { wire(); render(); }
+    if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', init); else init();
+  })();
+</script>
+<script src="back-btn.js?v=28.54.0"></script>
+</body>
+</html>
