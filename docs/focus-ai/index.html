@@ -6,6 +6,7 @@
 <title>Focus AI</title>
 <meta name="theme-color" content="#f3f4f7">
 <meta name="apple-mobile-web-app-capable" content="yes">
+<script>try{var _t=localStorage.getItem('focusai.theme');document.documentElement.setAttribute('data-theme',_t==='dark'?'dark':'light');}catch(e){}</script>
 <style>
   @import url('https://fonts.googleapis.com/css2?family=Anton&family=Inter:wght@400;500;600;700;800&display=swap');
 
@@ -166,6 +167,46 @@
   .win-card p { color:var(--text-dim); font-size:16px; line-height:1.5; margin-bottom:22px; }
 
   .hidden { display:none !important; }
+
+  /* Onboarding */
+  #screen-onboard { padding:0; height:100dvh; flex-direction:column; }
+  #screen-onboard.active { display:flex; }
+  .ob-slides { flex:1; position:relative; overflow:hidden; }
+  .ob-slide { position:absolute; inset:0; display:flex; flex-direction:column; align-items:center; justify-content:center; text-align:center; padding:40px 32px; opacity:0; transform:translateX(40px); transition:opacity .4s, transform .4s; pointer-events:none; }
+  .ob-slide.on { opacity:1; transform:none; pointer-events:auto; }
+  .ob-emoji { font-size:92px; margin-bottom:26px; filter:drop-shadow(0 12px 22px rgba(0,0,0,.15)); }
+  .ob-slide h2 { font-size:33px; margin-bottom:14px; max-width:300px; }
+  .ob-slide p { font-size:17px; color:var(--text-dim); line-height:1.6; max-width:320px; }
+  .ob-bar { display:flex; align-items:center; justify-content:space-between; padding:20px 28px calc(28px + env(safe-area-inset-bottom)); }
+  .ob-skip { background:none; border:none; color:var(--text-dim); font-size:15px; font-weight:600; cursor:pointer; font-family:inherit; }
+  .ob-dots { display:flex; gap:8px; }
+  .ob-dot { width:8px; height:8px; border-radius:50%; background:var(--line); transition:width .3s, background .3s; }
+  .ob-dot.on { width:24px; background:rgb(var(--c1)); }
+  .ob-next { background:linear-gradient(135deg,rgb(var(--c1)),#d9663c); color:#fff; border:none; width:54px; height:54px; border-radius:50%; font-size:22px; cursor:pointer; box-shadow:0 8px 20px rgba(var(--c1),.4); font-family:inherit; }
+  .ob-next.wide { width:auto; padding:0 28px; border-radius:999px; font-size:16px; font-weight:700; }
+
+  /* Auth */
+  #screen-auth { min-height:100dvh; flex-direction:column; align-items:center; justify-content:center; text-align:center; }
+  #screen-auth.active { display:flex; }
+  .auth-logo { font-family:'Anton'; font-size:48px; margin-bottom:8px; }
+  .auth-logo .ai { color:rgb(var(--c1)); }
+  .auth-tag { color:var(--text-dim); font-size:16px; margin-bottom:40px; }
+  .auth-card { width:100%; max-width:360px; }
+
+  /* Profile */
+  .prof-head { display:flex; flex-direction:column; align-items:center; text-align:center; margin-bottom:28px; }
+  .prof-avatar { width:88px; height:88px; border-radius:50%; background:linear-gradient(135deg,rgb(var(--c1)),rgb(var(--c3))); display:flex; align-items:center; justify-content:center; font-size:38px; color:#fff; margin-bottom:14px; font-weight:800; }
+  .prof-name { font-family:'Anton'; font-size:28px; }
+  .prof-row { display:flex; align-items:center; justify-content:space-between; padding:17px 20px; background:var(--surface); border:1px solid var(--line); border-radius:16px; margin-bottom:12px; }
+  .prof-row .lbl { font-size:16px; font-weight:600; }
+  .toggle { width:52px; height:30px; border-radius:999px; background:var(--line); position:relative; cursor:pointer; transition:background .2s; flex-shrink:0; }
+  .toggle.on { background:rgb(var(--c1)); }
+  .toggle::after { content:''; position:absolute; top:3px; left:3px; width:24px; height:24px; border-radius:50%; background:#fff; transition:transform .2s; box-shadow:0 2px 6px rgba(0,0,0,.2); }
+  .toggle.on::after { transform:translateX(22px); }
+  .lang-opts { display:flex; gap:8px; }
+  .lang-opt { padding:8px 13px; border-radius:10px; border:2px solid var(--line); background:var(--surface); font-size:14px; font-weight:700; cursor:pointer; color:var(--text-dim); }
+  .lang-opt.on { border-color:rgb(var(--c1)); color:rgb(var(--c1)); }
+  .logout { width:100%; margin-top:20px; background:none; border:2px solid rgba(var(--c1),.45); color:rgb(var(--c1)); padding:15px; border-radius:999px; font-weight:700; font-size:16px; cursor:pointer; font-family:inherit; }
 </style>
 </head>
 <body>
@@ -235,6 +276,43 @@
   </section>
 
 </div>
+
+<!-- ONBOARDING -->
+  <section id="screen-onboard" class="screen">
+    <div class="ob-slides" id="obSlides">
+      <div class="ob-slide on"><div class="ob-emoji">⏱️</div><h2>Vaqt — adolatli o'lchov</h2><p>Har bir to'lgan panel — siz yetib borgan qadam. Belgi emas, haqiqiy mehnat.</p></div>
+      <div class="ob-slide"><div class="ob-emoji">🎯</div><h2>"Qildim" emas — qancha?</h2><p>Boshqa ilovalar belgi qo'yadi. Focus AI sarflangan haqiqiy vaqtni o'lchaydi.</p></div>
+      <div class="ob-slide"><div class="ob-emoji">🏆</div><h2>Maqsadga yeting</h2><p>Taymerni bosing, fokuslaning, jarayonni 100% ga to'ldiring — g'alaba.</p></div>
+    </div>
+    <div class="ob-bar">
+      <button class="ob-skip" id="obSkip">O'tkazib yuborish</button>
+      <div class="ob-dots" id="obDots"></div>
+      <button class="ob-next" id="obNext">→</button>
+    </div>
+  </section>
+
+  <!-- AUTH -->
+  <section id="screen-auth" class="screen">
+    <div class="auth-logo">FOCUS<span class="ai"> AI</span></div>
+    <div class="auth-tag">Vaqtga asoslangan fokus</div>
+    <div class="auth-card">
+      <div class="field"><input class="input" id="authName" placeholder="Ismingiz (ixtiyoriy)" maxlength="30" style="text-align:center"></div>
+      <button class="btn-primary" id="authGuest">Boshlash</button>
+      <div class="btn-ghost" style="margin-top:12px">Ma'lumotlar telefoningizda saqlanadi 🔒</div>
+    </div>
+  </section>
+
+  <!-- PROFILE -->
+  <section id="screen-profile" class="screen">
+    <div class="top"><button class="icon-btn" data-back aria-label="Orqaga">‹</button></div>
+    <div class="prof-head">
+      <div class="prof-avatar" id="profAvatar">🙂</div>
+      <div class="prof-name" id="profName">Mehmon</div>
+    </div>
+    <div class="prof-row"><span class="lbl">🌙 Qorong'u rejim</span><div class="toggle" id="themeToggle" role="switch" tabindex="0"></div></div>
+    <div class="prof-row"><span class="lbl">🌐 Til</span><div class="lang-opts" id="langOpts"><div class="lang-opt on" data-l="uz">UZ</div><div class="lang-opt" data-l="ru">RU</div><div class="lang-opt" data-l="en">EN</div></div></div>
+    <button class="logout" id="logoutBtn">Chiqish</button>
+  </section>
 
 <!-- WIN OVERLAY -->
 <div class="win" id="winOverlay">

@@ -195,17 +195,74 @@
         timer: T.create(draft.hours * 3600000), createdAt: now() });
       save(); renderDashboard(); show('screen-dashboard');
     };
-    $('profileBtn').onclick = function () { /* profil — keyingi bosqich */ };
+    $('profileBtn').onclick = function () { renderProfile(); show('screen-profile'); };
+    $('obNext').onclick = obNext;
+    $('obSkip').onclick = finishOnboard;
+    $('authGuest').onclick = doGuest;
+    $('themeToggle').onclick = toggleTheme;
+    $('logoutBtn').onclick = logout;
     $('winClose').onclick = function () { $('winOverlay').classList.remove('show'); goDash(); };
     var backs = document.querySelectorAll('[data-back]');
     for (var i = 0; i < backs.length; i++) backs[i].onclick = function () { goDash(); };
   }
 
+  // ---------- Flow: Onboarding / Auth / Profil / Theme ----------
+  var K_ONB = 'focusai.onboarded', K_USER = 'focusai.user', K_THEME = 'focusai.theme';
+  var obIndex = 0;
+
+  function applyTheme() {
+    var t = localStorage.getItem(K_THEME) === 'dark' ? 'dark' : 'light';
+    document.documentElement.setAttribute('data-theme', t);
+    var meta = document.querySelector('meta[name=theme-color]');
+    if (meta) meta.setAttribute('content', t === 'dark' ? '#0a0b0e' : '#f3f4f7');
+  }
+  function curTheme() { return document.documentElement.getAttribute('data-theme') === 'dark' ? 'dark' : 'light'; }
+  function toggleTheme() {
+    var t = curTheme() === 'dark' ? 'light' : 'dark';
+    try { localStorage.setItem(K_THEME, t); } catch (e) {}
+    applyTheme(); $('themeToggle').classList.toggle('on', t === 'dark');
+  }
+
+  function renderOnboard() {
+    obIndex = 0;
+    var dots = $('obDots'); dots.innerHTML = '';
+    for (var i = 0; i < 3; i++) { var d = document.createElement('div'); d.className = 'ob-dot' + (i === 0 ? ' on' : ''); dots.appendChild(d); }
+    updateOb();
+  }
+  function updateOb() {
+    var slides = $('obSlides').children, dots = $('obDots').children, i;
+    for (i = 0; i < slides.length; i++) slides[i].classList.toggle('on', i === obIndex);
+    for (i = 0; i < dots.length; i++) dots[i].classList.toggle('on', i === obIndex);
+    var next = $('obNext');
+    if (obIndex === slides.length - 1) { next.classList.add('wide'); next.textContent = 'Boshlash'; }
+    else { next.classList.remove('wide'); next.textContent = '→'; }
+  }
+  function obNext() { if (obIndex < 2) { obIndex++; updateOb(); } else finishOnboard(); }
+  function finishOnboard() { try { localStorage.setItem(K_ONB, '1'); } catch (e) {} show('screen-auth'); }
+
+  function doGuest() {
+    var name = ($('authName').value || '').trim() || 'Mehmon';
+    try { localStorage.setItem(K_USER, name); } catch (e) {}
+    startApp();
+  }
+  function logout() { try { localStorage.removeItem(K_USER); } catch (e) {} $('authName').value = ''; show('screen-auth'); }
+
+  function renderProfile() {
+    var name = localStorage.getItem(K_USER) || 'Mehmon';
+    $('profName').textContent = name;
+    $('profAvatar').textContent = name === 'Mehmon' ? '🙂' : name.charAt(0).toUpperCase();
+    $('themeToggle').classList.toggle('on', curTheme() === 'dark');
+  }
+
+  function startApp() { renderDashboard(); show('screen-dashboard'); }
+
   // ---------- Init ----------
   function init() {
+    applyTheme();
     wire();
-    renderDashboard();
-    show('screen-dashboard');
+    if (!localStorage.getItem(K_ONB)) { renderOnboard(); show('screen-onboard'); }
+    else if (!localStorage.getItem(K_USER)) { show('screen-auth'); }
+    else startApp();
   }
   if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', init); else init();
 
