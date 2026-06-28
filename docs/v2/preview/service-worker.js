@@ -3,7 +3,7 @@
  * after first load. Caches all preview HTML files + the logo.
  */
 
-const CACHE_NAME = 'daywarden-v28.67.0';
+const CACHE_NAME = 'daywarden-v28.68.0';
 const ASSETS = [
   './',
   // Asosiy infratuzilma
@@ -29,6 +29,7 @@ const ASSETS = [
   './assets/mnsm-logo.png',
   './assets/logo-light.png',
   './assets/logo-dark.png',
+  './assets/mnsm-maskable-512.png',
   './assets/toon-1.webp',
   './assets/toon-2.webp',
   './assets/toon-3.webp',

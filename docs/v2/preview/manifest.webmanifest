@@ -1,6 +1,7 @@
 {
   "name": "Daywarden — Sizning intizom do'stingiz",
   "short_name": "Daywarden",
+  "id": "/",
   "description": "Daywarden — sizning intizom do'stingiz. Just AI It mahsuloti.",
   "start_url": "./app.html",
   "scope": "./",
@@ -25,7 +26,7 @@
       "purpose": "any"
     },
     {
-      "src": "assets/mnsm-512.png",
+      "src": "assets/mnsm-maskable-512.png",
       "sizes": "512x512",
       "type": "image/png",
       "purpose": "maskable"
