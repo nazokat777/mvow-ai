@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>Daywarden — Fokus izi</title>
+<link rel="manifest" href="manifest.webmanifest">
+<meta name="theme-color" content="#0a0610">
+<link rel="apple-touch-icon" href="assets/mnsm-logo.png?v=3">
+<link rel="icon" type="image/png" href="assets/mnsm-logo.png?v=3">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Anton&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+  html, body { background: var(--void); color: var(--text); min-height: 100vh; font-family: 'Inter', sans-serif; -webkit-font-smoothing: antialiased; }
+  .wrap { max-width: 520px; margin: 0 auto; padding: 64px 20px 110px; text-align: center; }
+  .title { font-family: 'Anton', sans-serif; font-size: 36px; text-transform: uppercase; }
+  .sub { color: var(--text-dim); font-size: 14px; margin-bottom: 22px; }
+  .canvas-box { position: relative; width: 100%; max-width: 360px; margin: 0 auto; border-radius: 24px; overflow: hidden; box-shadow: 0 20px 50px rgba(0,0,0,.35); }
+  #trace { display: block; width: 100%; height: auto; }
+  .count { font-family: 'Anton', sans-serif; font-size: 56px; line-height: 1; margin-top: 22px; color: rgb(244,132,95); }
+  .count small { font-family: 'Inter'; font-size: 18px; font-weight: 700; color: var(--text-dim); letter-spacing: 2px; text-transform: uppercase; }
+  .note { color: var(--text-dim); font-size: 14px; line-height: 1.6; margin-top: 10px; padding: 0 10px; }
+  .empty { color: var(--text-dim); font-size: 14px; margin-top: 16px; line-height: 1.6; }
+</style>
+<link rel="stylesheet" href="theme.css">
+</head>
+<body>
+
+<div class="wrap">
+  <h1 class="title">Fokus izi</h1>
+  <p class="sub">Har fokus sessiyasi — bitta nur</p>
+
+  <div class="canvas-box"><canvas id="trace"></canvas></div>
+
+  <div class="count" id="count">0 <small>nur</small></div>
+  <p class="note" id="note">Har bajargan fokus sessiyangiz bu osmonga bitta nur qo'shadi. Intizoming nuri o'syapti — to'xtamang.</p>
+</div>
+
+<script src="i18n.js?v=28.63.0"></script>
+<script src="lang-switcher.js?v=28.63.0" defer></script>
+<script src="data.js?v=28.63.0" defer></script>
+<script src="nav-overlay.js?v=28.63.0" defer></script>
+<script>
+  (function () {
+    var COLORS = [[244,132,95],[107,191,122],[232,130,180],[110,181,255]];
+    function sessionCount() {
+      try { if (window.MVOW_DATA && MVOW_DATA.getHistory) return MVOW_DATA.getHistory().length; } catch (e) {}
+      return 0;
+    }
+    function draw(N) {
+      var cv = document.getElementById('trace');
+      var size = Math.min(window.innerWidth - 40, 360);
+      var dpr = window.devicePixelRatio || 1;
+      cv.width = size * dpr; cv.height = size * dpr;
+      cv.style.width = size + 'px'; cv.style.height = size + 'px';
+      var ctx = cv.getContext('2d');
+      ctx.scale(dpr, dpr);
+      var cx = size / 2, cy = size / 2, R = size / 2;
+
+      // Qorong'i osmon foni (radial)
+      var bg = ctx.createRadialGradient(cx, cy, 0, cx, cy, R);
+      bg.addColorStop(0, '#161029'); bg.addColorStop(0.6, '#0c0816'); bg.addColorStop(1, '#070410');
+      ctx.fillStyle = bg; ctx.fillRect(0, 0, size, size);
+
+      // Markaziy yorug'lik
+      var glow = ctx.createRadialGradient(cx, cy, 0, cx, cy, R * 0.5);
+      glow.addColorStop(0, 'rgba(244,132,95,0.22)'); glow.addColorStop(1, 'rgba(244,132,95,0)');
+      ctx.fillStyle = glow; ctx.fillRect(0, 0, size, size);
+
+      if (N <= 0) return;
+
+      // Phyllotaxis (oltin burchak) — nurlar galaktikasi
+      var GA = Math.PI * (3 - Math.sqrt(5));
+      var C = Math.min(13, (R * 0.86) / Math.sqrt(Math.max(N, 1)));
+      for (var i = 0; i < N; i++) {
+        var ang = i * GA;
+        var r = C * Math.sqrt(i + 0.5);
+        var x = cx + Math.cos(ang) * r, y = cy + Math.sin(ang) * r;
+        var col = COLORS[i % COLORS.length];
+        var rad = 2.2 + (i / N) * 2.2;
+        ctx.shadowColor = 'rgba(' + col + ',0.95)';
+        ctx.shadowBlur = 10;
+        ctx.fillStyle = 'rgba(' + col + ',0.92)';
+        ctx.beginPath(); ctx.arc(x, y, rad, 0, Math.PI * 2); ctx.fill();
+      }
+      ctx.shadowBlur = 0;
+      // Markaz nuqtasi
+      ctx.fillStyle = '#fff';
+      ctx.beginPath(); ctx.arc(cx, cy, 3, 0, Math.PI * 2); ctx.fill();
+    }
+    function init() {
+      var N = sessionCount();
+      draw(N);
+      document.getElementById('count').innerHTML = N + ' <small>nur</small>';
+      if (N <= 0) {
+        document.getElementById('note').textContent = "Hali nur yo'q. Birinchi fokus sessiyangizni boshlang — har biri bu osmonga bitta nur qo'shadi.";
+      }
+      window.addEventListener('resize', function () { draw(sessionCount()); });
+    }
+    if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', init); else init();
+  })();
+</script>
+<script src="back-btn.js?v=28.63.0"></script>
+</body>
+</html>
