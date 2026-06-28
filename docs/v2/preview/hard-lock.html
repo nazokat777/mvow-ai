@@ -335,6 +335,7 @@ document.addEventListener('DOMContentLoaded', function () {
   let totalSec = WORK_MIN * 60;
   let remaining = totalSec;
   let startedAt = Date.now();
+  let phaseStartedAt = startedAt;
   let interval = null;
 
   function fmt(s) {
@@ -410,11 +411,12 @@ document.addEventListener('DOMContentLoaded', function () {
     noTimerArea.classList.remove('show');
     tsub.textContent = (window.I18N ? I18N.t('hardlock.sub_locked', 'fokusdasiz') : 'fokusdasiz');
     startedAt = Date.now();
+    phaseStartedAt = startedAt;
     remaining = WORK_MIN * 60;
     totalSec = WORK_MIN * 60;
     paint();
     interval = setInterval(() => {
-      remaining = Math.max(0, remaining - 1);
+      remaining = Math.max(0, totalSec - Math.floor((Date.now() - phaseStartedAt) / 1000));
       paint();
       if (remaining === 0) {
         if (window.MVOW_DATA && MVOW_DATA.fxFinish) MVOW_DATA.fxFinish();
@@ -428,11 +430,12 @@ document.addEventListener('DOMContentLoaded', function () {
     noTimerArea.classList.remove('show');
     tsub.textContent = (window.I18N ? I18N.t('hardlock.sub_locked', 'fokusdasiz') : 'fokusdasiz') + ' · ' + cycle + '/' + TOTAL_CYC;
     startedAt = Date.now();
+    phaseStartedAt = startedAt;
     remaining = WORK_MIN * 60;
     totalSec = WORK_MIN * 60;
     paint();
     interval = setInterval(() => {
-      remaining = Math.max(0, remaining - 1);
+      remaining = Math.max(0, totalSec - Math.floor((Date.now() - phaseStartedAt) / 1000));
       paint();
       if (remaining === 0) {
         if (window.MVOW_DATA && MVOW_DATA.fxFinish) MVOW_DATA.fxFinish();
@@ -464,9 +467,10 @@ document.addEventListener('DOMContentLoaded', function () {
       tsub.textContent = (window.I18N ? I18N.t('hardlock.sub_locked', 'fokusdasiz') : 'fokusdasiz') + ' · ' + cycle + '/' + TOTAL_CYC;
       ring.style.stroke = 'var(--accent)';
     }
+    phaseStartedAt = Date.now();
     paint();
     interval = setInterval(() => {
-      remaining = Math.max(0, remaining - 1);
+      remaining = Math.max(0, totalSec - Math.floor((Date.now() - phaseStartedAt) / 1000));
       paint();
       if (remaining === 0) {
         if (window.MVOW_DATA && MVOW_DATA.fxFinish) MVOW_DATA.fxFinish();
