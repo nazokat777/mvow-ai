@@ -22,7 +22,10 @@
   .count { font-family: 'Anton', sans-serif; font-size: 56px; line-height: 1; margin-top: 22px; color: rgb(244,132,95); }
   .count small { font-family: 'Inter'; font-size: 18px; font-weight: 700; color: var(--text-dim); letter-spacing: 2px; text-transform: uppercase; }
   .note { color: var(--text-dim); font-size: 14px; line-height: 1.6; margin-top: 10px; padding: 0 10px; }
-  .empty { color: var(--text-dim); font-size: 14px; margin-top: 16px; line-height: 1.6; }
+  .share-btn { margin-top: 20px; background: linear-gradient(135deg, rgb(244,132,95), #d9663c); color: #fff; border: none; border-radius: 14px; padding: 14px 30px; font-weight: 800; font-size: 16px; cursor: pointer; font-family: 'Inter'; box-shadow: 0 10px 26px rgba(244,132,95,.4); }
+  .share-btn:active { transform: scale(.97); }
+  .toast { position: fixed; left: 50%; bottom: 30px; transform: translateX(-50%); background: var(--card); color: var(--text); border: 1px solid rgba(244,132,95,.4); padding: 12px 20px; border-radius: 999px; font-size: 14px; font-weight: 600; box-shadow: 0 10px 30px rgba(0,0,0,.3); opacity: 0; transition: opacity .25s; pointer-events: none; z-index: 999; max-width: 90%; }
+  .toast.show { opacity: 1; }
 </style>
 <link rel="stylesheet" href="theme.css">
 </head>
@@ -36,72 +39,99 @@
 
   <div class="count" id="count">0 <small>nur</small></div>
   <p class="note" id="note">Har bajargan fokus sessiyangiz bu osmonga bitta nur qo'shadi. Intizoming nuri o'syapti — to'xtamang.</p>
+  <button class="share-btn" id="shareBtn">↗ Natijani ulashish</button>
 </div>
 
-<script src="i18n.js?v=28.63.0"></script>
-<script src="lang-switcher.js?v=28.63.0" defer></script>
-<script src="data.js?v=28.63.0" defer></script>
-<script src="nav-overlay.js?v=28.63.0" defer></script>
+<div class="toast" id="toast"></div>
+
+<script src="i18n.js?v=28.66.0"></script>
+<script src="lang-switcher.js?v=28.66.0" defer></script>
+<script src="data.js?v=28.66.0" defer></script>
+<script src="nav-overlay.js?v=28.66.0" defer></script>
 <script>
   (function () {
     var COLORS = [[244,132,95],[107,191,122],[232,130,180],[110,181,255]];
-    function sessionCount() {
-      try { if (window.MVOW_DATA && MVOW_DATA.getHistory) return MVOW_DATA.getHistory().length; } catch (e) {}
-      return 0;
+    function isoOf(d){ return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0'); }
+    function stats(){
+      var hist = [];
+      try { if (window.MVOW_DATA && MVOW_DATA.getHistory) hist = MVOW_DATA.getHistory(); } catch (e) {}
+      var mins = hist.reduce(function (s, h) { return s + (h.actualMins || 0); }, 0);
+      var days = {}; hist.forEach(function (h) { if (h.dateIso) days[h.dateIso] = 1; });
+      var d = new Date(); if (!days[isoOf(d)]) d.setDate(d.getDate() - 1);
+      var st = 0; while (days[isoOf(d)]) { st++; d.setDate(d.getDate() - 1); }
+      return { N: hist.length, focusH: Math.round(mins / 60 * 10) / 10, streak: st };
     }
-    function draw(N) {
-      var cv = document.getElementById('trace');
-      var size = Math.min(window.innerWidth - 40, 360);
-      var dpr = window.devicePixelRatio || 1;
-      cv.width = size * dpr; cv.height = size * dpr;
-      cv.style.width = size + 'px'; cv.style.height = size + 'px';
-      var ctx = cv.getContext('2d');
-      ctx.scale(dpr, dpr);
-      var cx = size / 2, cy = size / 2, R = size / 2;
-
-      // Qorong'i osmon foni (radial)
+    function drawGalaxy(ctx, cx, cy, R, N, dotBase){
       var bg = ctx.createRadialGradient(cx, cy, 0, cx, cy, R);
       bg.addColorStop(0, '#161029'); bg.addColorStop(0.6, '#0c0816'); bg.addColorStop(1, '#070410');
-      ctx.fillStyle = bg; ctx.fillRect(0, 0, size, size);
-
-      // Markaziy yorug'lik
+      ctx.fillStyle = bg; ctx.fillRect(cx - R, cy - R, R * 2, R * 2);
       var glow = ctx.createRadialGradient(cx, cy, 0, cx, cy, R * 0.5);
       glow.addColorStop(0, 'rgba(244,132,95,0.22)'); glow.addColorStop(1, 'rgba(244,132,95,0)');
-      ctx.fillStyle = glow; ctx.fillRect(0, 0, size, size);
-
+      ctx.fillStyle = glow; ctx.fillRect(cx - R, cy - R, R * 2, R * 2);
       if (N <= 0) return;
-
-      // Phyllotaxis (oltin burchak) — nurlar galaktikasi
       var GA = Math.PI * (3 - Math.sqrt(5));
-      var C = Math.min(13, (R * 0.86) / Math.sqrt(Math.max(N, 1)));
+      var C = Math.min(dotBase * 6, (R * 0.86) / Math.sqrt(Math.max(N, 1)));
       for (var i = 0; i < N; i++) {
-        var ang = i * GA;
-        var r = C * Math.sqrt(i + 0.5);
+        var ang = i * GA, r = C * Math.sqrt(i + 0.5);
         var x = cx + Math.cos(ang) * r, y = cy + Math.sin(ang) * r;
-        var col = COLORS[i % COLORS.length];
-        var rad = 2.2 + (i / N) * 2.2;
-        ctx.shadowColor = 'rgba(' + col + ',0.95)';
-        ctx.shadowBlur = 10;
+        var col = COLORS[i % COLORS.length], rad = dotBase + (i / N) * dotBase;
+        ctx.shadowColor = 'rgba(' + col + ',0.95)'; ctx.shadowBlur = dotBase * 4.5;
         ctx.fillStyle = 'rgba(' + col + ',0.92)';
         ctx.beginPath(); ctx.arc(x, y, rad, 0, Math.PI * 2); ctx.fill();
       }
-      ctx.shadowBlur = 0;
-      // Markaz nuqtasi
-      ctx.fillStyle = '#fff';
-      ctx.beginPath(); ctx.arc(cx, cy, 3, 0, Math.PI * 2); ctx.fill();
+      ctx.shadowBlur = 0; ctx.fillStyle = '#fff';
+      ctx.beginPath(); ctx.arc(cx, cy, dotBase * 1.4, 0, Math.PI * 2); ctx.fill();
     }
-    function init() {
-      var N = sessionCount();
-      draw(N);
-      document.getElementById('count').innerHTML = N + ' <small>nur</small>';
-      if (N <= 0) {
-        document.getElementById('note').textContent = "Hali nur yo'q. Birinchi fokus sessiyangizni boshlang — har biri bu osmonga bitta nur qo'shadi.";
-      }
-      window.addEventListener('resize', function () { draw(sessionCount()); });
+    function drawPage(N){
+      var cv = document.getElementById('trace');
+      var size = Math.min(window.innerWidth - 40, 360), dpr = window.devicePixelRatio || 1;
+      cv.width = size * dpr; cv.height = size * dpr; cv.style.width = size + 'px'; cv.style.height = size + 'px';
+      var ctx = cv.getContext('2d'); ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+      drawGalaxy(ctx, size / 2, size / 2, size / 2, N, 2.2);
+    }
+    function toast(m){ var t = document.getElementById('toast'); t.textContent = m; t.classList.add('show'); setTimeout(function(){ t.classList.remove('show'); }, 2400); }
+    function shareCard(s){
+      var SZ = 1080, c = document.createElement('canvas'); c.width = SZ; c.height = SZ;
+      var ctx = c.getContext('2d');
+      ctx.fillStyle = '#070410'; ctx.fillRect(0, 0, SZ, SZ);
+      drawGalaxy(ctx, SZ / 2, SZ * 0.45, SZ * 0.33, s.N, 4.5);
+      ctx.textAlign = 'center';
+      ctx.fillStyle = '#F4845F'; ctx.font = '700 66px Anton, sans-serif'; ctx.fillText('DAYWARDEN', SZ / 2, 112);
+      ctx.fillStyle = 'rgba(255,255,255,.75)'; ctx.font = '600 30px Inter, sans-serif'; ctx.fillText('Mening intizom izim', SZ / 2, 156);
+      ctx.fillStyle = '#fff'; ctx.font = '800 96px Anton, sans-serif'; ctx.fillText(s.N + ' nur', SZ / 2, SZ * 0.85);
+      ctx.fillStyle = 'rgba(255,255,255,.88)'; ctx.font = '600 38px Inter, sans-serif';
+      ctx.fillText(s.focusH + ' soat fokus   ·   ' + s.streak + ' kun ketma-ket', SZ / 2, SZ * 0.85 + 60);
+      ctx.fillStyle = 'rgba(255,255,255,.5)'; ctx.font = '500 30px Inter, sans-serif'; ctx.fillText('daywarden.vercel.app', SZ / 2, SZ - 48);
+      return c;
+    }
+    function doShare(){
+      var s = stats(), c = shareCard(s);
+      var txt = "Daywarden'da intizom izim: " + s.N + " nur, " + s.focusH + " soat fokus! Sen ham qo'shil 👉 daywarden.vercel.app";
+      if (c.toBlob) {
+        c.toBlob(function (blob) {
+          var file = new File([blob], 'daywarden-fokus.png', { type: 'image/png' });
+          if (navigator.canShare && navigator.canShare({ files: [file] })) {
+            navigator.share({ files: [file], text: txt, title: 'Daywarden' }).catch(function(){});
+          } else if (navigator.share) {
+            navigator.share({ text: txt, title: 'Daywarden' }).catch(function(){});
+          } else {
+            var a = document.createElement('a'); a.href = c.toDataURL('image/png'); a.download = 'daywarden-fokus.png'; a.click();
+            try { navigator.clipboard.writeText(txt); } catch(e){}
+            toast("Rasm yuklandi — Telegram/Instagram'ga joylang");
+          }
+        }, 'image/png');
+      } else { try { navigator.clipboard.writeText(txt); } catch(e){} toast('Matn nusxalandi'); }
+    }
+    function init(){
+      var s = stats(); drawPage(s.N);
+      document.getElementById('count').innerHTML = s.N + ' <small>nur</small>';
+      if (s.N <= 0) document.getElementById('note').textContent = "Hali nur yo'q. Birinchi fokus sessiyangizni boshlang — har biri bu osmonga bitta nur qo'shadi.";
+      document.getElementById('shareBtn').onclick = doShare;
+      window.addEventListener('resize', function () { drawPage(stats().N); });
     }
     if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', init); else init();
   })();
 </script>
-<script src="back-btn.js?v=28.63.0"></script>
+<script src="back-btn.js?v=28.66.0"></script>
 </body>
 </html>
