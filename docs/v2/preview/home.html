@@ -442,6 +442,11 @@
 <script src="lang-switcher.js?v=28.4.0" defer></script>
 <script src="data.js?v=28.4.0" defer></script>
 <script src="nav-overlay.js?v=28.4.0" defer></script>
+<!-- Ijtimoiy: kunlik natijani serverga avtomatik yuklash (ko'rinmas, dizaynga tegmaydi) -->
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2" defer></script>
+<script src="supabase-config.js?v=28.58.0" defer></script>
+<script src="social.js?v=28.58.0" defer></script>
+<script>window.addEventListener('load',function(){try{if(window.Social&&Social.cloud&&Social.cloud())Social.syncStats();}catch(e){}});</script>
 <script>
   document.addEventListener('DOMContentLoaded', () => {
     // Sana va vaqt
