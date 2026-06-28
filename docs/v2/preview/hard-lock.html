@@ -175,6 +175,9 @@
       <button class="done-btn" id="doneBtn" type="button" data-i18n="hardlock.done_btn">Bajardim</button>
     </div>
 
+    <!-- Telefon yuztuban = chuqur fokus (faqat yuztuban bo'lganda chiqadi) -->
+    <div id="focusBadge" style="display:none;text-align:center;margin:16px auto 0;font-size:15px;font-weight:700;color:#6BBF7A;letter-spacing:.3px;">📵 chuqur fokus</div>
+
   </div>
 
   <div class="bottom-bar">
@@ -327,6 +330,23 @@ document.addEventListener('DOMContentLoaded', function () {
   const timerArea = document.getElementById('timerArea');
   const noTimerArea = document.getElementById('noTimerArea');
   const elapsedEl = document.getElementById('elapsed');
+
+  // ── Telefon yuztuban = chuqur fokus (akselerometr) ──
+  const focusBadge = document.getElementById('focusBadge');
+  let fdActive = false;
+  function isFaceDown(z) { return typeof z === 'number' && !isNaN(z) && z < -7; }
+  function onFaceMotion(e) {
+    const a = e.accelerationIncludingGravity; if (!a) return;
+    const fd = isFaceDown(a.z);
+    if (fd !== fdActive) { fdActive = fd; if (focusBadge) focusBadge.style.display = fd ? 'block' : 'none'; }
+  }
+  function enableFaceDown() {
+    try {
+      if (typeof DeviceMotionEvent !== 'undefined' && typeof DeviceMotionEvent.requestPermission === 'function') {
+        DeviceMotionEvent.requestPermission().then(function (r) { if (r === 'granted') window.addEventListener('devicemotion', onFaceMotion); }).catch(function () {});
+      } else { window.addEventListener('devicemotion', onFaceMotion); }
+    } catch (e) {}
+  }
 
   const choiceOverlay = document.getElementById('choiceOverlay');
   const askOverlay = document.getElementById('askOverlay');
@@ -485,6 +505,7 @@ document.addEventListener('DOMContentLoaded', function () {
     WORK_MIN = taskMins; // to'liq vazifa davomiyligi
     TOTAL_CYC = 1;
     choiceOverlay.style.display = 'none';
+    enableFaceDown();
     startSimpleTimer();
   });
 
@@ -494,12 +515,14 @@ document.addEventListener('DOMContentLoaded', function () {
     BREAK_MIN = POMO_BREAK;
     TOTAL_CYC = pomoCycles;
     choiceOverlay.style.display = 'none';
+    enableFaceDown();
     startPomodoroTimer();
   });
 
   document.getElementById('chNoTimer').addEventListener('click', () => {
     mode = 'no-timer';
     choiceOverlay.style.display = 'none';
+    enableFaceDown();
     timerArea.classList.add('hidden');
     noTimerArea.classList.add('show');
     tsub.textContent = (window.I18N ? I18N.t('hardlock.sub_no_timer', 'taymersiz') : 'taymersiz');
