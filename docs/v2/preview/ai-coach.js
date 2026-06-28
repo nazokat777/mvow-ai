@@ -32,21 +32,15 @@
   }
 
   function coach(c, opts) {
-    opts = opts || {};
-    var key = (opts.apiKey) || (typeof window !== 'undefined' && window.AI_KEY) || '';
-    if (!key) return Promise.resolve(fallbackMessage(c));
-    var url = 'https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=' + encodeURIComponent(key);
-    return fetch(url, {
+    // Kalit serverда yashirin — /api/coach proksisi orqali. Klientда kalit YO'Q.
+    // Proksi bo'sh qaytarsa (kalit yo'q) yoki xato/offline bo'lsa — shablon (fallback).
+    return fetch('/api/coach', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ contents: [{ parts: [{ text: buildPrompt(c) }] }] })
+      body: JSON.stringify(c || {})
     })
       .then(function (r) { return r.json(); })
-      .then(function (d) {
-        var t = d && d.candidates && d.candidates[0] && d.candidates[0].content
-          && d.candidates[0].content.parts && d.candidates[0].content.parts[0] && d.candidates[0].content.parts[0].text;
-        return (t && t.trim()) ? t.trim() : fallbackMessage(c);
-      })
+      .then(function (d) { return (d && d.message && d.message.trim()) ? d.message.trim() : fallbackMessage(c); })
       .catch(function () { return fallbackMessage(c); });
   }
 

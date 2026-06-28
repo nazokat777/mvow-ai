@@ -3,14 +3,13 @@
  * after first load. Caches all preview HTML files + the logo.
  */
 
-const CACHE_NAME = 'daywarden-v28.53.0';
+const CACHE_NAME = 'daywarden-v28.54.0';
 const ASSETS = [
   './',
   // Asosiy infratuzilma
   './index.html',
   './data.js',
   './ai-coach.js',
-  './ai-config.js',
   './theme.css',
   './motion.css',
   './motion.js',
@@ -70,6 +69,9 @@ self.addEventListener('activate', event => {
 // Fetch — network-first for HTML/JS (always fresh), cache-first for images/fonts
 self.addEventListener('fetch', event => {
   const url = new URL(event.request.url);
+
+  // Serverless API (POST /api/...) — SW aralashmaydi, to'g'ridan tarmoqqa
+  if (url.pathname.indexOf('/api/') === 0) return;
 
   // Network-first for Google Fonts (cache fallback if offline)
   if (url.hostname === 'fonts.googleapis.com' || url.hostname === 'fonts.gstatic.com') {
