@@ -33,8 +33,9 @@
 
   function coach(c, opts) {
     opts = opts || {};
-    if (!opts.apiKey) return Promise.resolve(fallbackMessage(c));
-    var url = 'https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=' + encodeURIComponent(opts.apiKey);
+    var key = (opts.apiKey) || (typeof window !== 'undefined' && window.AI_KEY) || '';
+    if (!key) return Promise.resolve(fallbackMessage(c));
+    var url = 'https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=' + encodeURIComponent(key);
     return fetch(url, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
