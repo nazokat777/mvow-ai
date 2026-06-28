@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>Daywarden — Sovrinlar</title>
+<link rel="manifest" href="manifest.webmanifest">
+<meta name="theme-color" content="#f3f4f7">
+<link rel="apple-touch-icon" href="assets/mnsm-logo.png?v=3">
+<link rel="icon" type="image/png" href="assets/mnsm-logo.png?v=3">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Anton&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+  html, body { background: var(--void); color: var(--text); min-height: 100vh; font-family: 'Inter', sans-serif; -webkit-font-smoothing: antialiased; }
+  .wrap { max-width: 560px; margin: 0 auto; padding: 64px 18px 110px; }
+  .title { font-family: 'Anton', sans-serif; font-size: 36px; text-transform: uppercase; text-align: center; }
+  .sub { text-align: center; color: var(--text-dim); font-size: 14px; margin-bottom: 6px; }
+  .tally { text-align: center; font-weight: 800; font-size: 16px; color: rgb(244,132,95); margin-bottom: 22px; }
+  .grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; }
+  @media (max-width: 380px) { .grid { grid-template-columns: repeat(2, 1fr); } }
+  .medal { border-radius: 18px; padding: 16px 10px 14px; text-align: center; border: 1px solid var(--border-default, rgba(0,0,0,.08)); background: var(--card); position: relative; transition: transform .15s; }
+  .medal.on { color: #fff; border: none; box-shadow: 0 10px 24px rgba(0,0,0,.18); }
+  .medal .ic { font-size: 38px; line-height: 1; filter: grayscale(1) opacity(.45); }
+  .medal.on .ic { filter: none; }
+  .medal .nm { font-weight: 800; font-size: 14px; margin-top: 8px; }
+  .medal .ds { font-size: 11px; margin-top: 2px; opacity: .75; line-height: 1.3; }
+  .medal.off .nm, .medal.off .ds { color: var(--text-dim); }
+  .medal .lock { position: absolute; top: 8px; right: 10px; font-size: 13px; opacity: .5; }
+  .foot { text-align: center; color: var(--text-dim); font-size: 13px; margin-top: 22px; line-height: 1.5; }
+</style>
+<link rel="stylesheet" href="theme.css">
+</head>
+<body>
+
+<div class="wrap">
+  <h1 class="title">Sovrinlar</h1>
+  <p class="sub">Yig'ilgan medallar — natijangiz bilan ochiladi</p>
+  <div class="tally" id="tally">0 / 0</div>
+  <div class="grid" id="grid"></div>
+  <p class="foot">Fokus qiling, maqsadlarni bajaring, do'st qo'shing — medallar o'zi ochiladi. 🏅</p>
+</div>
+
+<script src="i18n.js?v=28.64.0"></script>
+<script src="lang-switcher.js?v=28.64.0" defer></script>
+<script src="data.js?v=28.64.0" defer></script>
+<script src="nav-overlay.js?v=28.64.0" defer></script>
+<script>
+  (function () {
+    var COLORS = [[244,132,95],[107,191,122],[232,130,180],[110,181,255]];
+    function lsNum(key) { try { return JSON.parse(localStorage.getItem(key) || '[]').length; } catch (e) { return 0; } }
+    function isoOf(d) { return d.getFullYear() + '-' + String(d.getMonth()+1).padStart(2,'0') + '-' + String(d.getDate()).padStart(2,'0'); }
+    function streakOf(hist) {
+      var days = {}; hist.forEach(function (h) { if (h.dateIso) days[h.dateIso] = 1; });
+      var d = new Date(); if (!days[isoOf(d)]) d.setDate(d.getDate() - 1);
+      var s = 0; while (days[isoOf(d)]) { s++; d.setDate(d.getDate() - 1); }
+      return s;
+    }
+    function stats() {
+      var hist = [];
+      try { if (window.MVOW_DATA && MVOW_DATA.getHistory) hist = MVOW_DATA.getHistory(); } catch (e) {}
+      var sessions = hist.length;
+      var mins = hist.reduce(function (s, h) { return s + (h.actualMins || 0); }, 0);
+      var goals = lsNum('mvow.goals');
+      var friends = lsNum('mvow.friends');
+      return { sessions: sessions, focusH: mins / 60, goals: goals, friends: friends, streak: streakOf(hist) };
+    }
+    function medals(s) {
+      return [
+        { ic: '🌱', nm: 'Birinchi qadam', ds: '1 sessiya', ok: s.sessions >= 1 },
+        { ic: '🔥', nm: '10 nur', ds: '10 sessiya', ok: s.sessions >= 10 },
+        { ic: '⭐', nm: '50 nur', ds: '50 sessiya', ok: s.sessions >= 50 },
+        { ic: '🏆', nm: '100 nur', ds: '100 sessiya', ok: s.sessions >= 100 },
+        { ic: '⏳', nm: 'Marafon', ds: '10 soat fokus', ok: s.focusH >= 10 },
+        { ic: '🎯', nm: 'Maqsadli', ds: '1 maqsad', ok: s.goals >= 1 },
+        { ic: '📅', nm: '3 kun', ds: '3 kun ketma-ket', ok: s.streak >= 3 },
+        { ic: '💪', nm: 'Temir iroda', ds: '7 kun ketma-ket', ok: s.streak >= 7 },
+        { ic: '🤝', nm: 'Jamoa', ds: "1 do'st qo'shildi", ok: s.friends >= 1 }
+      ];
+    }
+    function init() {
+      var s = stats(), list = medals(s), got = 0;
+      var html = list.map(function (m, i) {
+        if (m.ok) got++;
+        var c = COLORS[i % COLORS.length];
+        var bg = m.ok ? ('background:linear-gradient(135deg,rgb(' + c[0] + ',' + c[1] + ',' + c[2] + '),rgba(' + c[0] + ',' + c[1] + ',' + c[2] + ',.78));') : '';
+        return '<div class="medal ' + (m.ok ? 'on' : 'off') + '" style="' + bg + '">'
+          + (m.ok ? '' : '<span class="lock">🔒</span>')
+          + '<div class="ic">' + m.ic + '</div>'
+          + '<div class="nm">' + m.nm + '</div>'
+          + '<div class="ds">' + m.ds + '</div></div>';
+      }).join('');
+      document.getElementById('grid').innerHTML = html;
+      document.getElementById('tally').textContent = got + ' / ' + list.length + ' medal';
+    }
+    if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', init); else init();
+  })();
+</script>
+<script src="back-btn.js?v=28.64.0"></script>
+</body>
+</html>
