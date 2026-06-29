@@ -257,7 +257,7 @@ private struct MentorMessageView: View {
                         .foregroundColor(MentorColors.textPrimary)
                         .lineSpacing(4)
                     if let title = msg.wisdomTitle, let body = msg.wisdomBody {
-                        WisdomEmbed(title: title, body: body)
+                        WisdomEmbed(title: title, text: body)
                     }
                     if let action = msg.actionLabel {
                         ActionEmbed(label: action)
@@ -278,11 +278,11 @@ private struct MentorMessageView: View {
 
 private struct WisdomEmbed: View {
     let title: String
-    let body: String
+    let text: String
     var body: some View {
         VStack(alignment: .leading, spacing: 4) {
             Text(title).font(MentorFonts.mono(8).weight(.semibold)).tracking(3).foregroundColor(MentorColors.goldDeep)
-            Text(body)
+            Text(text)
                 .font(MentorFonts.mentor(12))
                 .foregroundColor(MentorColors.textBody)
                 .lineSpacing(3)
