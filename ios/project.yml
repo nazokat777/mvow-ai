@@ -35,3 +35,14 @@ targets:
         PRODUCT_BUNDLE_IDENTIFIER: uz.mentorai.focus
         TARGETED_DEVICE_FAMILY: "1"
         GENERATE_INFOPLIST_FILE: NO
+
+# Aniq scheme — bulutli xcodebuild "-scheme MVoW" topishi uchun
+schemes:
+  MVoW:
+    build:
+      targets:
+        MVoW: all
+    run:
+      config: Debug
+    archive:
+      config: Release
