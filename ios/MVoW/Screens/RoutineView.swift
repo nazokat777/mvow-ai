@@ -441,7 +441,7 @@ private struct DurationBar: View {
 }
 
 private extension Int {
-    var fraction: CGFloat { CGFloat(min(self, 120)) / 120.0 }
+    var fraction: CGFloat { CGFloat(Swift.min(self, 120)) / 120.0 }
 }
 
 private struct RotateForever: ViewModifier {
