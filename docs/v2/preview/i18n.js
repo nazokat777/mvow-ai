@@ -37,7 +37,7 @@
         note: "Har bajargan fokus sessiyangiz bu osmonga bitta nur qo'shadi. Intizoming nuri o'syapti — to'xtamang.",
         note_empty: "Hali nur yo'q. Birinchi fokus sessiyangizni boshlang — har biri bu osmonga bitta nur qo'shadi.",
         share: "↗ Natijani ulashish", dl_done: "Rasm yuklandi — Telegram/Instagram'ga joylang", copied: "Matn nusxalandi",
-        card_sub: "Mening intizom izim", soat: "soat", streak_unit: "kun ketma-ket",
+        card_sub: "Mening intizom izim", soat: "soat", streak_unit: "kun ketma-ket", heatmap: "Faollik",
         share_text: "Daywarden'da intizom izim: {n} nur, {h} soat fokus! Sen ham qo'shil 👉 daywarden.vercel.app"
       },
       sovrinlar: {
@@ -824,7 +824,7 @@
         note: "Каждая завершённая сессия фокуса добавляет на это небо один луч. Свет вашей дисциплины растёт — не останавливайтесь.",
         note_empty: "Пока лучей нет. Начните первую сессию фокуса — каждая добавит на небо один луч.",
         share: "↗ Поделиться результатом", dl_done: "Картинка скачана — отправьте в Telegram/Instagram", copied: "Текст скопирован",
-        card_sub: "Мой след дисциплины", soat: "ч", streak_unit: "дней подряд",
+        card_sub: "Мой след дисциплины", soat: "ч", streak_unit: "дней подряд", heatmap: "Активность",
         share_text: "Мой след дисциплины в Daywarden: {n} лучей, {h} ч фокуса! Присоединяйся 👉 daywarden.vercel.app"
       },
       sovrinlar: {
@@ -1598,7 +1598,7 @@
         note: "Every focus session you finish adds one ray to this sky. The light of your discipline is growing — don't stop.",
         note_empty: "No rays yet. Start your first focus session — each one adds a ray to this sky.",
         share: "↗ Share result", dl_done: "Image downloaded — post it to Telegram/Instagram", copied: "Text copied",
-        card_sub: "My discipline trace", soat: "h", streak_unit: "day streak",
+        card_sub: "My discipline trace", soat: "h", streak_unit: "day streak", heatmap: "Activity",
         share_text: "My discipline trace on Daywarden: {n} rays, {h}h of focus! Join me 👉 daywarden.vercel.app"
       },
       sovrinlar: {
