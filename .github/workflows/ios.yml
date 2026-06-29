@@ -1,0 +1,55 @@
+name: Build iOS
+
+# Mac KERAK EMAS — GitHub'ning macOS serverida yig'iladi.
+# 1-bosqich: ilova bulutда KOMPILE bo'lishini tasdiqlash (imzosiz, simulator).
+# Keyingi bosqichlarda: budilnik/bildirishnoma kodi + o'rnatiladigan IPA.
+
+on:
+  push:
+    branches: [ main ]
+    paths:
+      - 'ios/**'
+      - '.github/workflows/ios.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    runs-on: macos-14
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Install XcodeGen
+        run: brew install xcodegen
+
+      - name: Generate Xcode project (project.yml -> MVoW.xcodeproj)
+        working-directory: ios
+        run: xcodegen generate
+
+      - name: List schemes (diagnostika)
+        working-directory: ios
+        run: xcodebuild -list -project MVoW.xcodeproj || true
+
+      - name: Build (simulator, imzosiz) — kompilyatsiya tekshiruvi
+        working-directory: ios
+        run: |
+          set -o pipefail
+          xcodebuild build \
+            -project MVoW.xcodeproj \
+            -scheme MVoW \
+            -destination 'generic/platform=iOS Simulator' \
+            -derivedDataPath build \
+            CODE_SIGNING_ALLOWED=NO \
+            2>&1 | tee "$GITHUB_WORKSPACE/ios-build-log.txt"
+
+      - name: Publish build log (har doim — debugging)
+        if: always()
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: ios-ci-log
+          name: iOS CI build log (eng yangi)
+          body: "iOS bulut build jurnali. Xatolarni shu yerdan o'qiymiz."
+          files: ios-build-log.txt
