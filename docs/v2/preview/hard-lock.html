@@ -84,6 +84,14 @@
   .ring-svg { width: 100%; height: 100%; transform: rotate(-90deg); }
   .ring-track { fill: none; stroke: rgba(255,255,255,.06); stroke-width: 3; }
   .ring-prog { fill: none; stroke: var(--accent); stroke-width: 3; stroke-linecap: round; transition: stroke-dashoffset 1s linear; }
+  /* Vaqt bn kamayadigan nur (glow) */
+  .ring-glow { position: absolute; inset: -26px; border-radius: 50%; background: radial-gradient(circle, rgba(244,132,95,.55) 42%, rgba(244,132,95,0) 72%); transition: opacity 1s linear, transform 1s linear; pointer-events: none; z-index: 0; }
+  .ring-svg { position: relative; z-index: 1; }
+  .ring-center { z-index: 1; }
+  /* Chiqish tugmasi (taymer ishlab turaveradi) */
+  .hl-exit { position: fixed; top: max(14px, env(safe-area-inset-top, 14px)); left: 14px; z-index: 60; display: none; background: rgba(255,255,255,.08); border: 1px solid rgba(255,255,255,.16); color: var(--text-mid); border-radius: 999px; padding: 8px 16px; font: 600 14px 'Inter', sans-serif; cursor: pointer; }
+  .hl-exit.show { display: block; }
+  .hl-exit:active { transform: scale(.96); }
   .ring-center { position: absolute; inset: 0; display: flex; flex-direction: column; align-items:center; justify-content:center; gap: 6px; }
   .digits { font-size: 56px; font-weight: 500; color: var(--accent); letter-spacing: 1px; font-feature-settings: "tnum"; }
   .sub { font-size: 14px; letter-spacing: 3px; color: var(--text-dim); text-transform: uppercase; }
@@ -153,8 +161,10 @@
     </div>
 
     <!-- Taymer ko'rinishi -->
+    <button class="hl-exit" id="hlExit" type="button">‹ chiqish</button>
     <div class="timer-area" id="timerArea">
       <div class="ring-wrap">
+        <div class="ring-glow" id="ringGlow"></div>
         <svg class="ring-svg" viewBox="0 0 240 240">
           <circle class="ring-track" cx="120" cy="120" r="116"/>
           <circle id="ring" class="ring-prog" cx="120" cy="120" r="116"
@@ -366,14 +376,18 @@ document.addEventListener('DOMContentLoaded', function () {
 
   function paint() {
     digits.textContent = fmt(remaining);
-    const offset = RING_CIRC * (1 - remaining / totalSec);
-    ring.style.strokeDashoffset = offset;
+    const frac = totalSec ? Math.max(0, remaining / totalSec) : 0;
+    ring.style.strokeDashoffset = RING_CIRC * (1 - frac);
+    const g = document.getElementById('ringGlow');
+    if (g) { g.style.opacity = (0.08 + 0.92 * frac).toFixed(3); g.style.transform = 'scale(' + (0.7 + 0.4 * frac).toFixed(3) + ')'; }
+    saveActive();
   }
 
   let askedAlready = false;
   function paintElapsed() {
     const elapsedSec = Math.floor((Date.now() - startedAt) / 1000);
     elapsedEl.textContent = fmt(elapsedSec);
+    saveActive();
     // Taymersiz: rejalashtirilgan vaqt o'tgach avtomatik so'roq (bir marta)
     if (mode === 'no-timer' && !askedAlready && elapsedSec >= WORK_MIN * 60) {
       askedAlready = true;
@@ -383,6 +397,7 @@ document.addEventListener('DOMContentLoaded', function () {
   }
 
   function recordAndExit(completed) {
+    clearActive();
     if (window.MVOW_DATA) {
       const actualMins = Math.max(1, Math.round((Date.now() - startedAt) / 60000));
       if (completed) {
@@ -553,6 +568,53 @@ document.addEventListener('DOMContentLoaded', function () {
     askOverlay.classList.remove('show');
     recordAndExit(false);
   });
+
+  // ── Faol fokusni saqlash + chiqib ketsa ham davom etish (timestamp) ──
+  function saveActive() {
+    try {
+      localStorage.setItem('mvow.activeFocus', JSON.stringify({
+        mode: mode, phaseStartedAt: phaseStartedAt, totalSec: totalSec,
+        WORK_MIN: WORK_MIN, BREAK_MIN: BREAK_MIN, TOTAL_CYC: TOTAL_CYC,
+        cycle: cycle, phase: phase, startedAt: startedAt
+      }));
+    } catch (e) {}
+    const ex = document.getElementById('hlExit'); if (ex) ex.classList.add('show');
+  }
+  function clearActive() { try { localStorage.removeItem('mvow.activeFocus'); } catch (e) {} }
+  const _hlExit = document.getElementById('hlExit');
+  if (_hlExit) _hlExit.addEventListener('click', function () { location.href = 'home.html'; });
+
+  (function resumeActive() {
+    let s; try { s = JSON.parse(localStorage.getItem('mvow.activeFocus') || 'null'); } catch (e) { s = null; }
+    if (!s || !s.mode) return;
+    if (Date.now() - (s.startedAt || 0) > 8 * 3600 * 1000) { clearActive(); return; }
+    mode = s.mode; phaseStartedAt = s.phaseStartedAt; totalSec = s.totalSec;
+    WORK_MIN = s.WORK_MIN; BREAK_MIN = s.BREAK_MIN; TOTAL_CYC = s.TOTAL_CYC;
+    cycle = s.cycle; phase = s.phase; startedAt = s.startedAt;
+    choiceOverlay.style.display = 'none';
+    const _nav = document.getElementById('globalNavCaps'); if (_nav) _nav.style.display = 'none';
+    const _lang = document.querySelector('.lang-switcher'); if (_lang) _lang.style.display = 'none';
+    enableFaceDown();
+    if (mode === 'no-timer') {
+      timerArea.classList.add('hidden'); noTimerArea.classList.add('show');
+      tsub.textContent = (window.I18N ? I18N.t('hardlock.sub_no_timer', 'taymersiz') : 'taymersiz');
+      paintElapsed(); interval = setInterval(paintElapsed, 1000);
+    } else {
+      timerArea.classList.remove('hidden'); noTimerArea.classList.remove('show');
+      ring.style.stroke = (phase === 'break') ? '#F5C26B' : 'var(--accent)';
+      tsub.textContent = (window.I18N ? I18N.t('hardlock.sub_locked', 'fokusdasiz') : 'fokusdasiz') + (mode === 'pomodoro' ? (' · ' + cycle + '/' + TOTAL_CYC) : '');
+      remaining = Math.max(0, totalSec - Math.floor((Date.now() - phaseStartedAt) / 1000));
+      paint();
+      interval = setInterval(function () {
+        remaining = Math.max(0, totalSec - Math.floor((Date.now() - phaseStartedAt) / 1000));
+        paint();
+        if (remaining === 0) {
+          if (window.MVOW_DATA && MVOW_DATA.fxFinish) MVOW_DATA.fxFinish();
+          if (mode === 'pomodoro') nextPomodoroPhase(); else showAskModal();
+        }
+      }, 1000);
+    }
+  })();
 
   // ============================================================
   // DEEP LOCK — taymer paytida idle bo'lsa, ekran qulflanadi
