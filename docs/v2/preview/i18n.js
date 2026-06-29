@@ -47,7 +47,8 @@
         m3_n: "50 nur", m3_d: "50 sessiya", m4_n: "100 nur", m4_d: "100 sessiya",
         m5_n: "Marafon", m5_d: "10 soat fokus", m6_n: "Maqsadli", m6_d: "1 maqsad",
         m7_n: "3 kun", m7_d: "3 kun ketma-ket", m8_n: "Temir iroda", m8_d: "7 kun ketma-ket",
-        m9_n: "Jamoa", m9_d: "1 do'st qo'shildi"
+        m9_n: "Jamoa", m9_d: "1 do'st qo'shildi",
+        level: "Daraja", next: "Keyingi darajagacha", soat_h: "soat", max_level: "Eng yuqori daraja! 👑"
       },
       dostlar: {
         page_title: "{brand} — Do'stlar", title: "Do'stlar", sub: "Birga intizomli bo'ling",
@@ -833,7 +834,8 @@
         m3_n: "50 лучей", m3_d: "50 сессий", m4_n: "100 лучей", m4_d: "100 сессий",
         m5_n: "Марафон", m5_d: "10 ч фокуса", m6_n: "Целеустремлённый", m6_d: "1 цель",
         m7_n: "3 дня", m7_d: "3 дня подряд", m8_n: "Железная воля", m8_d: "7 дней подряд",
-        m9_n: "Команда", m9_d: "1 друг добавлен"
+        m9_n: "Команда", m9_d: "1 друг добавлен",
+        level: "Уровень", next: "До следующего", soat_h: "ч", max_level: "Высший уровень! 👑"
       },
       dostlar: {
         page_title: "{brand} — Друзья", title: "Друзья", sub: "Будьте дисциплинированы вместе",
@@ -1606,7 +1608,8 @@
         m3_n: "50 rays", m3_d: "50 sessions", m4_n: "100 rays", m4_d: "100 sessions",
         m5_n: "Marathon", m5_d: "10h of focus", m6_n: "Goal-driven", m6_d: "1 goal",
         m7_n: "3 days", m7_d: "3-day streak", m8_n: "Iron will", m8_d: "7-day streak",
-        m9_n: "Team", m9_d: "1 friend added"
+        m9_n: "Team", m9_d: "1 friend added",
+        level: "Level", next: "To next level", soat_h: "h", max_level: "Top level! 👑"
       },
       dostlar: {
         page_title: "{brand} — Friends", title: "Friends", sub: "Stay disciplined together",

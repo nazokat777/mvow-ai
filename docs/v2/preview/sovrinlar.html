@@ -29,6 +29,15 @@
   .medal.off .nm, .medal.off .ds { color: var(--text-dim); }
   .medal .lock { position: absolute; top: 8px; right: 10px; font-size: 13px; opacity: .5; }
   .foot { text-align: center; color: var(--text-dim); font-size: 13px; margin-top: 22px; line-height: 1.5; }
+  .level-card { display: none; background: linear-gradient(135deg, rgba(244,132,95,.16), rgba(244,132,95,.05)); border: 1px solid rgba(244,132,95,.28); border-radius: 18px; padding: 16px 18px; margin: 8px 0 14px; }
+  .level-card.show { display: block; }
+  .level-card .lv-top { display: flex; align-items: center; gap: 12px; }
+  .level-card .lv-ic { font-size: 34px; line-height: 1; }
+  .level-card .lv-nm { font-family: 'Anton', sans-serif; font-size: 22px; }
+  .level-card .lv-sub { color: var(--text-dim); font-size: 12px; }
+  .level-card .lv-bar { height: 7px; background: var(--void-soft, rgba(0,0,0,.08)); border-radius: 999px; overflow: hidden; margin-top: 12px; }
+  .level-card .lv-fill { height: 100%; background: linear-gradient(90deg, rgb(244,132,95), #d9663c); border-radius: 999px; }
+  .level-card .lv-next { font-size: 12px; color: var(--text-dim); margin-top: 6px; }
 </style>
 <link rel="stylesheet" href="theme.css">
 </head>
@@ -37,6 +46,7 @@
 <div class="wrap">
   <h1 class="title" data-i18n="sovrinlar.title">Sovrinlar</h1>
   <p class="sub" data-i18n="sovrinlar.sub">Yig'ilgan medallar — natijangiz bilan ochiladi</p>
+  <div class="level-card" id="levelCard"></div>
   <div class="tally" id="tally">0 / 0</div>
   <div class="grid" id="grid"></div>
   <p class="foot" data-i18n="sovrinlar.foot">Fokus qiling, maqsadlarni bajaring, do'st qo'shing — medallar o'zi ochiladi. 🏅</p>
@@ -80,9 +90,32 @@
         { ic: '🤝', nm: T('sovrinlar.m9_n','Jamoa'), ds: T('sovrinlar.m9_d',"1 do'st qo'shildi"), ok: s.friends >= 1 }
       ];
     }
+    var LEVELS = [
+      { min: 0, ic: '🥉', uz: 'Bronza', ru: 'Бронза', en: 'Bronze' },
+      { min: 10, ic: '🥈', uz: 'Kumush', ru: 'Серебро', en: 'Silver' },
+      { min: 30, ic: '🥇', uz: 'Oltin', ru: 'Золото', en: 'Gold' },
+      { min: 70, ic: '💠', uz: 'Platina', ru: 'Платина', en: 'Platinum' },
+      { min: 150, ic: '👑', uz: 'Olmos', ru: 'Алмаз', en: 'Diamond' }
+    ];
+    function renderLevel(focusH) {
+      var lang = (function () { try { return localStorage.getItem('mvow.lang') || 'uz'; } catch (e) { return 'uz'; } })();
+      var idx = 0; for (var i = 0; i < LEVELS.length; i++) if (focusH >= LEVELS[i].min) idx = i;
+      var lv = LEVELS[idx], next = LEVELS[idx + 1], soat = T('sovrinlar.soat_h', 'soat'), pct, nextTxt;
+      if (next) {
+        pct = Math.max(0, Math.min(100, Math.round((focusH - lv.min) / (next.min - lv.min) * 100)));
+        nextTxt = T('sovrinlar.next', 'Keyingi darajagacha') + ': ' + (Math.round((next.min - focusH) * 10) / 10) + ' ' + soat;
+      } else { pct = 100; nextTxt = T('sovrinlar.max_level', 'Eng yuqori daraja! 👑'); }
+      var card = document.getElementById('levelCard');
+      card.innerHTML = '<div class="lv-top"><div class="lv-ic">' + lv.ic + '</div><div><div class="lv-nm">' + (lv[lang] || lv.uz) + '</div>'
+        + '<div class="lv-sub">' + T('sovrinlar.level', 'Daraja') + ' · ' + (Math.round(focusH * 10) / 10) + ' ' + soat + '</div></div></div>'
+        + '<div class="lv-bar"><div class="lv-fill" style="width:' + pct + '%"></div></div>'
+        + '<div class="lv-next">' + nextTxt + '</div>';
+      card.classList.add('show');
+    }
     function init() {
       try { document.title = T('sovrinlar.page_title', 'Daywarden — Sovrinlar'); } catch(e){}
       var s = stats(), list = medals(s), got = 0;
+      renderLevel(s.focusH);
       var html = list.map(function (m, i) {
         if (m.ok) got++;
         var c = COLORS[i % COLORS.length];
