@@ -6,6 +6,8 @@ struct MVoWApp: App {
         WindowGroup {
             ContentView()
                 .preferredColorScheme(.dark)
+                .environmentObject(NotificationManager.shared)
+                .onAppear { NotificationManager.shared.configure() }
         }
     }
 }
