@@ -762,7 +762,12 @@
         row_session: 'Bajardim',
         row_evening: 'Kun yakuni',
         row_history: 'Tarix',
-        row_celebrate: 'Bayram'
+        row_celebrate: 'Bayram',
+        row_multitimer: 'Bir vaqtda fokus',
+        row_friends: "Do'stlar",
+        row_trace: 'Fokus izi',
+        row_rewards: 'Sovrinlar',
+        sec_social: 'Ijtimoiy'
       },
       sections: {
         intro: 'Tanishuv',
@@ -1501,7 +1506,12 @@
         row_session: 'Сделано',
         row_evening: 'Итог дня',
         row_history: 'История',
-        row_celebrate: 'Праздник'
+        row_celebrate: 'Праздник',
+        row_multitimer: 'Одновременный фокус',
+        row_friends: 'Друзья',
+        row_trace: 'След фокуса',
+        row_rewards: 'Награды',
+        sec_social: 'Социальное'
       },
       sections: {
         intro: 'Знакомство',
@@ -2240,7 +2250,12 @@
         row_session: 'Done',
         row_evening: 'Day summary',
         row_history: 'History',
-        row_celebrate: 'Celebration'
+        row_celebrate: 'Celebration',
+        row_multitimer: 'Multi-focus',
+        row_friends: 'Friends',
+        row_trace: 'Focus trace',
+        row_rewards: 'Rewards',
+        sec_social: 'Social'
       },
       sections: {
         intro: 'Intro',
