@@ -73,9 +73,9 @@
     },
 
     chains: [
-      { name: 'Tongi mashq',        days: 14 },
-      { name: "Til o'rganish",      days: 12 },
-      { name: 'Mutolaa',            days:  8 }
+      { name: 'Tongi mashq',        days: 14, hours: 12 },
+      { name: "Til o'rganish",      days: 12, hours: 18 },
+      { name: 'Mutolaa',            days:  8, hours:  6 }
     ]
   };
 

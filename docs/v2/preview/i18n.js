@@ -712,6 +712,7 @@
         cta: 'Keyingi hafta',
         stamp: '7 kun · tugadi',
         days_unit: 'kun',
+        hours_unit: 'soat',
         page_title: '{brand} — Bayram'
       },
       about: {
@@ -1456,6 +1457,7 @@
         cta: 'Следующая неделя',
         stamp: '7 дней · завершено',
         days_unit: 'дней',
+        hours_unit: 'ч',
         page_title: '{brand} — Праздник'
       },
       about: {
@@ -2200,6 +2202,7 @@
         cta: 'Next week',
         stamp: '7 days · complete',
         days_unit: 'days',
+        hours_unit: 'h',
         page_title: '{brand} — Celebration'
       },
       about: {
