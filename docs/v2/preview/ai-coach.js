@@ -44,5 +44,24 @@
       .catch(function () { return fallbackMessage(c); });
   }
 
-  return { fallbackMessage: fallbackMessage, buildPrompt: buildPrompt, coach: coach };
+  function planFallback(goal, lang) {
+    var GEN = {
+      uz: ['Boshlash va reja', "Asoslarni o'rganish", 'Kundalik amaliyot', "O'rta bosqich", 'Mustahkamlash', 'Yakuniy natija'],
+      ru: ['Начать и составить план', 'Изучить основы', 'Ежедневная практика', 'Средний этап', 'Закрепление', 'Финальный результат'],
+      en: ['Start & plan', 'Learn the basics', 'Daily practice', 'Mid stage', 'Reinforce', 'Final result']
+    };
+    return GEN[lang] || GEN.uz;
+  }
+  function planGoal(goal, opts) {
+    opts = opts || {};
+    return fetch('/api/coach', {
+      method: 'POST', headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ mode: 'plan', goal: goal, duration: opts.duration || '', lang: opts.lang || 'uz' })
+    })
+      .then(function (r) { return r.json(); })
+      .then(function (d) { return (d && d.steps && d.steps.length) ? d.steps : planFallback(goal, opts.lang); })
+      .catch(function () { return planFallback(goal, opts.lang); });
+  }
+
+  return { fallbackMessage: fallbackMessage, buildPrompt: buildPrompt, coach: coach, planGoal: planGoal, planFallback: planFallback };
 });

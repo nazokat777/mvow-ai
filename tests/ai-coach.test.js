@@ -45,3 +45,14 @@ test('coach: kalitsiz → fallback (tarmoqsiz ishlaydi)', async () => {
   const m = await A.coach({ done: 2, total: 4, pct: 50, streak: 1, focusH: 1 }, {});
   assert.ok(typeof m === 'string' && m.length > 12);
 });
+
+test('planFallback: maqsad bosqichlari massivi (uz default)', () => {
+  const steps = A.planFallback("Til o'rganish");
+  assert.ok(Array.isArray(steps) && steps.length >= 4);
+});
+
+test('planFallback: 3 til qaytaradi', () => {
+  assert.ok(A.planFallback('x', 'en').length >= 4);
+  assert.ok(A.planFallback('x', 'ru').length >= 4);
+  assert.ok(A.planFallback('x', 'uz').length >= 4);
+});

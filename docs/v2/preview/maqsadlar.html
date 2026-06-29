@@ -350,6 +350,12 @@
     color: var(--void);
   }
   .gs-add-save:hover { filter: brightness(1.1); }
+  .ms-gen { color: var(--accent) !important; border-style: dashed !important; }
+  .ms-bar { height: 6px; background: var(--void-soft, rgba(0,0,0,.08)); border-radius: 999px; overflow: hidden; margin: 6px 2px 8px; }
+  .ms-fill { height: 100%; background: var(--accent); border-radius: 999px; transition: width .3s; }
+  .ms-row { display: flex; align-items: center; gap: 10px; padding: 7px 2px; font-size: 15px; color: var(--text); cursor: pointer; }
+  .ms-row input { width: 18px; height: 18px; accent-color: var(--accent); flex-shrink: 0; }
+  .ms-row .ms-done { text-decoration: line-through; color: var(--text-dim); }
 
   /* Add button */
   .add-goal {
@@ -436,6 +442,7 @@
 <script src="lang-switcher.js?v=28.4.0" defer></script>
 <script src="data.js?v=28.4.0" defer></script>
 <script src="nav-overlay.js?v=28.4.0" defer></script>
+<script src="ai-coach.js?v=28.73.0" defer></script>
 <script>
   function _t(key, fb) { return (window.I18N ? I18N.t(key, fb) : fb); }
   const DURATION_INFO = {
@@ -709,6 +716,18 @@
     row.appendChild(no); row.appendChild(yes); card.appendChild(row); ov.appendChild(card); document.body.appendChild(ov);
   }
 
+  function msHtml(g) {
+    var ms = Array.isArray(g.milestones) ? g.milestones : [];
+    if (!ms.length) {
+      return '<button class="gs-add ms-gen" data-ms-gen="' + g.id + '" type="button">' + escapeHtml(_t('maqsadlar.ms_generate', "✨ AI bilan bosqichlarga bo'l")) + '</button>';
+    }
+    var done = ms.filter(function (m) { return m.done; }).length;
+    var pct = Math.round(done / ms.length * 100);
+    return '<div class="gs-label">' + escapeHtml(_t('maqsadlar.ms_title', 'Bosqichlar')) + ' <span style="color:var(--accent)">' + done + '/' + ms.length + '</span></div>'
+      + '<div class="ms-bar"><div class="ms-fill" style="width:' + pct + '%"></div></div>'
+      + ms.map(function (m, mi) { return '<label class="ms-row"><input type="checkbox" data-ms-toggle="' + g.id + '" data-ms-i="' + mi + '"' + (m.done ? ' checked' : '') + '><span class="' + (m.done ? 'ms-done' : '') + '">' + escapeHtml(m.text) + '</span></label>'; }).join('');
+  }
+
   function render() {
     const goals = loadGoals();
     const list = document.getElementById('goalsList');
@@ -830,6 +849,7 @@
                 </div>
               </form>
             </div>
+            <div class="goal-milestones" data-goal-ms="${g.id}">${msHtml(g)}</div>
           </div>
         </div>
       `;
@@ -842,6 +862,36 @@
         const id = parseInt(b.dataset.del, 10);
         if (!confirm(_t('maqsadlar.del_confirm', "Bu maqsadni o'chirasizmi? Kalendaringizdan ham olib tashlanadi."))) return;
         removeGoal(id);
+      });
+    });
+
+    // Milestone: AI bilan bosqichlarga bo'lish
+    list.querySelectorAll('[data-ms-gen]').forEach(function (btn) {
+      btn.addEventListener('click', function (e) {
+        e.stopPropagation();
+        var goalId = parseInt(btn.dataset.msGen, 10);
+        var g = loadGoals().find(function (x) { return x.id === goalId; });
+        if (!g || !window.AICoach) return;
+        btn.textContent = _t('maqsadlar.ms_generating', "Bo'linyapti...");
+        btn.disabled = true;
+        var lang = (function () { try { return localStorage.getItem('mvow.lang') || 'uz'; } catch (e) { return 'uz'; } })();
+        var info = DURATION_INFO[g.duration] || DURATION_INFO.month;
+        AICoach.planGoal(g.text, { duration: info.days + ' kun', lang: lang }).then(function (steps) {
+          var gg = loadGoals(), t = gg.find(function (x) { return x.id === goalId; });
+          if (!t) return;
+          t.milestones = (steps || []).map(function (s) { return { text: s, done: false }; });
+          saveGoals(gg); render();
+        });
+      });
+    });
+    // Milestone: belgilash (toggle)
+    list.querySelectorAll('[data-ms-toggle]').forEach(function (cb) {
+      cb.addEventListener('change', function (e) {
+        e.stopPropagation();
+        var goalId = parseInt(cb.dataset.msToggle, 10), mi = parseInt(cb.dataset.msI, 10);
+        var goals = loadGoals(), g = goals.find(function (x) { return x.id === goalId; });
+        if (!g || !g.milestones || !g.milestones[mi]) return;
+        g.milestones[mi].done = cb.checked; saveGoals(goals); render();
       });
     });
 
