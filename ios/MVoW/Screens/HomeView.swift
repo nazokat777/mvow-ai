@@ -2,6 +2,7 @@ import SwiftUI
 
 /// Daily home dashboard. Mirrors `home.html`.
 struct HomeView: View {
+    var onNavigate: (AppScreen) -> Void = { _ in }
     var body: some View {
         VoidBackdrop {
             VStack(spacing: 14) {
@@ -52,8 +53,9 @@ struct HomeView: View {
                 // Streak hero
                 StreakHeroCard()
 
-                // Next session card
-                NextSessionCard()
+                // Next session card — bosilsa fokusni boshlaydi
+                Button { onNavigate(.pomodoro) } label: { NextSessionCard() }
+                    .buttonStyle(.plain)
 
                 // Stats grid
                 HStack(spacing: 6) {
@@ -65,7 +67,7 @@ struct HomeView: View {
                 Spacer()
 
                 // Bottom nav
-                BottomNav()
+                BottomNav(onNavigate: onNavigate)
             }
             .padding(.horizontal, 24)
             .padding(.vertical, 22)
@@ -283,22 +285,26 @@ private struct StatMini: View {
 }
 
 private struct BottomNav: View {
+    var onNavigate: (AppScreen) -> Void = { _ in }
     var body: some View {
         HStack {
             NavItem(symbol: "house.fill", label: "UY", active: true)
             NavItem(symbol: "calendar", label: "KALENDAR")
-            // Center FAB
-            Image(systemName: "plus")
-                .font(.system(size: 20, weight: .bold))
-                .foregroundColor(MentorColors.surfaceVoid)
-                .frame(width: 42, height: 42)
-                .background(
-                    LinearGradient(colors: [MentorColors.goldFlash, MentorColors.gold, MentorColors.gold2],
-                                   startPoint: .top, endPoint: .bottom)
-                )
-                .clipShape(Circle())
-                .shadow(color: MentorColors.gold.opacity(0.4), radius: 8)
-                .offset(y: -22)
+            // Center FAB — fokusni boshlash
+            Button { onNavigate(.pomodoro) } label: {
+                Image(systemName: "plus")
+                    .font(.system(size: 20, weight: .bold))
+                    .foregroundColor(MentorColors.surfaceVoid)
+                    .frame(width: 42, height: 42)
+                    .background(
+                        LinearGradient(colors: [MentorColors.goldFlash, MentorColors.gold, MentorColors.gold2],
+                                       startPoint: .top, endPoint: .bottom)
+                    )
+                    .clipShape(Circle())
+                    .shadow(color: MentorColors.gold.opacity(0.4), radius: 8)
+            }
+            .buttonStyle(.plain)
+            .offset(y: -22)
 
             NavItem(symbol: "chart.line.uptrend.xyaxis", label: "YO'L")
             NavItem(symbol: "person.circle", label: "SEN")

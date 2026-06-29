@@ -14,21 +14,27 @@ struct MVoWApp: App {
 
 /// Root navigation. Real app would use a state machine to decide
 /// which screen to show: onboarding → home → session etc.
-struct ContentView: View {
-    @State private var screen: Screen = .welcome
+enum AppScreen { case welcome, home, pomodoro }
 
-    enum Screen { case welcome, home }
+struct ContentView: View {
+    @State private var screen: AppScreen = .welcome
 
     var body: some View {
-        switch screen {
-        case .welcome:
-            WelcomeView(onStart: {
-                withAnimation(.easeInOut(duration: 0.6)) { screen = .home }
-            })
-            .transition(.opacity)
-        case .home:
-            HomeView().transition(.opacity)
+        Group {
+            switch screen {
+            case .welcome:
+                WelcomeView(onStart: { go(.home) })
+            case .home:
+                HomeView(onNavigate: { go($0) })
+            case .pomodoro:
+                PomodoroView(onSessionDone: { go(.home) })
+            }
         }
+        .transition(.opacity)
+    }
+
+    private func go(_ s: AppScreen) {
+        withAnimation(.easeInOut(duration: 0.35)) { screen = s }
     }
 }
 

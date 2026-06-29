@@ -61,6 +61,17 @@ struct PomodoroView: View {
             }
             seconds -= 1
         }
+        .onAppear { scheduleAlarm() }
+    }
+
+    /// Joriy faza tugashida budilnik (mahalliy bildirishnoma) qo'yadi — ilova
+    /// yopiq turganda ham ovoz beradi.
+    private func scheduleAlarm() {
+        NotificationManager.shared.cancel(ids: ["pomo"])
+        guard mode != .complete, seconds > 0 else { return }
+        let title = mode == .focus ? "Fokus tugadi ✅" : "Dam tugadi"
+        let body = mode == .focus ? "Ajoyib ish! Endi qisqa dam oling." : "Tayyormisiz? Keyingi siklni boshlaymiz."
+        NotificationManager.shared.scheduleTimerEnd(id: "pomo", after: Double(seconds), title: title, body: body)
     }
 
     private var progress: Double {
@@ -105,10 +116,17 @@ struct PomodoroView: View {
             mode = .focus
             seconds = mode.durationSec
         }
+        scheduleAlarm()
     }
 
     private var header: some View {
         HStack {
+            Button { onSessionDone() } label: {
+                Image(systemName: "chevron.left")
+                    .font(.system(size: 16, weight: .semibold))
+                    .foregroundColor(MentorColors.gold)
+            }
+            .buttonStyle(.plain)
             MentorPill("⊙  POMODORO · 25/5", color: MentorColors.gold)
             Spacer()
             Text("SIKL \(cycle)/4")
