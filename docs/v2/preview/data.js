@@ -186,8 +186,8 @@
             start.setHours(0, 0, 0, 0);
             const daysSince = Math.floor((today - start) / 86400000);
             const totalDays = g.days || 30;
-            if (daysSince >= 0 && daysSince < totalDays) {
-              // Bu maqsad bugun ham davom etmoqda — sessions bo'yicha tarqatish
+            if (daysSince >= 0 && daysSince < totalDays && DATA.goalRunsOnDay(g, DATA.today.iso)) {
+              // Bu maqsad bugun ham davom etmoqda — sessions bo'yicha tarqatish (faqat tanlangan kunlarda)
               const sessions = (Array.isArray(g.sessions) && g.sessions.length)
                 ? g.sessions
                 : [{ sid: 's1', time: g.time || '07:00', dur: g.dur || '60 daq' }];
@@ -263,7 +263,9 @@
           for (let i = 0; i < totalDays; i++) {
             const d = new Date(start);
             d.setDate(start.getDate() + i);
-            const key = 'd' + DATA.localDateIso(d);
+            const dIso = DATA.localDateIso(d);
+            if (!DATA.goalRunsOnDay(g, dIso)) continue; // faqat tanlangan kunlar
+            const key = 'd' + dIso;
             if (!Array.isArray(w[key])) w[key] = [];
             for (const s of sessions) {
               // Dublikat yo'q — sessionSid bo'yicha (legacy uchun goalId bilan ham)

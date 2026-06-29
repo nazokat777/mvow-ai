@@ -42,7 +42,7 @@ final class NotificationManager: NSObject, ObservableObject, UNUserNotificationC
         c.body = body
         c.sound = .default
         c.categoryIdentifier = "TIMER_DONE"
-        c.interruptionLevel = .timeSensitive   // Focus rejimlarini yoradi (iOS 15+), entitlement shart emas
+        c.interruptionLevel = .timeSensitive   // iOS 15+. Focus/DND'ni to'liq yorish uchun "Time Sensitive" capability kerak; usiz oddiy (ovozli) bildirishnoma bo'lib keladi.
         return c
     }
 

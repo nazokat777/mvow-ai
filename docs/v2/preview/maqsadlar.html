@@ -706,13 +706,15 @@
     ov.style.cssText = 'position:fixed;inset:0;z-index:100002;background:rgba(0,0,0,.55);display:flex;align-items:center;justify-content:center;padding:24px;';
     const card = document.createElement('div');
     card.style.cssText = 'background:var(--card,#16161a);color:var(--text,#fff);border-radius:18px;max-width:340px;width:100%;padding:22px;box-shadow:0 20px 60px rgba(0,0,0,.5);font-family:Inter,sans-serif;';
+    var cMsg = _t('maqsadlar.conflict_msg', "Bu oraliq band: {goal} ({time}). Tizim bu vaqtga boshqa vazifani to'sadi — faqat shart qo'ysangiz qo'yiladi.")
+      .replace('{goal}', '<b>' + escapeHtml(conf.goal) + '</b>').replace('{time}', escapeHtml(conf.time));
     card.innerHTML = '<div style="font-size:30px;text-align:center;margin-bottom:6px;">⚠️</div>'
-      + '<div style="font-weight:700;font-size:17px;text-align:center;margin-bottom:8px;">Vaqt to\'qnashuvi</div>'
-      + '<div style="font-size:14px;color:var(--text-dim,#999);text-align:center;line-height:1.5;margin-bottom:18px;">Bu oraliq band: <b>' + escapeHtml(conf.goal) + '</b> (' + escapeHtml(conf.time) + '). Tizim bu vaqtga boshqa vazifani <b>to\'sadi</b> — faqat <b>shart qo\'ysangiz</b> qo\'yiladi.</div>';
+      + '<div style="font-weight:700;font-size:17px;text-align:center;margin-bottom:8px;">' + escapeHtml(_t('maqsadlar.conflict_title', "Vaqt to'qnashuvi")) + '</div>'
+      + '<div style="font-size:14px;color:var(--text-dim,#999);text-align:center;line-height:1.5;margin-bottom:18px;">' + cMsg + '</div>';
     const row = document.createElement('div'); row.style.cssText = 'display:flex;gap:10px;';
-    const no = document.createElement('button'); no.type = 'button'; no.textContent = 'Bekor';
+    const no = document.createElement('button'); no.type = 'button'; no.textContent = _t('bugun.cancel', 'Bekor');
     no.style.cssText = 'flex:1;padding:12px;border-radius:12px;border:none;background:linear-gradient(135deg,#F4845F,#d9663c);color:#fff;font-weight:800;cursor:pointer;font-family:Inter,sans-serif;';
-    const yes = document.createElement('button'); yes.type = 'button'; yes.textContent = 'Shart qo\'yaman';
+    const yes = document.createElement('button'); yes.type = 'button'; yes.textContent = _t('bugun.insist', 'Shart qo\'yaman');
     yes.style.cssText = 'flex:1;padding:12px;border-radius:12px;border:1px solid rgba(125,125,125,.4);background:transparent;color:var(--text,#fff);font-weight:700;cursor:pointer;font-family:Inter,sans-serif;';
     no.onclick = function () { if (ov.parentNode) document.body.removeChild(ov); };
     yes.onclick = function () { if (ov.parentNode) document.body.removeChild(ov); onYes(); };
@@ -779,8 +781,9 @@
       const timePct = Math.min(100, Math.round((passed / info.days) * 100));
       // Bajarilganlik % (history bo'yicha — shu maqsad nomi)
       const expectedSoFar = Math.min(passed + 1, info.days);
+      const goalEndIso = isoAddDays(g.startDate, info.days);
       const completedDays = history.filter(h =>
-        h.name === g.text && h.dateIso >= g.startDate
+        h.name === g.text && h.dateIso >= g.startDate && h.dateIso < goalEndIso
       ).length;
       const donePct = expectedSoFar > 0
         ? Math.min(100, Math.round((completedDays / expectedSoFar) * 100))
@@ -1036,7 +1039,7 @@
               const m = String(s.time || '').match(/^(\d{1,2}):(\d{2})$/);
               if (!m) return -1;
               const start = (+m[1]) * 60 + (+m[2]);
-              const dur = window.MVOW_DATA ? MVOW_DATA.parseDurMins(s.dur) : 60;
+              const dur = parseDurMins(s.dur);
               return start + dur;
             }).filter(e => e >= 0);
             if (ends.length) {
@@ -1098,7 +1101,8 @@
         d.setDate(start.getDate() + i);
         const key = 'd' + (window.MVOW_DATA ? MVOW_DATA.localDateIso(d) : d.toISOString().slice(0, 10));
         if (Array.isArray(w[key])) {
-          w[key] = w[key].filter(s => !(s.name === goal.text && s.time === goal.time));
+          w[key] = w[key].filter(s => s.goalId !== goal.id);
+          if (w[key].length === 0) delete w[key];
         }
       }
       MVOW_DATA.setWeekPlan(w);

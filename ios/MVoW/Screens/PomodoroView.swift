@@ -34,6 +34,7 @@ struct PomodoroView: View {
     @State private var mode: Mode = .focus
     @State private var seconds: Int = 25 * 60
     @State private var cycle: Int = 1
+    @State private var isRunning = true
 
     var onSessionDone: () -> Void = {}
 
@@ -48,18 +49,23 @@ struct PomodoroView: View {
                 CircularTimer(progress: progress, digits: digits, label: mode.label, accent: mode.accent)
                 Spacer()
                 mentorCard
-                MentorPrimaryButton(buttonLabel) { advanceMode() }
+                MentorPrimaryButton(buttonLabel) {
+                    if mode == .focus {
+                        isRunning.toggle()
+                        if isRunning { scheduleAlarm() } else { NotificationManager.shared.cancel(ids: ["pomo"]) }
+                    } else {
+                        advanceMode()
+                    }
+                }
             }
             .padding(.horizontal, 20)
             .padding(.top, 32)
             .padding(.bottom, 24)
         }
         .onReceive(Timer.publish(every: 1, on: .main, in: .common).autoconnect()) { _ in
-            guard mode != .complete, seconds > 0 else {
-                if seconds == 0 && mode != .complete { advanceMode() }
-                return
-            }
-            seconds -= 1
+            guard isRunning, mode != .complete else { return }
+            if seconds > 0 { seconds -= 1 }
+            if seconds == 0 { advanceMode() }
         }
         .onAppear { scheduleAlarm() }
     }
@@ -84,7 +90,7 @@ struct PomodoroView: View {
     }
     private var buttonLabel: String {
         switch mode {
-        case .focus: return "Pauza"
+        case .focus: return isRunning ? "Pauza" : "Davom"
         case .shortBreak: return "Keyingi sikl"
         case .longBreak: return "Yangi sessiya"
         case .complete: return "Yakunlandi"
@@ -116,6 +122,7 @@ struct PomodoroView: View {
             mode = .focus
             seconds = mode.durationSec
         }
+        isRunning = true
         scheduleAlarm()
     }
 

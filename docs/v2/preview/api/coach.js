@@ -41,7 +41,7 @@ module.exports = async (req, res) => {
         + "Har bosqich qisqa (3-6 so'z), " + langName + " tilida. "
         + "Faqat bosqichlarni yoz — har birini yangi qatordan, raqamsiz va izohsiz.";
       const t = await gemini(prompt);
-      const steps = (t || '').split('\n').map(function (s) { return s.replace(/^[\s\-•*\d.)]+/, '').trim(); }).filter(Boolean).slice(0, 7);
+      const steps = (t || '').split('\n').map(function (s) { return s.replace(/^\s*(?:[-*•]|\d+[.)])\s+/, '').trim(); }).filter(Boolean).slice(0, 7);
       res.status(200).json({ steps: steps });
     } catch (e) { res.status(200).json({ steps: [] }); }
     return;

@@ -57,3 +57,32 @@ test('getTodayPlan: weekdays yo\'q (default) → maqsad har kuni chiqadi', () =>
   const plan = DATA.getTodayPlan();
   assert.strictEqual(plan.filter(t => t.goalId === 1).length, 1);
 });
+
+// AUDIT REGRESSION: getTodayPlan off-weekday maqsadни cache (weekPlan)'ga yozmasin
+test('getTodayPlan: off-weekday maqsad cache\'ni ifloslantirmaydi (#5)', () => {
+  const iso = todayIso();
+  const todayDow = new Date(iso + 'T00:00:00').getDay();
+  const wd = [0, 1, 2, 3, 4, 5, 6].filter(d => d !== todayDow);
+  const goal = { id: 1, text: 'Sport', startDate: iso, days: 30, weekdays: wd, sessions: [{ sid: 's1', time: '09:00', dur: '1 soat' }] };
+  const { DATA, store } = loadData({ 'mvow.goals': [goal], 'mvow.localDateMigration_v2': 'done' });
+  DATA.getTodayPlan();
+  const w = JSON.parse(store.get('mvow.weekPlan') || '{}');
+  const todayTasks = w['d' + iso] || [];
+  assert.strictEqual(todayTasks.filter(t => t.goalId === 1).length, 0);
+});
+
+// AUDIT REGRESSION: migratsiya off-weekday kunlarga task yozmasin
+test('migrateGoalsToLocalDates: faqat tanlangan kunlarga yozadi (#6)', () => {
+  const goal = { id: 1, text: 'Sport', startDate: '2026-06-01', days: 30, weekdays: [1, 3, 5], sessions: [{ sid: 's1', time: '09:00', dur: '1 soat' }] };
+  const { DATA, store } = loadData({ 'mvow.goals': [goal] });
+  DATA.migrateGoalsToLocalDates();
+  const w = JSON.parse(store.get('mvow.weekPlan') || '{}');
+  let bad = 0;
+  for (const key of Object.keys(w)) {
+    if ((w[key] || []).some(t => t.goalId === 1)) {
+      const dow = new Date(key.slice(1) + 'T00:00:00').getDay();
+      if ([1, 3, 5].indexOf(dow) === -1) bad++;
+    }
+  }
+  assert.strictEqual(bad, 0);
+});
