@@ -38,7 +38,7 @@ jobs:
         working-directory: ios
         run: xcodebuild -list -project MVoW.xcodeproj || true
 
-      - name: Build (simulator, imzosiz) — kompilyatsiya tekshiruvi
+      - name: Build (device, imzosiz — AltStore uchun)
         working-directory: ios
         run: |
           set -o pipefail
@@ -46,16 +46,36 @@ jobs:
           xcodebuild build \
             -project MVoW.xcodeproj \
             -scheme MVoW \
-            -destination 'generic/platform=iOS Simulator' \
+            -sdk iphoneos \
+            -destination 'generic/platform=iOS' \
             -derivedDataPath build \
-            CODE_SIGNING_ALLOWED=NO \
+            CODE_SIGNING_ALLOWED=NO CODE_SIGNING_REQUIRED=NO CODE_SIGN_IDENTITY="" \
             2>&1 | tee -a "$GITHUB_WORKSPACE/ios-build-log.txt"
 
-      - name: Publish build log (har doim — debugging)
+      - name: Package unsigned IPA (Payload/MVoW.app -> .ipa)
+        if: success()
+        working-directory: ios
+        run: |
+          set -o pipefail
+          APP=$(find build/Build/Products -maxdepth 2 -name 'MVoW.app' -type d | head -1)
+          echo "Topilgan .app: $APP" | tee -a "$GITHUB_WORKSPACE/ios-build-log.txt"
+          rm -rf Payload && mkdir Payload
+          cp -R "$APP" Payload/
+          zip -qry "$GITHUB_WORKSPACE/MVoW-unsigned.ipa" Payload
+          ls -la "$GITHUB_WORKSPACE/MVoW-unsigned.ipa" | tee -a "$GITHUB_WORKSPACE/ios-build-log.txt"
+
+      - name: Publish IPA + log (har doim)
         if: always()
         uses: softprops/action-gh-release@v2
         with:
-          tag_name: ios-ci-log
-          name: iOS CI build log (eng yangi)
-          body: "iOS bulut build jurnali. Xatolarni shu yerdan o'qiymiz."
-          files: ios-build-log.txt
+          tag_name: ios-ipa
+          name: Daywarden iOS — imzosiz IPA (AltStore uchun)
+          body: |
+            iPhone'ga o'rnatish (Mac KERAK EMAS):
+            1) Windows kompyuterga AltServer: https://altstore.io
+            2) iPhone'ni USB bilan ulang -> AltServer -> "Install AltStore"
+            3) MVoW-unsigned.ipa'ni yuklab oling -> iPhone'da AltStore -> "+" -> tanlang
+            (Bepul Apple ID bilan imzolanadi; har 7 kunda yangilash kerak.)
+          files: |
+            MVoW-unsigned.ipa
+            ios-build-log.txt
