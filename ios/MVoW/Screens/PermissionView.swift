@@ -63,7 +63,7 @@ struct PermissionView: View {
                         granted: granted.contains(item.id),
                         onGrant: {
                             withAnimation(.easeInOut(duration: 0.2)) {
-                                granted.insert(item.id)
+                                _ = granted.insert(item.id)
                             }
                         }
                     )
