@@ -9,11 +9,17 @@ module.exports = async (req, res) => {
   res.setHeader('Access-Control-Allow-Origin', '*');
   res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
   if (req.method === 'OPTIONS') { res.status(200).end(); return; }
+
+  // Kalit — bir nechta keng tarqalgan nom qabul qilinadi (nom xatosiga chidamli)
+  const key = process.env.GEMINI_KEY || process.env.GEMINI_API_KEY
+    || process.env.GOOGLE_API_KEY || process.env.GOOGLE_GENAI_API_KEY;
+
+  // Diagnostika: GET → kalit o'rnatilganmi? (kalitning O'ZI hech qachon qaytmaydi)
+  if (req.method === 'GET') { res.status(200).json({ keySet: !!key }); return; }
   if (req.method !== 'POST') { res.status(200).json({ message: '' }); return; }
 
   let c = req.body || {};
   if (typeof c === 'string') { try { c = JSON.parse(c); } catch (e) { c = {}; } }
-  const key = process.env.GEMINI_KEY;
 
   async function gemini(prompt) {
     const gr = await fetch(
