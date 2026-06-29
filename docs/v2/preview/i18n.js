@@ -22,6 +22,33 @@
   // ──────────────────────────────────────────────────────────────
   const DICT = {
     uz: {
+      multitimer: {
+        page_title: "{brand} — Bir vaqtda fokus", title: "Bir vaqtda fokus",
+        sub: "2-3 vazifani birga bajaring — har biriga alohida taymer",
+        today: "Bugungi vazifalar", add_lbl: "Yangi taymer qo'shish", name_ph: "Vazifa nomi",
+        add_btn: "Qo'shish", done: "Bajardim", finished: "Tugadi! 🎉",
+        empty: "Hali taymer yo'q. Pastdan bugungi vazifani tanlang yoki yangi qo'shing.",
+        started: "Taymer boshlandi", gate_title: "Bir vaqtda 2 ish?",
+        gate_msg: "Daywarden bitta ishga to'liq fokusni tavsiya qiladi. Tizim bir vaqtda 2 ishni to'sadi — faqat o'zingiz shart qo'ysangiz qo'shiladi.",
+        cancel: "Bekor", insist: "Shart qo'yaman", daq: "daq"
+      },
+      fokusizi: {
+        page_title: "{brand} — Fokus izi", title: "Fokus izi", sub: "Har fokus sessiyasi — bitta nur", nur: "nur",
+        note: "Har bajargan fokus sessiyangiz bu osmonga bitta nur qo'shadi. Intizoming nuri o'syapti — to'xtamang.",
+        note_empty: "Hali nur yo'q. Birinchi fokus sessiyangizni boshlang — har biri bu osmonga bitta nur qo'shadi.",
+        share: "↗ Natijani ulashish", dl_done: "Rasm yuklandi — Telegram/Instagram'ga joylang", copied: "Matn nusxalandi",
+        card_sub: "Mening intizom izim", soat: "soat", streak_unit: "kun ketma-ket",
+        share_text: "Daywarden'da intizom izim: {n} nur, {h} soat fokus! Sen ham qo'shil 👉 daywarden.vercel.app"
+      },
+      sovrinlar: {
+        page_title: "{brand} — Sovrinlar", title: "Sovrinlar", sub: "Yig'ilgan medallar — natijangiz bilan ochiladi", medal: "medal",
+        foot: "Fokus qiling, maqsadlarni bajaring, do'st qo'shing — medallar o'zi ochiladi. 🏅",
+        m1_n: "Birinchi qadam", m1_d: "1 sessiya", m2_n: "10 nur", m2_d: "10 sessiya",
+        m3_n: "50 nur", m3_d: "50 sessiya", m4_n: "100 nur", m4_d: "100 sessiya",
+        m5_n: "Marafon", m5_d: "10 soat fokus", m6_n: "Maqsadli", m6_d: "1 maqsad",
+        m7_n: "3 kun", m7_d: "3 kun ketma-ket", m8_n: "Temir iroda", m8_d: "7 kun ketma-ket",
+        m9_n: "Jamoa", m9_d: "1 do'st qo'shildi"
+      },
       dostlar: {
         page_title: "{brand} — Do'stlar", title: "Do'stlar", sub: "Birga intizomli bo'ling",
         my_code: "Mening kodim", copy: "Nusxa", share: "Ulashish", add: "Qo'shish",
@@ -780,6 +807,33 @@
     },
 
     ru: {
+      multitimer: {
+        page_title: "{brand} — Одновременный фокус", title: "Одновременный фокус",
+        sub: "Делайте 2-3 задачи вместе — отдельный таймер для каждой",
+        today: "Сегодняшние задачи", add_lbl: "Добавить таймер", name_ph: "Название задачи",
+        add_btn: "Добавить", done: "Готово", finished: "Завершено! 🎉",
+        empty: "Пока нет таймеров. Выберите задачу ниже или добавьте новую.",
+        started: "Таймер запущен", gate_title: "Две задачи сразу?",
+        gate_msg: "Daywarden рекомендует полный фокус на одной задаче. Система блокирует две задачи сразу — добавится, только если вы настоите.",
+        cancel: "Отмена", insist: "Настаиваю", daq: "мин"
+      },
+      fokusizi: {
+        page_title: "{brand} — След фокуса", title: "След фокуса", sub: "Каждая сессия фокуса — один луч", nur: "лучей",
+        note: "Каждая завершённая сессия фокуса добавляет на это небо один луч. Свет вашей дисциплины растёт — не останавливайтесь.",
+        note_empty: "Пока лучей нет. Начните первую сессию фокуса — каждая добавит на небо один луч.",
+        share: "↗ Поделиться результатом", dl_done: "Картинка скачана — отправьте в Telegram/Instagram", copied: "Текст скопирован",
+        card_sub: "Мой след дисциплины", soat: "ч", streak_unit: "дней подряд",
+        share_text: "Мой след дисциплины в Daywarden: {n} лучей, {h} ч фокуса! Присоединяйся 👉 daywarden.vercel.app"
+      },
+      sovrinlar: {
+        page_title: "{brand} — Награды", title: "Награды", sub: "Собранные медали — открываются по результатам", medal: "медалей",
+        foot: "Фокусируйтесь, выполняйте цели, добавляйте друзей — медали откроются сами. 🏅",
+        m1_n: "Первый шаг", m1_d: "1 сессия", m2_n: "10 лучей", m2_d: "10 сессий",
+        m3_n: "50 лучей", m3_d: "50 сессий", m4_n: "100 лучей", m4_d: "100 сессий",
+        m5_n: "Марафон", m5_d: "10 ч фокуса", m6_n: "Целеустремлённый", m6_d: "1 цель",
+        m7_n: "3 дня", m7_d: "3 дня подряд", m8_n: "Железная воля", m8_d: "7 дней подряд",
+        m9_n: "Команда", m9_d: "1 друг добавлен"
+      },
       dostlar: {
         page_title: "{brand} — Друзья", title: "Друзья", sub: "Будьте дисциплинированы вместе",
         my_code: "Мой код", copy: "Копировать", share: "Поделиться", add: "Добавить",
@@ -1525,6 +1579,33 @@
     },
 
     en: {
+      multitimer: {
+        page_title: "{brand} — Multi-focus", title: "Multi-focus",
+        sub: "Do 2-3 tasks together — a separate timer for each",
+        today: "Today's tasks", add_lbl: "Add a timer", name_ph: "Task name",
+        add_btn: "Add", done: "Done", finished: "Finished! 🎉",
+        empty: "No timers yet. Pick a task below or add a new one.",
+        started: "Timer started", gate_title: "Two tasks at once?",
+        gate_msg: "Daywarden recommends full focus on one task. The system blocks two at once — it's added only if you insist.",
+        cancel: "Cancel", insist: "I insist", daq: "min"
+      },
+      fokusizi: {
+        page_title: "{brand} — Focus trace", title: "Focus trace", sub: "Each focus session — one ray", nur: "rays",
+        note: "Every focus session you finish adds one ray to this sky. The light of your discipline is growing — don't stop.",
+        note_empty: "No rays yet. Start your first focus session — each one adds a ray to this sky.",
+        share: "↗ Share result", dl_done: "Image downloaded — post it to Telegram/Instagram", copied: "Text copied",
+        card_sub: "My discipline trace", soat: "h", streak_unit: "day streak",
+        share_text: "My discipline trace on Daywarden: {n} rays, {h}h of focus! Join me 👉 daywarden.vercel.app"
+      },
+      sovrinlar: {
+        page_title: "{brand} — Rewards", title: "Rewards", sub: "Collected medals — unlocked by your results", medal: "medals",
+        foot: "Focus, complete goals, add friends — medals unlock on their own. 🏅",
+        m1_n: "First step", m1_d: "1 session", m2_n: "10 rays", m2_d: "10 sessions",
+        m3_n: "50 rays", m3_d: "50 sessions", m4_n: "100 rays", m4_d: "100 sessions",
+        m5_n: "Marathon", m5_d: "10h of focus", m6_n: "Goal-driven", m6_d: "1 goal",
+        m7_n: "3 days", m7_d: "3-day streak", m8_n: "Iron will", m8_d: "7-day streak",
+        m9_n: "Team", m9_d: "1 friend added"
+      },
       dostlar: {
         page_title: "{brand} — Friends", title: "Friends", sub: "Stay disciplined together",
         my_code: "My code", copy: "Copy", share: "Share", add: "Add",

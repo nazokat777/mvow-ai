@@ -32,14 +32,14 @@
 <body>
 
 <div class="wrap">
-  <h1 class="title">Fokus izi</h1>
-  <p class="sub">Har fokus sessiyasi — bitta nur</p>
+  <h1 class="title" data-i18n="fokusizi.title">Fokus izi</h1>
+  <p class="sub" data-i18n="fokusizi.sub">Har fokus sessiyasi — bitta nur</p>
 
   <div class="canvas-box"><canvas id="trace"></canvas></div>
 
   <div class="count" id="count">0 <small>nur</small></div>
-  <p class="note" id="note">Har bajargan fokus sessiyangiz bu osmonga bitta nur qo'shadi. Intizoming nuri o'syapti — to'xtamang.</p>
-  <button class="share-btn" id="shareBtn">↗ Natijani ulashish</button>
+  <p class="note" id="note" data-i18n="fokusizi.note">Har bajargan fokus sessiyangiz bu osmonga bitta nur qo'shadi. Intizoming nuri o'syapti — to'xtamang.</p>
+  <button class="share-btn" id="shareBtn" data-i18n="fokusizi.share">↗ Natijani ulashish</button>
 </div>
 
 <div class="toast" id="toast"></div>
@@ -51,6 +51,8 @@
 <script>
   (function () {
     var COLORS = [[244,132,95],[107,191,122],[232,130,180],[110,181,255]];
+    function T(k, fb){ return (window.I18N && I18N.t) ? I18N.t(k, fb) : fb; }
+    function tw(k, vars, fb){ var s = T(k, fb); for (var p in vars) s = s.split('{'+p+'}').join(vars[p]); return s; }
     function isoOf(d){ return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0'); }
     function stats(){
       var hist = [];
@@ -97,16 +99,16 @@
       drawGalaxy(ctx, SZ / 2, SZ * 0.45, SZ * 0.33, s.N, 4.5);
       ctx.textAlign = 'center';
       ctx.fillStyle = '#F4845F'; ctx.font = '700 66px Anton, sans-serif'; ctx.fillText('DAYWARDEN', SZ / 2, 112);
-      ctx.fillStyle = 'rgba(255,255,255,.75)'; ctx.font = '600 30px Inter, sans-serif'; ctx.fillText('Mening intizom izim', SZ / 2, 156);
-      ctx.fillStyle = '#fff'; ctx.font = '800 96px Anton, sans-serif'; ctx.fillText(s.N + ' nur', SZ / 2, SZ * 0.85);
+      ctx.fillStyle = 'rgba(255,255,255,.75)'; ctx.font = '600 30px Inter, sans-serif'; ctx.fillText(T('fokusizi.card_sub', 'Mening intizom izim'), SZ / 2, 156);
+      ctx.fillStyle = '#fff'; ctx.font = '800 96px Anton, sans-serif'; ctx.fillText(s.N + ' ' + T('fokusizi.nur', 'nur'), SZ / 2, SZ * 0.85);
       ctx.fillStyle = 'rgba(255,255,255,.88)'; ctx.font = '600 38px Inter, sans-serif';
-      ctx.fillText(s.focusH + ' soat fokus   ·   ' + s.streak + ' kun ketma-ket', SZ / 2, SZ * 0.85 + 60);
+      ctx.fillText(s.focusH + ' ' + T('fokusizi.soat', 'soat') + '   ·   ' + s.streak + ' ' + T('fokusizi.streak_unit', 'kun ketma-ket'), SZ / 2, SZ * 0.85 + 60);
       ctx.fillStyle = 'rgba(255,255,255,.5)'; ctx.font = '500 30px Inter, sans-serif'; ctx.fillText('daywarden.vercel.app', SZ / 2, SZ - 48);
       return c;
     }
     function doShare(){
       var s = stats(), c = shareCard(s);
-      var txt = "Daywarden'da intizom izim: " + s.N + " nur, " + s.focusH + " soat fokus! Sen ham qo'shil 👉 daywarden.vercel.app";
+      var txt = tw('fokusizi.share_text', { n: s.N, h: s.focusH }, "Daywarden'da intizom izim: " + s.N + " nur, " + s.focusH + " soat fokus! Sen ham qo'shil 👉 daywarden.vercel.app");
       if (c.toBlob) {
         c.toBlob(function (blob) {
           var file = new File([blob], 'daywarden-fokus.png', { type: 'image/png' });
@@ -124,8 +126,9 @@
     }
     function init(){
       var s = stats(); drawPage(s.N);
-      document.getElementById('count').innerHTML = s.N + ' <small>nur</small>';
-      if (s.N <= 0) document.getElementById('note').textContent = "Hali nur yo'q. Birinchi fokus sessiyangizni boshlang — har biri bu osmonga bitta nur qo'shadi.";
+      try { document.title = T('fokusizi.page_title', 'Daywarden — Fokus izi'); } catch(e){}
+      document.getElementById('count').innerHTML = s.N + ' <small>' + T('fokusizi.nur', 'nur') + '</small>';
+      if (s.N <= 0) document.getElementById('note').textContent = T('fokusizi.note_empty', "Hali nur yo'q. Birinchi fokus sessiyangizni boshlang — har biri bu osmonga bitta nur qo'shadi.");
       document.getElementById('shareBtn').onclick = doShare;
       window.addEventListener('resize', function () { drawPage(stats().N); });
     }
