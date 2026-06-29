@@ -132,6 +132,15 @@
   DATA.setWeekPlan = function (w) {
     localStorage.setItem('mvow.weekPlan', JSON.stringify(w));
   };
+  // Tanlangan kunlar — maqsad shu kunda ishlaydimi? (weekdays bo'sh yoki 7 = har kuni)
+  DATA.goalRunsOnDay = function (goal, iso) {
+    const wd = goal && goal.weekdays;
+    if (!Array.isArray(wd) || wd.length === 0 || wd.length >= 7) return true;
+    let dow;
+    try { dow = new Date(iso + 'T00:00:00').getDay(); } catch (e) { return true; }
+    if (isNaN(dow)) return true; // yaroqsiz sana — maqsadni yashirmaymiz
+    return wd.indexOf(dow) !== -1;
+  };
   DATA.getTodayPlan = function () {
     const w = DATA.getWeekPlan();
     let tasks = Array.isArray(w[DATA.today.key]) ? [...w[DATA.today.key]] : [];
@@ -204,6 +213,23 @@
         // sukut
       }
     }
+
+    // Tanlangan kunlar filtri — manba qaysi bo'lsa ham (cache/fallback), faqat
+    // shu hafta-kuniga to'g'ri keladigan maqsad vazifalari qoladi.
+    try {
+      const _goals = (typeof DATA.loadGoals === 'function')
+        ? DATA.loadGoals()
+        : JSON.parse(localStorage.getItem('mvow.goals') || '[]');
+      if (Array.isArray(_goals) && _goals.length) {
+        const _gmap = {};
+        for (const _g of _goals) if (_g && _g.id != null) _gmap[_g.id] = _g;
+        tasks = tasks.filter(t => {
+          if (!t || t.goalId == null) return true;
+          const g = _gmap[t.goalId];
+          return g ? DATA.goalRunsOnDay(g, DATA.today.iso) : true;
+        });
+      }
+    } catch (e) { /* sukut — filtrsiz qaytaramiz */ }
 
     return tasks;
   };
@@ -510,17 +536,19 @@
     safety = 0;
     while (cursor < endIso && safety < 5000) {
       const key = 'd' + cursor;
-      if (!Array.isArray(w[key])) w[key] = [];
-      for (const s of (goal.sessions || [])) {
-        const exists = w[key].some(t => t.goalId === goal.id && t.sessionSid === s.sid);
-        if (!exists) {
-          w[key].push({
-            time: s.time || '07:00',
-            name: goal.text || 'Reja',
-            dur:  s.dur  || '60 daq',
-            goalId: goal.id,
-            sessionSid: s.sid
-          });
+      if (DATA.goalRunsOnDay(goal, cursor)) {
+        if (!Array.isArray(w[key])) w[key] = [];
+        for (const s of (goal.sessions || [])) {
+          const exists = w[key].some(t => t.goalId === goal.id && t.sessionSid === s.sid);
+          if (!exists) {
+            w[key].push({
+              time: s.time || '07:00',
+              name: goal.text || 'Reja',
+              dur:  s.dur  || '60 daq',
+              goalId: goal.id,
+              sessionSid: s.sid
+            });
+          }
         }
       }
       cursor = isoAddDaysLocal(cursor, 1);

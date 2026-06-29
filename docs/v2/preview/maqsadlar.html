@@ -356,6 +356,9 @@
   .ms-row { display: flex; align-items: center; gap: 10px; padding: 7px 2px; font-size: 15px; color: var(--text); cursor: pointer; }
   .ms-row input { width: 18px; height: 18px; accent-color: var(--accent); flex-shrink: 0; }
   .ms-row .ms-done { text-decoration: line-through; color: var(--text-dim); }
+  .day-row { display: flex; gap: 6px; flex-wrap: wrap; margin: 2px 2px 6px; }
+  .day-chip { flex: 1; min-width: 34px; padding: 7px 0; border-radius: 9px; border: 1px solid var(--border-default, rgba(0,0,0,.12)); background: transparent; color: var(--text-dim); font-size: 13px; font-weight: 600; cursor: pointer; font-family: inherit; transition: background .12s; }
+  .day-chip.on { background: var(--accent); color: #fff; border-color: var(--accent); }
 
   /* Add button */
   .add-goal {
@@ -716,6 +719,23 @@
     row.appendChild(no); row.appendChild(yes); card.appendChild(row); ov.appendChild(card); document.body.appendChild(ov);
   }
 
+  var DAY_ABBR = {
+    uz: ['Ya', 'Du', 'Se', 'Ch', 'Pa', 'Ju', 'Sh'],
+    ru: ['Вс', 'Пн', 'Вт', 'Ср', 'Чт', 'Пт', 'Сб'],
+    en: ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat']
+  };
+  function daysHtml(g) {
+    var lang = (function () { try { return localStorage.getItem('mvow.lang') || 'uz'; } catch (e) { return 'uz'; } })();
+    var abbr = DAY_ABBR[lang] || DAY_ABBR.uz;
+    var sel = Array.isArray(g.weekdays) ? g.weekdays : [];
+    var allDay = sel.length === 0 || sel.length >= 7;
+    var chips = [1, 2, 3, 4, 5, 6, 0].map(function (dow) {
+      var on = allDay || sel.indexOf(dow) !== -1;
+      return '<button type="button" class="day-chip' + (on ? ' on' : '') + '" data-day-toggle="' + g.id + '" data-dow="' + dow + '">' + abbr[dow] + '</button>';
+    }).join('');
+    var tag = allDay ? ' <span style="color:var(--accent)">' + escapeHtml(_t('maqsadlar.all_days', 'Har kuni')) + '</span>' : '';
+    return '<div class="gs-label">' + escapeHtml(_t('maqsadlar.days_title', 'Kunlar')) + tag + '</div><div class="day-row">' + chips + '</div>';
+  }
   function msHtml(g) {
     var ms = Array.isArray(g.milestones) ? g.milestones : [];
     if (!ms.length) {
@@ -849,6 +869,7 @@
                 </div>
               </form>
             </div>
+            <div class="goal-days" data-goal-days="${g.id}">${daysHtml(g)}</div>
             <div class="goal-milestones" data-goal-ms="${g.id}">${msHtml(g)}</div>
           </div>
         </div>
@@ -892,6 +913,24 @@
         var goals = loadGoals(), g = goals.find(function (x) { return x.id === goalId; });
         if (!g || !g.milestones || !g.milestones[mi]) return;
         g.milestones[mi].done = cb.checked; saveGoals(goals); render();
+      });
+    });
+
+    // Kunlar: tanlangan hafta-kunlari (toggle)
+    list.querySelectorAll('[data-day-toggle]').forEach(function (chip) {
+      chip.addEventListener('click', function (e) {
+        e.stopPropagation();
+        var goalId = parseInt(chip.dataset.dayToggle, 10), dow = parseInt(chip.dataset.dow, 10);
+        var goals = loadGoals(), g = goals.find(function (x) { return x.id === goalId; });
+        if (!g) return;
+        var sel = (Array.isArray(g.weekdays) && g.weekdays.length > 0 && g.weekdays.length < 7) ? g.weekdays.slice() : [0, 1, 2, 3, 4, 5, 6];
+        var idx = sel.indexOf(dow);
+        if (idx === -1) sel.push(dow); else sel.splice(idx, 1);
+        if (sel.length === 0) sel = [dow];
+        g.weekdays = (sel.length >= 7) ? [] : sel.sort(function (a, b) { return a - b; });
+        saveGoals(goals);
+        if (window.MVOW_DATA && MVOW_DATA._retileGoal) { try { MVOW_DATA._retileGoal(g); } catch (e) {} }
+        render();
       });
     });
 
