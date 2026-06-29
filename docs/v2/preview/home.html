@@ -298,6 +298,9 @@
 
     <h1 class="greet"><span id="greetWord">Assalomu alaykum</span>, <span class="em" id="userName" data-i18n="home.addressee">do'stim</span>.</h1>
 
+    <!-- Hozir nima qilay? — joriy/keyingi vazifa -->
+    <div id="nowCard" style="display:none;background:rgba(244,132,95,.08);border:1px solid rgba(244,132,95,.25);border-radius:14px;padding:14px 16px;margin-bottom:14px;"></div>
+
     <!-- AI Murabbiy — kontekstli xabar (kerakli holatda chiqadi) -->
     <div id="murabbiyBox" style="display:none;background:rgba(244, 132, 95,.06);border:1px solid rgba(244, 132, 95,.18);border-radius:12px;padding:14px 16px;font-family:'Inter',sans-serif;font-style:normal;font-size:18px;line-height:1.5;color:var(--text);text-align:center;">
       <div id="murabbiyText"></div>
@@ -573,7 +576,37 @@
         tasksPrompt.style.display = 'block';
       }
     }
+    function renderNowCard() {
+      var card = document.getElementById('nowCard'); if (!card) return;
+      var p = (window.MVOW_DATA ? MVOW_DATA.getTodayPlan() : plan).slice().sort(function (a, b) { return tKey(a.time) - tKey(b.time); });
+      if (!p.length) { card.style.display = 'none'; return; }
+      var completed = (window.MVOW_DATA ? MVOW_DATA.getCompletedKeysToday() : new Set());
+      var active = null, next = null;
+      for (var i = 0; i < p.length; i++) {
+        var t = p[i];
+        var key = (window.MVOW_DATA && t.time && t.name) ? MVOW_DATA.taskKey(MVOW_DATA.today.iso, t.time, t.name) : '';
+        if (completed.has(key)) continue;
+        var start = tKey(t.time), end = start + (window.MVOW_DATA ? MVOW_DATA.parseDurMins(t.dur) : 60);
+        if (nowMin >= start && nowMin < end) { active = t; break; }
+        if (nowMin < start && !next) next = t;
+      }
+      var show = active || next;
+      if (!show) { card.style.display = 'none'; return; }
+      var lbl = active ? T('home.now_now', 'Hozir') : T('home.now_next', 'Keyingi');
+      card.innerHTML = '<div style="font-size:12px;letter-spacing:2px;text-transform:uppercase;color:var(--accent);font-weight:700;margin-bottom:5px;">' + lbl + '</div>'
+        + '<div style="display:flex;align-items:center;justify-content:space-between;gap:12px;">'
+        + '<div style="min-width:0;"><div style="font-size:19px;font-weight:700;color:var(--text);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">' + escapeHtmlH(show.name || '') + '</div>'
+        + '<div style="font-size:14px;color:var(--text-dim);">' + escapeHtmlH(show.time || '') + (show.dur ? ' · ' + escapeHtmlH(show.dur) : '') + '</div></div>'
+        + '<a href="hard-lock.html" id="nowStart" style="flex-shrink:0;padding:11px 22px;background:linear-gradient(135deg,var(--accent),var(--accent-deep));color:#fff;border-radius:999px;font-size:14px;font-weight:700;letter-spacing:1px;text-transform:uppercase;text-decoration:none;">' + T('home.cta_start', 'Boshlash') + '</a>'
+        + '</div>';
+      card.style.display = 'block';
+      var btn = document.getElementById('nowStart');
+      if (btn) btn.addEventListener('click', function () {
+        try { localStorage.setItem('mvow.activeTask', JSON.stringify({ name: show.name, time: show.time || '', dur: show.dur || '' })); } catch (e) {}
+      });
+    }
     renderTasks();
+    renderNowCard();
 
     // ── Vazifa vaqti/davomiyligini tahrirlash (qatorga bosib o'zgartirish) ──
     (function wireEditTask() {
