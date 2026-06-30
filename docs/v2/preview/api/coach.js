@@ -21,12 +21,14 @@ module.exports = async (req, res) => {
   let c = req.body || {};
   if (typeof c === 'string') { try { c = JSON.parse(c); } catch (e) { c = {}; } }
 
+  let _dbg = null;
   async function gemini(prompt) {
     const gr = await fetch(
       'https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=' + encodeURIComponent(key),
       { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ contents: [{ parts: [{ text: prompt }] }] }) }
     );
     const d = await gr.json();
+    _dbg = { status: gr.status, body: d };
     return (d && d.candidates && d.candidates[0] && d.candidates[0].content &&
       d.candidates[0].content.parts && d.candidates[0].content.parts[0] && d.candidates[0].content.parts[0].text) || '';
   }
