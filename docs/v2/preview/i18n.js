@@ -54,7 +54,7 @@
         page_title: "{brand} — Do'stlar", title: "Do'stlar", sub: "Birga intizomli bo'ling",
         my_code: "Mening kodim", copy: "Nusxa", share: "Ulashish", add: "Qo'shish",
         tab_friend: "Do'st", tab_mentor: "Ustoz / Ota-ona", rating: "Reyting", today: "bugun",
-        note: "Reyting fokus vaqti va bajarilgan odatlar bo'yicha. Do'stlaringizning real natijasi server ulanganda ko'rinadi."
+        note: "Reyting fokus vaqti va bajarilgan odatlar bo'yicha. Do'st qo'shsangiz, ularning real natijasi shu yerda ko'rinadi."
       },
       common: {
         continue: 'Davom',
@@ -858,7 +858,7 @@
         page_title: "{brand} — Друзья", title: "Друзья", sub: "Будьте дисциплинированы вместе",
         my_code: "Мой код", copy: "Копировать", share: "Поделиться", add: "Добавить",
         tab_friend: "Друг", tab_mentor: "Наставник / Родитель", rating: "Рейтинг", today: "сегодня",
-        note: "Рейтинг по времени фокуса и выполненным привычкам. Реальные результаты друзей появятся после подключения сервера."
+        note: "Рейтинг по времени фокуса и выполненным привычкам. Добавьте друга — его реальные результаты появятся здесь."
       },
       common: {
         continue: 'Продолжить',
@@ -1649,7 +1649,7 @@
         page_title: "{brand} — Friends", title: "Friends", sub: "Stay disciplined together",
         my_code: "My code", copy: "Copy", share: "Share", add: "Add",
         tab_friend: "Friend", tab_mentor: "Mentor / Parent", rating: "Rating", today: "today",
-        note: "Ranking by focus time and completed habits. Friends' real results appear once the server is connected."
+        note: "Ranking by focus time and completed habits. Add a friend — their real results appear here."
       },
       common: {
         continue: 'Continue',
