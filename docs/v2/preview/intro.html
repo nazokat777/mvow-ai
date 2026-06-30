@@ -75,6 +75,17 @@ body {
 }
 @media (min-width: 640px) { .brand { left: 32px; } }
 
+/* Skip — har doim ko'rinadi (TZ 3.1) */
+.skip {
+  position: absolute; top: 22px; right: 14px; z-index: 80;
+  background: rgba(255,255,255,0.16); color: #fff;
+  border: 1px solid rgba(255,255,255,0.45); border-radius: 999px;
+  padding: 8px 15px; font-size: 13px; font-weight: 600; cursor: pointer;
+  font-family: 'Inter', sans-serif; -webkit-backdrop-filter: blur(4px); backdrop-filter: blur(4px);
+}
+.skip:active { transform: scale(0.96); }
+@media (min-width: 640px) { .skip { top: 28px; right: 32px; padding: 10px 18px; font-size: 14px; } }
+
 /* 4. Carousel */
 .carousel { position: absolute; inset: 0; z-index: 3; }
 .fig {
@@ -158,6 +169,9 @@ body {
 
     <!-- 3. Brand -->
     <div class="brand"><img src="assets/logo-light.png?v=2" alt="DayWarden" style="height:50px;width:auto;display:block;filter:drop-shadow(0 1px 3px rgba(0,0,0,.25));"></div>
+
+    <!-- Skip (har doim ko'rinadi) -->
+    <button class="skip" id="skipBtn" type="button" data-i18n="intro.skip">O'tkazib yuborish ›</button>
 
     <!-- 4. Carousel (items injected by JS) -->
     <div class="carousel" id="carousel"></div>
@@ -322,6 +336,8 @@ body {
     setTimeout(function () { go('anketa.html'); }, 380);
   }
   document.getElementById('ctaLink').addEventListener('click', startApp);
+  var skipBtn = document.getElementById('skipBtn');
+  if (skipBtn) skipBtn.addEventListener('click', startApp);
 
   // ===== Keyboard =====
   document.addEventListener('keydown', function (e) {

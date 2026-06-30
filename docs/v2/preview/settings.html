@@ -198,6 +198,8 @@
       <span style="color:var(--text-dim);">›</span>
     </div>
 
+    <button id="logoutBtn" type="button" data-i18n="settings.logout" style="width:100%;padding:14px;margin-bottom:12px;background:transparent;color:var(--text-mid);border:1px solid rgba(255,255,255,.14);border-radius:999px;font-family:'Inter',sans-serif;font-size:16px;font-weight:600;letter-spacing:1px;cursor:pointer;">Chiqish</button>
+
     <button class="danger" id="resetBtn" type="button" data-i18n="settings.reset">Hammasini tozalash</button>
 
     <div class="footer">v <span class="em" data-brand="name">Daywarden</span> 9.2</div>
@@ -299,6 +301,21 @@
 
     // Reset button — confirm then clear
     const resetBtn = document.getElementById('resetBtn');
+    // Logout (TZ 3.6) — auth'ni tozalaydi, lekin odat/tarix saqlanadi
+    const logoutBtn = document.getElementById('logoutBtn');
+    if (logoutBtn) logoutBtn.addEventListener('click', () => {
+      if (logoutBtn.classList.contains('confirm')) {
+        ['mvow.email', 'mvow.userName', 'mvow.registeredAt'].forEach(k => { try { localStorage.removeItem(k); } catch (e) {} });
+        location.href = 'royhat.html';
+      } else {
+        logoutBtn.classList.add('confirm');
+        logoutBtn.textContent = (window.I18N ? I18N.t('settings.logout_confirm', 'Chiqasizmi? Bosing') : 'Chiqasizmi? Bosing');
+        setTimeout(() => {
+          logoutBtn.classList.remove('confirm');
+          logoutBtn.textContent = (window.I18N ? I18N.t('settings.logout', 'Chiqish') : 'Chiqish');
+        }, 3000);
+      }
+    });
     let confirmTimer = null;
     resetBtn.addEventListener('click', () => {
       if (resetBtn.classList.contains('confirm')) {

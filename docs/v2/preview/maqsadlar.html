@@ -835,10 +835,10 @@
       `).join('');
 
       return `
-        <div class="goal" data-id="${g.id}" style="--gc:${color}">
+        <div class="goal" data-id="${g.id}" style="--gc:${g.color || color}">
           <button class="goal-del" data-del="${g.id}" type="button" aria-label="${escapeHtml(lblDelAria)}">×</button>
           <div class="goal-head">
-            <span class="goal-num">${String(i + 1).padStart(2, '0')}</span>
+            <span class="goal-num">${g.icon ? g.icon : String(i + 1).padStart(2, '0')}</span>
             <div class="goal-main">
               <div class="goal-name">${escapeHtml(g.text)}</div>
               <div class="goal-meta">${escapeHtml(lblEveryDay)} <span class="em">${escapeHtml(g.time || (g.sessions && g.sessions[0] && g.sessions[0].time) || '')}</span> · ${escapeHtml(dispDur(g.dur))}</div>

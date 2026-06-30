@@ -95,6 +95,11 @@
   .ring-center { position: absolute; inset: 0; display: flex; flex-direction: column; align-items:center; justify-content:center; gap: 6px; }
   .digits { font-size: 56px; font-weight: 500; color: var(--accent); letter-spacing: 1px; font-feature-settings: "tnum"; }
   .sub { font-size: 14px; letter-spacing: 3px; color: var(--text-dim); text-transform: uppercase; }
+  /* O'tgan + qolgan vaqt (TZ 3.5) */
+  .timer-meta { font-size: 13px; letter-spacing: 1px; color: var(--text-dim); text-align: center; min-height: 16px; }
+  /* Pauza/Davom (TZ 3.5, 4.2) */
+  .pause-btn { margin-top: 2px; padding: 11px 32px; background: var(--void-soft); color: var(--text); border: 1px solid rgba(255,255,255,.14); border-radius: 999px; font: 600 15px 'Inter', sans-serif; letter-spacing: 1px; cursor: pointer; }
+  .pause-btn:active { transform: scale(.97); }
 
   /* Taymersiz katta tugma */
   .no-timer-area { display: none; text-align: center; gap: 18px; }
@@ -175,6 +180,8 @@
           <div class="sub" id="sub" data-i18n="hardlock.sub_remain">davom etyapsiz</div>
         </div>
       </div>
+      <div class="timer-meta" id="timerMeta"></div>
+      <button class="pause-btn" id="pauseBtn" type="button" data-i18n="hardlock.pause">Pauza</button>
     </div>
 
     <!-- Taymersiz ko'rinishi — faqat Bajardim tugmasi (boshqa hech narsa chiqmasin) -->
@@ -340,6 +347,10 @@ document.addEventListener('DOMContentLoaded', function () {
   const timerArea = document.getElementById('timerArea');
   const noTimerArea = document.getElementById('noTimerArea');
   const elapsedEl = document.getElementById('elapsed');
+  const timerMeta = document.getElementById('timerMeta');
+  const pauseBtn = document.getElementById('pauseBtn');
+  const ELAPSED_LBL = (window.I18N ? I18N.t('hardlock.elapsed_label', "o'tgan vaqt") : "o'tgan vaqt");
+  let paused = false;
 
   // ── Telefon yuztuban = chuqur fokus (akselerometr) ──
   const focusBadge = document.getElementById('focusBadge');
@@ -380,6 +391,7 @@ document.addEventListener('DOMContentLoaded', function () {
     ring.style.strokeDashoffset = RING_CIRC * (1 - frac);
     const g = document.getElementById('ringGlow');
     if (g) { g.style.opacity = (0.08 + 0.92 * frac).toFixed(3); g.style.transform = 'scale(' + (0.7 + 0.4 * frac).toFixed(3) + ')'; }
+    if (timerMeta) timerMeta.textContent = ELAPSED_LBL + ' ' + fmt(Math.max(0, totalSec - remaining));
     saveActive();
   }
 
@@ -514,6 +526,35 @@ document.addEventListener('DOMContentLoaded', function () {
     }, 1000);
   }
 
+  // Umumiy tick + Pauza/Davom (TZ 3.5, 4.2)
+  function tickStep() {
+    remaining = Math.max(0, totalSec - Math.floor((Date.now() - phaseStartedAt) / 1000));
+    paint();
+    if (remaining === 0) {
+      if (window.MVOW_DATA && MVOW_DATA.fxFinish) MVOW_DATA.fxFinish();
+      if (mode === 'pomodoro') nextPomodoroPhase(); else showAskModal();
+    }
+  }
+  function startTick() { if (interval) clearInterval(interval); interval = setInterval(tickStep, 1000); }
+  function togglePause() {
+    if (mode !== 'timer' && mode !== 'pomodoro') return;
+    if (!paused) {
+      paused = true;
+      if (interval) { clearInterval(interval); interval = null; }
+      if (idleTimer) clearTimeout(idleTimer);
+      pauseBtn.textContent = (window.I18N ? I18N.t('hardlock.resume', 'Davom') : 'Davom');
+      tsub.textContent = (window.I18N ? I18N.t('hardlock.sub_paused', 'pauza') : 'pauza');
+    } else {
+      paused = false;
+      phaseStartedAt = Date.now() - (totalSec - remaining) * 1000;
+      pauseBtn.textContent = (window.I18N ? I18N.t('hardlock.pause', 'Pauza') : 'Pauza');
+      tsub.textContent = (window.I18N ? I18N.t('hardlock.sub_locked', 'fokusdasiz') : 'fokusdasiz') + (mode === 'pomodoro' ? (' · ' + cycle + '/' + TOTAL_CYC) : '');
+      startTick();
+      resetIdleTimer();
+    }
+    saveActive();
+  }
+
   // Tanlovlar
   document.getElementById('chTimer').addEventListener('click', () => {
     mode = 'timer';
@@ -575,7 +616,8 @@ document.addEventListener('DOMContentLoaded', function () {
       localStorage.setItem('mvow.activeFocus', JSON.stringify({
         mode: mode, phaseStartedAt: phaseStartedAt, totalSec: totalSec,
         WORK_MIN: WORK_MIN, BREAK_MIN: BREAK_MIN, TOTAL_CYC: TOTAL_CYC,
-        cycle: cycle, phase: phase, startedAt: startedAt
+        cycle: cycle, phase: phase, startedAt: startedAt,
+        paused: paused, remaining: remaining
       }));
     } catch (e) {}
     const ex = document.getElementById('hlExit'); if (ex) ex.classList.add('show');
@@ -583,6 +625,7 @@ document.addEventListener('DOMContentLoaded', function () {
   function clearActive() { try { localStorage.removeItem('mvow.activeFocus'); } catch (e) {} }
   const _hlExit = document.getElementById('hlExit');
   if (_hlExit) _hlExit.addEventListener('click', function () { location.href = 'home.html'; });
+  if (pauseBtn) pauseBtn.addEventListener('click', togglePause);
 
   (function resumeActive() {
     let s; try { s = JSON.parse(localStorage.getItem('mvow.activeFocus') || 'null'); } catch (e) { s = null; }
@@ -591,6 +634,7 @@ document.addEventListener('DOMContentLoaded', function () {
     mode = s.mode; phaseStartedAt = s.phaseStartedAt; totalSec = s.totalSec;
     WORK_MIN = s.WORK_MIN; BREAK_MIN = s.BREAK_MIN; TOTAL_CYC = s.TOTAL_CYC;
     cycle = s.cycle; phase = s.phase; startedAt = s.startedAt;
+    paused = s.paused || false;
     choiceOverlay.style.display = 'none';
     const _nav = document.getElementById('globalNavCaps'); if (_nav) _nav.style.display = 'none';
     const _lang = document.querySelector('.lang-switcher'); if (_lang) _lang.style.display = 'none';
@@ -602,17 +646,17 @@ document.addEventListener('DOMContentLoaded', function () {
     } else {
       timerArea.classList.remove('hidden'); noTimerArea.classList.remove('show');
       ring.style.stroke = (phase === 'break') ? '#F5C26B' : 'var(--accent)';
-      tsub.textContent = (window.I18N ? I18N.t('hardlock.sub_locked', 'fokusdasiz') : 'fokusdasiz') + (mode === 'pomodoro' ? (' · ' + cycle + '/' + TOTAL_CYC) : '');
-      remaining = Math.max(0, totalSec - Math.floor((Date.now() - phaseStartedAt) / 1000));
-      paint();
-      interval = setInterval(function () {
+      if (paused) {
+        if (typeof s.remaining === 'number') remaining = s.remaining;
+        tsub.textContent = (window.I18N ? I18N.t('hardlock.sub_paused', 'pauza') : 'pauza');
+        if (pauseBtn) pauseBtn.textContent = (window.I18N ? I18N.t('hardlock.resume', 'Davom') : 'Davom');
+        paint();
+      } else {
+        tsub.textContent = (window.I18N ? I18N.t('hardlock.sub_locked', 'fokusdasiz') : 'fokusdasiz') + (mode === 'pomodoro' ? (' · ' + cycle + '/' + TOTAL_CYC) : '');
         remaining = Math.max(0, totalSec - Math.floor((Date.now() - phaseStartedAt) / 1000));
         paint();
-        if (remaining === 0) {
-          if (window.MVOW_DATA && MVOW_DATA.fxFinish) MVOW_DATA.fxFinish();
-          if (mode === 'pomodoro') nextPomodoroPhase(); else showAskModal();
-        }
-      }, 1000);
+        startTick();
+      }
     }
   })();
 

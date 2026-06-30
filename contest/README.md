@@ -5,6 +5,10 @@
 
 Konkurs ishi · Buyurtmachi: Shamsuddeen · "Just AI It" jamoasi
 
+**Kod (repo):** https://github.com/nazokat777/mvow-ai
+**Jonli ilova:** https://daywarden.vercel.app
+**Mobil:** Android APK (native, `android/`) + iOS build (`ios/`) — bonus, cross-platform.
+
 ---
 
 ## Asosiy farq
