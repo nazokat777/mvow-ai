@@ -564,13 +564,13 @@
           else if (isActive) { cls = 'active'; icon = '·'; }
           const tColor = TASK_COLORS[i % TASK_COLORS.length];
           return `<div class="t-item">
-            <div class="t-row ${cls}" data-key="${escapeHtmlH(taskKey)}" data-time="${escapeHtmlH(t.time || '')}" data-dur="${escapeHtmlH(t.dur || '')}" data-name="${escapeHtmlH(t.name || '')}" style="--tc:${tColor};cursor:pointer">
+            <div class="t-row ${cls}" data-key="${escapeHtmlH(taskKey)}" data-time="${escapeHtmlH(t.time || '')}" data-dur="${escapeHtmlH(t.dur || '')}" data-name="${escapeHtmlH(t.name || '')}" data-notimer="${t.noTimer ? '1' : ''}" style="--tc:${tColor};cursor:pointer">
               <span class="ord">${i+1}</span>
               <div class="tbody">
-                <span class="tname">${escapeHtmlH(t.name || T('today.ish_lbl', 'reja'))}</span>
+                <span class="tname">${escapeHtmlH(t.name || T('today.ish_lbl', 'reja'))}${t.noTimer ? ' <span style="font-size:12px;color:var(--text-dim);font-weight:500;">· ' + T('home.notimer_tag', 'eslatma') + '</span>' : ''}</span>
                 <span class="ttime">${escapeHtmlH(t.time || '—')}</span>
               </div>
-              <span class="tstat">${icon === '·' ? '' : icon}</span>
+              <span class="tstat">${isDone ? '' : (t.noTimer ? '☐' : (icon === '·' ? '' : icon))}</span>
             </div>${isOverdue ? `<div class="t-note">⏰ ${escapeHtmlH(overdueTxt)}</div>` : ''}
           </div>`;
         }).join('');
@@ -699,9 +699,42 @@
         try { localStorage.setItem('mvow.activeTask', JSON.stringify({ name: curName, time: hasTime ? time : '', dur: mins + ' daq' })); } catch (e) {}
         location.href = 'hard-lock.html';
       });
+      // ── Taymersiz vazifa: belgilash oynasi (izoh + ixtiyoriy soat) ──
+      var dov = document.createElement('div');
+      dov.style.cssText = 'display:none;position:fixed;inset:0;z-index:9998;background:rgba(0,0,0,.55);align-items:center;justify-content:center;padding:24px;';
+      dov.innerHTML = '<div style="background:var(--card,#12151c);border-radius:18px;padding:22px;width:100%;max-width:360px;box-shadow:0 20px 50px rgba(0,0,0,.45);">'
+        + '<div id="dovTitle" style="font-size:19px;font-weight:700;color:var(--text,#fff);margin-bottom:4px;"></div>'
+        + '<div style="font-size:14px;color:var(--text-dim);margin-bottom:14px;">' + T('home.done_sub', 'Bajardingizmi? Izoh va (xohlasangiz) soat yozing.') + '</div>'
+        + '<textarea id="dovNote" rows="2" maxlength="200" placeholder="' + T('home.done_note_ph', 'Izoh: masalan, ota-onamga pul berdim') + '" style="width:100%;padding:12px;border-radius:10px;border:1px solid var(--border-default,rgba(255,255,255,.12));background:var(--void,#0c0f16);color:var(--text,#fff);font-size:15px;box-sizing:border-box;font-family:inherit;resize:none;margin-bottom:12px;"></textarea>'
+        + '<div style="display:flex;align-items:center;gap:10px;margin-bottom:18px;"><label for="dovHours" style="font-size:15px;color:var(--text-mid);flex:1;">' + T('home.done_hours', 'Necha soat? (ixtiyoriy)') + '</label><input id="dovHours" type="number" min="0" max="24" step="0.5" placeholder="—" style="width:84px;padding:10px;border-radius:10px;border:1px solid var(--border-default,rgba(255,255,255,.12));background:var(--void,#0c0f16);color:var(--text,#fff);font-size:15px;text-align:right;box-sizing:border-box;font-family:inherit;"></div>'
+        + '<div style="display:flex;gap:10px;"><button id="dovCancel" type="button" style="flex:1;padding:13px;border-radius:10px;border:1px solid var(--border-default,rgba(255,255,255,.15));background:transparent;color:var(--text-mid);font-size:16px;font-weight:600;cursor:pointer;font-family:inherit;">' + T('common.cancel', 'Bekor') + '</button>'
+        + '<button id="dovSave" type="button" style="flex:2;padding:13px;border-radius:10px;border:none;background:var(--accent,#F4845F);color:#fff;font-size:16px;font-weight:700;cursor:pointer;font-family:inherit;">' + T('home.done_btn', 'Bajardim') + '</button></div></div>';
+      document.body.appendChild(dov);
+      var dCur = null;
+      function closeDone() { dov.style.display = 'none'; dCur = null; }
+      function openDone(key, time, dur, name) {
+        dCur = { key: key, time: time, dur: dur, name: name };
+        dov.querySelector('#dovTitle').textContent = name || 'Vazifa';
+        dov.querySelector('#dovNote').value = '';
+        dov.querySelector('#dovHours').value = '';
+        dov.style.display = 'flex';
+      }
+      dov.addEventListener('click', function (e) { if (e.target === dov) closeDone(); });
+      dov.querySelector('#dovCancel').addEventListener('click', closeDone);
+      dov.querySelector('#dovSave').addEventListener('click', function () {
+        if (!dCur || !window.MVOW_DATA) return;
+        var note = dov.querySelector('#dovNote').value.trim();
+        var hrs = parseFloat(dov.querySelector('#dovHours').value);
+        var mins = (isFinite(hrs) && hrs > 0) ? Math.round(hrs * 60) : 0;
+        MVOW_DATA.markTaskDone({ name: dCur.name, time: dCur.time || '', dur: dCur.dur || '0 daq' }, dCur.key, note, mins);
+        if (MVOW_DATA.fxSuccess) MVOW_DATA.fxSuccess();
+        closeDone();
+        renderTasks();
+      });
       tasksList.addEventListener('click', function (e) {
         var row = e.target.closest('.t-row');
         if (!row || !row.dataset.key) return;
+        if (row.dataset.notimer === '1') { openDone(row.dataset.key, row.dataset.time, row.dataset.dur, row.dataset.name); return; }
         openOv(row.dataset.key, row.dataset.time, row.dataset.dur, row.dataset.name);
       });
     })();
