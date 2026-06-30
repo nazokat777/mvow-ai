@@ -21,12 +21,13 @@ final class PlanStore: ObservableObject {
         didSet { save(); reschedule() }
     }
 
-    private init() { load() }
-
-    private func load() {
-        guard let data = UserDefaults.standard.data(forKey: key),
-              let arr = try? JSONDecoder().decode([PlanTask].self, from: data) else { return }
-        tasks = arr
+    private init() {
+        // Boshlang'ich yuklash — didSet ISHGA TUSHMAYDI (reschedule MVoWApp.onAppear'да,
+        // NotificationManager.configure()/ruxsat so'ralganidan keyin bir marta chaqiriladi).
+        if let data = UserDefaults.standard.data(forKey: key),
+           let arr = try? JSONDecoder().decode([PlanTask].self, from: data) {
+            _tasks = Published(initialValue: arr)
+        }
     }
 
     private func save() {
