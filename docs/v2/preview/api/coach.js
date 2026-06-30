@@ -14,7 +14,7 @@
  */
 const MAX_PER_DAY = 200;            // bir kunda ruxsat etilgan AI so'rovlar (xavfsizlik chegarasi)
 const MODEL = 'gemini-2.5-flash';   // bepul kvotali model
-const MAX_OUTPUT_TOKENS = 300;      // har javob uzunligi chegarasi
+const MAX_OUTPUT_TOKENS = 500;      // har javob uzunligi chegarasi (fikrlash o'chiq — hammasi matnga)
 let _capDay = '', _capCount = 0;    // kunlik hisoblagich (warm instance bo'yi saqlanadi)
 
 module.exports = async (req, res) => {
@@ -29,7 +29,7 @@ module.exports = async (req, res) => {
   // Diagnostika: GET → kalit o'rnatilganmi + bugun nechta so'rov ishlatilgan
   // (kalitning O'ZI hech qachon qaytmaydi)
   if (req.method === 'GET') {
-    res.status(200).json({ keySet: !!key, model: MODEL, used: _capCount, max: MAX_PER_DAY });
+    res.status(200).json({ keySet: !!key, model: MODEL, used: _capCount, max: MAX_PER_DAY, gen: 2 });
     return;
   }
   if (req.method !== 'POST') { res.status(200).json({ message: '' }); return; }
@@ -51,7 +51,7 @@ module.exports = async (req, res) => {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           contents: [{ parts: [{ text: prompt }] }],
-          generationConfig: { maxOutputTokens: MAX_OUTPUT_TOKENS, temperature: 0.7 }
+          generationConfig: { maxOutputTokens: MAX_OUTPUT_TOKENS, temperature: 0.7, thinkingConfig: { thinkingBudget: 0 } }
         })
       }
     );
