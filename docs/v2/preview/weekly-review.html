@@ -561,6 +561,7 @@
       <span class="li"><span class="sw done"></span><span data-i18n="weekly-review.tarix_legend_done">Bajarildi</span></span>
       <span class="li"><span class="sw missed"></span><span data-i18n="weekly-review.tarix_legend_missed">O'tkazilgan</span></span>
     </div>
+    <div id="calDetail" style="display:none;margin-top:12px;padding:11px 14px;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.1);border-radius:12px;font-family:'Inter',sans-serif;font-size:15px;color:var(--text);text-align:center;line-height:1.4;"></div>
   </div>
 </div>
 
@@ -856,8 +857,9 @@
       if (existing) {
         existing.mins += (h.actualMins || 0);
         existing.count += 1;
+        if (h.note) existing.note = existing.note ? (existing.note + ' · ' + h.note) : h.note;
       } else {
-        idx[name].doneByDate.set(iso, { mins: (h.actualMins || 0), count: 1, time: h.plannedTime || '' });
+        idx[name].doneByDate.set(iso, { mins: (h.actualMins || 0), count: 1, time: h.plannedTime || '', note: (h.note || '') });
       }
       // A completed task implicitly counts as planned (in case it wasn't in weekPlan)
       if (!idx[name].plannedByDate.has(iso)) {
@@ -1008,6 +1010,8 @@
       <span><span class="em">${focusHrs}</span> ${lblFocusHrs}</span>
     `;
 
+    window._calEntry = entry;
+    var _cd0 = document.getElementById('calDetail'); if (_cd0) { _cd0.style.display = 'none'; _cd0.innerHTML = ''; }
     const grid = document.getElementById('calGrid');
     grid.innerHTML = cells.map(c => {
       if (c.blank) return `<div class="cal-cell out"></div>`;
@@ -1028,7 +1032,7 @@
         cls += ' planned';
       }
       if (isToday) cls += ' today';
-      return `<div class="${cls}"><div class="d">${c.day}</div>${valHtml}</div>`;
+      return `<div class="${cls}" data-iso="${iso}" style="cursor:pointer;"><div class="d">${c.day}</div>${valHtml}</div>`;
     }).join('');
   }
 
@@ -1080,6 +1084,31 @@
       _calCurrent.month += 1;
       if (_calCurrent.month > 11) { _calCurrent.month = 0; _calCurrent.year += 1; }
       renderCalendar();
+    });
+    // Kun bosilganda — o'sha kungi izoh + davomiylik (user kiritgan ma'lumot)
+    document.getElementById('calGrid').addEventListener('click', (e) => {
+      const cell = e.target.closest('[data-iso]'); if (!cell) return;
+      const iso = cell.getAttribute('data-iso');
+      const detail = document.getElementById('calDetail'); if (!detail) return;
+      const en = window._calEntry;
+      const d = (en && en.doneByDate) ? en.doneByDate.get(iso) : null;
+      const planned = (en && en.plannedByDate) ? en.plannedByDate.has(iso) : false;
+      const dayNum = parseInt(iso.slice(8), 10);
+      const T = (k, f) => window.I18N ? I18N.t(k, f) : f;
+      let html = '';
+      if (d) {
+        const hrs = Math.round((d.mins || 0) / 60 * 10) / 10;
+        html = '<b>' + dayNum + '</b> · ' + hrs + ' ' + T('weekly-review.tarix_modal_focus_hours', 'soat fokus');
+        html += d.note
+          ? '<div style="margin-top:5px;">“' + escapeHtml(d.note) + '”</div>'
+          : '<div style="margin-top:5px;color:var(--text-dim);font-size:13px;">' + T('weekly-review.cal_no_note', 'izoh yozilmagan') + '</div>';
+      } else if (planned) {
+        html = '<b>' + dayNum + '</b> · ' + T('weekly-review.cal_planned', 'rejalashtirilgan, hali bajarilmagan');
+      } else {
+        html = '<span style="color:var(--text-dim);">' + T('weekly-review.cal_empty', 'bu kunda maʼlumot yoʻq') + '</span>';
+      }
+      detail.innerHTML = html;
+      detail.style.display = 'block';
     });
     document.addEventListener('keydown', (e) => {
       if (e.key === 'Escape' && overlay.classList.contains('on')) closeCalendar();
