@@ -3,7 +3,7 @@
  * after first load. Caches all preview HTML files + the logo.
  */
 
-const CACHE_NAME = 'focusai-v28.84.0';
+const CACHE_NAME = 'focusai-v28.85.0';
 const ASSETS = [
   './',
   // Asosiy infratuzilma
@@ -11,6 +11,7 @@ const ASSETS = [
   './data.js',
   './ai-coach.js',
   './focus-audio.js',
+  './focus-indicator.js',
   './social.js',
   './supabase-config.js',
   './pin-lock.js',

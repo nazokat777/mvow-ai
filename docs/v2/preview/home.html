@@ -443,6 +443,7 @@
 
 <script src="i18n.js?v=28.4.0"></script>
 <script src="lang-switcher.js?v=28.4.0" defer></script>
+<script src="focus-indicator.js?v=28.4.0" defer></script>
 <script src="data.js?v=28.4.0" defer></script>
 <script src="nav-overlay.js?v=28.4.0" defer></script>
 <script src="pin-lock.js?v=28.67.0"></script>
@@ -593,11 +594,14 @@
       var show = active || next;
       if (!show) { card.style.display = 'none'; return; }
       var lbl = active ? T('home.now_now', 'Hozir') : T('home.now_next', 'Keyingi');
+      var _af = null; try { _af = JSON.parse(localStorage.getItem('mvow.activeFocus') || 'null'); } catch (e) {}
+      var _running = _af && _af.mode && (Date.now() - (_af.startedAt || 0) <= 8 * 3600 * 1000);
+      var ctaTxt = _running ? T('home.cta_continue', 'Davom etaman') : T('home.cta_start', 'Boshlash');
       card.innerHTML = '<div style="font-size:12px;letter-spacing:2px;text-transform:uppercase;color:var(--accent);font-weight:700;margin-bottom:5px;">' + lbl + '</div>'
         + '<div style="display:flex;align-items:center;justify-content:space-between;gap:12px;">'
         + '<div style="min-width:0;"><div style="font-size:19px;font-weight:700;color:var(--text);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">' + escapeHtmlH(show.name || '') + '</div>'
         + '<div style="font-size:14px;color:var(--text-dim);">' + escapeHtmlH(show.time || '') + (show.dur ? ' · ' + escapeHtmlH(show.dur) : '') + '</div></div>'
-        + '<a href="hard-lock.html" id="nowStart" style="flex-shrink:0;padding:11px 22px;background:linear-gradient(135deg,var(--accent),var(--accent-deep));color:#fff;border-radius:999px;font-size:14px;font-weight:700;letter-spacing:1px;text-transform:uppercase;text-decoration:none;">' + T('home.cta_start', 'Boshlash') + '</a>'
+        + '<a href="hard-lock.html" id="nowStart" style="flex-shrink:0;padding:11px 22px;background:linear-gradient(135deg,var(--accent),var(--accent-deep));color:#fff;border-radius:999px;font-size:14px;font-weight:700;letter-spacing:1px;text-transform:uppercase;text-decoration:none;">' + ctaTxt + '</a>'
         + '</div>';
       card.style.display = 'block';
       var btn = document.getElementById('nowStart');
