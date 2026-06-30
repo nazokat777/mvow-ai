@@ -223,6 +223,11 @@
         <span style="display:block;font-size:14px;color:#fff;opacity:0.7;letter-spacing:0.5px;text-transform:none;font-weight:500;" id="chPomoDur" data-i18n="hardlock.opt_pomo_desc">25 daq ish + 5 daq dam sikllari</span>
       </button>
     </div>
+    <div style="margin-top:12px;display:flex;align-items:center;justify-content:center;gap:10px;">
+      <input type="file" id="bgFile" accept="image/*" hidden>
+      <button id="bgChoose" type="button" style="background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.14);color:#B8BBC2;border-radius:999px;padding:7px 14px;font-size:13px;cursor:pointer;font-family:Inter,sans-serif;">🖼 <span data-i18n="hardlock.bg_choose">Fokus foni</span></button>
+      <button id="bgRemove" type="button" style="display:none;background:transparent;border:1px solid rgba(255,255,255,.14);color:#9CA0A8;border-radius:999px;padding:7px 12px;font-size:13px;cursor:pointer;font-family:Inter,sans-serif;" data-i18n="hardlock.bg_remove">Olib tashlash</button>
+    </div>
   </div>
 </div>
 
@@ -636,6 +641,52 @@ document.addEventListener('DOMContentLoaded', function () {
   if (pauseBtn) pauseBtn.addEventListener('click', togglePause);
   if (soundBtn) soundBtn.addEventListener('click', function () { if (window.FocusAudio) FocusAudio.toggle(); syncSoundBtn(); });
   window.addEventListener('pagehide', function () { try { if (window.FocusAudio) FocusAudio.stop(); } catch (e) {} });
+
+  // ── Fokus foni (rasm) — yuklash/siqish/ko'rsatish ──
+  (function () {
+    var BG = 'mvow.focusBg';
+    var fileInp = document.getElementById('bgFile');
+    var chooseBtn = document.getElementById('bgChoose');
+    var removeBtn = document.getElementById('bgRemove');
+    function applyBg(url) {
+      if (url) {
+        document.body.style.backgroundImage = 'linear-gradient(rgba(4,6,11,.62),rgba(4,6,11,.62)), url(' + url + ')';
+        document.body.style.backgroundSize = 'cover';
+        document.body.style.backgroundPosition = 'center';
+        document.body.style.backgroundAttachment = 'fixed';
+        if (removeBtn) removeBtn.style.display = 'inline-block';
+      } else {
+        document.body.style.backgroundImage = '';
+        if (removeBtn) removeBtn.style.display = 'none';
+      }
+    }
+    var saved = null; try { saved = localStorage.getItem(BG); } catch (e) {}
+    if (saved) applyBg(saved);
+    if (chooseBtn && fileInp) chooseBtn.addEventListener('click', function () { fileInp.click(); });
+    if (fileInp) fileInp.addEventListener('change', function () {
+      var f = fileInp.files && fileInp.files[0]; if (!f) return;
+      var rd = new FileReader();
+      rd.onload = function () {
+        var img = new Image();
+        img.onload = function () {
+          var max = 1280, w = img.width, h = img.height;
+          if (w > h && w > max) { h = Math.round(h * max / w); w = max; }
+          else if (h >= w && h > max) { w = Math.round(w * max / h); h = max; }
+          var cv = document.createElement('canvas'); cv.width = w; cv.height = h;
+          cv.getContext('2d').drawImage(img, 0, 0, w, h);
+          var data = cv.toDataURL('image/jpeg', 0.72);
+          try { localStorage.setItem(BG, data); applyBg(data); }
+          catch (e) { alert(window.I18N ? I18N.t('hardlock.bg_toobig', 'Rasm juda katta') : 'Rasm juda katta'); }
+        };
+        img.src = rd.result;
+      };
+      rd.readAsDataURL(f);
+    });
+    if (removeBtn) removeBtn.addEventListener('click', function () {
+      try { localStorage.removeItem(BG); } catch (e) {}
+      applyBg(null);
+    });
+  })();
 
   (function resumeActive() {
     let s; try { s = JSON.parse(localStorage.getItem('mvow.activeFocus') || 'null'); } catch (e) { s = null; }
