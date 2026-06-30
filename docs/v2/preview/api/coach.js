@@ -15,7 +15,7 @@ module.exports = async (req, res) => {
     || process.env.GOOGLE_API_KEY || process.env.GOOGLE_GENAI_API_KEY;
 
   // Diagnostika: GET → kalit o'rnatilganmi? (kalitning O'ZI hech qachon qaytmaydi)
-  if (req.method === 'GET') { res.status(200).json({ keySet: !!key }); return; }
+  if (req.method === 'GET') { res.status(200).json({ keySet: !!key, fn: 'v2' }); return; }
   if (req.method !== 'POST') { res.status(200).json({ message: '' }); return; }
 
   let c = req.body || {};
@@ -44,8 +44,8 @@ module.exports = async (req, res) => {
         + "Faqat bosqichlarni yoz — har birini yangi qatordan, raqamsiz va izohsiz.";
       const t = await gemini(prompt);
       const steps = (t || '').split('\n').map(function (s) { return s.replace(/^\s*(?:[-*•]|\d+[.)])\s+/, '').trim(); }).filter(Boolean).slice(0, 7);
-      res.status(200).json({ steps: steps });
-    } catch (e) { res.status(200).json({ steps: [] }); }
+      res.status(200).json(c.debug ? { steps: steps, _dbg: _dbg } : { steps: steps });
+    } catch (e) { res.status(200).json(c.debug ? { steps: [], _err: String(e && e.message || e), _dbg: _dbg } : { steps: [] }); }
     return;
   }
 
