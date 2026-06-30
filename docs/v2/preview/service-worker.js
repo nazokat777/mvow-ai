@@ -3,13 +3,14 @@
  * after first load. Caches all preview HTML files + the logo.
  */
 
-const CACHE_NAME = 'daywarden-v28.80.0';
+const CACHE_NAME = 'daywarden-v28.81.0';
 const ASSETS = [
   './',
   // Asosiy infratuzilma
   './index.html',
   './data.js',
   './ai-coach.js',
+  './focus-audio.js',
   './social.js',
   './supabase-config.js',
   './pin-lock.js',
