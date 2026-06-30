@@ -187,7 +187,7 @@
   // bosh oqimdan olindi (faylda qoladi, lekin SEQ'da yo'q).
   const SEQ = [
     // Tanishuv (1-3)
-    'intro.html',             // 1. Tanishuv
+    'intro.html?show=1',      // 1. Tanishuv (menyudan majburan ko'rsatish)
     'anketa.html',            // 2. 6 qadamli savol-javob
     'vada.html',              // 3. Va'da
     'maqsadlar.html',         // 4. Maqsadlar ro'yhati

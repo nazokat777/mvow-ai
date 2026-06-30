@@ -210,11 +210,12 @@ body {
   function go(u) { try { location.replace(u); } catch (e) { location.href = u; } }
   function setSeen() { try { localStorage.setItem(INTRO_SEEN, '1'); } catch (e) {} }
 
-  try { if (localStorage.getItem(INTRO_SEEN)) { go('anketa.html'); return; } } catch (e) {}
+  var _force = (location.search.indexOf('show') >= 0);   // menyudan "?show=1" bilan ochilsa majburan ko'rsatamiz
+  try { if (!_force && localStorage.getItem(INTRO_SEEN)) { go('anketa.html'); return; } } catch (e) {}
   var pref = matchMedia('(prefers-reduced-motion: reduce)').matches;
   var intensity = '';
   try { intensity = localStorage.getItem('mvow.motion.intensity') || ''; } catch (e) {}
-  if (pref || intensity === 'minimal') { setSeen(); go('anketa.html'); return; }
+  if (!_force && (pref || intensity === 'minimal')) { setSeen(); go('anketa.html'); return; }
 
   // ===== Data =====
   var IMAGES = [
