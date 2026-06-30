@@ -257,7 +257,7 @@
     margin-bottom:24px;
     text-shadow:0 0 30px rgba(139, 124, 240,0.4);
   ">00:00</div>
-  <div data-i18n="hardlock.deep_lock_hint" style="
+  <div id="dlHint" data-i18n="hardlock.deep_lock_hint" style="
     font-family:'Inter',sans-serif;
     font-style:normal;
     font-size:24px;
@@ -583,7 +583,7 @@ document.addEventListener('DOMContentLoaded', function () {
       paused = false;
       phaseStartedAt = Date.now() - (totalSec - remaining) * 1000;
       pauseBtn.textContent = (window.I18N ? I18N.t('hardlock.pause', 'Pauza') : 'Pauza');
-      tsub.textContent = (window.I18N ? I18N.t('hardlock.sub_locked', 'fokusdasiz') : 'fokusdasiz') + (mode === 'pomodoro' ? (' · ' + cycle + '/' + TOTAL_CYC) : '');
+      tsub.textContent = (window.I18N ? I18N.t(phase === 'break' ? 'hardlock.sub_break' : 'hardlock.sub_locked', phase === 'break' ? 'dam oling' : 'fokusdasiz') : (phase === 'break' ? 'dam oling' : 'fokusdasiz')) + (mode === 'pomodoro' ? (' · ' + cycle + '/' + TOTAL_CYC) : '');
       startTick();
       resetIdleTimer();
     }
@@ -835,6 +835,10 @@ document.addEventListener('DOMContentLoaded', function () {
     deepLockOverlay.style.display = 'flex';
     // Sync current time
     if (dlTime) dlTime.textContent = digits.textContent;
+    var _dlHint = document.getElementById('dlHint');
+    if (_dlHint) _dlHint.textContent = (phase === 'break')
+      ? (window.I18N ? I18N.t('hardlock.sub_break', 'dam oling') : 'dam oling')
+      : (window.I18N ? I18N.t('hardlock.deep_lock_hint', 'Fokusdasiz, shunday davom eting.') : 'Fokusdasiz, shunday davom eting.');
     requestAnimationFrame(() => { deepLockOverlay.style.opacity = '1'; });
   }
 
