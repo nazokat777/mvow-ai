@@ -422,7 +422,10 @@ document.addEventListener('DOMContentLoaded', function () {
   function recordAndExit(completed) {
     clearActive();
     if (window.MVOW_DATA) {
-      const actualMins = Math.max(1, Math.round((Date.now() - startedAt) / 60000));
+      const _elapsedMins = Math.max(1, Math.round((Date.now() - startedAt) / 60000));
+      const _plannedMins = (window.MVOW_DATA && current.dur) ? (MVOW_DATA.parseDurMins(current.dur) || 0) : 0;
+      // Taymer/pomodoro: belgilangan vaqt yoziladi (user "1 soat" qildi -> 1 soat, 0.9 emas); taymersiz: haqiqiy
+      const actualMins = ((mode === 'timer' || mode === 'pomodoro') && _plannedMins > 0) ? _plannedMins : _elapsedMins;
       if (completed) {
         const noteEl = document.getElementById('hlNote');
         const note = noteEl ? noteEl.value.trim() : '';
