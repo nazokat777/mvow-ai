@@ -44,8 +44,12 @@ class FocusGuardService : LifecycleService() {
             sessionRepository.activeSession.collectLatest { session ->
                 if (session == null) {
                     autoEndJob?.cancel()
+                    uz.mentorai.focus.widget.FocusWidgetProvider.clear(this@FocusGuardService)
                     stopSelf()
                 } else {
+                    uz.mentorai.focus.widget.FocusWidgetProvider.setActive(
+                        this@FocusGuardService, session.plannedEndAtMillis, session.title
+                    )
                     updateNotification(session)
                     scheduleAutoEnd(session)
                 }
