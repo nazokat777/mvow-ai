@@ -567,7 +567,7 @@
             <div class="t-row ${cls}" data-key="${escapeHtmlH(taskKey)}" data-time="${escapeHtmlH(t.time || '')}" data-dur="${escapeHtmlH(t.dur || '')}" data-name="${escapeHtmlH(t.name || '')}" data-notimer="${t.noTimer ? '1' : ''}" style="--tc:${tColor};cursor:pointer">
               <span class="ord">${i+1}</span>
               <div class="tbody">
-                <span class="tname">${escapeHtmlH(t.name || T('today.ish_lbl', 'reja'))}${t.noTimer ? ' <span style="font-size:12px;color:var(--text-dim);font-weight:500;">· ' + T('home.notimer_tag', 'eslatma') + '</span>' : ''}</span>
+                <span class="tname">${escapeHtmlH(t.name || T('today.ish_lbl', 'reja'))} <span style="font-size:12px;color:var(--text-dim);font-weight:500;">· ${t.noTimer ? T('home.tag_notimer', 'Taymersiz') : T('home.tag_timer', 'Taymerli')}</span></span>
                 <span class="ttime">${escapeHtmlH(t.time || '—')}</span>
               </div>
               <span class="tstat">${isDone ? '' : (t.noTimer ? '☐' : (icon === '·' ? '' : icon))}</span>
