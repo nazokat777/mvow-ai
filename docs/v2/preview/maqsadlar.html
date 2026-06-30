@@ -188,6 +188,22 @@
     z-index: 2;
   }
   .goal-del:active { background: rgba(255,255,255,.34); }
+  .goal-edit {
+    position: absolute;
+    top: 14px; right: 52px;
+    width: 32px; height: 32px;
+    border-radius: 50%;
+    background: rgba(255,255,255,.18);
+    border: none;
+    color: #fff;
+    font-size: 15px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 2;
+  }
+  .goal-edit:active { background: rgba(255,255,255,.34); }
 
   /* Projection / stats line */
   .goal-projection {
@@ -845,6 +861,7 @@
 
       return `
         <div class="goal" data-id="${g.id}" style="--gc:${_rgbTriplet(g.color) || color}">
+          <button class="goal-edit" data-edit="${g.id}" type="button" aria-label="${escapeHtml(_t('maqsadlar.edit_aria', 'Tahrirlash'))}">✎</button>
           <button class="goal-del" data-del="${g.id}" type="button" aria-label="${escapeHtml(lblDelAria)}">×</button>
           <div class="goal-head">
             <span class="goal-num">${g.icon ? g.icon : String(i + 1).padStart(2, '0')}</span>
@@ -895,6 +912,14 @@
         const id = parseInt(b.dataset.del, 10);
         if (!confirm(_t('maqsadlar.del_confirm', "Bu maqsadni o'chirasizmi? Kalendaringizdan ham olib tashlanadi."))) return;
         removeGoal(id);
+      });
+    });
+
+    // Tahrirlash tugmasi
+    list.querySelectorAll('[data-edit]').forEach(b => {
+      b.addEventListener('click', (e) => {
+        e.stopPropagation();
+        openEditGoal(parseInt(b.dataset.edit, 10));
       });
     });
 
@@ -1128,6 +1153,63 @@
   });
   var emptyClick = document.getElementById('emptyState');
   if (emptyClick) emptyClick.addEventListener('click', () => { window.location.href = 'maqsad.html'; });
+
+  // ── Maqsadni tahrirlash modali (nom + ikonka + rang) ──
+  var EG_ICONS = ['📚', '💪', '🏃', '🧘', '💻', '🎯', '📖', '🌅', '🎨', '🙏'];
+  var EG_COLORS = ['#F4845F', '#6BBF7A', '#E882B4', '#6EB5FF'];
+  var egEditId = null, egIcon = '', egColor = '';
+  var egOv = document.createElement('div');
+  egOv.style.cssText = 'position:fixed;inset:0;z-index:300;display:none;align-items:center;justify-content:center;background:rgba(0,0,0,.62);padding:24px;';
+  egOv.innerHTML =
+    '<div style="width:100%;max-width:340px;background:#11151E;border:1px solid rgba(244,132,95,.3);border-radius:16px;padding:22px;font-family:Inter,sans-serif;box-sizing:border-box;">'
+    + '<div style="font-size:20px;color:#F5F2EC;font-weight:600;margin-bottom:14px;">' + _t('maqsadlar.edit_title', 'Maqsadni tahrirlash') + '</div>'
+    + '<input id="egName" type="text" maxlength="40" style="width:100%;padding:12px;background:#0C0F16;border:1px solid rgba(255,255,255,.1);border-radius:10px;color:#F5F2EC;font-size:18px;box-sizing:border-box;margin-bottom:14px;">'
+    + '<div style="font-size:13px;color:#9CA0A8;text-transform:uppercase;letter-spacing:1px;margin-bottom:6px;">' + _t('maqsadlar.icon_lbl', 'Belgi') + '</div>'
+    + '<div id="egIcons" style="display:flex;flex-wrap:wrap;gap:8px;margin-bottom:14px;"></div>'
+    + '<div style="font-size:13px;color:#9CA0A8;text-transform:uppercase;letter-spacing:1px;margin-bottom:6px;">' + _t('maqsadlar.color_lbl', 'Rang') + '</div>'
+    + '<div id="egColors" style="display:flex;gap:10px;margin-bottom:18px;"></div>'
+    + '<div style="display:flex;gap:10px;">'
+    + '<button id="egCancel" type="button" style="flex:1;padding:12px;background:transparent;border:1px solid rgba(255,255,255,.15);border-radius:10px;color:#B8BBC2;font-size:16px;cursor:pointer;">' + _t('common.cancel', 'Bekor') + '</button>'
+    + '<button id="egSave" type="button" style="flex:1;padding:12px;background:linear-gradient(135deg,#F4845F,#E8703F);border:none;border-radius:10px;color:#fff;font-size:16px;font-weight:700;cursor:pointer;">' + _t('common.save', 'Saqlash') + '</button>'
+    + '</div></div>';
+  document.body.appendChild(egOv);
+  var egName = egOv.querySelector('#egName');
+  var egIconsEl = egOv.querySelector('#egIcons');
+  var egColorsEl = egOv.querySelector('#egColors');
+  EG_ICONS.forEach(function (ic) {
+    var b = document.createElement('button'); b.type = 'button'; b.textContent = ic;
+    b.style.cssText = 'width:40px;height:40px;border-radius:10px;border:1px solid rgba(255,255,255,.12);background:#0C0F16;font-size:20px;cursor:pointer;';
+    b.addEventListener('click', function () { egIcon = ic; egSyncIcons(); });
+    egIconsEl.appendChild(b);
+  });
+  EG_COLORS.forEach(function (c) {
+    var b = document.createElement('button'); b.type = 'button'; b.setAttribute('data-c', c);
+    b.style.cssText = 'width:36px;height:36px;border-radius:50%;border:2px solid transparent;background:' + c + ';cursor:pointer;';
+    b.addEventListener('click', function () { egColor = c; egSyncColors(); });
+    egColorsEl.appendChild(b);
+  });
+  function egSyncIcons() { Array.prototype.forEach.call(egIconsEl.children, function (b) { b.style.borderColor = (b.textContent === egIcon) ? '#F4845F' : 'rgba(255,255,255,.12)'; }); }
+  function egSyncColors() { Array.prototype.forEach.call(egColorsEl.children, function (b) { b.style.borderColor = (b.getAttribute('data-c') === egColor) ? '#fff' : 'transparent'; }); }
+  function openEditGoal(id) {
+    var g = loadGoals().find(function (x) { return x.id === id; }); if (!g) return;
+    egEditId = id;
+    egName.value = g.text || g.name || g.title || g.goal || '';
+    egIcon = g.icon || ''; egColor = g.color || '';
+    egSyncIcons(); egSyncColors();
+    egOv.style.display = 'flex';
+    setTimeout(function () { egName.focus(); }, 50);
+  }
+  function closeEditGoal() { egOv.style.display = 'none'; egEditId = null; }
+  egOv.querySelector('#egCancel').addEventListener('click', closeEditGoal);
+  egOv.addEventListener('click', function (e) { if (e.target === egOv) closeEditGoal(); });
+  egOv.querySelector('#egSave').addEventListener('click', function () {
+    if (egEditId == null) return;
+    var goals = loadGoals(), g = goals.find(function (x) { return x.id === egEditId; });
+    if (!g) { closeEditGoal(); return; }
+    var nm = egName.value.trim(); if (nm) g.text = nm;
+    if (egIcon) g.icon = egIcon; if (egColor) g.color = egColor;
+    saveGoals(goals); closeEditGoal(); render();
+  });
 
   render();
 </script>
