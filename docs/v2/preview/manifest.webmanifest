@@ -1,8 +1,8 @@
 {
-  "name": "Daywarden — Sizning intizom do'stingiz",
-  "short_name": "Daywarden",
+  "name": "FOCUS AI — Sizning intizom do'stingiz",
+  "short_name": "FOCUS AI",
   "id": "/",
-  "description": "Daywarden — sizning intizom do'stingiz. Just AI It mahsuloti.",
+  "description": "FOCUS AI — sizning intizom do'stingiz. Just AI It mahsuloti.",
   "start_url": "./app.html",
   "scope": "./",
   "display": "standalone",

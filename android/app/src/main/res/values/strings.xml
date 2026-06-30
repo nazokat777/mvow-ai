@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">Daywarden</string>
+    <string name="app_name">FOCUS AI</string>
 
-    <string name="accessibility_service_label">Daywarden: Ilova nazorati</string>
+    <string name="accessibility_service_label">FOCUS AI: Ilova nazorati</string>
     <string name="accessibility_service_description">Sessiya davomida bloklangan ilovalarni aniqlash uchun ekran o\'zgarishlarini kuzatadi. Sizning belgilangan rejangizdan tashqari hech qanday maʼlumotni yig\'maydi.</string>
     <string name="accessibility_service_summary">Bloklangan ilovalarni real-time aniqlash</string>
 
-    <string name="notif_channel_guard">Daywarden jonli taymer</string>
+    <string name="notif_channel_guard">FOCUS AI jonli taymer</string>
     <string name="notif_channel_guard_desc">Sessiya davomida lock screen\'da koʻrinadi</string>
 
     <string name="notif_channel_alarm">Sessiya boshlanish</string>
@@ -15,6 +15,6 @@
     <string name="wake_notif_title">Sessiya vaqti keldi</string>
     <string name="wake_notif_text">Fokus sessiyangizni boshlash vaqti keldi. Ekranni oching.</string>
 
-    <string name="device_admin_label">Daywarden: Intizom himoyasi</string>
-    <string name="device_admin_description">Daywarden ni tasodifan oʻchirib qoʻyishdan saqlaydi va sessiya davomida ekranni qulflash imkonini beradi.</string>
+    <string name="device_admin_label">FOCUS AI: Intizom himoyasi</string>
+    <string name="device_admin_description">FOCUS AI ni tasodifan oʻchirib qoʻyishdan saqlaydi va sessiya davomida ekranni qulflash imkonini beradi.</string>
 </resources>

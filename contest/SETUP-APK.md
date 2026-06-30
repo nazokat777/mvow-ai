@@ -1,6 +1,6 @@
 # APK yasash (PWABuilder) — Play Market uchun
 
-Daywarden PWA to'liq tayyor (manifest + SW + ikonka + maskable + HTTPS). APK ~5 daqiqada yasaladi.
+FOCUS AI PWA to'liq tayyor (manifest + SW + ikonka + maskable + HTTPS). APK ~5 daqiqada yasaladi.
 
 ## Qadamlar
 
@@ -13,7 +13,7 @@ Daywarden PWA to'liq tayyor (manifest + SW + ikonka + maskable + HTTPS). APK ~5 
 
 **3. Sozlamalar**
 - **Package ID:** `com.justaiit.daywarden`
-- **App name:** Daywarden
+- **App name:** FOCUS AI
 - **App version:** 1.0.0
 - **Signing key:** **"Create new"** (PWABuilder yangi kalit yaratadi)
 

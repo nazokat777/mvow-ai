@@ -1,5 +1,5 @@
 /**
- * Daywarden — PIN qulf (yumshoq qulf, localStorage).
+ * FOCUS AI — PIN qulf (yumshoq qulf, localStorage).
  * Ilova ochilganda PIN so'raydi. PinLock.manage() — o'rnatish/o'zgartirish/o'chirish.
  * Eslatma: bu yumshoq qulf (mahalliy) — bolalar/tasodifiy kirishni to'sadi.
  */
@@ -25,7 +25,7 @@
     var ov = document.createElement('div');
     ov.style.cssText = 'position:fixed;inset:0;z-index:2147483600;background:#0a0610;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:24px;font-family:Inter,sans-serif;color:#fff;';
     ov.innerHTML = '<div style="font-size:40px;margin-bottom:10px;">🔒</div>'
-      + '<div style="font-family:Anton,sans-serif;font-size:26px;text-transform:uppercase;letter-spacing:1px;margin-bottom:6px;">Daywarden</div>'
+      + '<div style="font-family:Anton,sans-serif;font-size:26px;text-transform:uppercase;letter-spacing:1px;margin-bottom:6px;">FOCUS AI</div>'
       + '<div class="pmsg" style="color:#9aa;font-size:15px;margin-bottom:22px;text-align:center;">' + title + '</div>'
       + '<div class="pdots" style="display:flex;gap:14px;margin-bottom:26px;"></div>'
       + '<div class="ppad" style="display:grid;grid-template-columns:repeat(3,72px);gap:14px;"></div>'

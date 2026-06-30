@@ -1,5 +1,5 @@
 /**
- * Daywarden Language Switcher — sodda va ishonchli.
+ * FOCUS AI Language Switcher — sodda va ishonchli.
  *
  * Tugma bosilsa → dropdown ochiladi
  * Til tanlansa → localStorage['mvow.lang'] saqlanadi → sahifa qayta yuklanadi

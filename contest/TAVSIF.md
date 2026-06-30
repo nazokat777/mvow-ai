@@ -1,8 +1,8 @@
-# Kreativ tavsif — Focus AI (Daywarden)
+# Kreativ tavsif — Focus AI (FOCUS AI)
 
 *(Konkurs talabi: kreativ g'oyalar bayoni)*
 
-Focus AI ortidagi asosiy g'oya — **vaqtni halol o'lchash**. Bozordagi ko'pchilik odat ilovalari shunchaki "qildim / qilmadim" degan belgini so'raydi. Bu esa o'z-o'zini aldashga yo'l qo'yadi: 5 daqiqa ham, 3 soat ham bir xil "bajarildi" bo'ladi. Biz boshqacha yo'l tutdik — foydalanuvchi taymerni bosadi, jarayon paneli **haqiqiy sarflangan vaqt** bilan to'ladi, 100% bo'lganda esa g'alaba keladi. Shu falsafa butun ilovani belgilaydi: ilova nomi ham "Daywarden" — sizning *intizom do'stingiz*, qo'riqchi emas. Ohang iliq, qo'llab-quvvatlovchi; jazolamaydi, rag'batlantiradi.
+Focus AI ortidagi asosiy g'oya — **vaqtni halol o'lchash**. Bozordagi ko'pchilik odat ilovalari shunchaki "qildim / qilmadim" degan belgini so'raydi. Bu esa o'z-o'zini aldashga yo'l qo'yadi: 5 daqiqa ham, 3 soat ham bir xil "bajarildi" bo'ladi. Biz boshqacha yo'l tutdik — foydalanuvchi taymerni bosadi, jarayon paneli **haqiqiy sarflangan vaqt** bilan to'ladi, 100% bo'lganda esa g'alaba keladi. Shu falsafa butun ilovani belgilaydi: ilova nomi ham "FOCUS AI" — sizning *intizom do'stingiz*, qo'riqchi emas. Ohang iliq, qo'llab-quvvatlovchi; jazolamaydi, rag'batlantiradi.
 
 **Eng noyob funksiya — "Telefon yuztuban = chuqur fokus".** Sessiya davomida telefonni yuztuban qo'ysangiz, akselerometr buni aniqlaydi va ekranda "chuqur fokusdasiz" belgisi yonadi. Bu — chalg'ituvchini (telefonni) jismonan chetga qo'yishga undaydigan jismoniy odat. Veb-versiya buni qila olmaydi — bu sof mobil superkuch va ilovaning intizom falsafasiga to'liq mos.
 

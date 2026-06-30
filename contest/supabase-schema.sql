@@ -1,4 +1,4 @@
--- Daywarden ijtimoiy backend (SODDA versiya — auth'siz)
+-- FOCUS AI ijtimoiy backend (SODDA versiya — auth'siz)
 -- Supabase → SQL Editor → joylang → Run. Tamom.
 
 create table if not exists public.profiles (

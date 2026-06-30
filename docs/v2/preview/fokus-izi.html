@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-<title>Daywarden — Fokus izi</title>
+<title>FOCUS AI — Fokus izi</title>
 <link rel="manifest" href="manifest.webmanifest">
 <meta name="theme-color" content="#0a0610">
 <link rel="apple-touch-icon" href="assets/mnsm-logo.png?v=3">
@@ -113,14 +113,14 @@
     }
     function doShare(){
       var s = stats(), c = shareCard(s);
-      var txt = tw('fokusizi.share_text', { n: s.N, h: s.focusH }, "Daywarden'da intizom izim: " + s.N + " nur, " + s.focusH + " soat fokus! Sen ham qo'shil 👉 daywarden.vercel.app");
+      var txt = tw('fokusizi.share_text', { n: s.N, h: s.focusH }, "FOCUS AI'da intizom izim: " + s.N + " nur, " + s.focusH + " soat fokus! Sen ham qo'shil 👉 daywarden.vercel.app");
       if (c.toBlob) {
         c.toBlob(function (blob) {
           var file = new File([blob], 'daywarden-fokus.png', { type: 'image/png' });
           if (navigator.canShare && navigator.canShare({ files: [file] })) {
-            navigator.share({ files: [file], text: txt, title: 'Daywarden' }).catch(function(){});
+            navigator.share({ files: [file], text: txt, title: 'FOCUS AI' }).catch(function(){});
           } else if (navigator.share) {
-            navigator.share({ text: txt, title: 'Daywarden' }).catch(function(){});
+            navigator.share({ text: txt, title: 'FOCUS AI' }).catch(function(){});
           } else {
             var a = document.createElement('a'); a.href = c.toDataURL('image/png'); a.download = 'daywarden-fokus.png'; a.click();
             try { navigator.clipboard.writeText(txt); } catch(e){}
@@ -151,7 +151,7 @@
     }
     function init(){
       var s = stats(); drawPage(s.N); renderHeatmap();
-      try { document.title = T('fokusizi.page_title', 'Daywarden — Fokus izi'); } catch(e){}
+      try { document.title = T('fokusizi.page_title', 'FOCUS AI — Fokus izi'); } catch(e){}
       document.getElementById('count').innerHTML = s.N + ' <small>' + T('fokusizi.nur', 'nur') + '</small>';
       if (s.N <= 0) document.getElementById('note').textContent = T('fokusizi.note_empty', "Hali nur yo'q. Birinchi fokus sessiyangizni boshlang — har biri bu osmonga bitta nur qo'shadi.");
       document.getElementById('shareBtn').onclick = doShare;

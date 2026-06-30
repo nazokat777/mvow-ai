@@ -1,4 +1,4 @@
-# Focus AI — Daywarden
+# Focus AI — FOCUS AI
 
 > Vaqtga asoslangan intizom va odat ilovasi.
 > *"Vaqt — eng adolatli o'lchov. Har bir to'lgan jarayon — siz yetib borgan qadam."*

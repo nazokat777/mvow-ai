@@ -4,7 +4,7 @@
 })();
 
 /**
- * Daywarden — i18n (O'zbekcha / Русский / English)
+ * FOCUS AI — i18n (O'zbekcha / Русский / English)
  *
  * Ishlatish:
  *   <h1 data-i18n="welcome.title">Tanishaylik</h1>
@@ -29,7 +29,7 @@
         add_btn: "Qo'shish", done: "Bajardim", finished: "Tugadi! 🎉",
         empty: "Hali taymer yo'q. Pastdan bugungi vazifani tanlang yoki yangi qo'shing.",
         started: "Taymer boshlandi", gate_title: "Bir vaqtda 2 ish?",
-        gate_msg: "Daywarden bitta ishga to'liq fokusni tavsiya qiladi. Tizim bir vaqtda 2 ishni to'sadi — faqat o'zingiz shart qo'ysangiz qo'shiladi.",
+        gate_msg: "FOCUS AI bitta ishga to'liq fokusni tavsiya qiladi. Tizim bir vaqtda 2 ishni to'sadi — faqat o'zingiz shart qo'ysangiz qo'shiladi.",
         cancel: "Bekor", insist: "Shart qo'yaman", daq: "daq"
       },
       fokusizi: {
@@ -38,7 +38,7 @@
         note_empty: "Hali nur yo'q. Birinchi fokus sessiyangizni boshlang — har biri bu osmonga bitta nur qo'shadi.",
         share: "↗ Natijani ulashish", dl_done: "Rasm yuklandi — Telegram/Instagram'ga joylang", copied: "Matn nusxalandi",
         card_sub: "Mening intizom izim", soat: "soat", streak_unit: "kun ketma-ket", heatmap: "Faollik",
-        share_text: "Daywarden'da intizom izim: {n} nur, {h} soat fokus! Sen ham qo'shil 👉 daywarden.vercel.app"
+        share_text: "FOCUS AI'da intizom izim: {n} nur, {h} soat fokus! Sen ham qo'shil 👉 daywarden.vercel.app"
       },
       sovrinlar: {
         page_title: "{brand} — Sovrinlar", title: "Sovrinlar", sub: "Yig'ilgan medallar — natijangiz bilan ochiladi", medal: "medal",
@@ -125,7 +125,7 @@
         back: '‹ Orqaga',
         loading: 'Yuklanmoqda',
         fallback_title: 'Vaqt — sizning eng qimmat boyligingiz',
-        fallback_body: "Daywarden — sizning intizom do'stingiz. Maqsadlaringizni kunlik harakatga aylantiramiz.",
+        fallback_body: "FOCUS AI — sizning intizom do'stingiz. Maqsadlaringizni kunlik harakatga aylantiramiz.",
         fallback_cta: 'Boshlaymiz ›',
         poem1: 'VAQT — insonning eng qimmat boyligi',
         poem2: "Uni qaytarib bo'lmaydi",
@@ -823,7 +823,7 @@
         add_btn: "Добавить", done: "Готово", finished: "Завершено! 🎉",
         empty: "Пока нет таймеров. Выберите задачу ниже или добавьте новую.",
         started: "Таймер запущен", gate_title: "Две задачи сразу?",
-        gate_msg: "Daywarden рекомендует полный фокус на одной задаче. Система блокирует две задачи сразу — добавится, только если вы настоите.",
+        gate_msg: "FOCUS AI рекомендует полный фокус на одной задаче. Система блокирует две задачи сразу — добавится, только если вы настоите.",
         cancel: "Отмена", insist: "Настаиваю", daq: "мин"
       },
       fokusizi: {
@@ -832,7 +832,7 @@
         note_empty: "Пока лучей нет. Начните первую сессию фокуса — каждая добавит на небо один луч.",
         share: "↗ Поделиться результатом", dl_done: "Картинка скачана — отправьте в Telegram/Instagram", copied: "Текст скопирован",
         card_sub: "Мой след дисциплины", soat: "ч", streak_unit: "дней подряд", heatmap: "Активность",
-        share_text: "Мой след дисциплины в Daywarden: {n} лучей, {h} ч фокуса! Присоединяйся 👉 daywarden.vercel.app"
+        share_text: "Мой след дисциплины в FOCUS AI: {n} лучей, {h} ч фокуса! Присоединяйся 👉 daywarden.vercel.app"
       },
       sovrinlar: {
         page_title: "{brand} — Награды", title: "Награды", sub: "Собранные медали — открываются по результатам", medal: "медалей",
@@ -919,7 +919,7 @@
         back: '‹ Назад',
         loading: 'Загрузка',
         fallback_title: 'Время — ваше самое ценное богатство',
-        fallback_body: 'Daywarden — ваш друг по дисциплине. Превратим ваши цели в ежедневные действия.',
+        fallback_body: 'FOCUS AI — ваш друг по дисциплине. Превратим ваши цели в ежедневные действия.',
         fallback_cta: 'Начнём ›',
         poem1: 'ВРЕМЯ — самое ценное богатство человека',
         poem2: 'Его не вернуть',
@@ -1604,7 +1604,7 @@
         add_btn: "Add", done: "Done", finished: "Finished! 🎉",
         empty: "No timers yet. Pick a task below or add a new one.",
         started: "Timer started", gate_title: "Two tasks at once?",
-        gate_msg: "Daywarden recommends full focus on one task. The system blocks two at once — it's added only if you insist.",
+        gate_msg: "FOCUS AI recommends full focus on one task. The system blocks two at once — it's added only if you insist.",
         cancel: "Cancel", insist: "I insist", daq: "min"
       },
       fokusizi: {
@@ -1613,7 +1613,7 @@
         note_empty: "No rays yet. Start your first focus session — each one adds a ray to this sky.",
         share: "↗ Share result", dl_done: "Image downloaded — post it to Telegram/Instagram", copied: "Text copied",
         card_sub: "My discipline trace", soat: "h", streak_unit: "day streak", heatmap: "Activity",
-        share_text: "My discipline trace on Daywarden: {n} rays, {h}h of focus! Join me 👉 daywarden.vercel.app"
+        share_text: "My discipline trace on FOCUS AI: {n} rays, {h}h of focus! Join me 👉 daywarden.vercel.app"
       },
       sovrinlar: {
         page_title: "{brand} — Rewards", title: "Rewards", sub: "Collected medals — unlocked by your results", medal: "medals",
@@ -1700,7 +1700,7 @@
         back: '‹ Back',
         loading: 'Loading',
         fallback_title: 'Time is your most precious wealth',
-        fallback_body: 'Daywarden — your discipline companion. Turn your goals into daily action.',
+        fallback_body: 'FOCUS AI — your discipline companion. Turn your goals into daily action.',
         fallback_cta: 'Let\'s start ›',
         poem1: "TIME — a human's most precious wealth",
         poem2: 'It can never be brought back',
@@ -2391,7 +2391,7 @@
   let CURRENT_LANG = detectLang();
 
   // Brend nomi — {brand} o'rinbosari hamma joyda shu bilan almashadi
-  var BRAND = 'Daywarden';
+  var BRAND = 'FOCUS AI';
   function subBrand(v) {
     return (typeof v === 'string' && v.indexOf('{brand}') !== -1) ? v.split('{brand}').join(BRAND) : v;
   }

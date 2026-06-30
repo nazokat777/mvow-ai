@@ -34,7 +34,7 @@ function htmlKeys() {
 }
 
 // FIX 1 — {brand} o'rinbosari almashtirilishi kerak (xom {brand} qolmasin sarlavhalarda)
-test('i18n: hech bir tarjimada xom {brand} qolmaydi (Daywarden ga almashadi)', () => {
+test('i18n: hech bir tarjimada xom {brand} qolmaydi (FOCUS AI ga almashadi)', () => {
   const { I18N } = loadI18N();
   const keys = htmlKeys();
   const bad = [];

@@ -217,8 +217,8 @@
       };
       $('shareBtn').onclick = function () {
         var c = Social.myCode();
-        var txt = 'Daywarden\'da men bilan intizomda musobaqalashing! Mening kodim: ' + c + ' — daywarden.vercel.app';
-        if (navigator.share) { navigator.share({ title: 'Daywarden', text: txt }).catch(function () {}); }
+        var txt = 'FOCUS AI\'da men bilan intizomda musobaqalashing! Mening kodim: ' + c + ' — daywarden.vercel.app';
+        if (navigator.share) { navigator.share({ title: 'FOCUS AI', text: txt }).catch(function () {}); }
         else { try { navigator.clipboard.writeText(txt); } catch (e) {} toast('Taklif nusxalandi'); }
       };
       $('addBtn').onclick = function () {

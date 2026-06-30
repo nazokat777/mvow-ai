@@ -1,6 +1,6 @@
 'use strict';
 /**
- * Daywarden — AI murabbiy (intizom do'sti).
+ * FOCUS AI — AI murabbiy (intizom do'sti).
  * coach(ctx, {apiKey}) → kun yakuni uchun iliq, shaxsiy xabar.
  * Kalit bo'lsa — Gemini (bepul tier). Bo'lmasa/xatoda — fallback (shablon).
  * Shuning uchun ilova HECH QACHON buzilmaydi va pul ketmaydi.

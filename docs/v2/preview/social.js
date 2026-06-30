@@ -1,6 +1,6 @@
 'use strict';
 /**
- * Daywarden — ijtimoiy qatlam.
+ * FOCUS AI — ijtimoiy qatlam.
  * Supabase ulansa (window.SB_KEY to'ldirilgan) → real reyting + nazorat (qurilmalararo).
  * Ulanmasa → lokal rejim (ilova hech qachon buzilmaydi).
  * Reyting: fokus vaqti (asosiy) + bajarilgan odatlar.

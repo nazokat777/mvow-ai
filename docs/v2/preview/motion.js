@@ -1,5 +1,5 @@
 /*
- * Daywarden Motion System — v1.0
+ * FOCUS AI Motion System — v1.0
  * Primitive API surface under window.MVOW_MOTION
  */
 (function () {
@@ -706,7 +706,7 @@
       var stage = document.createElement('div');
       stage.className = 'mvw-openinghourglass-stage';
       stage.setAttribute('role', 'img');
-      stage.setAttribute('aria-label', 'Daywarden — sizning intizom do\'stingiz');
+      stage.setAttribute('aria-label', 'FOCUS AI — sizning intizom do\'stingiz');
 
       var frame = document.createElement('div');
       frame.className = 'mvw-openinghourglass-frame';
@@ -773,7 +773,7 @@
       // Wordmark
       var word = document.createElement('div');
       word.className = 'mvw-openinghourglass-wordmark';
-      word.textContent = 'Daywarden';
+      word.textContent = 'FOCUS AI';
       frame.appendChild(word);
 
       stage.appendChild(frame);

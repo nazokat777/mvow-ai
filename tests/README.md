@@ -1,4 +1,4 @@
-# Tests — Daywarden PWA sifat qalqoni
+# Tests — FOCUS AI PWA sifat qalqoni
 
 Dependency YO'Q. Node ichki test-runneri (`node:test`) + `vm` bilan ishlaydi.
 

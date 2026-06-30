@@ -6,7 +6,7 @@ Supabase bepul (kartasiz). "anon" kaliti ochiq bo'lishi xavfsiz (RLS himoya qila
 
 **1. Loyiha yarating**
 - `supabase.com` → **Start your project** → GitHub/Google bilan kiring
-- **New project** → nom: `Daywarden` → **Database Password** o'ylab toping va **saqlang** → region: eng yaqin → **Create** (~2 daqiqa kutadi)
+- **New project** → nom: `FOCUS AI` → **Database Password** o'ylab toping va **saqlang** → region: eng yaqin → **Create** (~2 daqiqa kutadi)
 
 **2. Sxemani joylang**
 - Chap menyu → **SQL Editor** → **New query**
@@ -29,6 +29,6 @@ Supabase bepul (kartasiz). "anon" kaliti ochiq bo'lishi xavfsiz (RLS himoya qila
 
 - `supabase-config.js` (URL + anon kalit) + Supabase klientini ulayman
 - Anonim kirish → har qurilmaga profil + do'st kodi
-- Daywarden kunlik natijani (fokus daqiqa + odat) serverga yozadi
+- FOCUS AI kunlik natijani (fokus daqiqa + odat) serverga yozadi
 - Do'stlar ekrani: real reyting + ustoz/ota-ona nazorati
 - 2-bosqich: chat (realtime)

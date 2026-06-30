@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-<title>Daywarden — Bir vaqtda fokus</title>
+<title>FOCUS AI — Bir vaqtda fokus</title>
 <link rel="manifest" href="manifest.webmanifest">
 <meta name="theme-color" content="#f3f4f7">
 <link rel="apple-touch-icon" href="assets/mnsm-logo.png?v=3">
@@ -98,7 +98,7 @@
       card.style.cssText = 'background:var(--card,#16161a);color:var(--text,#fff);border-radius:18px;max-width:340px;width:100%;padding:22px;box-shadow:0 20px 60px rgba(0,0,0,.5);font-family:Inter,sans-serif;';
       card.innerHTML = '<div style="font-size:30px;text-align:center;margin-bottom:6px;">⚠️</div>'
         + '<div style="font-weight:800;font-size:17px;text-align:center;margin-bottom:8px;">' + esc(T('multitimer.gate_title', "Bir vaqtda 2 ish?")) + '</div>'
-        + '<div style="font-size:14px;color:var(--text-dim,#999);text-align:center;line-height:1.5;margin-bottom:18px;">' + esc(T('multitimer.gate_msg', "Daywarden bitta ishga to'liq fokusni tavsiya qiladi. Tizim bir vaqtda 2 ishni to'sadi — faqat o'zingiz shart qo'ysangiz qo'shiladi.")) + '</div>';
+        + '<div style="font-size:14px;color:var(--text-dim,#999);text-align:center;line-height:1.5;margin-bottom:18px;">' + esc(T('multitimer.gate_msg', "FOCUS AI bitta ishga to'liq fokusni tavsiya qiladi. Tizim bir vaqtda 2 ishni to'sadi — faqat o'zingiz shart qo'ysangiz qo'shiladi.")) + '</div>';
       var row = document.createElement('div'); row.style.cssText = 'display:flex;gap:10px;';
       var no = document.createElement('button'); no.type = 'button'; no.textContent = T('multitimer.cancel', 'Bekor');
       no.style.cssText = 'flex:1;padding:12px;border-radius:12px;border:none;background:linear-gradient(135deg,rgb(244,132,95),#d9663c);color:#fff;font-weight:800;cursor:pointer;font-family:Inter,sans-serif;';
@@ -180,7 +180,7 @@
     }
 
     function init(){
-      try { document.title = T('multitimer.page_title', 'Daywarden — Bir vaqtda fokus'); } catch(e){}
+      try { document.title = T('multitimer.page_title', 'FOCUS AI — Bir vaqtda fokus'); } catch(e){}
       $('mtName').placeholder = T('multitimer.name_ph', 'Vazifa nomi');
       $('mtMin').placeholder = T('multitimer.daq', 'daq');
       render(); renderToday();
