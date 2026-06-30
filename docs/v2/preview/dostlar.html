@@ -100,7 +100,7 @@
 
   <!-- Do'st qo'shish -->
   <div class="add-row">
-    <input id="friendInput" maxlength="6" placeholder="Do'st kodini kiriting" autocomplete="off" autocapitalize="characters">
+    <input id="friendInput" maxlength="6" placeholder="Do'st kodini kiriting" data-i18n-placeholder="dostlar.code_ph" autocomplete="off" autocapitalize="characters">
     <button id="addBtn" data-i18n="dostlar.add">Qo'shish</button>
   </div>
 
@@ -125,7 +125,7 @@
   </div>
   <div class="chat-msgs" id="chatMsgs"></div>
   <div class="chat-in">
-    <input id="chatInput" placeholder="Xabar yozing..." autocomplete="off" maxlength="500">
+    <input id="chatInput" placeholder="Xabar yozing..." data-i18n-placeholder="dostlar.chat_ph" autocomplete="off" maxlength="500">
     <button id="chatSend">➤</button>
   </div>
 </div>
@@ -143,6 +143,7 @@
 <script>
   (function () {
     var role = 'friend';
+    function T(k, def, params) { var s = window.I18N ? (params ? I18N.tWith('dostlar.' + k, params) : I18N.t('dostlar.' + k, def)) : def; if (params && (!window.I18N)) { Object.keys(params).forEach(function (p) { s = s.split('{' + p + '}').join(params[p]); }); } return s; }
     function $(id) { return document.getElementById(id); }
     function toast(msg) { var t = $('toast'); t.textContent = msg; t.classList.add('show'); setTimeout(function () { t.classList.remove('show'); }, 1800); }
 
@@ -156,17 +157,17 @@
         list.forEach(function (r, i) {
           var top = i === 0 && r.focusMins > 0;
           var stat = r.pending
-            ? '<span class="lb-pending">kutilmoqda…</span>'
-            : '<span class="lb-stat">' + (r.focusH || 0) + ' soat <span class="hb">· ' + (r.habits || 0) + ' odat</span></span>';
+            ? '<span class="lb-pending">' + T('pending', 'kutilmoqda…') + '</span>'
+            : '<span class="lb-stat">' + (r.focusH || 0) + ' ' + T('hours', 'soat') + ' <span class="hb">· ' + (r.habits || 0) + ' ' + T('habits', 'odat') + '</span></span>';
           html += '<div class="lb-row' + (r.me ? ' me' : '') + (top ? ' top' : '') + '"' + (r.me ? '' : ' data-chat="' + escapeHtml(r.code) + '"') + '>'
             + '<div class="lb-rank">' + (i + 1) + '</div>'
-            + '<div class="lb-name">' + (r.me ? '<span class="you">Siz</span>' : escapeHtml(r.name)) + '</div>'
+            + '<div class="lb-name">' + (r.me ? '<span class="you">' + T('you', 'Siz') + '</span>' : escapeHtml(r.name)) + '</div>'
             + stat + (r.me ? '' : '<span class="chat-ic">💬</span>') + '</div>';
         });
         if (!hasFriends) {
           html += '<div class="lb-empty">' + (role === 'mentor'
-            ? 'Ustoz yoki ota-onangiz kodini qo\'shing — ular natijangizni ko\'radi.'
-            : 'Hali do\'st yo\'q — kodingizni ulashing va musobaqani boshlang!') + '</div>';
+            ? T('empty_mentor', 'Ustoz yoki ota-onangiz kodini qo\'shing — ular natijangizni ko\'radi.')
+            : T('empty_friend', 'Hali do\'st yo\'q — kodingizni ulashing va musobaqani boshlang!')) + '</div>';
         }
         el.innerHTML = html;
       });
@@ -178,10 +179,10 @@
     function openChat(code) {
       chatCode = code;
       $('chatWho').textContent = code;
-      $('chatMsgs').innerHTML = '<div class="chat-empty">Yuklanmoqda…</div>';
+      $('chatMsgs').innerHTML = '<div class="chat-empty">' + T('loading', 'Yuklanmoqda…') + '</div>';
       $('chatOv').classList.add('open');
       $('chatInput').focus();
-      if (!Social.cloud()) { $('chatMsgs').innerHTML = '<div class="chat-empty">Chat uchun internet kerak.</div>'; return; }
+      if (!Social.cloud()) { $('chatMsgs').innerHTML = '<div class="chat-empty">' + T('need_net', 'Chat uchun internet kerak.') + '</div>'; return; }
       Social.getMessages(code).then(renderMsgs);
       chatCh = Social.subscribeMessages(code, function (m) { if (m.from_code !== Social.myCode()) appendMsg(m); });
     }
@@ -193,7 +194,7 @@
     function msgHtml(m) { return '<div class="msg ' + (m.from_code === Social.myCode() ? 'me' : 'them') + '">' + escapeHtml(m.body) + '</div>'; }
     function renderMsgs(list) {
       var el = $('chatMsgs');
-      if (!list.length) { el.innerHTML = '<div class="chat-empty">Hali xabar yo\'q. Birinchi bo\'lib yozing!</div>'; return; }
+      if (!list.length) { el.innerHTML = '<div class="chat-empty">' + T('no_msg', 'Hali xabar yo\'q. Birinchi bo\'lib yozing!') + '</div>'; return; }
       el.innerHTML = list.map(msgHtml).join('');
       el.scrollTop = el.scrollHeight;
     }
@@ -206,7 +207,7 @@
       $('chatInput').value = '';
       Social.sendMessage(chatCode, v).then(function (ok) {
         if (ok) appendMsg({ from_code: Social.myCode(), to_code: chatCode, body: v });
-        else toast('Yuborilmadi');
+        else toast(T('send_fail', 'Yuborilmadi'));
       });
     }
 
@@ -214,19 +215,19 @@
       $('copyBtn').onclick = function () {
         var c = Social.myCode();
         try { navigator.clipboard.writeText(c); } catch (e) {}
-        toast('Kod nusxalandi: ' + c);
+        toast(T('code_copied', 'Kod nusxalandi: {code}', { code: c }));
       };
       $('shareBtn').onclick = function () {
         var c = Social.myCode();
-        var txt = 'FOCUS AI\'da men bilan intizomda musobaqalashing! Mening kodim: ' + c + ' — daywarden.vercel.app';
+        var txt = T('share_text', 'FOCUS AI\'da men bilan intizomda musobaqalashing! Mening kodim: {code} — daywarden.vercel.app', { code: c });
         if (navigator.share) { navigator.share({ title: 'FOCUS AI', text: txt }).catch(function () {}); }
-        else { try { navigator.clipboard.writeText(txt); } catch (e) {} toast('Taklif nusxalandi'); }
+        else { try { navigator.clipboard.writeText(txt); } catch (e) {} toast(T('invite_copied', 'Taklif nusxalandi')); }
       };
       $('addBtn').onclick = function () {
         var v = $('friendInput').value;
         Social.addFriend(v, role).then(function (ok) {
-          if (ok) { $('friendInput').value = ''; render(); toast('Qo\'shildi'); }
-          else { toast('Kod noto\'g\'ri yoki allaqachon bor'); }
+          if (ok) { $('friendInput').value = ''; render(); toast(T('added', 'Qo\'shildi')); }
+          else { toast(T('add_fail', 'Kod noto\'g\'ri yoki allaqachon bor')); }
         });
       };
       var tabs = document.querySelectorAll('.tab');

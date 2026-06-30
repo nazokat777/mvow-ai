@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-<title>{brand} — Rejalar</title>
+<title data-i18n="rejalar.page_title">{brand} — Rejalar</title>
 <link rel="manifest" href="manifest.webmanifest">
 <meta name="theme-color" content="#04060B">
 <link rel="apple-touch-icon" href="assets/mnsm-logo.png?v=2">
@@ -191,15 +191,15 @@
 <body>
 
 <div class="wrap">
-  <h1 class="title">Uzoq yo'l</h1>
-  <p class="sub">Hafta, oy va yil rejalari</p>
+  <h1 class="title" data-i18n="rejalar.title">Uzoq yo'l</h1>
+  <p class="sub" data-i18n="rejalar.sub">Hafta, oy va yil rejalari</p>
 
   <div class="range-tabs" id="rangeTabs" style="grid-template-columns: repeat(5, 1fr);">
-    <button class="range-tab on" data-range="week"  type="button">Hafta</button>
-    <button class="range-tab"    data-range="month" type="button">Oy</button>
-    <button class="range-tab"    data-range="3mo"   type="button">3 oy</button>
-    <button class="range-tab"    data-range="6mo"   type="button">6 oy</button>
-    <button class="range-tab"    data-range="year"  type="button">Yil</button>
+    <button class="range-tab on" data-range="week"  type="button" data-i18n="rejalar.tab_week">Hafta</button>
+    <button class="range-tab"    data-range="month" type="button" data-i18n="rejalar.tab_month">Oy</button>
+    <button class="range-tab"    data-range="3mo"   type="button" data-i18n="rejalar.tab_3mo">3 oy</button>
+    <button class="range-tab"    data-range="6mo"   type="button" data-i18n="rejalar.tab_6mo">6 oy</button>
+    <button class="range-tab"    data-range="year"  type="button" data-i18n="rejalar.tab_year">Yil</button>
   </div>
 
   <!-- Weekly -->
@@ -209,8 +209,8 @@
       <div class="hint" id="weekRange">10 — 16 iyun</div>
     </div>
     <div class="input-block">
-      <label class="input-lbl">Bu hafta nima qilasiz?</label>
-      <textarea id="weekGoal" rows="5" placeholder="masalan:&#10;• 3 ta kitob bobi&#10;• 4 ta sport sessiyasi&#10;• 1 ta loyiha bosqichi" maxlength="500"></textarea>
+      <label class="input-lbl" data-i18n="rejalar.week_lbl">Bu hafta nima qilasiz?</label>
+      <textarea id="weekGoal" rows="5" placeholder="masalan:&#10;• 3 ta kitob bobi&#10;• 4 ta sport sessiyasi&#10;• 1 ta loyiha bosqichi" data-i18n-placeholder="rejalar.week_ph" maxlength="500"></textarea>
     </div>
   </div>
 
@@ -218,11 +218,11 @@
   <div class="panel" id="panel-month">
     <div class="period-meta">
       <div class="when" id="monthWhen">Iyun 2026</div>
-      <div class="hint">Bu oy uchun asosiy yo'nalish</div>
+      <div class="hint" data-i18n="rejalar.month_hint">Bu oy uchun asosiy yo'nalish</div>
     </div>
     <div class="input-block">
-      <label class="input-lbl">Bu oy nima qilasiz?</label>
-      <textarea id="monthGoal" rows="5" placeholder="masalan:&#10;• Til o'qishni 2 daraja oshirish&#10;• Sport — 16 sessiya&#10;• Loyiha — birinchi versiya tayyor" maxlength="500"></textarea>
+      <label class="input-lbl" data-i18n="rejalar.month_lbl">Bu oy nima qilasiz?</label>
+      <textarea id="monthGoal" rows="5" placeholder="masalan:&#10;• Til o'qishni 2 daraja oshirish&#10;• Sport — 16 sessiya&#10;• Loyiha — birinchi versiya tayyor" data-i18n-placeholder="rejalar.month_ph" maxlength="500"></textarea>
     </div>
   </div>
 
@@ -230,11 +230,11 @@
   <div class="panel" id="panel-3mo">
     <div class="period-meta">
       <div class="when" id="threeMoWhen">Iyun — Avgust</div>
-      <div class="hint">3 oy uchun katta maqsad</div>
+      <div class="hint" data-i18n="rejalar.threeMo_hint">3 oy uchun katta maqsad</div>
     </div>
     <div class="input-block">
-      <label class="input-lbl">3 oyda nimaga erishasiz?</label>
-      <textarea id="threeMoGoal" rows="5" placeholder="masalan: yangi mahorat o'rganish, sport 50 sessiya, 5 kitob" maxlength="600"></textarea>
+      <label class="input-lbl" data-i18n="rejalar.threeMo_lbl">3 oyda nimaga erishasiz?</label>
+      <textarea id="threeMoGoal" rows="5" placeholder="masalan: yangi mahorat o'rganish, sport 50 sessiya, 5 kitob" data-i18n-placeholder="rejalar.threeMo_ph" maxlength="600"></textarea>
     </div>
   </div>
 
@@ -242,11 +242,11 @@
   <div class="panel" id="panel-6mo">
     <div class="period-meta">
       <div class="when" id="sixMoWhen">Iyun — Noyabr</div>
-      <div class="hint">Yarim yillik niyat</div>
+      <div class="hint" data-i18n="rejalar.sixMo_hint">Yarim yillik niyat</div>
     </div>
     <div class="input-block">
-      <label class="input-lbl">6 oyda nimaga erishasiz?</label>
-      <textarea id="sixMoGoal" rows="6" placeholder="masalan: yangi til daraja oshirish, loyiha ishga tushirish, sog'lik darajasini ko'tarish" maxlength="700"></textarea>
+      <label class="input-lbl" data-i18n="rejalar.sixMo_lbl">6 oyda nimaga erishasiz?</label>
+      <textarea id="sixMoGoal" rows="6" placeholder="masalan: yangi til daraja oshirish, loyiha ishga tushirish, sog'lik darajasini ko'tarish" data-i18n-placeholder="rejalar.sixMo_ph" maxlength="700"></textarea>
     </div>
   </div>
 
@@ -254,20 +254,20 @@
   <div class="panel" id="panel-year">
     <div class="period-meta">
       <div class="when" id="yearWhen">2026</div>
-      <div class="hint">Yil uchun katta niyat</div>
+      <div class="hint" data-i18n="rejalar.year_hint">Yil uchun katta niyat</div>
     </div>
     <div class="input-block">
-      <label class="input-lbl">Yilning oxiriga nima qilmoqchi?</label>
-      <textarea id="yearGoal" rows="6" placeholder="masalan:&#10;• Yangi mahorat o'rganish&#10;• Sog'lik darajasi yaxshilanishi&#10;• Bir katta loyiha tugatish&#10;• Mustaqil bo'lish" maxlength="700"></textarea>
+      <label class="input-lbl" data-i18n="rejalar.year_lbl">Yilning oxiriga nima qilmoqchi?</label>
+      <textarea id="yearGoal" rows="6" placeholder="masalan:&#10;• Yangi mahorat o'rganish&#10;• Sog'lik darajasi yaxshilanishi&#10;• Bir katta loyiha tugatish&#10;• Mustaqil bo'lish" data-i18n-placeholder="rejalar.year_ph" maxlength="700"></textarea>
     </div>
   </div>
 
-  <div class="saved-banner" id="savedBanner">✓ Saqlandi</div>
+  <div class="saved-banner" id="savedBanner"><span data-i18n="rejalar.saved">✓ Saqlandi</span></div>
 
 </div>
 
 <div class="bottom">
-  <a class="cta" id="saveBtn" href="home.html">Saqla va davom</a>
+  <a class="cta" id="saveBtn" href="home.html" data-i18n="rejalar.cta">Saqla va davom</a>
 </div>
 
 <script src="i18n.js?v=28.4.0"></script>
@@ -292,13 +292,16 @@
     document.getElementById('sixMoGoal').value    = localStorage.getItem(KEY['6mo'])   || '';
     document.getElementById('yearGoal').value     = localStorage.getItem(KEY.year)     || '';
 
+    const now = new Date();
+    const cap = s => s.charAt(0).toUpperCase() + s.slice(1);
+
     // 3 oy va 6 oy meta
-    const oyShort = ['yan','fev','mar','apr','may','iyn','iyl','avg','sen','okt','noy','dek'];
+    const oyShort = (window.I18N && I18N.t('common.months_short', null)) || ['yan','fev','mar','apr','may','iyn','iyl','avg','sen','okt','noy','dek'];
     const m1 = now.getMonth();
     const m3 = (m1 + 2) % 12;
     const m6 = (m1 + 5) % 12;
-    document.getElementById('threeMoWhen').textContent = oyShort[m1].charAt(0).toUpperCase()+oyShort[m1].slice(1) + ' — ' + oyShort[m3].charAt(0).toUpperCase()+oyShort[m3].slice(1);
-    document.getElementById('sixMoWhen').textContent   = oyShort[m1].charAt(0).toUpperCase()+oyShort[m1].slice(1) + ' — ' + oyShort[m6].charAt(0).toUpperCase()+oyShort[m6].slice(1);
+    document.getElementById('threeMoWhen').textContent = cap(oyShort[m1]) + ' — ' + cap(oyShort[m3]);
+    document.getElementById('sixMoWhen').textContent   = cap(oyShort[m1]) + ' — ' + cap(oyShort[m6]);
 
     // Tabs
     document.querySelectorAll('.range-tab').forEach(t => {
@@ -312,9 +315,8 @@
     });
 
     // Meta — hozirgi hafta/oy/yil
-    const now = new Date();
-    const monNames = ['Yanvar','Fevral','Mart','Aprel','May','Iyun','Iyul','Avgust','Sentyabr','Oktyabr','Noyabr','Dekabr'];
-    const monShort = ['yan','fev','mar','apr','may','iyun','iyul','avg','sen','okt','noy','dek'];
+    const monNames = (window.I18N && I18N.t('common.months_long', null)) || ['Yanvar','Fevral','Mart','Aprel','May','Iyun','Iyul','Avgust','Sentyabr','Oktyabr','Noyabr','Dekabr'];
+    const monShort = (window.I18N && I18N.t('common.months_short', null)) || ['yan','fev','mar','apr','may','iyun','iyul','avg','sen','okt','noy','dek'];
     const dow = now.getDay();
     const monday = new Date(now);
     monday.setDate(now.getDate() - ((dow + 6) % 7));
@@ -328,7 +330,7 @@
     const w = new Date(t.getFullYear(), 0, 4);
     const weekNum = 1 + Math.round(((t - w) / 86400000 - 3 + ((w.getDay() + 6) % 7)) / 7);
 
-    document.getElementById('weekWhen').textContent = `Hafta ${weekNum}`;
+    document.getElementById('weekWhen').textContent = (window.I18N ? I18N.tWith('rejalar.week_when', { n: weekNum }) : `Hafta ${weekNum}`);
     document.getElementById('weekRange').textContent = `${monday.getDate()} ${monShort[monday.getMonth()]} — ${sunday.getDate()} ${monShort[sunday.getMonth()]}`;
     document.getElementById('monthWhen').textContent = monNames[now.getMonth()] + ' ' + now.getFullYear();
     document.getElementById('yearWhen').textContent = String(now.getFullYear());

@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-<title>{brand} — Xabarlar</title>
+<title data-i18n="notifications.page_title">{brand} — Xabarlar</title>
 <link rel="manifest" href="manifest.webmanifest">
 <meta name="theme-color" content="#04060B">
 <link rel="apple-touch-icon" href="assets/mnsm-logo.png?v=2">
@@ -80,13 +80,13 @@
   <div class="container">
 
     <div class="h">
-      <div class="title">Xabarlar</div>
+      <div class="title" data-i18n="notifications.title">Xabarlar</div>
       <div class="day" id="dateLbl">10-JUN</div>
     </div>
 
     <div id="items"></div>
 
-    <button class="clear-btn" id="clearBtn" type="button">Tozalash</button>
+    <button class="clear-btn" id="clearBtn" type="button" data-i18n="notifications.clear">Tozalash</button>
 
   </div>
 </div>
@@ -97,6 +97,13 @@
 <script src="data.js?v=28.4.0" defer></script>
 <script src="nav-overlay.js?v=28.4.0" defer></script>
 <script>
+  function T(k, fb) { return (window.I18N && I18N.t) ? I18N.t(k, fb) : fb; }
+  function TW(k, fb, params) {
+    if (window.I18N && I18N.tWith) { const v = I18N.tWith(k, params); if (v) return v; }
+    let s = fb;
+    if (params) Object.keys(params).forEach(p => { s = s.split('{' + p + '}').join(String(params[p])); });
+    return s;
+  }
   function fmtTime(ts) {
     const d = new Date(ts);
     return String(d.getHours()).padStart(2,'0') + ':' + String(d.getMinutes()).padStart(2,'0');
@@ -122,7 +129,7 @@
     // Streak voqeasi (agar mavjud)
     const streak = parseInt(localStorage.getItem('mvow.streak') || '0', 10);
     if (streak > 0 && !out.some(e => e.type === 'streak' && e.day === todayDateStr())) {
-      out.push({ ts: now - 60000 * 30, type: 'streak', text: `${streak} kun streak.`, day: todayDateStr() });
+      out.push({ ts: now - 60000 * 30, type: 'streak', text: TW('notifications.evt_streak', '{n} kun streak.', { n: streak }), day: todayDateStr() });
     }
 
     // Reja tuzilgan
@@ -131,7 +138,7 @@
       try {
         const plan = JSON.parse(planRaw);
         if (Array.isArray(plan) && plan.length) {
-          out.push({ ts: now - 60000 * 90, type: 'plan', text: `Bugungi reja tuzildi — ${plan.length} ish.`, day: todayDateStr() });
+          out.push({ ts: now - 60000 * 90, type: 'plan', text: TW('notifications.evt_plan', 'Bugungi reja tuzildi — {n} ish.', { n: plan.length }), day: todayDateStr() });
         }
       } catch {}
     }
@@ -140,7 +147,7 @@
     const todayKey = 'mvow.done.' + (window.MVOW_DATA ? MVOW_DATA.today.iso : new Date().toISOString().slice(0,10));
     const done = parseInt(localStorage.getItem(todayKey) || '0', 10);
     if (done > 0 && !out.some(e => e.type === 'done' && e.day === todayDateStr() && e.count === done)) {
-      out.push({ ts: now - 60000 * 5, type: 'done', text: `${done} ta ish bajarildi.`, day: todayDateStr(), count: done });
+      out.push({ ts: now - 60000 * 5, type: 'done', text: TW('notifications.evt_done', '{n} ta ish bajarildi.', { n: done }), day: todayDateStr(), count: done });
     }
 
     return out;
@@ -161,7 +168,7 @@
 
     const container = document.getElementById('items');
     if (!evts.length) {
-      container.innerHTML = `<div class="empty">Bugun hech qanday xabar yo'q.<br>Reja tuzing, ishni bajaring — bu yerda chiqadi.</div>`;
+      container.innerHTML = `<div class="empty">${T('notifications.empty_title', "Bugun hech qanday xabar yo'q.")}<br>${T('notifications.empty_sub', 'Reja tuzing, ishni bajaring — bu yerda chiqadi.')}</div>`;
       return;
     }
 
