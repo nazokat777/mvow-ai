@@ -64,7 +64,7 @@
 <div class="phone">
   <div class="container">
 
-    <div class="stamp" data-i18n="celebrate.stamp">7 kun · tugadi</div>
+    <div class="stamp" id="celStamp">7 kun · tugadi</div>
 
     <div class="hero">
       <div class="big">+70%</div>
@@ -92,16 +92,28 @@
     const daysUnit = (window.I18N ? I18N.t('celebrate.days_unit', 'kun') : 'kun');
     const hoursUnit = (window.I18N ? I18N.t('celebrate.hours_unit', 'soat') : 'soat');
     const _hist = (MVOW_DATA.getHistory ? MVOW_DATA.getHistory() : []);
-    list.innerHTML = MVOW_DATA.chains.map(c => {
-      const _mins = _hist.filter(h => (h.name || '') === c.name).reduce((s, h) => s + (h.actualMins || 0), 0);
-      const _hours = _mins > 0 ? Math.round(_mins / 60) : (c.hours || 0);
-      return `
+    const _esc = s => String(s || '').replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
+    const _daysAgo = iso => { if (!iso) return 999; const d = new Date(iso + 'T00:00:00'); const t = new Date(); t.setHours(0, 0, 0, 0); return Math.round((t - d) / 86400000); };
+    // Hero %: shu hafta vs o'tgan hafta (haqiqiy tarix)
+    let _thisWk = 0, _lastWk = 0; const _wkDays = {};
+    _hist.forEach(h => { const a = _daysAgo(h.dateIso), m = h.actualMins || 0; if (a >= 0 && a < 7) { _thisWk += m; _wkDays[h.dateIso] = 1; } else if (a >= 7 && a < 14) { _lastWk += m; } });
+    const _pct = _lastWk > 0 ? Math.round((_thisWk - _lastWk) / _lastWk * 100) : (_thisWk > 0 ? 100 : 0);
+    const _big = document.querySelector('.hero .big'); if (_big) _big.textContent = (_pct >= 0 ? '+' : '') + _pct + '%';
+    const _stamp = document.getElementById('celStamp');
+    if (_stamp) _stamp.textContent = Object.keys(_wkDays).length + ' ' + daysUnit + ' · ' + Math.round(_thisWk / 60) + ' ' + hoursUnit;
+    // Breakdown: haqiqiy tarixdan, maqsad bo'yicha
+    const _byName = {};
+    _hist.forEach(h => { const n = h.name || ''; if (!n) return; if (!_byName[n]) _byName[n] = { d: {}, m: 0 }; _byName[n].d[h.dateIso] = 1; _byName[n].m += (h.actualMins || 0); });
+    const _rows = Object.keys(_byName).map(n => ({ name: n, days: Object.keys(_byName[n].d).length, hours: Math.round(_byName[n].m / 60) })).sort((a, b) => b.days - a.days);
+    if (_rows.length) {
+      list.innerHTML = _rows.map(c => `
       <div class="chain">
-        <span class="name">${c.name}</span>
-        <span class="days"><span class="em">${c.days}</span> ${daysUnit} · <span class="em">${_hours}</span> ${hoursUnit}</span>
-      </div>
-    `;
-    }).join('');
+        <span class="name">${_esc(c.name)}</span>
+        <span class="days"><span class="em">${c.days}</span> ${daysUnit} · <span class="em">${c.hours}</span> ${hoursUnit}</span>
+      </div>`).join('');
+    } else {
+      list.innerHTML = `<div style="text-align:center;color:var(--text-dim);padding:22px 8px;font-size:15px;line-height:1.5;">${(window.I18N ? I18N.t('celebrate.empty', "Hali natija yo'q — birinchi fokus sessiyangizni boshlang!") : "Hali natija yo'q — boshlang!")}</div>`;
+    }
 
     // --- Motion: milestoneMark on the hero number, gated by streak ---
     try {
