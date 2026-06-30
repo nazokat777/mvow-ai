@@ -7,14 +7,17 @@ struct MVoWApp: App {
             ContentView()
                 .preferredColorScheme(.dark)
                 .environmentObject(NotificationManager.shared)
-                .onAppear { NotificationManager.shared.configure() }
+                .onAppear {
+                    NotificationManager.shared.configure()
+                    PlanStore.shared.reschedule()
+                }
         }
     }
 }
 
 /// Root navigation. Real app would use a state machine to decide
 /// which screen to show: onboarding → home → session etc.
-enum AppScreen { case welcome, home, pomodoro }
+enum AppScreen { case welcome, home, pomodoro, plan }
 
 struct ContentView: View {
     @State private var screen: AppScreen = .welcome
@@ -28,6 +31,8 @@ struct ContentView: View {
                 HomeView(onNavigate: { go($0) })
             case .pomodoro:
                 PomodoroView(onSessionDone: { go(.home) })
+            case .plan:
+                PlanView(onClose: { go(.home) })
             }
         }
         .transition(.opacity)

@@ -289,7 +289,8 @@ private struct BottomNav: View {
     var body: some View {
         HStack {
             NavItem(symbol: "house.fill", label: "UY", active: true)
-            NavItem(symbol: "calendar", label: "KALENDAR")
+            Button { onNavigate(.plan) } label: { NavItem(symbol: "bell", label: "ESLATMA") }
+                .buttonStyle(.plain)
             // Center FAB — fokusni boshlash
             Button { onNavigate(.pomodoro) } label: {
                 Image(systemName: "plus")
