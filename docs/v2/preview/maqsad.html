@@ -268,6 +268,11 @@
     <div class="picker-lbl" data-i18n="maqsad.color_lbl">Rang</div>
     <div class="color-row" id="colorRow"></div>
 
+    <!-- Tur: Taymerli / Taymersiz -->
+    <div class="picker-lbl" data-i18n="maqsad.type_lbl">Turi</div>
+    <div id="typeRow" style="display:flex;gap:10px;margin-bottom:6px;"></div>
+    <div id="typeHint" style="font-size:13px;color:var(--text-dim);margin-bottom:10px;line-height:1.45;"></div>
+
     <!-- Band vaqtlar (boshqa maqsadlardan) -->
     <div id="occupiedHint" style="display:none;background:rgba(244, 132, 95,.05);border:1px solid rgba(244, 132, 95,.18);border-radius:10px;padding:10px 14px;margin:8px 0 4px;">
       <div style="font-size:14px;color:var(--text-dim);letter-spacing:2px;text-transform:uppercase;margin-bottom:6px;" data-i18n="maqsad.occupied_lbl">Band vaqtlar</div>
@@ -275,13 +280,19 @@
     </div>
 
     <div class="time-input">
-      <label for="dailyTime" data-i18n="maqsad.daily_time_lbl">Har kun qaysi vaqtda?</label>
+      <label for="dailyTime" id="timeLbl" data-i18n="maqsad.daily_time_lbl">Har kun qaysi vaqtda?</label>
       <input id="dailyTime" type="time" value="07:00">
     </div>
 
-    <div class="time-input">
+    <div class="time-input" id="durRow">
       <label for="dailyDur" data-i18n="maqsad.daily_dur_lbl">Davomiylik (daqiqa)</label>
       <input id="dailyDur" type="number" min="10" max="240" value="60" style="text-align:right;">
+    </div>
+
+    <!-- Taymersiz: foydalanuvchi o'zi yozadigan eslatma matni -->
+    <div id="reminderRow" style="display:none;">
+      <div class="picker-lbl" data-i18n="maqsad.reminder_text_lbl">Eslatma matni</div>
+      <input id="reminderText" type="text" maxlength="120" data-i18n-placeholder="maqsad.reminder_text_ph" placeholder="masalan: Bugun ota-onang uchun nima yaxshilik qilding?" style="width:100%;padding:12px;background:var(--card,#0C0F16);border:1px solid var(--border-default,rgba(255,255,255,.12));border-radius:10px;color:var(--text,#F5F2EC);font-size:16px;box-sizing:border-box;font-family:inherit;">
     </div>
 
     <!-- Konflikt xabari -->
@@ -362,6 +373,47 @@
       });
     })();
 
+    // ── Tur: Taymerli / Taymersiz ──
+    let goalType = 'timer';
+    function applyGoalType() {
+      var durRow = document.getElementById('durRow');
+      var reminderRow = document.getElementById('reminderRow');
+      var timeLbl = document.getElementById('timeLbl');
+      var hint = document.getElementById('typeHint');
+      var notimer = (goalType === 'notimer');
+      if (durRow) durRow.style.display = notimer ? 'none' : '';
+      if (reminderRow) reminderRow.style.display = notimer ? 'block' : 'none';
+      if (timeLbl) timeLbl.textContent = notimer
+        ? (window.I18N ? I18N.t('maqsad.reminder_lbl', 'Eslatma vaqti') : 'Eslatma vaqti')
+        : (window.I18N ? I18N.t('maqsad.daily_time_lbl', 'Har kun qaysi vaqtda?') : 'Har kun qaysi vaqtda?');
+      if (hint) hint.textContent = notimer
+        ? (window.I18N ? I18N.t('maqsad.type_notimer_hint', 'Belgilangan vaqtda eslatma keladi. Bajarganingizda belgilab, izoh va (xohlasangiz) soat yozasiz.') : 'Belgilangan vaqtda eslatma keladi.')
+        : (window.I18N ? I18N.t('maqsad.type_timer_hint', 'Fokus vaqtida oddiy taymer yoki Pomodoro tanlaysiz.') : 'Fokus vaqtida taymer tanlaysiz.');
+      if (typeof checkStep2 === 'function') checkStep2();
+    }
+    (function buildTypes() {
+      var row = document.getElementById('typeRow');
+      if (!row) return;
+      var TYPES = [
+        { key: 'timer', label: (window.I18N ? I18N.t('maqsad.type_timer', 'Taymerli') : 'Taymerli') },
+        { key: 'notimer', label: (window.I18N ? I18N.t('maqsad.type_notimer', 'Taymersiz') : 'Taymersiz') }
+      ];
+      var base = 'flex:1;padding:12px;border-radius:12px;border:1px solid var(--border-default,rgba(0,0,0,.12));background:transparent;color:var(--text-mid);font-family:inherit;font-size:16px;font-weight:600;cursor:pointer;transition:background .12s;';
+      function restyle() {
+        Array.prototype.forEach.call(row.children, function (c) {
+          var on = c.getAttribute('data-type') === goalType;
+          c.style.cssText = base + (on ? 'background:var(--accent,#F4845F);border-color:var(--accent,#F4845F);color:#fff;' : '');
+        });
+      }
+      TYPES.forEach(function (t) {
+        var b = document.createElement('button');
+        b.type = 'button'; b.setAttribute('data-type', t.key); b.textContent = t.label;
+        b.addEventListener('click', function () { goalType = t.key; restyle(); applyGoalType(); if (window.MVOW_DATA) MVOW_DATA.fxTap(); });
+        row.appendChild(b);
+      });
+      restyle(); applyGoalType();
+    })();
+
     // ── Vaqt utilities ──
     function timeToMin(t) {
       const m = String(t || '').match(/^(\d{1,2}):(\d{2})$/);
@@ -397,6 +449,7 @@
 
     // Yangi vaqt boshqa maqsad bilan to'qnashadimi?
     function findConflict() {
+      if (goalType === 'notimer') return null;   // eslatma slot band qilmaydi
       const newStart = timeToMin(dailyTime.value);
       const newDur = parseInt(dailyDur.value, 10) || 60;
       if (newStart === null || newDur <= 0) return null;
@@ -528,12 +581,17 @@
         return;
       }
       const time = dailyTime.value;
-      const durMin = parseInt(dailyDur.value, 10) || 60;
+      const isNoTimer = (goalType === 'notimer');
       const hourLbl = (window.I18N ? I18N.t('maqsad.unit_hour', 'soat') : 'soat');
       const minLbl  = (window.I18N ? I18N.t('maqsad.unit_min',  'daq')  : 'daq');
-      const dur = durMin >= 60
-        ? (durMin % 60 === 0 ? (durMin/60) + ' ' + hourLbl : Math.floor(durMin/60) + ' ' + hourLbl + ' ' + (durMin%60) + ' ' + minLbl)
-        : durMin + ' ' + minLbl;
+      const durMin = isNoTimer ? 0 : (parseInt(dailyDur.value, 10) || 60);
+      const dur = isNoTimer
+        ? ('0 ' + minLbl)
+        : (durMin >= 60
+          ? (durMin % 60 === 0 ? (durMin/60) + ' ' + hourLbl : Math.floor(durMin/60) + ' ' + hourLbl + ' ' + (durMin%60) + ' ' + minLbl)
+          : durMin + ' ' + minLbl);
+      var _remEl = document.getElementById('reminderText');
+      const reminderText = (isNoTimer && _remEl) ? _remEl.value.trim() : '';
 
       const today = new Date();
       // MUHIM: local sanani ishlatamiz (UTC emas) — vaqt zonasi bug'ini oldini olish
@@ -556,7 +614,9 @@
         dur: dur,
         startDate: startIso,
         icon: selectedIcon,
-        color: selectedColor
+        color: selectedColor,
+        noTimer: isNoTimer,
+        reminderText: reminderText
       };
       goals.push(newGoal);
       localStorage.setItem('mvow.goals', JSON.stringify(goals));

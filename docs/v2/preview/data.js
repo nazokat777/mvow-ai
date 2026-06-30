@@ -197,7 +197,8 @@
                   name: g.text || 'Reja',
                   dur:  s.dur  || g.dur  || '60 daq',
                   goalId: g.id,
-                  sessionSid: s.sid
+                  sessionSid: s.sid,
+                  noTimer: !!g.noTimer
                 });
               }
             }
@@ -364,7 +365,7 @@
         g.sessions = [{
           sid: 's1',
           time: g.time || '07:00',
-          dur:  g.dur  || '60 daq'
+          dur:  g.noTimer ? '0 daq' : (g.dur || '60 daq')   // taymersiz maqsad: davomiylik yo'q (faqat eslatma)
         }];
       } else {
         // Sid'siz yozuvlarga sid berish (idempotent)
@@ -812,13 +813,16 @@
   // MUHIM: startedAt va completedAt — HAQIQIY bajarilgan vaqt (rejadagi vaqt emas).
   // task.actualStartedAt bo'lsa (taymer'dan), uni ishlatamiz. Aks holda
   // hozirgi vaqtdan dur'ni ayirib hisoblaymiz.
-  DATA.markTaskDone = function (task, taskKey, note) {
+  DATA.markTaskDone = function (task, taskKey, note, actualMinsOverride) {
     DATA.setTaskState(taskKey, { status: 'done' });
     const completedAt = Date.now();
     const durMin = DATA.parseDurMins(task.dur);
+    // Taymersiz vazifa: user xohlasa necha soat ishlaganini kiritadi (actualMinsOverride),
+    // aks holda rejadagi davomiylik (0 ham bo'lishi mumkin — shunchaki belgilangan).
+    const actualMins = (typeof actualMinsOverride === 'number' && actualMinsOverride >= 0) ? actualMinsOverride : durMin;
     const startedAt = (typeof task.actualStartedAt === 'number' && task.actualStartedAt > 0)
       ? task.actualStartedAt
-      : (completedAt - durMin * 60 * 1000);
+      : (completedAt - actualMins * 60 * 1000);
     DATA.addHistory({
       name: task.name || 'Ish',
       plannedTime: task.time || '',
@@ -826,7 +830,7 @@
       dateIso: DATA.today.iso,
       startedAt,
       completedAt,
-      actualMins: durMin,
+      actualMins: actualMins,
       withTimer: false,
       note: (note || '').trim()
     });

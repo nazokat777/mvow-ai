@@ -375,6 +375,14 @@
         energy_night: 'Tunda (22+)'
       },
       maqsad: {
+        type_lbl: 'Turi',
+        type_timer: 'Taymerli',
+        type_notimer: 'Taymersiz',
+        type_timer_hint: 'Fokus vaqtida oddiy taymer yoki Pomodoro tanlaysiz.',
+        type_notimer_hint: 'Belgilangan vaqtda eslatma keladi. Bajarganingizda belgilab, izoh va (xohlasangiz) soat yozasiz.',
+        reminder_lbl: 'Eslatma vaqti',
+        reminder_text_lbl: 'Eslatma matni',
+        reminder_text_ph: 'masalan: Bugun ota-onang uchun nima yaxshilik qilding?',
         step1_title: 'Maqsad muddati',
         step1_sub: 'Qancha vaqt ichida erishasiz?',
         dur_week: '1 hafta',
@@ -1304,6 +1312,14 @@
         energy_night: 'Ночь (22+)'
       },
       maqsad: {
+        type_lbl: 'Тип',
+        type_timer: 'С таймером',
+        type_notimer: 'Без таймера',
+        type_timer_hint: 'Во время фокуса выберете обычный таймер или Pomodoro.',
+        type_notimer_hint: 'В заданное время придёт напоминание. Выполнив, отмечаете — пишете заметку и (при желании) часы.',
+        reminder_lbl: 'Время напоминания',
+        reminder_text_lbl: 'Текст напоминания',
+        reminder_text_ph: 'например: Что хорошего вы сегодня сделали для родителей?',
         step1_title: 'Срок цели',
         step1_sub: 'За какой срок Вы её достигнете?',
         dur_week: '1 неделя',
@@ -2220,6 +2236,14 @@
         energy_night: 'Night (22+)'
       },
       maqsad: {
+        type_lbl: 'Type',
+        type_timer: 'With timer',
+        type_notimer: 'No timer',
+        type_timer_hint: 'At focus time you choose a regular timer or Pomodoro.',
+        type_notimer_hint: 'A reminder comes at the set time. When done, check it off — add a note and (optionally) hours.',
+        reminder_lbl: 'Reminder time',
+        reminder_text_lbl: 'Reminder text',
+        reminder_text_ph: 'e.g.: What good did you do for your parents today?',
         step1_title: 'Goal duration',
         step1_sub: 'In how long will you reach it?',
         dur_week: '1 week',
