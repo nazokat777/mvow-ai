@@ -701,12 +701,18 @@ document.addEventListener('DOMContentLoaded', function () {
     function applyBg(url) {
       var el = document.querySelector('.phone') || document.body;
       if (url) {
-        el.style.backgroundImage = 'linear-gradient(rgba(4,6,11,.62),rgba(4,6,11,.62)), url(' + url + ')';
-        el.style.backgroundSize = 'cover';
-        el.style.backgroundPosition = 'center';
-        el.style.backgroundAttachment = 'fixed';
+        // !important SHART: theme.css'da `.phone { background-image: gradient !important }` va yorug' rejimda
+        // `background:#f3f4f7 !important` bor — ular !important'siz inline style'ni yengardi (rasm ko'rinmasdi).
+        // setProperty(..., 'important') stylesheet !important'ni ham biypas qiladi (qora+yorug' rejimda ishlaydi).
+        el.style.setProperty('background-image', 'linear-gradient(rgba(4,6,11,.62),rgba(4,6,11,.62)), url(' + url + ')', 'important');
+        el.style.setProperty('background-size', 'cover', 'important');
+        el.style.setProperty('background-position', 'center', 'important');
+        el.style.setProperty('background-color', 'transparent', 'important');
       } else {
-        el.style.backgroundImage = '';
+        el.style.removeProperty('background-image');
+        el.style.removeProperty('background-size');
+        el.style.removeProperty('background-position');
+        el.style.removeProperty('background-color');
       }
     }
     // Maqsad nomi + anketa profilidan kalit so'z -> onlayn motivatsion foto (loremflickr)
@@ -741,7 +747,8 @@ document.addEventListener('DOMContentLoaded', function () {
       var kw = bgKeyword(), lock = null;
       try { lock = localStorage.getItem('mvow.focusBgLock'); } catch (e) {}
       if (!lock) { lock = 0; for (var ii = 0; ii < kw.length; ii++) lock = (lock * 31 + kw.charCodeAt(ii)) % 100000; }
-      return 'https://loremflickr.com/1280/720/' + encodeURIComponent(kw) + '?lock=' + lock;
+      // picsum.photos — ishonchli (loremflickr 1280x720 -> HTTP 500 berardi). seed=kalit+lock (shuffle yangilaydi).
+      return 'https://picsum.photos/seed/' + encodeURIComponent(kw + '-' + lock) + '/1080/1920';
     }
     function isOff() { try { return localStorage.getItem('mvow.focusBgOff') === '1'; } catch (e) { return false; } }
     function syncBtns() {
