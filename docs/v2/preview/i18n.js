@@ -301,6 +301,8 @@
         toast_foot: 'har kungi reja avtomatik chiqadi'
       },
       maqsadlar: {
+        conflict_title: "Vaqt to'qnashuvi", conflict_msg: "Bu oraliq band: {goal} ({time}). Tizim bu vaqtga boshqa vazifani to'sadi — faqat shart qo'ysangiz qo'yiladi.",
+        icon_lbl: "Belgi", color_lbl: "Rang", edit_title: "Maqsadni tahrirlash", edit_aria: "Tahrirlash",
         title: 'Maqsadlar',
         tagline_a: 'Maqsadlaringizni yozing —',
         tagline_em: "bo'laklarga bo'lib",
@@ -375,6 +377,7 @@
         insight_lead: 'Sermahsul vaqt:'
       },
       'weekly-review': {
+        cal_no_note: 'izoh yozilmagan', cal_planned: 'rejalashtirilgan, hali bajarilmagan', cal_empty: "bu kunda ma'lumot yo'q",
         title: 'Tarix',
         page_title: '{brand} — Tarix',
         tarix_legend_done: 'Bajarilgan',
@@ -754,6 +757,7 @@
         month: 'Oy'
       },
       celebrate: {
+        empty: "Hali natija yo'q — birinchi fokus sessiyangizni boshlang!",
         sub: 'oldingi sizdan kuchliroqsiz',
         cta: 'Keyingi hafta',
         stamp: '7 kun · tugadi',
@@ -1105,6 +1109,8 @@
         toast_foot: 'ежедневный план появляется автоматически'
       },
       maqsadlar: {
+        conflict_title: 'Конфликт времени', conflict_msg: 'Это время занято: {goal} ({time}). Система заблокирует другую задачу на это время — добавится только если вы настаиваете.',
+        icon_lbl: 'Значок', color_lbl: 'Цвет', edit_title: 'Редактировать цель', edit_aria: 'Редактировать',
         title: 'Цели',
         tagline_a: 'Запишите свои цели —',
         tagline_em: 'разделим на части',
@@ -1179,6 +1185,7 @@
         insight_lead: 'Продуктивное время:'
       },
       'weekly-review': {
+        cal_no_note: 'заметки нет', cal_planned: 'запланировано, ещё не выполнено', cal_empty: 'нет данных за этот день',
         title: 'История',
         page_title: '{brand} — История',
         tarix_legend_done: 'Выполнено',
@@ -1545,6 +1552,7 @@
         month: 'Месяц'
       },
       celebrate: {
+        empty: 'Пока нет результатов — начните первую фокус-сессию!',
         sub: 'сильнее, чем были раньше',
         cta: 'Следующая неделя',
         stamp: '7 дней · завершено',
@@ -1896,6 +1904,8 @@
         toast_foot: 'daily plan appears automatically'
       },
       maqsadlar: {
+        conflict_title: 'Time conflict', conflict_msg: 'This slot is taken: {goal} ({time}). The system blocks another task at this time — added only if you insist.',
+        icon_lbl: 'Icon', color_lbl: 'Color', edit_title: 'Edit goal', edit_aria: 'Edit',
         title: 'Goals',
         tagline_a: 'Write down your goals —',
         tagline_em: 'breaking them into pieces',
@@ -1970,6 +1980,7 @@
         insight_lead: 'Productive time:'
       },
       'weekly-review': {
+        cal_no_note: 'no note', cal_planned: 'planned, not done yet', cal_empty: 'no data for this day',
         title: 'History',
         page_title: '{brand} — History',
         tarix_legend_done: 'Done',
@@ -2336,6 +2347,7 @@
         month: 'Month'
       },
       celebrate: {
+        empty: 'No results yet — start your first focus session!',
         sub: 'stronger than before',
         cta: 'Next week',
         stamp: '7 days · complete',
