@@ -699,13 +699,14 @@ document.addEventListener('DOMContentLoaded', function () {
     var offBtn = document.getElementById('bgOff');
     var offLbl = document.getElementById('bgOffLbl');
     function applyBg(url) {
+      var el = document.querySelector('.phone') || document.body;
       if (url) {
-        document.body.style.backgroundImage = 'linear-gradient(rgba(4,6,11,.62),rgba(4,6,11,.62)), url(' + url + ')';
-        document.body.style.backgroundSize = 'cover';
-        document.body.style.backgroundPosition = 'center';
-        document.body.style.backgroundAttachment = 'fixed';
+        el.style.backgroundImage = 'linear-gradient(rgba(4,6,11,.62),rgba(4,6,11,.62)), url(' + url + ')';
+        el.style.backgroundSize = 'cover';
+        el.style.backgroundPosition = 'center';
+        el.style.backgroundAttachment = 'fixed';
       } else {
-        document.body.style.backgroundImage = '';
+        el.style.backgroundImage = '';
       }
     }
     // Maqsad nomi + anketa profilidan kalit so'z -> onlayn motivatsion foto (loremflickr)

@@ -276,9 +276,7 @@ body {
   function fitGhost() {
     ghostWord.style.fontSize = '200px';
     var w = ghostWord.scrollWidth || 1;
-    var byWidth = (window.innerWidth * 0.88) / w * 200;
-    var byHeight = window.innerHeight * 0.30;   // qisqa so'zlar (FOCUS) juda baland bo'lib kesilmasin
-    var size = Math.min(300, byWidth, byHeight);
+    var size = Math.min(380, (window.innerWidth * 0.92) / w * 200);
     ghostWord.style.fontSize = size + 'px';
   }
 

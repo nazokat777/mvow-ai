@@ -868,8 +868,8 @@
             <div class="goal-main">
               <div class="goal-name">${escapeHtml(g.text || g.name || g.title || g.goal || '')}</div>
               <div class="goal-meta">${escapeHtml(lblEveryDay)} <span class="em">${escapeHtml(g.time || (g.sessions && g.sessions[0] && g.sessions[0].time) || '')}</span> · ${escapeHtml(dispDur(g.dur))}</div>
+              <div class="goal-badge ${info.cls}" style="display:inline-block;margin-top:8px;">${info.label}</div>
             </div>
-            <div class="goal-badge ${info.cls}">${info.label}</div>
           </div>
           <div class="goal-body">
             <div class="progress-bar"><div class="progress-fill" style="width:${timePct}%"></div></div>
