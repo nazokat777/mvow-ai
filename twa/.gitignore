@@ -1,0 +1,13 @@
+# Bubblewrap generatsiya qiladigan narsalar (faqat twa-manifest.json saqlanadi)
+android.keystore
+*.keystore
+*.apk
+*.aab
+*.idsig
+app/
+.gradle/
+build/
+out/
+*.iml
+twa-manifest.json.bak
+store_icon.png

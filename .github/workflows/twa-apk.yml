@@ -1,0 +1,88 @@
+name: APK (PWA -> Android TWA)
+
+# PWA'ni (daywarden.vercel.app) Android APK'ga o'raydi (Bubblewrap TWA).
+# Ishga tushgach -> APK "Releases" (apk-latest) va Actions artifact'ida paydo bo'ladi.
+# Eslatma: har build yangi imzo kaliti yaratadi (demo uchun). Brauzer URL chizig'ini
+# yashirish (assetlinks) keyin qo'shiladi.
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/twa-apk.yml'
+      - 'twa/twa-manifest.json'
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: JDK 17
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+
+      - name: Android SDK
+        uses: android-actions/setup-android@v3
+
+      - name: Node 20
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Install Bubblewrap
+        run: npm install -g @bubblewrap/cli
+
+      - name: Point Bubblewrap to JDK + SDK
+        run: |
+          mkdir -p ~/.bubblewrap
+          printf '{"jdkPath":"%s","androidSdkPath":"%s"}\n' "$JAVA_HOME" "$ANDROID_HOME" > ~/.bubblewrap/config.json
+          cat ~/.bubblewrap/config.json
+
+      - name: Generate signing keystore (demo)
+        working-directory: twa
+        run: |
+          keytool -genkeypair -v \
+            -keystore android.keystore -alias focusai \
+            -keyalg RSA -keysize 2048 -validity 10000 \
+            -storepass focusai2026 -keypass focusai2026 \
+            -dname "CN=FOCUS AI, OU=Just AI It, O=Just AI It, L=Tashkent, C=UZ"
+
+      - name: Build signed APK
+        working-directory: twa
+        run: |
+          # Loyihani twa-manifest.json'dan generatsiya qilish
+          printf 'focusai2026\nfocusai2026\n' | bubblewrap build --skipPwaValidation || \
+          printf 'focusai2026\nfocusai2026\n' | bubblewrap build --skipPwaValidation
+          echo "--- qurilgan fayllar ---"
+          find . -name "*.apk" -o -name "*.aab" | sort
+
+      - name: Collect APK
+        working-directory: twa
+        run: |
+          mkdir -p out
+          find . -path ./out -prune -o -name "*.apk" -print -exec cp {} out/ \;
+          ls -la out
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: focus-ai-apk
+          path: twa/out/*.apk
+          if-no-files-found: error
+
+      - name: Publish to Releases
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: apk-latest
+          name: FOCUS AI — Android APK
+          body: |
+            FOCUS AI Android APK (PWA TWA o'rami). Telefonga yuklab, sideload qilib o'rnating.
+            Internet bilan barcha funksiya ishlaydi (AI, bildirishnoma, audio).
+          files: twa/out/*.apk

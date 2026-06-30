@@ -1,0 +1,40 @@
+{
+  "packageId": "com.justaiit.daywarden.twa",
+  "host": "daywarden.vercel.app",
+  "name": "FOCUS AI",
+  "launcherName": "FOCUS AI",
+  "display": "standalone",
+  "themeColor": "#04060B",
+  "themeColorDark": "#04060B",
+  "navigationColor": "#04060B",
+  "navigationColorDark": "#04060B",
+  "navigationDividerColor": "#04060B",
+  "navigationDividerColorDark": "#04060B",
+  "backgroundColor": "#04060B",
+  "enableNotifications": true,
+  "startUrl": "/app.html",
+  "iconUrl": "https://daywarden.vercel.app/assets/mnsm-maskable-512.png",
+  "maskableIconUrl": "https://daywarden.vercel.app/assets/mnsm-maskable-512.png",
+  "splashScreenFadeOutDuration": 300,
+  "signingKey": {
+    "path": "./android.keystore",
+    "alias": "focusai"
+  },
+  "appVersionName": "1.0.0",
+  "appVersionCode": 1,
+  "shortcuts": [],
+  "generatorApp": "bubblewrap-cli",
+  "webManifestUrl": "https://daywarden.vercel.app/manifest.webmanifest",
+  "fallbackType": "customtabs",
+  "features": {},
+  "alphaDependencies": {
+    "enabled": false
+  },
+  "enableSiteSettingsShortcut": true,
+  "isChromeOSOnly": false,
+  "isMetaQuest": false,
+  "fullScopeUrl": "https://daywarden.vercel.app/",
+  "minSdkVersion": 21,
+  "orientation": "portrait",
+  "fingerprints": []
+}
