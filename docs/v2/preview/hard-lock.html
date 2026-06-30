@@ -223,10 +223,11 @@
         <span style="display:block;font-size:14px;color:#fff;opacity:0.7;letter-spacing:0.5px;text-transform:none;font-weight:500;" id="chPomoDur" data-i18n="hardlock.opt_pomo_desc">25 daq ish + 5 daq dam sikllari</span>
       </button>
     </div>
-    <div style="margin-top:12px;display:flex;align-items:center;justify-content:center;gap:10px;">
+    <div style="margin-top:12px;display:flex;align-items:center;justify-content:center;gap:8px;flex-wrap:wrap;">
       <input type="file" id="bgFile" accept="image/*" hidden>
-      <button id="bgChoose" type="button" style="background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.14);color:#B8BBC2;border-radius:999px;padding:7px 14px;font-size:13px;cursor:pointer;font-family:Inter,sans-serif;">🖼 <span data-i18n="hardlock.bg_choose">Fokus foni</span></button>
-      <button id="bgRemove" type="button" style="display:none;background:transparent;border:1px solid rgba(255,255,255,.14);color:#9CA0A8;border-radius:999px;padding:7px 12px;font-size:13px;cursor:pointer;font-family:Inter,sans-serif;" data-i18n="hardlock.bg_remove">Olib tashlash</button>
+      <button id="bgChoose" type="button" style="background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.14);color:#B8BBC2;border-radius:999px;padding:7px 13px;font-size:13px;cursor:pointer;font-family:Inter,sans-serif;">🖼 <span data-i18n="hardlock.bg_choose">Rasm</span></button>
+      <button id="bgShuffle" type="button" style="background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.14);color:#B8BBC2;border-radius:999px;padding:7px 13px;font-size:13px;cursor:pointer;font-family:Inter,sans-serif;">🔄 <span data-i18n="hardlock.bg_shuffle">Boshqasi</span></button>
+      <button id="bgOff" type="button" style="background:transparent;border:1px solid rgba(255,255,255,.14);color:#9CA0A8;border-radius:999px;padding:7px 13px;font-size:13px;cursor:pointer;font-family:Inter,sans-serif;"><span id="bgOffLbl" data-i18n="hardlock.bg_off">Fonsiz</span></button>
     </div>
   </div>
 </div>
@@ -674,7 +675,9 @@ document.addEventListener('DOMContentLoaded', function () {
     var BG = 'mvow.focusBg';
     var fileInp = document.getElementById('bgFile');
     var chooseBtn = document.getElementById('bgChoose');
-    var removeBtn = document.getElementById('bgRemove');
+    var shuffleBtn = document.getElementById('bgShuffle');
+    var offBtn = document.getElementById('bgOff');
+    var offLbl = document.getElementById('bgOffLbl');
     function applyBg(url) {
       if (url) {
         document.body.style.backgroundImage = 'linear-gradient(rgba(4,6,11,.62),rgba(4,6,11,.62)), url(' + url + ')';
@@ -714,14 +717,23 @@ document.addEventListener('DOMContentLoaded', function () {
       return 'focus,calm,minimal';
     }
     function autoBg() {
-      var kw = bgKeyword(), lock = 0;
-      for (var ii = 0; ii < kw.length; ii++) lock = (lock * 31 + kw.charCodeAt(ii)) % 100000;
+      var kw = bgKeyword(), lock = null;
+      try { lock = localStorage.getItem('mvow.focusBgLock'); } catch (e) {}
+      if (!lock) { lock = 0; for (var ii = 0; ii < kw.length; ii++) lock = (lock * 31 + kw.charCodeAt(ii)) % 100000; }
       return 'https://loremflickr.com/1280/720/' + encodeURIComponent(kw) + '?lock=' + lock;
     }
-    function syncRemoveBtn() { var has = false; try { has = !!localStorage.getItem(BG); } catch (e) {} if (removeBtn) removeBtn.style.display = has ? 'inline-block' : 'none'; }
-    var saved = null; try { saved = localStorage.getItem(BG); } catch (e) {}
-    applyBg(saved || autoBg());
-    syncRemoveBtn();
+    function isOff() { try { return localStorage.getItem('mvow.focusBgOff') === '1'; } catch (e) { return false; } }
+    function syncBtns() {
+      if (offLbl) offLbl.textContent = isOff()
+        ? (window.I18N ? I18N.t('hardlock.bg_on', 'Fon') : 'Fon')
+        : (window.I18N ? I18N.t('hardlock.bg_off', 'Fonsiz') : 'Fonsiz');
+    }
+    function refresh() {
+      var saved = null; try { saved = localStorage.getItem(BG); } catch (e) {}
+      if (isOff()) applyBg(null); else applyBg(saved || autoBg());
+      syncBtns();
+    }
+    refresh();
     if (chooseBtn && fileInp) chooseBtn.addEventListener('click', function () { fileInp.click(); });
     if (fileInp) fileInp.addEventListener('change', function () {
       var f = fileInp.files && fileInp.files[0]; if (!f) return;
@@ -735,17 +747,24 @@ document.addEventListener('DOMContentLoaded', function () {
           var cv = document.createElement('canvas'); cv.width = w; cv.height = h;
           cv.getContext('2d').drawImage(img, 0, 0, w, h);
           var data = cv.toDataURL('image/jpeg', 0.72);
-          try { localStorage.setItem(BG, data); applyBg(data); syncRemoveBtn(); }
+          try { localStorage.setItem(BG, data); localStorage.removeItem('mvow.focusBgOff'); refresh(); }
           catch (e) { alert(window.I18N ? I18N.t('hardlock.bg_toobig', 'Rasm juda katta') : 'Rasm juda katta'); }
         };
         img.src = rd.result;
       };
       rd.readAsDataURL(f);
     });
-    if (removeBtn) removeBtn.addEventListener('click', function () {
-      try { localStorage.removeItem(BG); } catch (e) {}
-      applyBg(autoBg());
-      syncRemoveBtn();
+    if (shuffleBtn) shuffleBtn.addEventListener('click', function () {
+      try {
+        localStorage.removeItem(BG);
+        localStorage.removeItem('mvow.focusBgOff');
+        localStorage.setItem('mvow.focusBgLock', String(Math.floor(Math.random() * 100000)));
+      } catch (e) {}
+      refresh();
+    });
+    if (offBtn) offBtn.addEventListener('click', function () {
+      try { if (isOff()) localStorage.removeItem('mvow.focusBgOff'); else localStorage.setItem('mvow.focusBgOff', '1'); } catch (e) {}
+      refresh();
     });
   })();
 
