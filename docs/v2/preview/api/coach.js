@@ -1,10 +1,22 @@
 /**
- * Vercel serverless funksiya — AI proksisi (2 rejim).
- * Gemini kaliti FAQAT shu yerda (process.env.GEMINI_KEY) — ilovada/kodда ko'rinmaydi.
- *  - mode yo'q  → kun yakuni motivatsiyasi  → { message }
+ * Vercel serverless funksiya — AI proksisi (Gemini).
+ * Kalit FAQAT shu yerda (process.env.GEMINI_KEY) — ilovada/kodda KO'RINMAYDI.
+ *  - mode yo'q   → kun yakuni motivatsiyasi      → { message }
  *  - mode:'plan' → maqsadni bosqichlarga bo'lish → { steps: [...] }
- * Kalit yo'q/xato → bo'sh qaytaradi (klient shablonga/fallback'ga o'tadi).
+ * Kalit yo'q / kvota tugagan / xato → bo'sh qaytaradi (klient shablonga o'tadi).
+ *
+ * BEPULDA QOLISH (pul yechilmasligi uchun):
+ *  - Model: gemini-2.5-flash (bu hisobda bepul kvotali; 2.0-flash kvota=0 edi).
+ *  - Kunlik chegara MAX_PER_DAY — oshsa AI o'chadi, shablon ishlaydi.
+ *  - Har javob maxOutputTokens bilan cheklangan (kichik = arzon + tez).
+ *  - Eslatma: Google bepul tier HECH QACHON pul yechmaydi — chegaraga yetsa 429 beradi.
+ *    Pul faqat AI Studio'da "billing" yoqilsa yechiladi (default — o'chiq).
  */
+const MAX_PER_DAY = 200;            // bir kunda ruxsat etilgan AI so'rovlar (xavfsizlik chegarasi)
+const MODEL = 'gemini-2.5-flash';   // bepul kvotali model
+const MAX_OUTPUT_TOKENS = 300;      // har javob uzunligi chegarasi
+let _capDay = '', _capCount = 0;    // kunlik hisoblagich (warm instance bo'yi saqlanadi)
+
 module.exports = async (req, res) => {
   res.setHeader('Access-Control-Allow-Origin', '*');
   res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
@@ -14,21 +26,36 @@ module.exports = async (req, res) => {
   const key = process.env.GEMINI_KEY || process.env.GEMINI_API_KEY
     || process.env.GOOGLE_API_KEY || process.env.GOOGLE_GENAI_API_KEY;
 
-  // Diagnostika: GET → kalit o'rnatilganmi? (kalitning O'ZI hech qachon qaytmaydi)
-  if (req.method === 'GET') { res.status(200).json({ keySet: !!key, fn: 'v3' }); return; }
+  // Diagnostika: GET → kalit o'rnatilganmi + bugun nechta so'rov ishlatilgan
+  // (kalitning O'ZI hech qachon qaytmaydi)
+  if (req.method === 'GET') {
+    res.status(200).json({ keySet: !!key, model: MODEL, used: _capCount, max: MAX_PER_DAY });
+    return;
+  }
   if (req.method !== 'POST') { res.status(200).json({ message: '' }); return; }
 
   let c = req.body || {};
   if (typeof c === 'string') { try { c = JSON.parse(c); } catch (e) { c = {}; } }
 
-  let _dbg = null;
   async function gemini(prompt) {
+    // ── Kunlik chegara — bepulda qolish kafolati ──
+    const today = new Date().toISOString().slice(0, 10);
+    if (today !== _capDay) { _capDay = today; _capCount = 0; }
+    if (_capCount >= MAX_PER_DAY) return '';   // chegaraga yetdi → shablonga o'tadi
+    _capCount++;
+
     const gr = await fetch(
-      'https://generativelanguage.googleapis.com/v1beta/models/' + (c.model || 'gemini-2.0-flash') + ':generateContent?key=' + encodeURIComponent(key),
-      { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ contents: [{ parts: [{ text: prompt }] }] }) }
+      'https://generativelanguage.googleapis.com/v1beta/models/' + MODEL + ':generateContent?key=' + encodeURIComponent(key),
+      {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          contents: [{ parts: [{ text: prompt }] }],
+          generationConfig: { maxOutputTokens: MAX_OUTPUT_TOKENS, temperature: 0.7 }
+        })
+      }
     );
     const d = await gr.json();
-    _dbg = { status: gr.status, body: d };
     return (d && d.candidates && d.candidates[0] && d.candidates[0].content &&
       d.candidates[0].content.parts && d.candidates[0].content.parts[0] && d.candidates[0].content.parts[0].text) || '';
   }
@@ -44,8 +71,8 @@ module.exports = async (req, res) => {
         + "Faqat bosqichlarni yoz — har birini yangi qatordan, raqamsiz va izohsiz.";
       const t = await gemini(prompt);
       const steps = (t || '').split('\n').map(function (s) { return s.replace(/^\s*(?:[-*•]|\d+[.)])\s+/, '').trim(); }).filter(Boolean).slice(0, 7);
-      res.status(200).json(c.debug ? { steps: steps, _dbg: _dbg } : { steps: steps });
-    } catch (e) { res.status(200).json(c.debug ? { steps: [], _err: String(e && e.message || e), _dbg: _dbg } : { steps: [] }); }
+      res.status(200).json({ steps: steps });
+    } catch (e) { res.status(200).json({ steps: [] }); }
     return;
   }
 

@@ -32,15 +32,31 @@
   }
 
   function coach(c, opts) {
+    c = c || {};
+    // Kunlik kesh — bir xil natija uchun AI bir marta chaqiriladi (bepulda qolish + tezlik).
+    var ck = '';
+    try {
+      ck = 'mvow.ai.msg.' + new Date().toISOString().slice(0, 10)
+        + '.' + (c.done || 0) + '-' + (c.total || 0) + '-' + (c.streak || 0);
+      var cached = (typeof localStorage !== 'undefined') ? localStorage.getItem(ck) : null;
+      if (cached) return Promise.resolve(cached);
+    } catch (e) {}
     // Kalit serverда yashirin — /api/coach proksisi orqali. Klientда kalit YO'Q.
     // Proksi bo'sh qaytarsa (kalit yo'q) yoki xato/offline bo'lsa — shablon (fallback).
     return fetch('/api/coach', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(c || {})
+      body: JSON.stringify(c)
     })
       .then(function (r) { return r.json(); })
-      .then(function (d) { return (d && d.message && d.message.trim()) ? d.message.trim() : fallbackMessage(c); })
+      .then(function (d) {
+        if (d && d.message && d.message.trim()) {
+          var msg = d.message.trim();
+          try { if (ck && typeof localStorage !== 'undefined') localStorage.setItem(ck, msg); } catch (e) {}
+          return msg;
+        }
+        return fallbackMessage(c);   // bo'sh (kalit yo'q/chegara) — keshlanmaydi, keyin qayta urinadi
+      })
       .catch(function () { return fallbackMessage(c); });
   }
 
