@@ -696,7 +696,7 @@
         ans_yes: 'Ha',
         dur_fallback: '25 daq',
         page_title: 'Fokus rejimi',
-        sub_break: 'dam',
+        sub_break: 'dam oling',
         sub_no_timer: 'taymersiz'
       },
       negotiation: {
@@ -1483,7 +1483,7 @@
         ans_yes: 'Да',
         dur_fallback: '25 мин',
         page_title: 'Режим фокуса',
-        sub_break: 'отдых',
+        sub_break: 'Отдыхайте',
         sub_no_timer: 'без таймера'
       },
       negotiation: {
@@ -2270,7 +2270,7 @@
         ans_yes: 'Yes',
         dur_fallback: '25 min',
         page_title: 'Focus mode',
-        sub_break: 'break',
+        sub_break: 'Rest',
         sub_no_timer: 'no timer'
       },
       negotiation: {

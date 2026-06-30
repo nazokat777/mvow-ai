@@ -413,7 +413,7 @@ document.addEventListener('DOMContentLoaded', function () {
     // Taymersiz: rejalashtirilgan vaqt o'tgach avtomatik so'roq (bir marta)
     if (mode === 'no-timer' && !askedAlready && elapsedSec >= WORK_MIN * 60) {
       askedAlready = true;
-      if (window.MVOW_DATA && MVOW_DATA.fxFinish) MVOW_DATA.fxFinish();
+      if (window.MVOW_DATA && MVOW_DATA.fxFinish) MVOW_DATA.fxFinish(); playBeep();
       askOverlay.classList.add('show');
     }
   }
@@ -476,7 +476,7 @@ document.addEventListener('DOMContentLoaded', function () {
       remaining = Math.max(0, totalSec - Math.floor((Date.now() - phaseStartedAt) / 1000));
       paint();
       if (remaining === 0) {
-        if (window.MVOW_DATA && MVOW_DATA.fxFinish) MVOW_DATA.fxFinish();
+        if (window.MVOW_DATA && MVOW_DATA.fxFinish) MVOW_DATA.fxFinish(); playBeep();
         showAskModal();
       }
     }, 1000);
@@ -495,12 +495,36 @@ document.addEventListener('DOMContentLoaded', function () {
       remaining = Math.max(0, totalSec - Math.floor((Date.now() - phaseStartedAt) / 1000));
       paint();
       if (remaining === 0) {
-        if (window.MVOW_DATA && MVOW_DATA.fxFinish) MVOW_DATA.fxFinish();
+        if (window.MVOW_DATA && MVOW_DATA.fxFinish) MVOW_DATA.fxFinish(); playBeep();
         nextPomodoroPhase();
       }
     }, 1000);
   }
 
+  var _ac = null;
+  function _getAC() {
+    try {
+      var A = window.AudioContext || window.webkitAudioContext; if (!A) return null;
+      if (!_ac) _ac = new A();
+      if (_ac.state === 'suspended') _ac.resume();
+      return _ac;
+    } catch (e) { return null; }
+  }
+  function playBeep() {
+    var c = _getAC(); if (!c) return;
+    try {
+      var t = c.currentTime;
+      [0, 0.18].forEach(function (off) {
+        var o = c.createOscillator(), g = c.createGain();
+        o.type = 'sine'; o.frequency.value = 880;
+        o.connect(g); g.connect(c.destination);
+        g.gain.setValueAtTime(0.0001, t + off);
+        g.gain.exponentialRampToValueAtTime(0.32, t + off + 0.02);
+        g.gain.exponentialRampToValueAtTime(0.0001, t + off + 0.16);
+        o.start(t + off); o.stop(t + off + 0.18);
+      });
+    } catch (e) {}
+  }
   function nextPomodoroPhase() {
     if (interval) clearInterval(interval);
     if (phase === 'work') {
@@ -530,7 +554,7 @@ document.addEventListener('DOMContentLoaded', function () {
       remaining = Math.max(0, totalSec - Math.floor((Date.now() - phaseStartedAt) / 1000));
       paint();
       if (remaining === 0) {
-        if (window.MVOW_DATA && MVOW_DATA.fxFinish) MVOW_DATA.fxFinish();
+        if (window.MVOW_DATA && MVOW_DATA.fxFinish) MVOW_DATA.fxFinish(); playBeep();
         nextPomodoroPhase();
       }
     }, 1000);
@@ -541,7 +565,7 @@ document.addEventListener('DOMContentLoaded', function () {
     remaining = Math.max(0, totalSec - Math.floor((Date.now() - phaseStartedAt) / 1000));
     paint();
     if (remaining === 0) {
-      if (window.MVOW_DATA && MVOW_DATA.fxFinish) MVOW_DATA.fxFinish();
+      if (window.MVOW_DATA && MVOW_DATA.fxFinish) MVOW_DATA.fxFinish(); playBeep();
       if (mode === 'pomodoro') nextPomodoroPhase(); else showAskModal();
     }
   }
@@ -575,6 +599,7 @@ document.addEventListener('DOMContentLoaded', function () {
     var _lang = document.querySelector('.lang-switcher'); if (_lang) _lang.style.display = 'none';
     enableFaceDown();
     startFocusAudioIfPref();
+    _getAC();
     startSimpleTimer();
   });
 
@@ -588,6 +613,7 @@ document.addEventListener('DOMContentLoaded', function () {
     var _lang = document.querySelector('.lang-switcher'); if (_lang) _lang.style.display = 'none';
     enableFaceDown();
     startFocusAudioIfPref();
+    _getAC();
     startPomodoroTimer();
   });
 
@@ -598,6 +624,7 @@ document.addEventListener('DOMContentLoaded', function () {
     var _lang = document.querySelector('.lang-switcher'); if (_lang) _lang.style.display = 'none';
     enableFaceDown();
     startFocusAudioIfPref();
+    _getAC();
     timerArea.classList.add('hidden');
     noTimerArea.classList.add('show');
     tsub.textContent = (window.I18N ? I18N.t('hardlock.sub_no_timer', 'taymersiz') : 'taymersiz');
@@ -701,6 +728,7 @@ document.addEventListener('DOMContentLoaded', function () {
     const _lang = document.querySelector('.lang-switcher'); if (_lang) _lang.style.display = 'none';
     enableFaceDown();
     startFocusAudioIfPref();
+    _getAC();
     if (mode === 'no-timer') {
       timerArea.classList.add('hidden'); noTimerArea.classList.add('show');
       tsub.textContent = (window.I18N ? I18N.t('hardlock.sub_no_timer', 'taymersiz') : 'taymersiz');
@@ -714,7 +742,7 @@ document.addEventListener('DOMContentLoaded', function () {
         if (pauseBtn) pauseBtn.textContent = (window.I18N ? I18N.t('hardlock.resume', 'Davom') : 'Davom');
         paint();
       } else {
-        tsub.textContent = (window.I18N ? I18N.t('hardlock.sub_locked', 'fokusdasiz') : 'fokusdasiz') + (mode === 'pomodoro' ? (' · ' + cycle + '/' + TOTAL_CYC) : '');
+        tsub.textContent = (window.I18N ? I18N.t(phase === 'break' ? 'hardlock.sub_break' : 'hardlock.sub_locked', phase === 'break' ? 'dam oling' : 'fokusdasiz') : (phase === 'break' ? 'dam oling' : 'fokusdasiz')) + (mode === 'pomodoro' ? (' · ' + cycle + '/' + TOTAL_CYC) : '');
         remaining = Math.max(0, totalSec - Math.floor((Date.now() - phaseStartedAt) / 1000));
         paint();
         startTick();
