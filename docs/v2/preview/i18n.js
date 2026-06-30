@@ -700,6 +700,7 @@
         dur_fallback: '25 daq',
         page_title: 'Fokus rejimi',
         sub_break: 'dam oling',
+        notif_done: '⏰ Vaqt tugadi',
         sub_no_timer: 'taymersiz'
       },
       negotiation: {
@@ -1490,6 +1491,7 @@
         dur_fallback: '25 мин',
         page_title: 'Режим фокуса',
         sub_break: 'Отдыхайте',
+        notif_done: '⏰ Время вышло',
         sub_no_timer: 'без таймера'
       },
       negotiation: {
@@ -2280,6 +2282,7 @@
         dur_fallback: '25 min',
         page_title: 'Focus mode',
         sub_break: 'Rest',
+        notif_done: '⏰ Time is up',
         sub_no_timer: 'no timer'
       },
       negotiation: {

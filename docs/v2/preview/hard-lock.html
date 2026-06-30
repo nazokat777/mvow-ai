@@ -414,7 +414,7 @@ document.addEventListener('DOMContentLoaded', function () {
     // Taymersiz: rejalashtirilgan vaqt o'tgach avtomatik so'roq (bir marta)
     if (mode === 'no-timer' && !askedAlready && elapsedSec >= WORK_MIN * 60) {
       askedAlready = true;
-      if (window.MVOW_DATA && MVOW_DATA.fxFinish) MVOW_DATA.fxFinish(); playBeep();
+      if (window.MVOW_DATA && MVOW_DATA.fxFinish) MVOW_DATA.fxFinish(); playBeep(); notify();
       askOverlay.classList.add('show');
     }
   }
@@ -477,7 +477,7 @@ document.addEventListener('DOMContentLoaded', function () {
       remaining = Math.max(0, totalSec - Math.floor((Date.now() - phaseStartedAt) / 1000));
       paint();
       if (remaining === 0) {
-        if (window.MVOW_DATA && MVOW_DATA.fxFinish) MVOW_DATA.fxFinish(); playBeep();
+        if (window.MVOW_DATA && MVOW_DATA.fxFinish) MVOW_DATA.fxFinish(); playBeep(); notify();
         showAskModal();
       }
     }, 1000);
@@ -496,7 +496,7 @@ document.addEventListener('DOMContentLoaded', function () {
       remaining = Math.max(0, totalSec - Math.floor((Date.now() - phaseStartedAt) / 1000));
       paint();
       if (remaining === 0) {
-        if (window.MVOW_DATA && MVOW_DATA.fxFinish) MVOW_DATA.fxFinish(); playBeep();
+        if (window.MVOW_DATA && MVOW_DATA.fxFinish) MVOW_DATA.fxFinish(); playBeep(); notify();
         nextPomodoroPhase();
       }
     }, 1000);
@@ -526,6 +526,18 @@ document.addEventListener('DOMContentLoaded', function () {
       });
     } catch (e) {}
   }
+  function notify() {
+    try {
+      if (!('Notification' in window) || Notification.permission !== 'granted') return;
+      var title = (window.I18N ? I18N.t('hardlock.notif_done', '⏰ Vaqt tugadi') : '⏰ Vaqt tugadi');
+      if (navigator.serviceWorker && navigator.serviceWorker.ready) {
+        navigator.serviceWorker.ready.then(function (reg) {
+          reg.showNotification(title, { body: 'FOCUS AI', icon: 'assets/mnsm-192.png', badge: 'assets/mnsm-192.png', vibrate: [300, 150, 300], tag: 'focus-end', renotify: true });
+        }).catch(function () {});
+      }
+    } catch (e) {}
+  }
+  function ensureNotifPerm() { try { if ('Notification' in window && Notification.permission === 'default') Notification.requestPermission(); } catch (e) {} }
   function nextPomodoroPhase() {
     if (interval) clearInterval(interval);
     if (phase === 'work') {
@@ -555,7 +567,7 @@ document.addEventListener('DOMContentLoaded', function () {
       remaining = Math.max(0, totalSec - Math.floor((Date.now() - phaseStartedAt) / 1000));
       paint();
       if (remaining === 0) {
-        if (window.MVOW_DATA && MVOW_DATA.fxFinish) MVOW_DATA.fxFinish(); playBeep();
+        if (window.MVOW_DATA && MVOW_DATA.fxFinish) MVOW_DATA.fxFinish(); playBeep(); notify();
         nextPomodoroPhase();
       }
     }, 1000);
@@ -566,7 +578,7 @@ document.addEventListener('DOMContentLoaded', function () {
     remaining = Math.max(0, totalSec - Math.floor((Date.now() - phaseStartedAt) / 1000));
     paint();
     if (remaining === 0) {
-      if (window.MVOW_DATA && MVOW_DATA.fxFinish) MVOW_DATA.fxFinish(); playBeep();
+      if (window.MVOW_DATA && MVOW_DATA.fxFinish) MVOW_DATA.fxFinish(); playBeep(); notify();
       if (mode === 'pomodoro') nextPomodoroPhase(); else showAskModal();
     }
   }
@@ -601,6 +613,7 @@ document.addEventListener('DOMContentLoaded', function () {
     enableFaceDown();
     startFocusAudioIfPref();
     _getAC();
+    ensureNotifPerm();
     startSimpleTimer();
   });
 
@@ -615,6 +628,7 @@ document.addEventListener('DOMContentLoaded', function () {
     enableFaceDown();
     startFocusAudioIfPref();
     _getAC();
+    ensureNotifPerm();
     startPomodoroTimer();
   });
 
@@ -626,6 +640,7 @@ document.addEventListener('DOMContentLoaded', function () {
     enableFaceDown();
     startFocusAudioIfPref();
     _getAC();
+    ensureNotifPerm();
     timerArea.classList.add('hidden');
     noTimerArea.classList.add('show');
     tsub.textContent = (window.I18N ? I18N.t('hardlock.sub_no_timer', 'taymersiz') : 'taymersiz');
@@ -782,6 +797,7 @@ document.addEventListener('DOMContentLoaded', function () {
     enableFaceDown();
     startFocusAudioIfPref();
     _getAC();
+    ensureNotifPerm();
     if (mode === 'no-timer') {
       timerArea.classList.add('hidden'); noTimerArea.classList.add('show');
       tsub.textContent = (window.I18N ? I18N.t('hardlock.sub_no_timer', 'taymersiz') : 'taymersiz');
