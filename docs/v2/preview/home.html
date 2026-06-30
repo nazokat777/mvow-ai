@@ -596,18 +596,36 @@
       var lbl = active ? T('home.now_now', 'Hozir') : T('home.now_next', 'Keyingi');
       var _af = null; try { _af = JSON.parse(localStorage.getItem('mvow.activeFocus') || 'null'); } catch (e) {}
       var _running = _af && _af.mode && (Date.now() - (_af.startedAt || 0) <= 8 * 3600 * 1000);
-      var ctaTxt = _running ? T('home.cta_continue', 'Davom etaman') : T('home.cta_start', 'Boshlash');
+      function _fmtT(s) { s = Math.max(0, s | 0); var m = Math.floor(s / 60), x = s % 60; return (m < 10 ? '0' : '') + m + ':' + (x < 10 ? '0' : '') + x; }
+      function _afText() {
+        var a = null; try { a = JSON.parse(localStorage.getItem('mvow.activeFocus') || 'null'); } catch (e) {}
+        if (!a || !a.mode || (Date.now() - (a.startedAt || 0) > 8 * 3600 * 1000)) return null;
+        var d;
+        if (a.mode === 'no-timer') d = _fmtT(Math.floor((Date.now() - (a.startedAt || Date.now())) / 1000));
+        else { var r = (a.paused && typeof a.remaining === 'number') ? a.remaining : (a.totalSec || 0) - Math.floor((Date.now() - (a.phaseStartedAt || Date.now())) / 1000); d = _fmtT(r); }
+        return '⏱ ' + d + ' · ' + T('hardlock.ind_active', 'Fokus');
+      }
+      var ctaTxt = _running ? (_afText() || T('home.cta_start', 'Boshlash')) : T('home.cta_start', 'Boshlash');
       card.innerHTML = '<div style="font-size:12px;letter-spacing:2px;text-transform:uppercase;color:var(--accent);font-weight:700;margin-bottom:5px;">' + lbl + '</div>'
         + '<div style="display:flex;align-items:center;justify-content:space-between;gap:12px;">'
         + '<div style="min-width:0;"><div style="font-size:19px;font-weight:700;color:var(--text);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">' + escapeHtmlH(show.name || '') + '</div>'
         + '<div style="font-size:14px;color:var(--text-dim);">' + escapeHtmlH(show.time || '') + (show.dur ? ' · ' + escapeHtmlH(show.dur) : '') + '</div></div>'
-        + '<a href="hard-lock.html" id="nowStart" style="flex-shrink:0;padding:11px 22px;background:linear-gradient(135deg,var(--accent),var(--accent-deep));color:#fff;border-radius:999px;font-size:14px;font-weight:700;letter-spacing:1px;text-transform:uppercase;text-decoration:none;">' + ctaTxt + '</a>'
+        + '<a href="hard-lock.html" id="nowStart" style="flex-shrink:0;padding:11px 22px;background:linear-gradient(135deg,var(--accent),var(--accent-deep));color:#fff;border-radius:999px;font-size:14px;font-weight:700;letter-spacing:1px;text-transform:' + (_running ? 'none' : 'uppercase') + ';text-decoration:none;">' + ctaTxt + '</a>'
         + '</div>';
       card.style.display = 'block';
       var btn = document.getElementById('nowStart');
       if (btn) btn.addEventListener('click', function () {
         try { localStorage.setItem('mvow.activeTask', JSON.stringify({ name: show.name, time: show.time || '', dur: show.dur || '' })); } catch (e) {}
       });
+      if (btn && _running) {
+        var _ctaTimer = null;
+        var _ctaTick = function () {
+          var txt = _afText();
+          if (txt) { btn.textContent = txt; btn.style.textTransform = 'none'; }
+          else { btn.textContent = T('home.cta_start', 'Boshlash'); btn.style.textTransform = 'uppercase'; if (_ctaTimer) clearInterval(_ctaTimer); }
+        };
+        _ctaTimer = setInterval(_ctaTick, 1000); _ctaTick();
+      }
     }
     renderTasks();
     renderNowCard();
