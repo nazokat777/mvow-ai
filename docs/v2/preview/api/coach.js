@@ -15,7 +15,7 @@ module.exports = async (req, res) => {
     || process.env.GOOGLE_API_KEY || process.env.GOOGLE_GENAI_API_KEY;
 
   // Diagnostika: GET → kalit o'rnatilganmi? (kalitning O'ZI hech qachon qaytmaydi)
-  if (req.method === 'GET') { res.status(200).json({ keySet: !!key, fn: 'v2' }); return; }
+  if (req.method === 'GET') { res.status(200).json({ keySet: !!key, fn: 'v3' }); return; }
   if (req.method !== 'POST') { res.status(200).json({ message: '' }); return; }
 
   let c = req.body || {};
@@ -24,7 +24,7 @@ module.exports = async (req, res) => {
   let _dbg = null;
   async function gemini(prompt) {
     const gr = await fetch(
-      'https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=' + encodeURIComponent(key),
+      'https://generativelanguage.googleapis.com/v1beta/models/' + (c.model || 'gemini-2.0-flash') + ':generateContent?key=' + encodeURIComponent(key),
       { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ contents: [{ parts: [{ text: prompt }] }] }) }
     );
     const d = await gr.json();
