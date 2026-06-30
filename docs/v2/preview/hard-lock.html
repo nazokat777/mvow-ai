@@ -681,14 +681,47 @@ document.addEventListener('DOMContentLoaded', function () {
         document.body.style.backgroundSize = 'cover';
         document.body.style.backgroundPosition = 'center';
         document.body.style.backgroundAttachment = 'fixed';
-        if (removeBtn) removeBtn.style.display = 'inline-block';
       } else {
         document.body.style.backgroundImage = '';
-        if (removeBtn) removeBtn.style.display = 'none';
       }
     }
+    // Maqsad nomi + anketa profilidan kalit so'z -> onlayn motivatsion foto (loremflickr)
+    function bgKeyword() {
+      var el = document.getElementById('cTaskName');
+      var name = ((el && el.textContent) || '').toLowerCase();
+      var groups = [
+        [/kitob|o'qi|oqi|mutola|read|book|чита|книг/, 'reading,book,library'],
+        [/sport|mashq|jismoniy|yugur|fitnes|gym|run|workout|спорт|трен/, 'fitness,gym,workout'],
+        [/ingliz|\btil\b|language|english|язык|англ/, 'study,language,books'],
+        [/dastur|\bkod\b|program|coding|разработ|програм/, 'coding,programming,laptop'],
+        [/namoz|ibodat|qur|duo|pray|mosque|молитв|намаз/, 'mosque,spiritual,calm'],
+        [/imtihon|dars|study|exam|talaba|student|учеб|экзам/, 'study,desk,student'],
+        [/rasm|chiz|ijod|\bart\b|paint|draw|design|рисов|искусств/, 'art,creative,painting'],
+        [/\byoz|maqola|blog|writ|пиш|текст/, 'writing,notebook,desk'],
+        [/biznes|\bish\b|loyiha|work|business|project|бизнес|работ/, 'workspace,productivity,office'],
+        [/medita|yoga|tinch|nafas|calm|breath|медита/, 'meditation,calm,nature']
+      ];
+      for (var i = 0; i < groups.length; i++) if (groups[i][0].test(name)) return groups[i][1];
+      try {
+        var p = JSON.parse(localStorage.getItem('mvow.profile') || 'null');
+        if (p) {
+          if (p.job === 'phys') return 'workout,strength,nature';
+          if (p.job === 'study') return 'study,student,books';
+          if (p.job === 'mental') return 'workspace,laptop,focus';
+          if (p.job === 'lead') return 'office,leadership,city';
+        }
+      } catch (e) {}
+      return 'focus,calm,minimal';
+    }
+    function autoBg() {
+      var kw = bgKeyword(), lock = 0;
+      for (var ii = 0; ii < kw.length; ii++) lock = (lock * 31 + kw.charCodeAt(ii)) % 100000;
+      return 'https://loremflickr.com/1280/720/' + encodeURIComponent(kw) + '?lock=' + lock;
+    }
+    function syncRemoveBtn() { var has = false; try { has = !!localStorage.getItem(BG); } catch (e) {} if (removeBtn) removeBtn.style.display = has ? 'inline-block' : 'none'; }
     var saved = null; try { saved = localStorage.getItem(BG); } catch (e) {}
-    if (saved) applyBg(saved);
+    applyBg(saved || autoBg());
+    syncRemoveBtn();
     if (chooseBtn && fileInp) chooseBtn.addEventListener('click', function () { fileInp.click(); });
     if (fileInp) fileInp.addEventListener('change', function () {
       var f = fileInp.files && fileInp.files[0]; if (!f) return;
@@ -702,7 +735,7 @@ document.addEventListener('DOMContentLoaded', function () {
           var cv = document.createElement('canvas'); cv.width = w; cv.height = h;
           cv.getContext('2d').drawImage(img, 0, 0, w, h);
           var data = cv.toDataURL('image/jpeg', 0.72);
-          try { localStorage.setItem(BG, data); applyBg(data); }
+          try { localStorage.setItem(BG, data); applyBg(data); syncRemoveBtn(); }
           catch (e) { alert(window.I18N ? I18N.t('hardlock.bg_toobig', 'Rasm juda katta') : 'Rasm juda katta'); }
         };
         img.src = rd.result;
@@ -711,7 +744,8 @@ document.addEventListener('DOMContentLoaded', function () {
     });
     if (removeBtn) removeBtn.addEventListener('click', function () {
       try { localStorage.removeItem(BG); } catch (e) {}
-      applyBg(null);
+      applyBg(autoBg());
+      syncRemoveBtn();
     });
   })();
 
