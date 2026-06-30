@@ -3,7 +3,7 @@
  * after first load. Caches all preview HTML files + the logo.
  */
 
-const CACHE_NAME = 'focusai-v29.0.18';
+const CACHE_NAME = 'focusai-v29.0.19';
 const ASSETS = [
   './',
   // Asosiy infratuzilma
@@ -14,6 +14,7 @@ const ASSETS = [
   './focus-indicator.js',
   './social.js',
   './supabase-config.js',
+  './push.js',
   './pin-lock.js',
   './dostlar.html',
   './theme.css',
@@ -139,7 +140,8 @@ self.addEventListener('fetch', event => {
 // ──────────────────────────────────────────────────────────────
 self.addEventListener('notificationclick', event => {
   event.notification.close();
-  const raw = (event.notification.data && event.notification.data.url) || 'alarm.html';
+  if (event.action === 'snooze') return;   // "Keyinroq" — yopiladi (bugun qayta chiqmaydi)
+  const raw = (event.notification.data && event.notification.data.url) || 'home.html';
   // Absolute URL — service worker scope'ga nisbatan
   const targetUrl = new URL(raw, self.registration.scope).href;
 
@@ -179,17 +181,21 @@ self.addEventListener('notificationclick', event => {
 
 // Push event (kelajak uchun, server yuborgan push'larni qo'llab-quvvatlash)
 self.addEventListener('push', event => {
-  let data = { title: "Uyg'oning", body: 'Vaqt keldi. Misolni yeching.', url: './alarm.html' };
+  let data = { title: 'FOCUS AI', body: 'Eslatma', url: './home.html' };
   try { if (event.data) data = Object.assign(data, event.data.json()); } catch {}
   event.waitUntil(
     self.registration.showNotification(data.title, {
       body: data.body,
       icon: './assets/mnsm-logo.png',
       badge: './assets/mnsm-logo.png',
-      vibrate: [500, 200, 500, 200, 500, 200, 500],
-      tag: 'wake-alarm',
+      vibrate: [400, 150, 400],
+      tag: data.tag || ('mvow-reminder-' + String(data.body || '').slice(0, 24)),
       requireInteraction: true,
-      data: { url: data.url }
+      data: { url: data.url || './home.html' },
+      actions: [
+        { action: 'done', title: '✓ Bajardim' },
+        { action: 'snooze', title: '⏰ Keyinroq' }
+      ]
     })
   );
 });

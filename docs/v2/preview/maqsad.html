@@ -312,6 +312,7 @@
 <script src="lang-switcher.js?v=28.4.0" defer></script>
 <script src="focus-indicator.js?v=28.4.0" defer></script>
 <script src="data.js?v=28.4.0" defer></script>
+<script src="push.js?v=28.4.0" defer></script>
 <script src="nav-overlay.js?v=28.4.0" defer></script>
 <script>
   document.addEventListener('DOMContentLoaded', () => {
@@ -631,12 +632,14 @@
           if (!Array.isArray(w[key])) w[key] = [];
           const exists = w[key].some(s => s.name === text && s.time === time);
           if (!exists) {
-            w[key].push({ time, name: text, dur, goalId: newGoal.id });
+            w[key].push({ time, name: text, dur, goalId: newGoal.id, noTimer: isNoTimer, reminderText: reminderText });
           }
         }
         MVOW_DATA.setWeekPlan(w);
         if (MVOW_DATA.fxSuccess) MVOW_DATA.fxSuccess();
       }
+      // Taymersiz maqsad — telefon eslatmasini yoqishni so'raymiz (Web Push)
+      if (isNoTimer && window.PushReminders) { try { PushReminders.enable(); } catch (e) {} }
 
       // Tasdiq toast — falsafiy aniqlik
       const toast = document.createElement('div');

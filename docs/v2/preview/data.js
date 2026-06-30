@@ -228,6 +228,15 @@
           if (!t || t.goalId == null) return true;
           const g = _gmap[t.goalId];
           return g ? DATA.goalRunsOnDay(g, DATA.today.iso) : true;
+        }).map(t => {
+          // Goal'dan noTimer/reminderText bilan boyitish — cache eski bo'lsa ham
+          // taymersiz vazifa kunlik ro'yxatda eslatma sifatida to'g'ri ko'rinadi
+          if (t && t.goalId != null && _gmap[t.goalId]) {
+            const g = _gmap[t.goalId];
+            t.noTimer = !!g.noTimer;
+            if (g.reminderText) t.reminderText = g.reminderText;
+          }
+          return t;
         });
       }
     } catch (e) { /* sukut — filtrsiz qaytaramiz */ }
