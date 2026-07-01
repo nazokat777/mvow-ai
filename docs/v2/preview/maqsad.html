@@ -289,6 +289,10 @@
       <input id="dailyDur" type="number" min="10" max="240" value="60" style="text-align:right;">
     </div>
 
+    <!-- Bir maqsad kunda bir necha marta -->
+    <div id="extraTimes"></div>
+    <button type="button" id="addTimeBtn" style="width:100%;padding:11px;margin-top:8px;background:transparent;border:1px dashed var(--border-default,rgba(255,255,255,.22));border-radius:10px;color:var(--accent,#F4845F);font-family:inherit;font-size:15px;font-weight:600;cursor:pointer;">+ Vaqt qo'shish</button>
+
     <!-- Taymersiz: foydalanuvchi o'zi yozadigan eslatma matni -->
     <div id="reminderRow" style="display:none;">
       <div class="picker-lbl" data-i18n="maqsad.reminder_text_lbl">Eslatma matni</div>
@@ -413,6 +417,27 @@
         row.appendChild(b);
       });
       restyle(); applyGoalType();
+    })();
+
+    // "+ Vaqt qo'shish" — bitta maqsadga kunda bir necha vaqt
+    (function extraTimesInit() {
+      var wrap = document.getElementById('extraTimes'), btn = document.getElementById('addTimeBtn');
+      if (!wrap || !btn) return;
+      btn.addEventListener('click', function () {
+        var row = document.createElement('div');
+        row.className = 'xrow'; row.style.cssText = 'display:flex;gap:8px;align-items:center;margin-top:8px;';
+        var t = document.createElement('input'); t.type = 'time'; t.className = 'xtime'; t.value = '13:00';
+        t.style.cssText = 'flex:1;padding:10px;background:var(--card,#0C0F16);border:1px solid var(--border-default,rgba(255,255,255,.12));border-radius:10px;color:var(--text,#F5F2EC);font-size:16px;font-family:inherit;';
+        var d = document.createElement('input'); d.type = 'number'; d.className = 'xdur'; d.min = 10; d.max = 240; d.value = 60;
+        d.style.cssText = 'width:78px;padding:10px;background:var(--card,#0C0F16);border:1px solid var(--border-default,rgba(255,255,255,.12));border-radius:10px;color:var(--text,#F5F2EC);font-size:16px;text-align:right;font-family:inherit;';
+        d.style.display = (goalType === 'notimer') ? 'none' : '';
+        var x = document.createElement('button'); x.type = 'button'; x.textContent = '×';
+        x.style.cssText = 'width:40px;padding:8px;background:transparent;border:none;color:var(--text-dim,#9CA0A8);font-size:22px;cursor:pointer;';
+        x.addEventListener('click', function () { row.remove(); });
+        row.appendChild(t); row.appendChild(d); row.appendChild(x);
+        wrap.appendChild(row);
+        if (window.MVOW_DATA) MVOW_DATA.fxTap();
+      });
     })();
 
     // ── Vaqt utilities ──
@@ -581,16 +606,26 @@
         checkStep2();
         return;
       }
-      const time = dailyTime.value;
       const isNoTimer = (goalType === 'notimer');
       const hourLbl = (window.I18N ? I18N.t('maqsad.unit_hour', 'soat') : 'soat');
       const minLbl  = (window.I18N ? I18N.t('maqsad.unit_min',  'daq')  : 'daq');
-      const durMin = isNoTimer ? 0 : (parseInt(dailyDur.value, 10) || 60);
-      const dur = isNoTimer
-        ? ('0 ' + minLbl)
-        : (durMin >= 60
-          ? (durMin % 60 === 0 ? (durMin/60) + ' ' + hourLbl : Math.floor(durMin/60) + ' ' + hourLbl + ' ' + (durMin%60) + ' ' + minLbl)
-          : durMin + ' ' + minLbl);
+      function _fmtDur(mn) {
+        return mn >= 60 ? (mn % 60 === 0 ? (mn/60) + ' ' + hourLbl : Math.floor(mn/60) + ' ' + hourLbl + ' ' + (mn%60) + ' ' + minLbl) : mn + ' ' + minLbl;
+      }
+      // Barcha vaqtlar: birinchi qator + "+ Vaqt qo'shish" bilan qo'shilganlar
+      const sessions = [];
+      if (/^\d{1,2}:\d{2}$/.test(dailyTime.value)) {
+        sessions.push({ time: dailyTime.value, dur: isNoTimer ? ('0 ' + minLbl) : _fmtDur(parseInt(dailyDur.value, 10) || 60) });
+      }
+      document.querySelectorAll('#extraTimes .xrow').forEach(function (row) {
+        var te = row.querySelector('.xtime'), de = row.querySelector('.xdur');
+        var tv = te ? te.value : '';
+        if (!/^\d{1,2}:\d{2}$/.test(tv)) return;
+        sessions.push({ time: tv, dur: isNoTimer ? ('0 ' + minLbl) : _fmtDur(de ? (parseInt(de.value, 10) || 60) : 60) });
+      });
+      if (!sessions.length) { checkStep2(); return; }
+      const time = sessions[0].time;
+      const dur = sessions[0].dur;
       var _remEl = document.getElementById('reminderText');
       const reminderText = (isNoTimer && _remEl) ? _remEl.value.trim() : '';
 
@@ -616,6 +651,7 @@
         startDate: startIso,
         icon: selectedIcon,
         color: selectedColor,
+        sessions: sessions.map(function (s, i) { return { sid: 's' + (i + 1), time: s.time, dur: s.dur }; }),
         noTimer: isNoTimer,
         reminderText: reminderText
       };
@@ -630,10 +666,10 @@
           d.setDate(today.getDate() + i);
           const key = 'd' + MVOW_DATA.localDateIso(d);
           if (!Array.isArray(w[key])) w[key] = [];
-          const exists = w[key].some(s => s.name === text && s.time === time);
-          if (!exists) {
-            w[key].push({ time, name: text, dur, goalId: newGoal.id, noTimer: isNoTimer, reminderText: reminderText });
-          }
+          sessions.forEach(function (s) {
+            const exists = w[key].some(x => x.name === text && x.time === s.time);
+            if (!exists) w[key].push({ time: s.time, name: text, dur: s.dur, goalId: newGoal.id, noTimer: isNoTimer, reminderText: reminderText });
+          });
         }
         MVOW_DATA.setWeekPlan(w);
         if (MVOW_DATA.fxSuccess) MVOW_DATA.fxSuccess();
