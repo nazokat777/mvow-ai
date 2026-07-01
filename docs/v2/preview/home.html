@@ -530,6 +530,43 @@
     }
 
     // Render today's tasks — reusable so add-task can re-call after save
+    // Bosqichlar (milestones) — kunlik vazifa ostida ham, shu yerda belgilanadi (maqsadlarga qaytmasdan)
+    function renderHomeMilestones() {
+      if (!window.MVOW_DATA || !tasksList) return;
+      var host = document.getElementById('homeMilestones');
+      if (!host) {
+        host = document.createElement('div');
+        host.id = 'homeMilestones';
+        host.style.cssText = 'margin-top:18px;';
+        tasksList.parentNode.insertBefore(host, tasksList.nextSibling);
+      }
+      var goals = MVOW_DATA.loadGoals().filter(function (g) {
+        return g && Array.isArray(g.milestones) && g.milestones.length && g.milestones.some(function (m) { return !m.done; });
+      });
+      if (!goals.length) { host.innerHTML = ''; return; }
+      host.innerHTML = '<div style="font-size:12px;letter-spacing:2px;text-transform:uppercase;color:var(--text-dim);font-weight:700;margin:0 2px 8px;">' + T('home.ms_title', 'Bosqichlar') + '</div>'
+        + goals.map(function (g) {
+          var done = g.milestones.filter(function (m) { return m.done; }).length;
+          return '<div style="background:var(--card);border:1px solid var(--border-default);border-radius:16px;padding:14px 16px;margin-bottom:10px;">'
+            + '<div style="font-weight:600;margin-bottom:8px;">' + escapeHtmlH(g.text || '') + ' <span style="color:var(--accent);font-size:13px;">' + done + '/' + g.milestones.length + '</span></div>'
+            + g.milestones.map(function (m, mi) {
+              return '<label style="display:flex;align-items:center;gap:10px;padding:6px 2px;font-size:15px;cursor:pointer;color:var(--text);"><input type="checkbox" data-hms="' + g.id + '" data-hmi="' + mi + '"' + (m.done ? ' checked' : '') + ' style="width:18px;height:18px;accent-color:var(--accent);flex-shrink:0;"><span style="' + (m.done ? 'text-decoration:line-through;color:var(--text-dim);' : '') + '">' + escapeHtmlH(m.text) + '</span></label>';
+            }).join('')
+            + '</div>';
+        }).join('');
+      host.querySelectorAll('[data-hms]').forEach(function (cb) {
+        cb.addEventListener('change', function () {
+          var gid = parseInt(cb.dataset.hms, 10), mi = parseInt(cb.dataset.hmi, 10);
+          var gs = MVOW_DATA.loadGoals(), g = gs.find(function (x) { return x.id === gid; });
+          if (!g || !g.milestones || !g.milestones[mi]) return;
+          g.milestones[mi].done = cb.checked;
+          MVOW_DATA.saveGoals(gs);
+          if (MVOW_DATA.fxSuccess) MVOW_DATA.fxSuccess();
+          renderHomeMilestones();
+        });
+      });
+    }
+
     function renderTasks() {
       // Re-read plan so newly added tasks appear
       plan = window.MVOW_DATA ? MVOW_DATA.getTodayPlan() : plan;
@@ -576,6 +613,7 @@
         }).join('');
         tasksPrompt.style.display = 'block';
       }
+      renderHomeMilestones();
     }
     function renderNowCard() {
       var card = document.getElementById('nowCard'); if (!card) return;
