@@ -3,7 +3,7 @@
  * after first load. Caches all preview HTML files + the logo.
  */
 
-const CACHE_NAME = 'focusai-v29.0.27';
+const CACHE_NAME = 'focusai-v29.0.28';
 const ASSETS = [
   './',
   // Asosiy infratuzilma
@@ -28,6 +28,7 @@ const ASSETS = [
   './manifest.webmanifest',
   './menu.html',
   './eslatmalar.html',
+  './orzular.html',
   './gallery.html',
   './about.html',
   './royhat.html',

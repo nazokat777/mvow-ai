@@ -900,6 +900,15 @@
         new_medal: 'Yangi medal',
         continue: 'Davom'
       },
+      orzular: {
+        title: 'Orzular daftari',
+        sub: "Yil oxirigacha erishmoqchi bo'lgan orzularingiz. Ilova vaqti-vaqti bilan eslatib turadi.",
+        add_ph: 'Yangi orzu...',
+        empty: "Hali orzu yo'q. Birinchisini yozing.",
+        remind_off: 'Har kuni eslatib tur',
+        remind_on: 'Eslatib turiladi ✓',
+        remind_card: "orzularingizni o'qing"
+      },
       about: {
         what_lbl: 'Nima bu?',
         what_text: "Bu ilov sizga kunlik rejani tuzish, fokus paytida chalg'imaslik va har kuni bitta qadam tashlashda yordam beradi. Do'st — sizning intizom do'stingiz.",
@@ -945,6 +954,7 @@
         row_calendar: 'Kalendar',
         row_alarm: 'Budilnik',
         row_reminders: 'Eslatmalar',
+        row_dreams: 'Orzular daftari',
         row_hardlock: 'Fokus taymeri',
         row_session: 'Bajardim',
         row_evening: 'Kun yakuni',
@@ -1831,6 +1841,15 @@
         new_medal: 'Новая медаль',
         continue: 'Далее'
       },
+      orzular: {
+        title: 'Дневник мечт',
+        sub: 'Ваши мечты, которых хотите достичь к концу года. Приложение будет напоминать.',
+        add_ph: 'Новая мечта...',
+        empty: 'Мечт пока нет. Запишите первую.',
+        remind_off: 'Напоминать каждый день',
+        remind_on: 'Напоминание включено ✓',
+        remind_card: 'перечитайте свои мечты'
+      },
       about: {
         what_lbl: 'Что это?',
         what_text: 'Это приложение поможет вам составить дневной план, не отвлекаться во время фокуса и каждый день делать один шаг. Друг — ваш друг по дисциплине.',
@@ -1876,6 +1895,7 @@
         row_calendar: 'Календарь',
         row_alarm: 'Будильник',
         row_reminders: 'Напоминания',
+        row_dreams: 'Дневник мечт',
         row_hardlock: 'Таймер фокуса',
         row_session: 'Сделано',
         row_evening: 'Итог дня',
@@ -2762,6 +2782,15 @@
         new_medal: 'New medal',
         continue: 'Continue'
       },
+      orzular: {
+        title: 'Dream journal',
+        sub: 'Your dreams to reach by the end of the year. The app will remind you now and then.',
+        add_ph: 'New dream...',
+        empty: 'No dreams yet. Write your first one.',
+        remind_off: 'Remind me daily',
+        remind_on: 'Reminder on ✓',
+        remind_card: 'read your dreams'
+      },
       about: {
         what_lbl: 'What is this?',
         what_text: 'This app helps you plan your day, stay focused, and take one step every day. The Mentor — your discipline companion.',
@@ -2807,6 +2836,7 @@
         row_calendar: 'Calendar',
         row_alarm: 'Alarm',
         row_reminders: 'Reminders',
+        row_dreams: 'Dream journal',
         row_hardlock: 'Focus timer',
         row_session: 'Done',
         row_evening: 'Day summary',

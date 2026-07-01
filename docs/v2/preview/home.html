@@ -300,6 +300,7 @@
 
     <!-- Hozir nima qilay? — joriy/keyingi vazifa -->
     <div id="nowCard" style="display:none;background:rgba(244,132,95,.08);border:1px solid rgba(244,132,95,.25);border-radius:14px;padding:14px 16px;margin-bottom:14px;"></div>
+    <div id="dreamCard" style="display:none;background:linear-gradient(135deg,rgba(110,181,255,.12),rgba(232,130,180,.08));border:1px solid rgba(110,181,255,.28);border-radius:14px;padding:14px 16px;margin-bottom:14px;"></div>
 
     <!-- AI Murabbiy — kontekstli xabar (kerakli holatda chiqadi) -->
     <div id="murabbiyBox" style="display:none;background:rgba(244, 132, 95,.06);border:1px solid rgba(244, 132, 95,.18);border-radius:12px;padding:14px 16px;font-family:'Inter',sans-serif;font-style:normal;font-size:18px;line-height:1.5;color:var(--text);text-align:center;">
@@ -677,6 +678,26 @@
     }
     renderTasks();
     renderNowCard();
+
+    // ── Orzular eslatmasi — 3 kunda bir "orzularingizni o'qing" kartasi ──
+    (function renderDreamCard() {
+      var card = document.getElementById('dreamCard'); if (!card) return;
+      var dreams = [];
+      try { dreams = JSON.parse(localStorage.getItem('mvow.dreams') || '[]'); } catch (e) {}
+      if (!Array.isArray(dreams) || !dreams.length) return;
+      var last = 0; try { last = +localStorage.getItem('mvow.dreamCardShown') || 0; } catch (e) {}
+      if (Date.now() - last < 3 * 24 * 3600 * 1000) return;
+      var open = dreams.filter(function (d) { return !d.done; });
+      var pool = open.length ? open : dreams;
+      var pick = pool[Math.floor(Math.random() * pool.length)];
+      var yr = (pick && pick.year) ? pick.year : 2026;
+      var head = '📖 ' + yr + ' ' + T('orzular.remind_card', "orzularingizni o'qing");
+      card.innerHTML = '<a href="orzular.html" style="text-decoration:none;color:inherit;display:block;">'
+        + '<div style="font-size:13px;font-weight:700;color:#6EB5FF;letter-spacing:.5px;margin-bottom:4px;">' + head + '</div>'
+        + '<div style="font-size:15px;color:var(--text);opacity:.9;">“' + escapeHtmlH(pick ? pick.text : '') + '”</div></a>';
+      card.style.display = 'block';
+      try { localStorage.setItem('mvow.dreamCardShown', String(Date.now())); } catch (e) {}
+    })();
 
     // ── Vazifa vaqti/davomiyligini tahrirlash (qatorga bosib o'zgartirish) ──
     (function wireEditTask() {
