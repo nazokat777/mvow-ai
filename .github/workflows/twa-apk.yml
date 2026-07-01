@@ -57,11 +57,11 @@ jobs:
       - name: Build signed APK
         working-directory: twa
         run: |
-          # Loyihani twa-manifest.json'dan generatsiya qilish
-          printf 'focusai2026\nfocusai2026\n' | bubblewrap build --skipPwaValidation || \
-          printf 'focusai2026\nfocusai2026\n' | bubblewrap build --skipPwaValidation
+          yes | sdkmanager --licenses >/dev/null 2>&1 || true
+          # bubblewrap build twa-manifest.json'dan loyihani generatsiya qiladi; parollar stdin'dan (yes = har promptga parol)
+          yes 'focusai2026' | bubblewrap build --skipPwaValidation
           echo "--- qurilgan fayllar ---"
-          find . -name "*.apk" -o -name "*.aab" | sort
+          find . -name "*.apk" | sort
 
       - name: Collect APK
         working-directory: twa
