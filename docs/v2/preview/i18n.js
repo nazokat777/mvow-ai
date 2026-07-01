@@ -654,7 +654,7 @@
         tile_history: 'Tarix',
         tasks_ask: "Yana qo'shasizmi yoki o'zgartirasizmi?",
         tasks_edit: "Tahrirlash →",
-        tasks_lbl: "Bugungi vazifalar",
+        tasks_lbl: "Kunlik odatlar", tasks_sub: "Maqsadni shular hosil qiladi",
                   add: {
           title: "vazifa qo'shish",
           name: "Vazifa nomi",
@@ -1589,7 +1589,7 @@
         tile_history: 'История',
         tasks_ask: 'Добавить или изменить?',
         tasks_edit: 'Редактировать →',
-        tasks_lbl: 'Задачи на сегодня',
+        tasks_lbl: 'Ежедневные привычки', tasks_sub: 'Из них рождается цель',
                   add: {
           title: "добавить задачу",
           name: "Название задачи",
@@ -2513,7 +2513,7 @@
         tile_history: 'History',
         tasks_ask: 'Add more or edit?',
         tasks_edit: 'Edit →',
-        tasks_lbl: "Today's tasks",
+        tasks_lbl: "Daily habits", tasks_sub: "They shape your goal",
                   add: {
           title: "add task",
           name: "Task name",
