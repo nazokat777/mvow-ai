@@ -533,6 +533,8 @@
     // Bosqichlar (milestones) — kunlik vazifa ostida ham, shu yerda belgilanadi (maqsadlarga qaytmasdan)
     function renderHomeMilestones() {
       if (!window.MVOW_DATA || !tasksList) return;
+      renderHomeMilestones._open = renderHomeMilestones._open || {};
+      var _hmOpen = renderHomeMilestones._open;
       var host = document.getElementById('homeMilestones');
       if (!host) {
         host = document.createElement('div');
@@ -547,13 +549,20 @@
       host.innerHTML = '<div style="font-size:12px;letter-spacing:2px;text-transform:uppercase;color:var(--text-dim);font-weight:700;margin:0 2px 8px;">' + T('home.ms_title', 'Bosqichlar') + '</div>'
         + goals.map(function (g) {
           var done = g.milestones.filter(function (m) { return m.done; }).length;
+          var open = _hmOpen[g.id];
           return '<div style="background:var(--card);border:1px solid var(--border-default);border-radius:16px;padding:14px 16px;margin-bottom:10px;">'
-            + '<div style="font-weight:600;margin-bottom:8px;">' + escapeHtmlH(g.text || '') + ' <span style="color:var(--accent);font-size:13px;">' + done + '/' + g.milestones.length + '</span></div>'
+            + '<div data-hmhead="' + g.id + '" style="font-weight:600;display:flex;align-items:center;justify-content:space-between;cursor:pointer;gap:10px;">'
+            + '<span>' + escapeHtmlH(g.text || '') + ' <span style="color:var(--accent);font-size:13px;">' + done + '/' + g.milestones.length + '</span></span>'
+            + '<span style="color:var(--text-dim);font-size:14px;flex-shrink:0;">' + (open ? '▾' : '▸') + '</span></div>'
+            + '<div style="margin-top:8px;' + (open ? '' : 'display:none;') + '">'
             + g.milestones.map(function (m, mi) {
               return '<label style="display:flex;align-items:center;gap:10px;padding:6px 2px;font-size:15px;cursor:pointer;color:var(--text);"><input type="checkbox" data-hms="' + g.id + '" data-hmi="' + mi + '"' + (m.done ? ' checked' : '') + ' style="width:18px;height:18px;accent-color:var(--accent);flex-shrink:0;"><span style="' + (m.done ? 'text-decoration:line-through;color:var(--text-dim);' : '') + '">' + escapeHtmlH(m.text) + '</span></label>';
             }).join('')
-            + '</div>';
+            + '</div></div>';
         }).join('');
+      host.querySelectorAll('[data-hmhead]').forEach(function (h) {
+        h.addEventListener('click', function () { var id = h.getAttribute('data-hmhead'); _hmOpen[id] = !_hmOpen[id]; renderHomeMilestones(); });
+      });
       host.querySelectorAll('[data-hms]').forEach(function (cb) {
         cb.addEventListener('change', function () {
           var gid = parseInt(cb.dataset.hms, 10), mi = parseInt(cb.dataset.hmi, 10);
@@ -1370,5 +1379,35 @@
 </script>
 
 <script src="back-btn.js?v=28.4.0"></script>
+<script>
+  // Coach-mark — birinchi kirganda yo'l ko'rsatgich (bilmagan odam tushunsin)
+  (function coachMark() {
+    try { if (localStorage.getItem('mvow.coachSeen')) return; } catch (e) { return; }
+    var steps = [
+      { t: 'Maqsadlaringiz', d: "Katta maqsad yozing — AI uni kichik bosqichlarga bo'ladi." },
+      { t: 'Kunlik reja', d: 'Bugungi vazifalaringiz shu yerda. Bajarib, belgilaysiz.' },
+      { t: 'Fokus taymeri', d: "Vazifani tanlab, taymer bilan chalg'imasdan ishlaysiz." },
+      { t: 'Natijalar', d: "Fokus soatlari, streak, medallar — o'sishingiz shu yerda." }
+    ];
+    var i = 0;
+    var ov = document.createElement('div');
+    ov.style.cssText = 'position:fixed;inset:0;background:rgba(4,6,11,.9);z-index:99999;display:flex;align-items:center;justify-content:center;padding:24px;';
+    var card = document.createElement('div');
+    card.style.cssText = 'max-width:360px;width:100%;background:var(--card,#0C0F16);border:1px solid var(--border-default,rgba(255,255,255,.14));border-radius:20px;padding:28px 24px;text-align:center;';
+    ov.appendChild(card); document.body.appendChild(ov);
+    function close() { try { localStorage.setItem('mvow.coachSeen', '1'); } catch (e) {} ov.remove(); }
+    function draw() {
+      var s = steps[i], last = (i === steps.length - 1);
+      card.innerHTML = '<div style="font-size:12px;letter-spacing:2px;color:var(--accent,#F4845F);font-weight:700;margin-bottom:8px;">' + (i + 1) + ' / ' + steps.length + '</div>'
+        + '<div style="font-size:24px;font-weight:700;color:var(--text,#F5F2EC);margin-bottom:10px;">' + s.t + '</div>'
+        + '<div style="font-size:16px;color:var(--text-mid,#C9CDD4);line-height:1.55;margin-bottom:22px;">' + s.d + '</div>'
+        + '<button id="cmNext" style="width:100%;padding:14px;background:var(--accent,#F4845F);color:#fff;border:none;border-radius:12px;font-size:16px;font-weight:700;font-family:inherit;cursor:pointer;">' + (last ? 'Tushundim' : 'Keyingi') + '</button>'
+        + (last ? '' : '<div id="cmSkip" style="margin-top:12px;font-size:14px;color:var(--text-dim,#9CA0A8);cursor:pointer;">O’tkazib yuborish</div>');
+      card.querySelector('#cmNext').addEventListener('click', function () { if (last) close(); else { i++; draw(); } });
+      var sk = card.querySelector('#cmSkip'); if (sk) sk.addEventListener('click', close);
+    }
+    draw();
+  })();
+</script>
 </body>
 </html>

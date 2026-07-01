@@ -772,7 +772,7 @@
     var pct = Math.round(done / ms.length * 100);
     return '<div class="gs-label">' + escapeHtml(_t('maqsadlar.ms_title', 'Bosqichlar')) + ' <span style="color:var(--accent)">' + done + '/' + ms.length + '</span></div>'
       + '<div class="ms-bar"><div class="ms-fill" style="width:' + pct + '%"></div></div>'
-      + ms.map(function (m, mi) { return '<label class="ms-row"><input type="checkbox" data-ms-toggle="' + g.id + '" data-ms-i="' + mi + '"' + (m.done ? ' checked' : '') + '><span class="' + (m.done ? 'ms-done' : '') + '">' + escapeHtml(m.text) + '</span></label>'; }).join('');
+      + ms.map(function (m, mi) { return '<div class="ms-row"><label style="display:flex;align-items:center;gap:10px;flex:1;cursor:pointer;"><input type="checkbox" data-ms-toggle="' + g.id + '" data-ms-i="' + mi + '"' + (m.done ? ' checked' : '') + '><span class="' + (m.done ? 'ms-done' : '') + '">' + escapeHtml(m.text) + '</span></label><button type="button" data-ms-edit="' + g.id + '" data-ms-ei="' + mi + '" style="background:none;border:none;color:var(--text-dim);cursor:pointer;font-size:15px;padding:4px 8px;flex-shrink:0;" aria-label="tahrirlash">✎</button></div>'; }).join('');
   }
 
   function render() {
@@ -950,6 +950,19 @@
         var goals = loadGoals(), g = goals.find(function (x) { return x.id === goalId; });
         if (!g || !g.milestones || !g.milestones[mi]) return;
         g.milestones[mi].done = cb.checked; saveGoals(goals); render();
+      });
+    });
+    // Milestone: tahrirlash (AI bosqichi yoqmasa o'zgartirish)
+    list.querySelectorAll('[data-ms-edit]').forEach(function (btn) {
+      btn.addEventListener('click', function (e) {
+        e.stopPropagation();
+        var goalId = parseInt(btn.dataset.msEdit, 10), mi = parseInt(btn.dataset.msEi, 10);
+        var goals = loadGoals(), g = goals.find(function (x) { return x.id === goalId; });
+        if (!g || !g.milestones || !g.milestones[mi]) return;
+        var nt = prompt(_t('maqsadlar.ms_edit', 'Bosqichni tahrirlash:'), g.milestones[mi].text);
+        if (nt === null) return;
+        nt = nt.trim(); if (!nt) return;
+        g.milestones[mi].text = nt; saveGoals(goals); render();
       });
     });
 
