@@ -892,7 +892,13 @@
         stamp: '7 kun · tugadi',
         days_unit: 'kun',
         hours_unit: 'soat',
-        page_title: '{brand} — Bayram'
+        page_title: '{brand} — Bayram',
+        done_title: "Zo'r! Bajarildi",
+        done_sub: 'Yana bir qadam maqsad sari',
+        medal_title: 'Yangi medal ochildi!',
+        medal_sub: 'Ajoyib natija — davom eting',
+        new_medal: 'Yangi medal',
+        continue: 'Davom'
       },
       about: {
         what_lbl: 'Nima bu?',
@@ -938,6 +944,7 @@
         row_today: 'Bugungi reja',
         row_calendar: 'Kalendar',
         row_alarm: 'Budilnik',
+        row_reminders: 'Eslatmalar',
         row_hardlock: 'Fokus taymeri',
         row_session: 'Bajardim',
         row_evening: 'Kun yakuni',
@@ -1816,7 +1823,13 @@
         stamp: '7 дней · завершено',
         days_unit: 'дней',
         hours_unit: 'ч',
-        page_title: '{brand} — Праздник'
+        page_title: '{brand} — Праздник',
+        done_title: 'Отлично! Выполнено',
+        done_sub: 'Ещё один шаг к цели',
+        medal_title: 'Новая медаль!',
+        medal_sub: 'Отличный результат — продолжайте',
+        new_medal: 'Новая медаль',
+        continue: 'Далее'
       },
       about: {
         what_lbl: 'Что это?',
@@ -1862,6 +1875,7 @@
         row_today: 'План на сегодня',
         row_calendar: 'Календарь',
         row_alarm: 'Будильник',
+        row_reminders: 'Напоминания',
         row_hardlock: 'Таймер фокуса',
         row_session: 'Сделано',
         row_evening: 'Итог дня',
@@ -2740,7 +2754,13 @@
         stamp: '7 days · complete',
         days_unit: 'days',
         hours_unit: 'h',
-        page_title: '{brand} — Celebration'
+        page_title: '{brand} — Celebration',
+        done_title: 'Great! Done',
+        done_sub: 'One more step toward your goal',
+        medal_title: 'New medal unlocked!',
+        medal_sub: 'Great result — keep going',
+        new_medal: 'New medal',
+        continue: 'Continue'
       },
       about: {
         what_lbl: 'What is this?',
@@ -2786,6 +2806,7 @@
         row_today: 'Today\'s plan',
         row_calendar: 'Calendar',
         row_alarm: 'Alarm',
+        row_reminders: 'Reminders',
         row_hardlock: 'Focus timer',
         row_session: 'Done',
         row_evening: 'Day summary',

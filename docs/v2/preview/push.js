@@ -58,8 +58,11 @@
       return navigator.serviceWorker.ready
         .then(function (reg) { return getSub(reg, true); })
         .then(function (sub) {
-          try { localStorage.setItem('mvow.pushOn', '1'); } catch (e) {}
-          return post(sub);
+          if (!sub) return { ok: false, reason: 'no-sub' };
+          return post(sub).then(function (res) {
+            if (res && res.ok) { try { localStorage.setItem('mvow.pushOn', '1'); } catch (e) {} }
+            return res;
+          });
         });
     }).catch(function (e) { return { ok: false, reason: String(e && e.message || e) }; });
   }

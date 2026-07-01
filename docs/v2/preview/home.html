@@ -446,6 +446,7 @@
 <script src="lang-switcher.js?v=28.4.0" defer></script>
 <script src="focus-indicator.js?v=28.4.0" defer></script>
 <script src="data.js?v=28.4.0" defer></script>
+<script src="celebrate.js?v=29.0.27" defer></script>
 <script src="nav-overlay.js?v=28.4.0" defer></script>
 <script src="pin-lock.js?v=28.67.0"></script>
 <!-- Ijtimoiy: kunlik natijani serverga avtomatik yuklash (ko'rinmas, dizaynga tegmaydi) -->
@@ -596,13 +597,12 @@
           const state = window.MVOW_DATA ? MVOW_DATA.getTaskState(taskKey) : { status: 'pending' };
           const isDone = completedKeys.has(taskKey) || state.status === 'done';
           const startMin = tKey(t.time);
-          const durMin = window.MVOW_DATA ? MVOW_DATA.parseDurMins(t.dur) : 60;
+          const durMin = t.noTimer ? 0 : (window.MVOW_DATA ? MVOW_DATA.parseDurMins(t.dur) : 60);
           const endMin = startMin + durMin;
-          const isActive = nowMin >= startMin && nowMin < endMin && !isDone;
+          const isActive = !t.noTimer && nowMin >= startMin && nowMin < endMin && !isDone;
           const isExplicitMissed = !isDone && state.status === 'missed';
-          // Bugun vaqti o'tib ketgan, lekin bajarilmagan — bu "o'tkazib yuborildi" EMAS.
-          // Kun hali tugamagan, shuning uchun muloyim eslatma ko'rsatamiz.
-          const isOverdue = !isDone && !isExplicitMissed && nowMin > endMin;
+          // Taymersiz odatda muddat yo'q — "aktiv/vaqti o'tdi" ko'rsatilmaydi
+          const isOverdue = !t.noTimer && !isDone && !isExplicitMissed && nowMin > endMin;
           let cls = 'pending';
           let icon = '·';
           if (isDone) { cls = 'done'; icon = ''; }
@@ -778,6 +778,7 @@
         if (MVOW_DATA.fxSuccess) MVOW_DATA.fxSuccess();
         closeDone();
         renderTasks();
+        if (window.MvowCelebrate) MvowCelebrate.celebrate();   // konfetti + medal tabrigi
       });
       tasksList.addEventListener('click', function (e) {
         var row = e.target.closest('.t-row');
@@ -933,13 +934,31 @@
     } else {
       cta.textContent = Ti('home.cta_start', 'Boshlash');
       cta.href = 'hard-lock.html';
-      // Umumiy "Boshlash" ham aniq vazifani (nomi/vaqti/davomiyligi bilan) taymerga uzatsin
+      // Umumiy "Boshlash": faqat 1 ta bajarilmagan vazifa bo'lsa — to'g'ridan-to'g'ri nomi bilan.
+      // Ko'p yoki vaqti o'tib ketgan (overdue) bo'lsa — activeTask o'rnatilmaydi,
+      // hard-lock "Qaysi vazifa ustida ishlaysiz?" deb so'raydi (picker).
       cta.addEventListener('click', function () {
         try {
-          if (window.MVOW_DATA) {
-            var _t = MVOW_DATA.currentTaskFromPlan();
-            if (_t && _t.name) localStorage.setItem('mvow.activeTask', JSON.stringify({ name: _t.name, time: _t.time || '', dur: _t.dur || '' }));
+          if (!window.MVOW_DATA) return;
+          localStorage.removeItem('mvow.activeTask');
+          var completed = MVOW_DATA.getCompletedKeysToday ? MVOW_DATA.getCompletedKeysToday() : new Set();
+          var seen = {}, todo = [];
+          (MVOW_DATA.getTodayPlan() || []).forEach(function (t) {
+            if (!t || !t.name) return;
+            var k = t.time ? MVOW_DATA.taskKey(MVOW_DATA.today.iso, t.time, t.name) : '';
+            if (k && completed.has(k)) return;
+            if (seen[t.name]) return; seen[t.name] = 1;
+            todo.push({ name: t.name, time: t.time || '', dur: t.dur || '' });
+          });
+          // Bugungi reja bo'sh bo'lsa — maqsadlardan zaxira
+          if (!todo.length && MVOW_DATA.loadGoals) {
+            (MVOW_DATA.loadGoals() || []).forEach(function (g) {
+              if (!g || !g.text || seen[g.text]) return; seen[g.text] = 1;
+              todo.push({ name: g.text, time: g.time || '', dur: g.dur || '' });
+            });
           }
+          if (todo.length === 1) localStorage.setItem('mvow.activeTask', JSON.stringify(todo[0]));
+          // aks holda: o'rnatmaymiz -> hard-lock picker so'raydi
         } catch (e) {}
       });
     }

@@ -229,12 +229,13 @@
           const g = _gmap[t.goalId];
           return g ? DATA.goalRunsOnDay(g, DATA.today.iso) : true;
         }).map(t => {
-          // Goal'dan noTimer/reminderText bilan boyitish — cache eski bo'lsa ham
-          // taymersiz vazifa kunlik ro'yxatda eslatma sifatida to'g'ri ko'rinadi
+          // Goal'dan boyitish — cache obyektini MUTATSIYA qilmasdan (nusxa)
           if (t && t.goalId != null && _gmap[t.goalId]) {
             const g = _gmap[t.goalId];
-            t.noTimer = !!g.noTimer;
-            if (g.reminderText) t.reminderText = g.reminderText;
+            const nt = Object.assign({}, t);
+            nt.noTimer = !!g.noTimer;
+            nt.reminderText = g.reminderText || '';
+            return nt;
           }
           return t;
         });

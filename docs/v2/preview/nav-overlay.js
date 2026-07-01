@@ -577,6 +577,7 @@
       MVOW_DATA.markTaskDone(currentAsk.task, currentAsk.key, note);
       document.getElementById('askNote').value = '';
       if (MVOW_DATA.fxSuccess) MVOW_DATA.fxSuccess();
+      if (window.MvowCelebrate) MvowCelebrate.celebrate();   // konfetti + medal tabrigi
       processQueue();
     });
     document.getElementById('askNo').addEventListener('click', () => {

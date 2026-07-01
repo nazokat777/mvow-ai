@@ -387,6 +387,7 @@
       var hint = document.getElementById('typeHint');
       var notimer = (goalType === 'notimer');
       if (durRow) durRow.style.display = notimer ? 'none' : '';
+      document.querySelectorAll('#extraTimes .xdur').forEach(function (d) { d.style.display = notimer ? 'none' : ''; });
       if (reminderRow) reminderRow.style.display = 'none';   // eslatma endi alohida bo'lim (eslatmalar.html)
       if (timeLbl) timeLbl.textContent = notimer
         ? (window.I18N ? I18N.t('maqsad.reminder_lbl', 'Eslatma vaqti') : 'Eslatma vaqti')
@@ -464,13 +465,19 @@
     // Mavjud maqsadlarning vaqt slotlari
     function getOccupiedSlots() {
       let goals = [];
-      try { goals = JSON.parse(localStorage.getItem('mvow.goals') || '[]'); } catch {}
+      try { goals = (window.MVOW_DATA && MVOW_DATA.loadGoals) ? MVOW_DATA.loadGoals() : JSON.parse(localStorage.getItem('mvow.goals') || '[]'); } catch {}
       if (!Array.isArray(goals)) return [];
-      return goals.map(g => {
-        const start = timeToMin(g.time);
-        const dur = durMinsFrom(g);
-        return { text: g.text, time: g.time, dur: g.dur, start, end: start + dur };
-      }).filter(s => s.start !== null);
+      const slots = [];
+      goals.forEach(g => {
+        const sessions = (Array.isArray(g.sessions) && g.sessions.length) ? g.sessions : [{ time: g.time, dur: g.dur }];
+        sessions.forEach(s => {
+          const start = timeToMin(s.time);
+          if (start === null) return;
+          const dur = window.MVOW_DATA ? MVOW_DATA.parseDurMins(s.dur) : durMinsFrom({ dur: s.dur });
+          slots.push({ text: g.text, time: s.time, start: start, end: start + dur });
+        });
+      });
+      return slots;
     }
 
     // Yangi vaqt boshqa maqsad bilan to'qnashadimi?
@@ -667,7 +674,7 @@
           const key = 'd' + MVOW_DATA.localDateIso(d);
           if (!Array.isArray(w[key])) w[key] = [];
           sessions.forEach(function (s) {
-            const exists = w[key].some(x => x.name === text && x.time === s.time);
+            const exists = w[key].some(x => x.goalId === newGoal.id && x.time === s.time);
             if (!exists) w[key].push({ time: s.time, name: text, dur: s.dur, goalId: newGoal.id, noTimer: isNoTimer, reminderText: reminderText });
           });
         }
