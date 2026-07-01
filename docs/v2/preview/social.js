@@ -150,8 +150,27 @@
   }
   function unsubscribe(ch) { var c = client(); if (c && ch) { try { c.removeChannel(ch); } catch (e) {} } }
 
+  // Wards — kim MENI ustoz/ota-ona qilib qo'shgan (kind='mentor') -> men ularni NAZORAT qilaman
+  function wards() {
+    var c = client();
+    if (!c) return Promise.resolve([]);
+    return c.from('links').select('follower').eq('target_code', myCode()).eq('kind', 'mentor')
+      .then(function (res) {
+        var codes = ((res && res.data) || []).map(function (x) { return x.follower; });
+        if (!codes.length) return [];
+        return c.from('daily_stats').select('code,focus_mins,habits').eq('d', todayIso()).in('code', codes)
+          .then(function (r2) {
+            var by = {}; ((r2 && r2.data) || []).forEach(function (s) { by[s.code] = s; });
+            return codes.map(function (cd) {
+              var s = by[cd] || { focus_mins: 0, habits: 0 };
+              return { code: cd, name: cd, focusMins: s.focus_mins || 0, focusH: Math.round((s.focus_mins || 0) / 60 * 10) / 10, habits: s.habits || 0 };
+            }).sort(function (a, b) { return (b.focusMins - a.focusMins) || (b.habits - a.habits); });
+          });
+      }).catch(function () { return []; });
+  }
+
   window.Social = {
-    myCode: myCode, myStats: myStats, cloud: cloud, syncStats: syncStats,
+    myCode: myCode, myStats: myStats, cloud: cloud, syncStats: syncStats, wards: wards,
     friends: friends, addFriend: addFriend, removeFriend: removeFriend, leaderboard: leaderboard,
     sendMessage: sendMessage, getMessages: getMessages, subscribeMessages: subscribeMessages, unsubscribe: unsubscribe
   };

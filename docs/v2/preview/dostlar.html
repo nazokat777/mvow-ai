@@ -150,7 +150,10 @@
     function render() {
       if (!window.Social) return;
       $('myCode').textContent = Social.myCode();
-      Social.leaderboard(role).then(function (list) {
+      var inp = $('friendInput');
+      if (inp) inp.placeholder = (role === 'mentor') ? T('code_ph_mentor', 'Ustoz/ota-ona kodini kiriting') : T('code_ph', "Do'st kodini kiriting");
+      if (role === 'mentor') { renderMentor(); return; }
+      Social.leaderboard('friend').then(function (list) {
         var el = $('lbList');
         var hasFriends = list.length > 1;
         var html = '';
@@ -165,11 +168,36 @@
             + stat + (r.me ? '' : '<span class="chat-ic">💬</span>') + '</div>';
         });
         if (!hasFriends) {
-          html += '<div class="lb-empty">' + (role === 'mentor'
-            ? T('empty_mentor', 'Ustoz yoki ota-onangiz kodini qo\'shing — ular natijangizni ko\'radi.')
-            : T('empty_friend', 'Hali do\'st yo\'q — kodingizni ulashing va musobaqani boshlang!')) + '</div>';
+          html += '<div class="lb-empty">' + T('empty_friend', 'Hali do\'st yo\'q — kodingizni ulashing va musobaqani boshlang!') + '</div>';
         }
         el.innerHTML = html;
+      });
+    }
+    function renderMentor() {
+      var el = $('lbList');
+      var lbl = 'font-size:12px;letter-spacing:1.5px;text-transform:uppercase;color:var(--text-dim);margin:0 2px 8px;';
+      Social.wards().then(function (w) {
+        var html = '<div style="' + lbl + '">' + T('watching', 'Siz nazorat qilyapsiz') + '</div>';
+        if (w.length) {
+          w.forEach(function (r, i) {
+            html += '<div class="lb-row"><div class="lb-rank">' + (i + 1) + '</div><div class="lb-name">' + escapeHtml(r.name) + '</div><span class="lb-stat">' + (r.focusH || 0) + ' ' + T('hours', 'soat') + ' <span class="hb">· ' + (r.habits || 0) + ' ' + T('habits', 'odat') + '</span></span></div>';
+          });
+        } else {
+          html += '<div class="lb-empty">' + T('no_wards', "Hali hech kim sizni ustoz/ota-ona qilib qo'shmagan. Kodingizni farzandingiz yoki o'quvchingizga bering — u sizni qo'shsa, natijasini shu yerda ko'rasiz.") + '</div>';
+        }
+        var mine = (Social.friends ? Social.friends() : []).filter(function (x) { return x.role === 'mentor'; });
+        html += '<div style="' + lbl + 'margin-top:20px;">' + T('who_watches', 'Sizni kuzatadi') + '</div>';
+        if (mine.length) {
+          mine.forEach(function (x) {
+            html += '<div class="lb-row"><div class="lb-name">' + escapeHtml(x.code) + '</div><span data-del="' + escapeHtml(x.code) + '" style="margin-left:auto;color:var(--text-dim);font-size:20px;cursor:pointer;">×</span></div>';
+          });
+        } else {
+          html += '<div class="lb-empty">' + T('add_mentor_hint', "Pastga ota-onangiz/ustozingiz kodini kiriting — ular sizni kuzatadi.") + '</div>';
+        }
+        el.innerHTML = html;
+        el.querySelectorAll('[data-del]').forEach(function (b) {
+          b.addEventListener('click', function () { Social.removeFriend(b.getAttribute('data-del'), 'mentor'); render(); });
+        });
       });
     }
     function escapeHtml(s) { return String(s).replace(/[<>&"]/g, function (c) { return ({ '<': '&lt;', '>': '&gt;', '&': '&amp;', '"': '&quot;' })[c]; }); }
