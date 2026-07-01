@@ -3,9 +3,9 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-<title>FOCUS AI — Fokus izi</title>
+<title>FOCUS AI — Seriya</title>
 <link rel="manifest" href="manifest.webmanifest">
-<meta name="theme-color" content="#0a0610">
+<meta name="theme-color" content="#04060B">
 <link rel="apple-touch-icon" href="assets/mnsm-logo.png?v=3">
 <link rel="icon" type="image/png" href="assets/mnsm-logo.png?v=3">
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -15,19 +15,32 @@
   * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
   html, body { background: var(--void); color: var(--text); min-height: 100vh; font-family: 'Inter', sans-serif; -webkit-font-smoothing: antialiased; }
   .wrap { max-width: 520px; margin: 0 auto; padding: 64px 20px 110px; text-align: center; }
-  .title { font-family: 'Anton', sans-serif; font-size: 36px; text-transform: uppercase; }
-  .sub { color: var(--text-dim); font-size: 14px; margin-bottom: 22px; }
-  .canvas-box { position: relative; width: 100%; max-width: 360px; margin: 0 auto; border-radius: 24px; overflow: hidden; box-shadow: 0 20px 50px rgba(0,0,0,.35); }
-  #trace { display: block; width: 100%; height: auto; }
-  .count { font-family: 'Anton', sans-serif; font-size: 56px; line-height: 1; margin-top: 22px; color: rgb(244,132,95); }
-  .count small { font-family: 'Inter'; font-size: 18px; font-weight: 700; color: var(--text-dim); letter-spacing: 2px; text-transform: uppercase; }
-  .note { color: var(--text-dim); font-size: 14px; line-height: 1.6; margin-top: 10px; padding: 0 10px; }
-  .share-btn { margin-top: 20px; background: linear-gradient(135deg, rgb(244,132,95), #d9663c); color: #fff; border: none; border-radius: 14px; padding: 14px 30px; font-weight: 800; font-size: 16px; cursor: pointer; font-family: 'Inter'; box-shadow: 0 10px 26px rgba(244,132,95,.4); }
+  .title { font-family: 'Anton', sans-serif; font-size: 34px; text-transform: uppercase; }
+  .sub { color: var(--text-dim); font-size: 14px; margin-bottom: 20px; }
+  .flame { font-size: 88px; line-height: 1; filter: drop-shadow(0 8px 26px rgba(244,132,95,.5)); }
+  .flame.dim { filter: grayscale(1) opacity(.5); }
+  .streak-num { font-family: 'Anton', sans-serif; font-size: 76px; line-height: 1; color: rgb(244,132,95); margin-top: 4px; }
+  .streak-lbl { font-size: 15px; letter-spacing: 2px; text-transform: uppercase; color: var(--text-dim); font-weight: 700; }
+  .week { display: flex; justify-content: center; gap: 8px; margin: 24px auto 4px; max-width: 340px; }
+  .wd { flex: 1; display: flex; flex-direction: column; align-items: center; gap: 6px; }
+  .wd .dot { width: 34px; height: 34px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 17px; background: var(--card, rgba(255,255,255,.05)); border: 1px solid var(--border-default, rgba(255,255,255,.10)); }
+  .wd .dot.on { background: linear-gradient(135deg, rgb(244,132,95), #d9663c); border: none; }
+  .wd .dot.today { border: 2px solid rgb(244,132,95); }
+  .wd .lt { font-size: 12px; color: var(--text-dim); font-weight: 700; }
+  .card { background: var(--card); border: 1px solid var(--border-default, rgba(255,255,255,.08)); border-radius: 18px; padding: 16px 18px; margin: 22px auto 0; max-width: 360px; text-align: left; }
+  .level .lv-top { display: flex; align-items: center; gap: 12px; }
+  .level .lv-ic { font-size: 34px; line-height: 1; }
+  .level .lv-nm { font-family: 'Anton', sans-serif; font-size: 22px; }
+  .level .lv-sub { color: var(--text-dim); font-size: 12px; }
+  .level .lv-bar { height: 8px; background: rgba(255,255,255,.08); border-radius: 999px; overflow: hidden; margin-top: 12px; }
+  .level .lv-fill { height: 100%; background: linear-gradient(90deg, rgb(244,132,95), #d9663c); border-radius: 999px; }
+  .level .lv-next { font-size: 12px; color: var(--text-dim); margin-top: 6px; }
+  .statsrow { display: flex; justify-content: center; gap: 28px; margin: 20px auto 0; }
+  .st .v { font-family: 'Anton', sans-serif; font-size: 30px; color: var(--text); }
+  .st .k { font-size: 12px; letter-spacing: 1px; text-transform: uppercase; color: var(--text-dim); }
+  .motiv { color: var(--text); opacity: .9; font-size: 15px; line-height: 1.5; margin: 20px auto 0; max-width: 340px; }
+  .share-btn { margin-top: 22px; background: linear-gradient(135deg, rgb(244,132,95), #d9663c); color: #fff; border: none; border-radius: 14px; padding: 14px 30px; font-weight: 800; font-size: 16px; cursor: pointer; font-family: 'Inter'; box-shadow: 0 10px 26px rgba(244,132,95,.4); }
   .share-btn:active { transform: scale(.97); }
-  .hm-wrap { max-width: 360px; margin: 24px auto 0; }
-  .hm-lbl { font-size: 12px; letter-spacing: 2px; text-transform: uppercase; color: var(--text-dim); margin-bottom: 8px; text-align: left; }
-  .heatmap { display: grid; grid-template-rows: repeat(7, 13px); grid-auto-flow: column; grid-auto-columns: 13px; gap: 3px; justify-content: center; }
-  .hm-cell { width: 13px; height: 13px; border-radius: 3px; }
   .toast { position: fixed; left: 50%; bottom: 30px; transform: translateX(-50%); background: var(--card); color: var(--text); border: 1px solid rgba(244,132,95,.4); padding: 12px 20px; border-radius: 999px; font-size: 14px; font-weight: 600; box-shadow: 0 10px 30px rgba(0,0,0,.3); opacity: 0; transition: opacity .25s; pointer-events: none; z-index: 999; max-width: 90%; }
   .toast.show { opacity: 1; }
 </style>
@@ -36,131 +49,128 @@
 <body>
 
 <div class="wrap">
-  <h1 class="title" data-i18n="fokusizi.title">Fokus izi</h1>
-  <p class="sub" data-i18n="fokusizi.sub">Har fokus sessiyasi — bitta nur</p>
+  <h1 class="title" data-i18n="fokusizi.title">Seriya</h1>
+  <p class="sub" data-i18n="fokusizi.sub">Har kun bir qadam — seriyangni uzma</p>
 
-  <div class="canvas-box"><canvas id="trace"></canvas></div>
+  <div class="flame" id="flame">🔥</div>
+  <div class="streak-num" id="streakNum">0</div>
+  <div class="streak-lbl" id="streakLbl" data-i18n="fokusizi.streak_unit">kun ketma-ket</div>
 
-  <div class="count" id="count">0 <small>nur</small></div>
-  <p class="note" id="note" data-i18n="fokusizi.note">Har bajargan fokus sessiyangiz bu osmonga bitta nur qo'shadi. Intizoming nuri o'syapti — to'xtamang.</p>
-  <div class="hm-wrap"><div class="hm-lbl" data-i18n="fokusizi.heatmap">Faollik</div><div class="heatmap" id="heatmap"></div></div>
+  <div class="week" id="week"></div>
+
+  <div class="card level" id="levelCard"></div>
+
+  <div class="statsrow" id="statsRow"></div>
+  <div class="motiv" id="motiv"></div>
   <button class="share-btn" id="shareBtn" data-i18n="fokusizi.share">↗ Natijani ulashish</button>
 </div>
 
 <div class="toast" id="toast"></div>
 
-<script src="i18n.js?v=28.66.0"></script>
-<script src="lang-switcher.js?v=28.66.0" defer></script>
-<script src="focus-indicator.js?v=28.4.0" defer></script>
-<script src="data.js?v=28.66.0" defer></script>
-<script src="nav-overlay.js?v=28.66.0" defer></script>
+<script src="i18n.js?v=29.0.28"></script>
+<script src="lang-switcher.js?v=29.0.28" defer></script>
+<script src="focus-indicator.js?v=29.0.28" defer></script>
+<script src="data.js?v=29.0.28" defer></script>
+<script src="nav-overlay.js?v=29.0.28" defer></script>
 <script>
   (function () {
-    var COLORS = [[244,132,95],[107,191,122],[232,130,180],[110,181,255]];
-    function T(k, fb){ return (window.I18N && I18N.t) ? I18N.t(k, fb) : fb; }
-    function tw(k, vars, fb){ var s = T(k, fb); for (var p in vars) s = s.split('{'+p+'}').join(vars[p]); return s; }
-    function isoOf(d){ return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0'); }
-    function stats(){
+    function T(k, fb) { return (window.I18N && I18N.t) ? I18N.t(k, fb) : fb; }
+    function tw(k, vars, fb) { var s = T(k, fb); for (var p in vars) s = s.split('{' + p + '}').join(vars[p]); return s; }
+    function lang() { return (window.I18N && I18N.lang) ? I18N.lang : 'uz'; }
+    function isoOf(d) { return d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0'); }
+    var LEVELS = [
+      { min: 0, ic: '🥉', uz: 'Bronza', ru: 'Бронза', en: 'Bronze' },
+      { min: 10, ic: '🥈', uz: 'Kumush', ru: 'Серебро', en: 'Silver' },
+      { min: 30, ic: '🥇', uz: 'Oltin', ru: 'Золото', en: 'Gold' },
+      { min: 70, ic: '💠', uz: 'Platina', ru: 'Платина', en: 'Platinum' },
+      { min: 150, ic: '👑', uz: 'Olmos', ru: 'Алмаз', en: 'Diamond' }
+    ];
+    var WD = {
+      uz: ['D', 'S', 'C', 'P', 'J', 'S', 'Y'],
+      ru: ['П', 'В', 'С', 'Ч', 'П', 'С', 'В'],
+      en: ['M', 'T', 'W', 'T', 'F', 'S', 'S']
+    };
+    function stats() {
       var hist = [];
-      try { if (window.MVOW_DATA && MVOW_DATA.getHistory) hist = MVOW_DATA.getHistory(); } catch (e) {}
+      try { if (window.MVOW_DATA && MVOW_DATA.getHistory) hist = MVOW_DATA.getHistory() || []; } catch (e) {}
       var mins = hist.reduce(function (s, h) { return s + (h.actualMins || 0); }, 0);
-      var days = {}; hist.forEach(function (h) { if (h.dateIso) days[h.dateIso] = 1; });
-      var d = new Date(); if (!days[isoOf(d)]) d.setDate(d.getDate() - 1);
-      var st = 0; while (days[isoOf(d)]) { st++; d.setDate(d.getDate() - 1); }
-      return { N: hist.length, focusH: Math.round(mins / 60 * 10) / 10, streak: st };
-    }
-    function drawGalaxy(ctx, cx, cy, R, N, dotBase){
-      var bg = ctx.createRadialGradient(cx, cy, 0, cx, cy, R);
-      bg.addColorStop(0, '#161029'); bg.addColorStop(0.6, '#0c0816'); bg.addColorStop(1, '#070410');
-      ctx.fillStyle = bg; ctx.fillRect(cx - R, cy - R, R * 2, R * 2);
-      var glow = ctx.createRadialGradient(cx, cy, 0, cx, cy, R * 0.5);
-      glow.addColorStop(0, 'rgba(244,132,95,0.22)'); glow.addColorStop(1, 'rgba(244,132,95,0)');
-      ctx.fillStyle = glow; ctx.fillRect(cx - R, cy - R, R * 2, R * 2);
-      if (N <= 0) return;
-      var GA = Math.PI * (3 - Math.sqrt(5));
-      var C = Math.min(dotBase * 6, (R * 0.86) / Math.sqrt(Math.max(N, 1)));
-      for (var i = 0; i < N; i++) {
-        var ang = i * GA, r = C * Math.sqrt(i + 0.5);
-        var x = cx + Math.cos(ang) * r, y = cy + Math.sin(ang) * r;
-        var col = COLORS[i % COLORS.length], rad = dotBase + (i / N) * dotBase;
-        ctx.shadowColor = 'rgba(' + col + ',0.95)'; ctx.shadowBlur = dotBase * 4.5;
-        ctx.fillStyle = 'rgba(' + col + ',0.92)';
-        ctx.beginPath(); ctx.arc(x, y, rad, 0, Math.PI * 2); ctx.fill();
-      }
-      ctx.shadowBlur = 0; ctx.fillStyle = '#fff';
-      ctx.beginPath(); ctx.arc(cx, cy, dotBase * 1.4, 0, Math.PI * 2); ctx.fill();
-    }
-    function drawPage(N){
-      var cv = document.getElementById('trace');
-      var size = Math.min(window.innerWidth - 40, 360), dpr = window.devicePixelRatio || 1;
-      cv.width = size * dpr; cv.height = size * dpr; cv.style.width = size + 'px'; cv.style.height = size + 'px';
-      var ctx = cv.getContext('2d'); ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
-      drawGalaxy(ctx, size / 2, size / 2, size / 2, N, 2.2);
-    }
-    function toast(m){ var t = document.getElementById('toast'); t.textContent = m; t.classList.add('show'); setTimeout(function(){ t.classList.remove('show'); }, 2400); }
-    function shareCard(s){
-      var SZ = 1080, c = document.createElement('canvas'); c.width = SZ; c.height = SZ;
-      var ctx = c.getContext('2d');
-      ctx.fillStyle = '#070410'; ctx.fillRect(0, 0, SZ, SZ);
-      drawGalaxy(ctx, SZ / 2, SZ * 0.45, SZ * 0.33, s.N, 4.5);
-      ctx.textAlign = 'center';
-      ctx.fillStyle = '#F4845F'; ctx.font = '700 66px Anton, sans-serif'; ctx.fillText('FOCUS AI', SZ / 2, 112);
-      ctx.fillStyle = 'rgba(255,255,255,.75)'; ctx.font = '600 30px Inter, sans-serif'; ctx.fillText(T('fokusizi.card_sub', 'Mening intizom izim'), SZ / 2, 156);
-      ctx.fillStyle = '#fff'; ctx.font = '800 96px Anton, sans-serif'; ctx.fillText(s.N + ' ' + T('fokusizi.nur', 'nur'), SZ / 2, SZ * 0.85);
-      ctx.fillStyle = 'rgba(255,255,255,.88)'; ctx.font = '600 38px Inter, sans-serif';
-      ctx.fillText(s.focusH + ' ' + T('fokusizi.soat', 'soat') + '   ·   ' + s.streak + ' ' + T('fokusizi.streak_unit', 'kun ketma-ket'), SZ / 2, SZ * 0.85 + 60);
-      ctx.fillStyle = 'rgba(255,255,255,.5)'; ctx.font = '500 30px Inter, sans-serif'; ctx.fillText('daywarden.vercel.app', SZ / 2, SZ - 48);
-      return c;
-    }
-    function doShare(){
-      var s = stats(), c = shareCard(s);
-      var txt = tw('fokusizi.share_text', { n: s.N, h: s.focusH }, "FOCUS AI'da intizom izim: " + s.N + " nur, " + s.focusH + " soat fokus! Sen ham qo'shil 👉 daywarden.vercel.app");
-      if (c.toBlob) {
-        c.toBlob(function (blob) {
-          var file = new File([blob], 'daywarden-fokus.png', { type: 'image/png' });
-          if (navigator.canShare && navigator.canShare({ files: [file] })) {
-            navigator.share({ files: [file], text: txt, title: 'FOCUS AI' }).catch(function(){});
-          } else if (navigator.share) {
-            navigator.share({ text: txt, title: 'FOCUS AI' }).catch(function(){});
-          } else {
-            var a = document.createElement('a'); a.href = c.toDataURL('image/png'); a.download = 'daywarden-fokus.png'; a.click();
-            try { navigator.clipboard.writeText(txt); } catch(e){}
-            toast("Rasm yuklandi — Telegram/Instagram'ga joylang");
-          }
-        }, 'image/png');
-      } else { try { navigator.clipboard.writeText(txt); } catch(e){} toast('Matn nusxalandi'); }
-    }
-    function hmColor(mins) {
-      if (mins <= 0) return 'rgba(244,132,95,.08)';
-      if (mins < 30) return 'rgba(244,132,95,.35)';
-      if (mins < 60) return 'rgba(244,132,95,.6)';
-      if (mins < 120) return 'rgba(244,132,95,.82)';
-      return 'rgb(244,132,95)';
-    }
-    function renderHeatmap() {
-      var hist = []; try { if (window.MVOW_DATA && MVOW_DATA.getHistory) hist = MVOW_DATA.getHistory(); } catch (e) {}
       var byDay = {}; hist.forEach(function (h) { if (h.dateIso) byDay[h.dateIso] = (byDay[h.dateIso] || 0) + (h.actualMins || 0); });
-      var el = document.getElementById('heatmap'); if (!el) return;
-      var d = new Date(); d.setHours(0, 0, 0, 0); d.setDate(d.getDate() - 90);
-      var html = '';
-      for (var i = 0; i < 91; i++) {
-        var iso = isoOf(d);
-        html += '<div class="hm-cell" style="background:' + hmColor(byDay[iso] || 0) + '" title="' + iso + '"></div>';
-        d.setDate(d.getDate() + 1);
+      var d = new Date(); if (!byDay[isoOf(d)]) d.setDate(d.getDate() - 1);
+      var st = 0; while (byDay[isoOf(d)]) { st++; d.setDate(d.getDate() - 1); }
+      return { N: hist.length, focusH: Math.round(mins / 60 * 10) / 10, streak: st, byDay: byDay };
+    }
+    function renderWeek(s) {
+      var el = document.getElementById('week'); if (!el) return;
+      var today = new Date(); today.setHours(0, 0, 0, 0);
+      var dow = (today.getDay() + 6) % 7;             // Dushanba = 0
+      var mon = new Date(today); mon.setDate(today.getDate() - dow);
+      var letters = WD[lang()] || WD.uz, todayIso = isoOf(new Date()), html = '';
+      for (var i = 0; i < 7; i++) {
+        var d = new Date(mon); d.setDate(mon.getDate() + i);
+        var iso = isoOf(d), on = (s.byDay[iso] || 0) > 0, isToday = iso === todayIso;
+        html += '<div class="wd"><div class="dot' + (on ? ' on' : '') + (isToday ? ' today' : '') + '">' + (on ? '🔥' : '') + '</div>'
+          + '<div class="lt">' + letters[i] + '</div></div>';
       }
       el.innerHTML = html;
     }
-    function init(){
-      var s = stats(); drawPage(s.N); renderHeatmap();
-      try { document.title = T('fokusizi.page_title', 'FOCUS AI — Fokus izi'); } catch(e){}
-      document.getElementById('count').innerHTML = s.N + ' <small>' + T('fokusizi.nur', 'nur') + '</small>';
-      if (s.N <= 0) document.getElementById('note').textContent = T('fokusizi.note_empty', "Hali nur yo'q. Birinchi fokus sessiyangizni boshlang — har biri bu osmonga bitta nur qo'shadi.");
+    function renderLevel(focusH) {
+      var idx = 0; for (var i = 0; i < LEVELS.length; i++) if (focusH >= LEVELS[i].min) idx = i;
+      var lv = LEVELS[idx], next = LEVELS[idx + 1], soat = T('fokusizi.soat', 'soat'), pct, nextTxt, L = lang();
+      if (next) {
+        pct = Math.max(0, Math.min(100, Math.round((focusH - lv.min) / (next.min - lv.min) * 100)));
+        nextTxt = T('fokusizi.next_lbl', 'Keyingi darajagacha') + ': ' + (Math.round((next.min - focusH) * 10) / 10) + ' ' + soat;
+      } else { pct = 100; nextTxt = T('fokusizi.max_level', 'Eng yuqori daraja! 👑'); }
+      document.getElementById('levelCard').innerHTML =
+        '<div class="lv-top"><div class="lv-ic">' + lv.ic + '</div><div><div class="lv-nm">' + (lv[L] || lv.uz) + '</div>'
+        + '<div class="lv-sub">' + T('fokusizi.level_lbl', 'Daraja') + ' · ' + (Math.round(focusH * 10) / 10) + ' ' + soat + '</div></div></div>'
+        + '<div class="lv-bar"><div class="lv-fill" style="width:' + pct + '%"></div></div>'
+        + '<div class="lv-next">' + nextTxt + '</div>';
+    }
+    function toast(m) { var t = document.getElementById('toast'); t.textContent = m; t.classList.add('show'); setTimeout(function () { t.classList.remove('show'); }, 2400); }
+    function shareCard(s) {
+      var SZ = 1080, c = document.createElement('canvas'); c.width = SZ; c.height = SZ;
+      var ctx = c.getContext('2d');
+      var g = ctx.createLinearGradient(0, 0, 0, SZ); g.addColorStop(0, '#120a08'); g.addColorStop(1, '#04060B');
+      ctx.fillStyle = g; ctx.fillRect(0, 0, SZ, SZ);
+      ctx.textAlign = 'center';
+      ctx.fillStyle = '#F4845F'; ctx.font = '700 60px Anton, sans-serif'; ctx.fillText('FOCUS AI', SZ / 2, 120);
+      ctx.font = '160px sans-serif'; ctx.fillText('🔥', SZ / 2, SZ * 0.42);
+      ctx.fillStyle = '#F4845F'; ctx.font = '800 200px Anton, sans-serif'; ctx.fillText(String(s.streak), SZ / 2, SZ * 0.66);
+      ctx.fillStyle = 'rgba(255,255,255,.9)'; ctx.font = '600 40px Inter, sans-serif';
+      ctx.fillText(T('fokusizi.streak_unit', 'kun ketma-ket'), SZ / 2, SZ * 0.72);
+      ctx.fillStyle = 'rgba(255,255,255,.7)'; ctx.font = '500 34px Inter, sans-serif';
+      ctx.fillText(s.N + ' ' + T('fokusizi.sessions_unit', 'sessiya') + '   ·   ' + s.focusH + ' ' + T('fokusizi.soat', 'soat'), SZ / 2, SZ * 0.80);
+      ctx.fillStyle = 'rgba(255,255,255,.5)'; ctx.font = '500 30px Inter, sans-serif'; ctx.fillText('daywarden.vercel.app', SZ / 2, SZ - 56);
+      return c;
+    }
+    function doShare() {
+      var s = stats(), c = shareCard(s);
+      var txt = tw('fokusizi.share_text', { n: s.streak, h: s.focusH }, "FOCUS AI'da seriyam: " + s.streak + " kun ketma-ket, " + s.focusH + " soat!");
+      if (c.toBlob) {
+        c.toBlob(function (blob) {
+          var file = new File([blob], 'focusai-seriya.png', { type: 'image/png' });
+          if (navigator.canShare && navigator.canShare({ files: [file] })) navigator.share({ files: [file], text: txt, title: 'FOCUS AI' }).catch(function () {});
+          else if (navigator.share) navigator.share({ text: txt, title: 'FOCUS AI' }).catch(function () {});
+          else { var a = document.createElement('a'); a.href = c.toDataURL('image/png'); a.download = 'focusai-seriya.png'; a.click(); try { navigator.clipboard.writeText(txt); } catch (e) {} toast(T('fokusizi.dl_done', 'Rasm yuklandi')); }
+        }, 'image/png');
+      } else { try { navigator.clipboard.writeText(txt); } catch (e) {} toast(T('fokusizi.copied', 'Matn nusxalandi')); }
+    }
+    function init() {
+      try { document.title = T('fokusizi.page_title', 'FOCUS AI — Seriya'); } catch (e) {}
+      var s = stats();
+      document.getElementById('streakNum').textContent = s.streak;
+      document.getElementById('flame').className = 'flame' + (s.streak > 0 ? '' : ' dim');
+      renderWeek(s); renderLevel(s.focusH);
+      document.getElementById('statsRow').innerHTML =
+        '<div class="st"><div class="v">' + s.N + '</div><div class="k">' + T('fokusizi.sessions_unit', 'sessiya') + '</div></div>'
+        + '<div class="st"><div class="v">' + s.focusH + '</div><div class="k">' + T('fokusizi.soat', 'soat') + '</div></div>';
+      document.getElementById('motiv').textContent = s.streak >= 3 ? T('fokusizi.motiv_high', 'Ajoyib seriya! To\'xtama 🔥')
+        : (s.streak >= 1 ? T('fokusizi.motiv_low', 'Zo\'r boshlanish! Ertaga ham davom et 🔥') : T('fokusizi.motiv_0', 'Bugun boshla 💪'));
       document.getElementById('shareBtn').onclick = doShare;
-      window.addEventListener('resize', function () { drawPage(stats().N); });
     }
     if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', init); else init();
   })();
 </script>
-<script src="back-btn.js?v=28.66.0"></script>
+<script src="back-btn.js?v=29.0.28"></script>
 </body>
 </html>

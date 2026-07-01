@@ -49,6 +49,46 @@
     return fresh;
   }
 
+  // ── Daraja (fokus soatiga qarab) — sovrinlar.html bilan bir xil ──
+  var LEVELS = [
+    { min: 0, ic: '🥉', uz: 'Bronza', ru: 'Бронза', en: 'Bronze' },
+    { min: 10, ic: '🥈', uz: 'Kumush', ru: 'Серебро', en: 'Silver' },
+    { min: 30, ic: '🥇', uz: 'Oltin', ru: 'Золото', en: 'Gold' },
+    { min: 70, ic: '💠', uz: 'Platina', ru: 'Платина', en: 'Platinum' },
+    { min: 150, ic: '👑', uz: 'Olmos', ru: 'Алмаз', en: 'Diamond' }
+  ];
+  function levelIndex(focusH) { var i = 0; for (var k = 0; k < LEVELS.length; k++) if (focusH >= LEVELS[k].min) i = k; return i; }
+  function levelName(lv) { var lang = (root.I18N && root.I18N.lang) ? root.I18N.lang : 'uz'; return lv[lang] || lv.uz; }
+  function newLevel() {
+    var idx = levelIndex(stats().focusH), seen;
+    try { seen = parseInt(localStorage.getItem('mvow.levelSeen'), 10); } catch (e) {}
+    if (isNaN(seen)) { try { localStorage.setItem('mvow.levelSeen', String(idx)); } catch (e) {} return null; } // seed
+    if (idx > seen) { try { localStorage.setItem('mvow.levelSeen', String(idx)); } catch (e) {} return LEVELS[idx]; }
+    return null;
+  }
+
+  // ── Duolingo uslubi: 3-7 vazifada bir do'stlarga MAQTOV push (kuniga max 1 marta) ──
+  function maybePraise() {
+    try {
+      var today = isoOf(new Date());
+      if (localStorage.getItem('mvow.praiseDay') === today) return;
+      var total = (parseInt(localStorage.getItem('mvow.doneTotal'), 10) || 0) + 1;
+      localStorage.setItem('mvow.doneTotal', String(total));
+      var thr = parseInt(localStorage.getItem('mvow.praiseThreshold'), 10) || 0;
+      if (!thr) { thr = 3 + Math.floor(Math.random() * 5); localStorage.setItem('mvow.praiseThreshold', String(thr)); }
+      if (total < thr) return;
+      localStorage.setItem('mvow.praiseDay', today);
+      localStorage.setItem('mvow.doneTotal', '0');
+      localStorage.setItem('mvow.praiseThreshold', String(3 + Math.floor(Math.random() * 5)));
+      var code = ''; try { if (root.Social && root.Social.myCode) code = root.Social.myCode(); } catch (e) {}
+      if (!code) return;
+      var name = ''; try { name = localStorage.getItem('mvow.userName') || ''; } catch (e) {}
+      var s = stats();
+      if (root.fetch) root.fetch('/api/praise', { method: 'POST', headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ code: code, name: name, count: s.sessions, streak: s.streak }) }).catch(function () {});
+    } catch (e) {}
+  }
+
   // ── KONFETTI + SALYUT (canvas) ──
   function runConfetti(canvas, ms) {
     var ctx = canvas.getContext('2d');
@@ -93,6 +133,10 @@
   function celebrate(opts) {
     opts = opts || {};
     var fresh = (opts.checkMedals === false) ? [] : newlyUnlocked();
+    var st = stats();
+    var lvUp = (opts.checkMedals === false) ? null : newLevel();
+    var big = !!(fresh.length || lvUp);
+    maybePraise();
     if (typeof document === 'undefined' || !document.body) { if (opts.onClose) opts.onClose(); return; }
 
     var canvas = document.createElement('canvas');
@@ -111,12 +155,14 @@
           + '<div style="font-size:15px;font-weight:800;color:#fff;margin-top:2px;">' + m.nm + '</div></div>';
       }).join('') + '</div>';
     }
+    var streakHtml = (st.streak >= 2) ? '<div style="margin-top:14px;display:inline-flex;align-items:center;gap:8px;background:rgba(244,132,95,.16);border:1px solid rgba(244,132,95,.4);border-radius:999px;padding:8px 16px;font-size:15px;font-weight:700;color:#F4845F;">🔥 ' + st.streak + ' ' + T('celebrate.streak_unit', 'kun ketma-ket') + '</div>' : '';
+    var levelHtml = lvUp ? '<div style="margin-top:16px;background:linear-gradient(135deg,rgba(110,181,255,.18),rgba(232,130,180,.12));border:1px solid rgba(110,181,255,.35);border-radius:16px;padding:14px 18px;"><div style="font-size:36px;line-height:1;">' + lvUp.ic + '</div><div style="font-size:16px;font-weight:800;color:#fff;margin-top:4px;">' + levelName(lvUp) + ' ' + T('celebrate.level_up', 'darajasiga chiqdingiz!') + '</div></div>' : '';
     var title = fresh.length ? T('celebrate.medal_title', 'Yangi medal ochildi!') : T('celebrate.done_title', "Zo'r! Bajarildi");
     var sub = fresh.length ? T('celebrate.medal_sub', 'Ajoyib natija — davom eting') : T('celebrate.done_sub', 'Yana bir qadam maqsad sari');
     ov.innerHTML = '<div style="font-size:66px;line-height:1;animation:celPop .5s cubic-bezier(.16,.84,.32,1);">🎉</div>'
       + '<div style="font-family:Inter,sans-serif;font-size:26px;font-weight:800;color:#fff;margin-top:10px;">' + title + '</div>'
       + '<div style="font-size:15px;color:#B8BBC2;margin-top:6px;">' + sub + '</div>'
-      + medalHtml
+      + streakHtml + levelHtml + medalHtml
       + '<button id="celClose" type="button" style="margin-top:26px;padding:14px 44px;border:none;border-radius:999px;background:linear-gradient(135deg,#F4845F,#d9663c);color:#fff;font-size:16px;font-weight:700;letter-spacing:1px;cursor:pointer;font-family:Inter,sans-serif;">' + T('celebrate.continue', 'Davom') + '</button>';
 
     if (!document.getElementById('celKeyframes')) {
@@ -127,8 +173,8 @@
     document.body.appendChild(ov);
     requestAnimationFrame(function () { ov.style.opacity = '1'; });
 
-    var stopC = runConfetti(canvas, fresh.length ? 4200 : 2600);
-    try { if (root.navigator && root.navigator.vibrate) root.navigator.vibrate(fresh.length ? [40, 60, 40] : 30); } catch (e) {}
+    var stopC = runConfetti(canvas, big ? 4200 : 2600);
+    try { if (root.navigator && root.navigator.vibrate) root.navigator.vibrate(big ? [40, 60, 40] : 30); } catch (e) {}
 
     var closed = false;
     function close() {
@@ -139,7 +185,7 @@
     }
     var cb = ov.querySelector('#celClose'); if (cb) cb.addEventListener('click', close);
     ov.addEventListener('click', function (e) { if (e.target === ov) close(); });
-    if (!fresh.length) setTimeout(close, 2400);   // medal yo'q — o'zi yopiladi
+    if (!big) setTimeout(close, 2400);   // medal/daraja yo'q — o'zi yopiladi
     return close;
   }
 

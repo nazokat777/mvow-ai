@@ -33,12 +33,16 @@
         cancel: "Bekor", insist: "Shart qo'yaman", daq: "daq"
       },
       fokusizi: {
-        page_title: "{brand} — Fokus izi", title: "Fokus izi", sub: "Har fokus sessiyasi — bitta nur", nur: "nur",
-        note: "Har bajargan fokus sessiyangiz bu osmonga bitta nur qo'shadi. Intizoming nuri o'syapti — to'xtamang.",
-        note_empty: "Hali nur yo'q. Birinchi fokus sessiyangizni boshlang — har biri bu osmonga bitta nur qo'shadi.",
+        page_title: "{brand} — Seriya", title: "Seriya", sub: "Har kun bir qadam — seriyangni uzma",
+        streak_unit: "kun ketma-ket", week_lbl: "Shu hafta", level_lbl: "Daraja",
+        next_lbl: "Keyingi darajagacha", max_level: "Eng yuqori daraja! 👑",
+        sessions_unit: "sessiya", soat: "soat",
+        motiv_0: "Bugun boshla — birinchi qadam eng muhimi 💪",
+        motiv_low: "Zo'r boshlanish! Ertaga ham davom et 🔥",
+        motiv_high: "Ajoyib seriya! To'xtama — sen buni uddalayapsan 🔥",
         share: "↗ Natijani ulashish", dl_done: "Rasm yuklandi — Telegram/Instagram'ga joylang", copied: "Matn nusxalandi",
-        card_sub: "Mening intizom izim", soat: "soat", streak_unit: "kun ketma-ket", heatmap: "Faollik",
-        share_text: "FOCUS AI'da intizom izim: {n} nur, {h} soat fokus! Sen ham qo'shil 👉 daywarden.vercel.app"
+        card_sub: "Mening seriyam",
+        share_text: "FOCUS AI'da seriyam: {n} kun ketma-ket, {h} soat fokus! Sen ham qo'shil 👉 daywarden.vercel.app"
       },
       sovrinlar: {
         page_title: "{brand} — Sovrinlar", title: "Sovrinlar", sub: "Yig'ilgan medallar — natijangiz bilan ochiladi", medal: "medal",
@@ -898,7 +902,9 @@
         medal_title: 'Yangi medal ochildi!',
         medal_sub: 'Ajoyib natija — davom eting',
         new_medal: 'Yangi medal',
-        continue: 'Davom'
+        continue: 'Davom',
+        streak_unit: 'kun ketma-ket',
+        level_up: 'darajasiga chiqdingiz!'
       },
       orzular: {
         title: 'Orzular daftari',
@@ -962,7 +968,7 @@
         row_celebrate: 'Bayram',
         row_multitimer: 'Bir vaqtda fokus',
         row_friends: "Do'stlar",
-        row_trace: 'Fokus izi',
+        row_trace: 'Seriya',
         row_rewards: 'Sovrinlar',
         sec_social: 'Ijtimoiy'
       },
@@ -987,12 +993,16 @@
         cancel: "Отмена", insist: "Настаиваю", daq: "мин"
       },
       fokusizi: {
-        page_title: "{brand} — След фокуса", title: "След фокуса", sub: "Каждая сессия фокуса — один луч", nur: "лучей",
-        note: "Каждая завершённая сессия фокуса добавляет на это небо один луч. Свет вашей дисциплины растёт — не останавливайтесь.",
-        note_empty: "Пока лучей нет. Начните первую сессию фокуса — каждая добавит на небо один луч.",
+        page_title: "{brand} — Серия", title: "Серия", sub: "Каждый день один шаг — не прерывай серию",
+        streak_unit: "дней подряд", week_lbl: "Эта неделя", level_lbl: "Уровень",
+        next_lbl: "До следующего уровня", max_level: "Высший уровень! 👑",
+        sessions_unit: "сессий", soat: "ч",
+        motiv_0: "Начни сегодня — первый шаг самый важный 💪",
+        motiv_low: "Отличное начало! Продолжай и завтра 🔥",
+        motiv_high: "Отличная серия! Не останавливайся 🔥",
         share: "↗ Поделиться результатом", dl_done: "Картинка скачана — отправьте в Telegram/Instagram", copied: "Текст скопирован",
-        card_sub: "Мой след дисциплины", soat: "ч", streak_unit: "дней подряд", heatmap: "Активность",
-        share_text: "Мой след дисциплины в FOCUS AI: {n} лучей, {h} ч фокуса! Присоединяйся 👉 daywarden.vercel.app"
+        card_sub: "Моя серия",
+        share_text: "Моя серия в FOCUS AI: {n} дней подряд, {h} ч фокуса! Присоединяйся 👉 daywarden.vercel.app"
       },
       sovrinlar: {
         page_title: "{brand} — Награды", title: "Награды", sub: "Собранные медали — открываются по результатам", medal: "медалей",
@@ -1839,7 +1849,9 @@
         medal_title: 'Новая медаль!',
         medal_sub: 'Отличный результат — продолжайте',
         new_medal: 'Новая медаль',
-        continue: 'Далее'
+        continue: 'Далее',
+        streak_unit: 'дней подряд',
+        level_up: 'уровень достигнут!'
       },
       orzular: {
         title: 'Дневник мечт',
@@ -1903,7 +1915,7 @@
         row_celebrate: 'Праздник',
         row_multitimer: 'Одновременный фокус',
         row_friends: 'Друзья',
-        row_trace: 'След фокуса',
+        row_trace: 'Серия',
         row_rewards: 'Награды',
         sec_social: 'Социальное'
       },
@@ -1928,12 +1940,16 @@
         cancel: "Cancel", insist: "I insist", daq: "min"
       },
       fokusizi: {
-        page_title: "{brand} — Focus trace", title: "Focus trace", sub: "Each focus session — one ray", nur: "rays",
-        note: "Every focus session you finish adds one ray to this sky. The light of your discipline is growing — don't stop.",
-        note_empty: "No rays yet. Start your first focus session — each one adds a ray to this sky.",
+        page_title: "{brand} — Streak", title: "Streak", sub: "One step every day — keep your streak alive",
+        streak_unit: "day streak", week_lbl: "This week", level_lbl: "Level",
+        next_lbl: "To next level", max_level: "Top level! 👑",
+        sessions_unit: "sessions", soat: "h",
+        motiv_0: "Start today — the first step matters most 💪",
+        motiv_low: "Great start! Keep going tomorrow 🔥",
+        motiv_high: "Amazing streak! Don't stop 🔥",
         share: "↗ Share result", dl_done: "Image downloaded — post it to Telegram/Instagram", copied: "Text copied",
-        card_sub: "My discipline trace", soat: "h", streak_unit: "day streak", heatmap: "Activity",
-        share_text: "My discipline trace on FOCUS AI: {n} rays, {h}h of focus! Join me 👉 daywarden.vercel.app"
+        card_sub: "My streak",
+        share_text: "My streak on FOCUS AI: {n} days, {h}h of focus! Join me 👉 daywarden.vercel.app"
       },
       sovrinlar: {
         page_title: "{brand} — Rewards", title: "Rewards", sub: "Collected medals — unlocked by your results", medal: "medals",
@@ -2780,7 +2796,9 @@
         medal_title: 'New medal unlocked!',
         medal_sub: 'Great result — keep going',
         new_medal: 'New medal',
-        continue: 'Continue'
+        continue: 'Continue',
+        streak_unit: 'day streak',
+        level_up: 'level reached!'
       },
       orzular: {
         title: 'Dream journal',
@@ -2844,7 +2862,7 @@
         row_celebrate: 'Celebration',
         row_multitimer: 'Multi-focus',
         row_friends: 'Friends',
-        row_trace: 'Focus trace',
+        row_trace: 'Streak',
         row_rewards: 'Rewards',
         sec_social: 'Social'
       },
