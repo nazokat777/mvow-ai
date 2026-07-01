@@ -404,7 +404,15 @@ document.addEventListener('DOMContentLoaded', function () {
   const soundBtn = document.getElementById('soundBtn');
   const ELAPSED_LBL = (window.I18N ? I18N.t('hardlock.elapsed_label', "o'tgan vaqt") : "o'tgan vaqt");
   let paused = false;
-  function syncSoundBtn() { if (soundBtn) soundBtn.textContent = (window.FocusAudio && FocusAudio.isOn()) ? '🔊' : '🔇'; }
+  function syncSoundBtn() {
+    if (!soundBtn) return;
+    var m = (window.FocusAudio && FocusAudio.mode) ? FocusAudio.mode() : ((window.FocusAudio && FocusAudio.isOn()) ? 'rain' : 'off');
+    var ic = { off: '🔇', rain: '🌧', ocean: '🌊', forest: '🐦' };
+    var nm = { off: 'snd_off', rain: 'snd_rain', ocean: 'snd_ocean', forest: 'snd_forest' };
+    soundBtn.textContent = ic[m] || '🔇';
+    var lbl = (window.I18N ? I18N.t('hardlock.' + (nm[m] || 'snd_off'), m) : m);
+    soundBtn.title = lbl; soundBtn.setAttribute('aria-label', lbl);
+  }
   function startFocusAudioIfPref() { try { if (window.FocusAudio && FocusAudio.pref()) FocusAudio.start(); } catch (e) {} syncSoundBtn(); }
 
   // ── Telefon yuztuban = chuqur fokus (akselerometr) ──
@@ -732,7 +740,7 @@ document.addEventListener('DOMContentLoaded', function () {
   const _hlExit = document.getElementById('hlExit');
   if (_hlExit) _hlExit.addEventListener('click', function () { location.href = 'home.html'; });
   if (pauseBtn) pauseBtn.addEventListener('click', togglePause);
-  if (soundBtn) soundBtn.addEventListener('click', function () { if (window.FocusAudio) FocusAudio.toggle(); syncSoundBtn(); });
+  if (soundBtn) soundBtn.addEventListener('click', function () { if (window.FocusAudio) { if (FocusAudio.cycle) FocusAudio.cycle(); else FocusAudio.toggle(); } syncSoundBtn(); });
   window.addEventListener('pagehide', function () { try { if (window.FocusAudio) FocusAudio.stop(); } catch (e) {} });
 
   // ── Fokus foni (rasm) — yuklash/siqish/ko'rsatish ──
