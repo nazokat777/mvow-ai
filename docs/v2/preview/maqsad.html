@@ -387,7 +387,7 @@
       var hint = document.getElementById('typeHint');
       var notimer = (goalType === 'notimer');
       if (durRow) durRow.style.display = notimer ? 'none' : '';
-      if (reminderRow) reminderRow.style.display = notimer ? 'block' : 'none';
+      if (reminderRow) reminderRow.style.display = 'none';   // eslatma endi alohida bo'lim (eslatmalar.html)
       if (timeLbl) timeLbl.textContent = notimer
         ? (window.I18N ? I18N.t('maqsad.reminder_lbl', 'Eslatma vaqti') : 'Eslatma vaqti')
         : (window.I18N ? I18N.t('maqsad.daily_time_lbl', 'Har kun qaysi vaqtda?') : 'Har kun qaysi vaqtda?');
@@ -674,8 +674,7 @@
         MVOW_DATA.setWeekPlan(w);
         if (MVOW_DATA.fxSuccess) MVOW_DATA.fxSuccess();
       }
-      // Taymersiz maqsad — telefon eslatmasini yoqishni so'raymiz (Web Push)
-      if (isNoTimer && window.PushReminders) { try { PushReminders.enable(); } catch (e) {} }
+      // Eslatma (push) endi alohida bo'limda: eslatmalar.html
 
       // Tasdiq toast — falsafiy aniqlik
       const toast = document.createElement('div');

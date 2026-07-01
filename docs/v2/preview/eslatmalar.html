@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+<title>FOCUS AI — Eslatmalar</title>
+<link rel="stylesheet" href="theme.css">
+<style>
+  * { box-sizing: border-box; }
+  body { margin: 0; font-family: 'Inter', sans-serif; background: var(--void, #04060B); color: var(--text, #F5F2EC); }
+  .phone { max-width: 480px; margin: 0 auto; min-height: 100vh; background: var(--void, #04060B); padding: 26px 22px 40px; }
+  h1 { font-size: 30px; margin: 6px 0 4px; }
+  .sub { color: var(--text-dim, #9CA0A8); font-size: 15px; line-height: 1.5; margin-bottom: 20px; }
+  .fld { width: 100%; padding: 13px; background: var(--card, #0C0F16); border: 1px solid var(--border-default, rgba(255,255,255,.12)); border-radius: 12px; color: var(--text, #F5F2EC); font-size: 16px; font-family: inherit; margin-bottom: 10px; }
+  .row { display: flex; gap: 10px; }
+  .btn { width: 100%; padding: 14px; border: none; border-radius: 12px; font-size: 16px; font-weight: 700; font-family: inherit; cursor: pointer; }
+  .btn-add { background: var(--accent, #F4845F); color: #fff; }
+  .btn-push { background: transparent; border: 1px solid var(--accent, #F4845F); color: var(--accent, #F4845F); margin-top: 14px; }
+  .rem { display: flex; align-items: center; gap: 12px; background: var(--card, #0C0F16); border: 1px solid var(--border-default, rgba(255,255,255,.12)); border-radius: 14px; padding: 14px 16px; margin-top: 10px; }
+  .rem .t { color: var(--accent, #F4845F); font-weight: 700; font-size: 15px; flex-shrink: 0; }
+  .rem .x { color: var(--text-dim, #9CA0A8); font-size: 22px; cursor: pointer; background: none; border: none; margin-left: auto; }
+  .empty { color: var(--text-dim, #9CA0A8); text-align: center; padding: 24px 8px; font-size: 15px; }
+  .sec-lbl { font-size: 12px; letter-spacing: 2px; text-transform: uppercase; color: var(--text-dim, #9CA0A8); font-weight: 700; margin: 22px 2px 8px; }
+</style>
+</head>
+<body>
+<div class="phone">
+  <h1>Eslatmalar</h1>
+  <div class="sub">Belgilangan vaqtda o'zingizga savol / motivatsiya. Ilova yopiq bo'lsa ham telefoningizda chiqadi.</div>
+
+  <input id="remText" class="fld" maxlength="120" placeholder="masalan: Bugun ota-onang uchun nima qilding?">
+  <div class="row">
+    <input id="remTime" class="fld" type="time" value="20:00" style="flex:1;">
+    <button id="remAdd" class="btn btn-add" style="width:auto;padding:13px 22px;">+ Qo'shish</button>
+  </div>
+
+  <div class="sec-lbl">Eslatmalarim</div>
+  <div id="remList"></div>
+
+  <button id="pushBtn" class="btn btn-push">🔔 Telefon eslatmalarini yoqish</button>
+</div>
+
+<script src="i18n.js?v=28.4.0"></script>
+<script src="lang-switcher.js?v=28.4.0" defer></script>
+<script src="data.js?v=28.4.0" defer></script>
+<script src="social.js?v=28.4.0" defer></script>
+<script src="supabase-config.js?v=28.4.0"></script>
+<script src="push.js?v=28.4.0" defer></script>
+<script src="nav-overlay.js?v=28.4.0" defer></script>
+<script>
+  (function () {
+    function esc(s) { return String(s || '').replace(/[&<>"]/g, function (c) { return ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]); }); }
+    function load() { try { var r = JSON.parse(localStorage.getItem('mvow.reminders') || '[]'); return Array.isArray(r) ? r : []; } catch (e) { return []; } }
+    function save(r) { localStorage.setItem('mvow.reminders', JSON.stringify(r)); if (window.PushReminders && PushReminders.isEnabled()) PushReminders.sync(); }
+    var listEl = document.getElementById('remList');
+    function render() {
+      var r = load();
+      if (!r.length) { listEl.innerHTML = '<div class="empty">Hali eslatma yo\'q. Yuqoridan qo\'shing.</div>'; return; }
+      r.sort(function (a, b) { return (a.time || '').localeCompare(b.time || ''); });
+      listEl.innerHTML = r.map(function (x) {
+        return '<div class="rem"><span class="t">' + esc(x.time) + '</span><span>' + esc(x.text) + '</span><button class="x" data-del="' + x.id + '" aria-label="o\'chirish">×</button></div>';
+      }).join('');
+      listEl.querySelectorAll('[data-del]').forEach(function (b) {
+        b.addEventListener('click', function () {
+          var id = b.getAttribute('data-del');
+          save(load().filter(function (x) { return String(x.id) !== String(id); }));
+          if (window.MVOW_DATA && MVOW_DATA.fxTap) MVOW_DATA.fxTap();
+          render();
+        });
+      });
+    }
+    document.getElementById('remAdd').addEventListener('click', function () {
+      var t = document.getElementById('remText'), tm = document.getElementById('remTime');
+      var text = t.value.trim(), time = tm.value;
+      if (!text || !/^\d{1,2}:\d{2}$/.test(time)) return;
+      var r = load();
+      r.push({ id: Date.now(), text: text, time: time });
+      save(r); t.value = '';
+      if (window.MVOW_DATA && MVOW_DATA.fxSuccess) MVOW_DATA.fxSuccess();
+      render();
+      // birinchi eslatма qo'shilganda push yoqishni taklif qilamiz
+      if (window.PushReminders && !PushReminders.isEnabled()) PushReminders.enable();
+    });
+    document.getElementById('pushBtn').addEventListener('click', function () {
+      if (!window.PushReminders) return;
+      PushReminders.enable().then(function (res) {
+        alert(res && res.ok ? 'Eslatmalar yoqildi ✅ — endi ilova yopiq bo\'lsa ham chiqadi.' : 'Yoqilmadi. Bildirishnomaga ruxsat bering.');
+      });
+    });
+    render();
+  })();
+</script>
+<script src="back-btn.js?v=28.4.0"></script>
+</body>
+</html>

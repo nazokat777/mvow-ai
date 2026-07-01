@@ -25,16 +25,13 @@
     } catch (e) { return ''; }
   }
   function gatherReminders() {
-    var out = [];
+    // Mustaqil eslatmalar (eslatmalar.html) — maqsadlardan ALOHIDA
     try {
-      var goals = (root.MVOW_DATA && MVOW_DATA.loadGoals) ? MVOW_DATA.loadGoals() : [];
-      goals.forEach(function (g) {
-        if (g && g.noTimer && g.time) {
-          out.push({ time: g.time, body: (g.reminderText && g.reminderText.trim()) || (g.text || 'Eslatma') });
-        }
-      });
-    } catch (e) {}
-    return out;
+      var r = JSON.parse(localStorage.getItem('mvow.reminders') || '[]');
+      return (Array.isArray(r) ? r : [])
+        .filter(function (x) { return x && x.time && x.text; })
+        .map(function (x) { return { time: x.time, body: x.text }; });
+    } catch (e) { return []; }
   }
   function isEnabled() { try { return localStorage.getItem('mvow.pushOn') === '1'; } catch (e) { return false; } }
   function post(sub) {
