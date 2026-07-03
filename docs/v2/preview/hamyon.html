@@ -58,6 +58,8 @@
   .seg { display: flex; gap: 6px; }
   .seg button { flex: 1; padding: 11px; border-radius: 10px; border: 1px solid var(--border-default, rgba(255,255,255,.14)); background: transparent; color: var(--text-mid, #B8BBC2); font-size: 14px; font-weight: 600; cursor: pointer; font-family: inherit; }
   .seg button.on { background: var(--accent, #F4845F); border-color: var(--accent, #F4845F); color: #fff; }
+  #rowType button { padding: 11px; border-radius: 10px; border: 1px solid var(--border-default, rgba(255,255,255,.14)); background: transparent; color: var(--text-mid, #B8BBC2); font-size: 14px; font-weight: 600; cursor: pointer; font-family: inherit; }
+  #rowType button.on { background: var(--accent, #F4845F); border-color: var(--accent, #F4845F); color: #fff; }
   .preview { font-size: 13px; color: var(--text-dim, #9CA0A8); margin-top: 6px; min-height: 16px; }
   #fPreview { color: var(--accent, #F4845F); font-weight: 800; font-size: 16px; }
   .row2 { display: flex; gap: 10px; margin-top: 18px; }
@@ -114,6 +116,12 @@
 <div class="ov" id="ov">
   <div class="sheet">
     <h2 id="ovTitle">—</h2>
+    <div id="rowType" style="display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-bottom:14px;">
+      <button type="button" id="tIn" data-i18n="wallet.type_in">Kirim</button>
+      <button type="button" id="tExpIn" data-i18n="wallet.type_expected">Kutilayotgan</button>
+      <button type="button" id="tSpend" data-i18n="wallet.type_exp">Rasxod</button>
+      <button type="button" id="tPlan" data-i18n="wallet.type_plan">Reja</button>
+    </div>
     <label class="lbl" data-i18n="wallet.amount">Summa</label>
     <div class="amtrow">
       <input id="fAmount" class="fld" type="number" inputmode="numeric" min="0" step="any" placeholder="0">
@@ -322,25 +330,33 @@
     }
     function setMethod(m) { curMethod = m; mCard.classList.toggle('on', m === 'card'); mCash.classList.toggle('on', m === 'cash'); }
 
-    function openSheet(type, entry) {
-      if (!entry) curEdit = null;
-      curType = type; setMethod('card');
-      fAmount.value = ''; fName.value = ''; fWeeks.value = '4'; fUnit.value = '1'; if (fApprox) fApprox.checked = false;
-      document.getElementById('fPreview').textContent = ''; document.getElementById('fWeekPreview').textContent = '';
-      var titles = { 'in': T('wallet.add_in', '+ Kirim'), 'exp-in': T('wallet.add_expected', '+ Kutilayotgan'), 'spend': T('wallet.add_exp', '+ Rasxod'), 'plan': T('wallet.add_plan', '+ Reja') };
-      document.getElementById('ovTitle').textContent = entry ? T('wallet.edit', 'Tahrirlash') : (titles[type] || '');
-      // name label + placeholder
+    // Tur (bo'lim) tanlash — barcha rejimda; tahrirlashda boshqa bo'limga ko'chirish mumkin
+    function setType(type) {
+      curType = type;
+      [['tIn', 'in'], ['tExpIn', 'exp-in'], ['tSpend', 'spend'], ['tPlan', 'plan']].forEach(function (p) {
+        var b = document.getElementById(p[0]); if (b) b.classList.toggle('on', type === p[1]);
+      });
+      var tk = { 'in': 'wallet.add_in', 'exp-in': 'wallet.add_expected', 'spend': 'wallet.add_exp', 'plan': 'wallet.add_plan' };
+      document.getElementById('ovTitle').textContent = curEdit ? T('wallet.edit', 'Tahrirlash') : T(tk[type], '+');
       if (type === 'in' || type === 'exp-in') { fNameLbl.textContent = T('wallet.source_lbl', 'Manba'); fName.placeholder = T('wallet.source_ph', 'mas. oylik'); }
       else if (type === 'spend') { fNameLbl.textContent = T('wallet.cat_lbl', 'Nima uchun'); fName.placeholder = T('wallet.cat_ph', 'mas. maktab to\'lovi'); }
       else { fNameLbl.textContent = T('wallet.plan_lbl', 'Reja nomi'); fName.placeholder = T('wallet.plan_ph', 'mas. haftalik xarajat'); }
       rowMethod.style.display = (type === 'plan') ? 'none' : '';
-      rowDate.style.display = '';
-      fDate.value = todayIso();
       fDateLbl.textContent = (type === 'plan') ? T('wallet.date_start_lbl', 'Boshlanish sanasi')
         : ((type === 'exp-in') ? T('wallet.date_exp_lbl', 'Qachon kutilmoqda') : T('wallet.date_lbl', 'Sana'));
       rowWeeks.style.display = (type === 'plan') ? '' : 'none';
       if (rowApprox) rowApprox.style.display = (type === 'plan') ? '' : 'none';
+      updatePreview();
+    }
+    function openSheet(type, entry) {
+      if (!entry) curEdit = null;
+      setMethod('card');
+      fAmount.value = ''; fName.value = ''; fWeeks.value = '4'; fUnit.value = '1'; if (fApprox) fApprox.checked = false;
+      document.getElementById('fPreview').textContent = ''; document.getElementById('fWeekPreview').textContent = '';
+      rowDate.style.display = '';
+      fDate.value = todayIso();
       setPeriod('week');
+      setType(type);
       if (entry) {   // TAHRIRLASH — mavjud qiymatlar bilan to'ldirish
         fUnit.value = '1';
         fAmount.value = num(entry.amount) || '';
@@ -376,14 +392,20 @@
       var dt = /^\d{4}-\d{2}-\d{2}$/.test(fDate.value) ? fDate.value : ti;
       var cnt = Math.max(1, Math.min(365, parseInt(fWeeks.value, 10) || 1));
       var isApprox = !!(fApprox && fApprox.checked);
-      if (curEdit) {   // MAVJUDNI YANGILASH
-        var arr = curEdit.kind === 'inc' ? d.incomes : (curEdit.kind === 'exp' ? d.expenses : d.planned), it = null;
-        for (var k = 0; k < arr.length; k++) { if (String(arr[k].id) === curEdit.id) { it = arr[k]; break; } }
-        if (it) {
-          it.amount = a; it.date = dt;
-          if (curType === 'in' || curType === 'exp-in') { it.source = name; it.method = curMethod; it.expected = (curType === 'exp-in'); }
-          else if (curType === 'spend') { it.cat = name; it.method = curMethod; }
-          else if (curType === 'plan') { it.cat = name; it.unit = curPeriod; it.count = cnt; it.approx = isApprox; }
+      if (curEdit) {   // MAVJUDNI YANGILASH (kerak bo'lsa boshqa bo'limga KO'CHIRISH)
+        var newKind = curType === 'spend' ? 'exp' : (curType === 'plan' ? 'plan' : 'inc');
+        var obj;
+        if (newKind === 'inc') obj = { id: curEdit.id, amount: a, source: name, method: curMethod, expected: (curType === 'exp-in'), date: dt };
+        else if (newKind === 'exp') obj = { id: curEdit.id, amount: a, cat: name, method: curMethod, date: dt };
+        else obj = { id: curEdit.id, amount: a, cat: name, unit: curPeriod, count: cnt, date: dt, approx: isApprox };
+        if (curEdit.kind === newKind) {   // o'sha bo'limda — o'rnida yangilash
+          var arr2 = newKind === 'inc' ? d.incomes : (newKind === 'exp' ? d.expenses : d.planned);
+          for (var k = 0; k < arr2.length; k++) { if (String(arr2[k].id) === curEdit.id) { arr2[k] = obj; break; } }
+        } else {                          // boshqa bo'limga — eskisidan olib, yangisiga qo'shish
+          if (curEdit.kind === 'inc') d.incomes = d.incomes.filter(function (x) { return String(x.id) !== curEdit.id; });
+          else if (curEdit.kind === 'exp') d.expenses = d.expenses.filter(function (x) { return String(x.id) !== curEdit.id; });
+          else d.planned = d.planned.filter(function (x) { return String(x.id) !== curEdit.id; });
+          (newKind === 'inc' ? d.incomes : (newKind === 'exp' ? d.expenses : d.planned)).push(obj);
         }
       } else {         // YANGI QO'SHISH
         var id = String(Date.now()) + Math.floor(Math.random() * 999);
@@ -403,6 +425,11 @@
     mCash.addEventListener('click', function () { setMethod('cash'); });
     if (uWeek) uWeek.addEventListener('click', function () { setPeriod('week'); });
     if (uDay) uDay.addEventListener('click', function () { setPeriod('day'); });
+    var typeMap = { tIn: 'in', tExpIn: 'exp-in', tSpend: 'spend', tPlan: 'plan' };
+    Object.keys(typeMap).forEach(function (idk) {
+      var b = document.getElementById(idk);
+      if (b) b.addEventListener('click', function () { setType(typeMap[idk]); });
+    });
     document.getElementById('ovCancel').addEventListener('click', closeSheet);
     document.getElementById('ovSave').addEventListener('click', saveSheet);
     ov.addEventListener('click', function (e) { if (e.target === ov) closeSheet(); });
