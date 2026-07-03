@@ -3177,9 +3177,23 @@
   setTimeout(applyAll, 500);
 })();
 
-// ===== PWA: service worker ro'yxatdan o'tkazish (Android/Chrome o'rnatish uchun ZARUR) =====
+// ===== PWA: service worker + AVTO-YANGILANISH (eski kesh o'zi tozalanadi, "yana oldingi" qaytmaydi) =====
 if ('serviceWorker' in navigator) {
+  // Boshida controller bormi? (birinchi o'rnatishда reload qilmaymiz)
+  var _mvowHadCtrl = !!navigator.serviceWorker.controller;
+  var _mvowReloaded = false;
+  // Yangi SW nazoratni olganda -> sahifani bir marta yangilash (eski keshdan qutulish)
+  navigator.serviceWorker.addEventListener('controllerchange', function() {
+    if (_mvowReloaded || !_mvowHadCtrl) return;
+    _mvowReloaded = true;
+    location.reload();
+  });
   window.addEventListener('load', function() {
-    navigator.serviceWorker.register('service-worker.js').catch(function(){});
+    navigator.serviceWorker.register('service-worker.js').then(function(reg) {
+      // Har ochilishда yangi versiyani tekshir
+      try { reg.update(); } catch (e) {}
+      // Sahifa ochiq turганда yangi versiya chiqsa ham darhol qo'llanadi
+      setInterval(function() { try { reg.update(); } catch (e) {} }, 60000);
+    }).catch(function(){});
   });
 }
