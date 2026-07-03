@@ -41,6 +41,7 @@
   .item .nm .n2 { font-size: 12px; color: var(--text-dim, #9CA0A8); margin-top: 2px; }
   .item .amt { font-size: 15px; font-weight: 800; flex-shrink: 0; }
   .item .amt.g { color: #6BBF7A; } .item .amt.a { color: #F5C26B; } .item .amt.r { color: #FF7A7A; } .item .amt.b { color: #6EB5FF; }
+  .item .amt.muted { color: var(--text-dim, #9CA0A8); font-weight: 700; }
   .item .x { background: none; border: none; color: var(--text-dim, #9CA0A8); font-size: 20px; cursor: pointer; flex-shrink: 0; line-height: 1; }
   .empty { color: var(--text-dim, #9CA0A8); font-size: 14px; padding: 8px 4px; }
   .tag { display: inline-block; font-size: 11px; font-weight: 700; padding: 1px 7px; border-radius: 6px; margin-left: 6px; vertical-align: middle; }
@@ -154,6 +155,13 @@
       <div class="preview" id="fWeekPreview"></div>
     </div>
 
+    <div id="rowApprox" style="display:none;margin-top:14px;">
+      <label style="display:flex;align-items:center;gap:10px;cursor:pointer;font-size:15px;color:var(--text-mid,#B8BBC2);">
+        <input type="checkbox" id="fApprox" style="width:18px;height:18px;accent-color:var(--accent);flex-shrink:0;">
+        <span data-i18n="wallet.approx_lbl">≈ Balansdan taxminan ayirilsin (rangsiz)</span>
+      </label>
+    </div>
+
     <div class="row2">
       <button class="btn cancel" id="ovCancel" data-i18n="wallet.cancel">Bekor</button>
       <button class="btn save" id="ovSave" data-i18n="wallet.save">Saqlash</button>
@@ -211,10 +219,13 @@
         spentToday: spentToday, avgDay: nd ? datedSpent / nd : 0, hasDaily: nd > 0 };
     }
 
-    function itemRow(text, sub, amount, cls, delAttr) {
-      return '<div class="item"><div class="nm"><div class="n1">' + esc(text || '—') + '</div>'
+    function itemRow(text, sub, amount, cls, delAttr, opts) {
+      opts = opts || {};
+      var amt = (opts.amtStr != null) ? opts.amtStr : fmt(amount);
+      var nmAttr = opts.edit ? ' data-edit="' + opts.edit + '" style="cursor:pointer;"' : '';
+      return '<div class="item"' + (opts.rowStyle ? ' style="' + opts.rowStyle + '"' : '') + '><div class="nm"' + nmAttr + '><div class="n1">' + esc(text || '—') + '</div>'
         + (sub ? '<div class="n2">' + sub + '</div>' : '')
-        + '</div><div class="amt ' + cls + '">' + fmt(amount) + '</div>'
+        + '</div><div class="amt ' + cls + '">' + amt + '</div>'
         + '<button class="x" ' + delAttr + ' aria-label="o\'chirish">×</button></div>';
     }
     function methodTag(m) {
@@ -245,13 +256,13 @@
       var received = d.incomes.filter(function (i) { return !i.expected; });
       var expected = d.incomes.filter(function (i) { return i.expected; });
       document.getElementById('listIn').innerHTML = received.length
-        ? received.map(function (i) { return itemRow(i.source, subMeta(i.method, i.date), i.amount, 'g', 'data-del="inc:' + i.id + '"'); }).join('')
+        ? received.map(function (i) { return itemRow(i.source, subMeta(i.method, i.date), i.amount, 'g', 'data-del="inc:' + i.id + '"', { edit: 'inc:' + i.id }); }).join('')
         : '<div class="empty">' + T('wallet.empty_in', "Hali kirim yo'q") + '</div>';
       document.getElementById('listExp').innerHTML = expected.length
-        ? expected.map(function (i) { return itemRow(i.source, subMeta(i.method, i.date), i.amount, 'a', 'data-del="inc:' + i.id + '"'); }).join('')
+        ? expected.map(function (i) { return itemRow(i.source, subMeta(i.method, i.date), i.amount, 'a', 'data-del="inc:' + i.id + '"', { edit: 'inc:' + i.id }); }).join('')
         : '<div class="empty">' + T('wallet.empty_expected', 'Hali yo\'q') + '</div>';
       document.getElementById('listSpent').innerHTML = d.expenses.length
-        ? d.expenses.map(function (e) { return itemRow(e.cat, subMeta(e.method, e.date), -Math.abs(num(e.amount)), 'r', 'data-del="exp:' + e.id + '"'); }).join('')
+        ? d.expenses.map(function (e) { return itemRow(e.cat, subMeta(e.method, e.date), -Math.abs(num(e.amount)), 'r', 'data-del="exp:' + e.id + '"', { edit: 'exp:' + e.id }); }).join('')
         : '<div class="empty">' + T('wallet.empty_exp', "Hali rasxod yo'q") + '</div>';
       document.getElementById('listPlan').innerHTML = d.planned.length
         ? d.planned.map(function (p) {
@@ -261,12 +272,17 @@
             var unitLbl = (unit === 'day') ? T('wallet.days_short', 'kun') : T('wallet.weeks_short', 'hafta');
             var dprefix = p.date ? '🗓 ' + fmtDate(p.date) + ' · ' : '';
             var sub = dprefix + sp.count + ' ' + unitLbl + ' · ' + T('wallet.per_week', 'haftasiga') + ' ' + fmt(sp.perWeek) + ' · ' + T('wallet.per_day', 'kuniga') + ' ' + fmt(sp.perDay);
-            return itemRow(p.cat, sub, p.amount, 'b', 'data-del="plan:' + p.id + '"');
+            var opts = { edit: 'plan:' + p.id };
+            if (p.approx) { opts.amtStr = '≈ −' + fmt(num(p.amount)); opts.rowStyle = 'opacity:.7;'; }
+            return itemRow(p.cat, sub, p.amount, p.approx ? 'muted' : 'b', 'data-del="plan:' + p.id + '"', opts);
           }).join('')
         : '<div class="empty">' + T('wallet.empty_plan', "Hali reja yo'q") + '</div>';
 
       document.querySelectorAll('[data-del]').forEach(function (b) {
-        b.addEventListener('click', function () { del(b.getAttribute('data-del')); });
+        b.addEventListener('click', function (e) { e.stopPropagation(); del(b.getAttribute('data-del')); });
+      });
+      document.querySelectorAll('[data-edit]').forEach(function (el) {
+        el.addEventListener('click', function () { var t = el.getAttribute('data-edit').split(':'); startEdit(t[0], t.slice(1).join(':')); });
       });
     }
 
@@ -289,7 +305,8 @@
     var mCard = document.getElementById('mCard'), mCash = document.getElementById('mCash');
     var uWeek = document.getElementById('uWeek'), uDay = document.getElementById('uDay');
     var rowDate = document.getElementById('rowDate'), fDate = document.getElementById('fDate'), fDateLbl = document.getElementById('fDateLbl');
-    var curType = null, curMethod = 'card', curPeriod = 'week';
+    var rowApprox = document.getElementById('rowApprox'), fApprox = document.getElementById('fApprox');
+    var curType = null, curMethod = 'card', curPeriod = 'week', curEdit = null;
     function setPeriod(p) { curPeriod = p; if (uWeek) uWeek.classList.toggle('on', p === 'week'); if (uDay) uDay.classList.toggle('on', p === 'day'); updatePreview(); }
 
     function calcAmount() { return Math.round(num(fAmount.value) * num(fUnit.value)); } // butun so'm — float chang saqlanmasin
@@ -305,12 +322,13 @@
     }
     function setMethod(m) { curMethod = m; mCard.classList.toggle('on', m === 'card'); mCash.classList.toggle('on', m === 'cash'); }
 
-    function openSheet(type) {
+    function openSheet(type, entry) {
+      if (!entry) curEdit = null;
       curType = type; setMethod('card');
-      fAmount.value = ''; fName.value = ''; fWeeks.value = '4'; fUnit.value = '1';
+      fAmount.value = ''; fName.value = ''; fWeeks.value = '4'; fUnit.value = '1'; if (fApprox) fApprox.checked = false;
       document.getElementById('fPreview').textContent = ''; document.getElementById('fWeekPreview').textContent = '';
       var titles = { 'in': T('wallet.add_in', '+ Kirim'), 'exp-in': T('wallet.add_expected', '+ Kutilayotgan'), 'spend': T('wallet.add_exp', '+ Rasxod'), 'plan': T('wallet.add_plan', '+ Reja') };
-      document.getElementById('ovTitle').textContent = titles[type] || '';
+      document.getElementById('ovTitle').textContent = entry ? T('wallet.edit', 'Tahrirlash') : (titles[type] || '');
       // name label + placeholder
       if (type === 'in' || type === 'exp-in') { fNameLbl.textContent = T('wallet.source_lbl', 'Manba'); fName.placeholder = T('wallet.source_ph', 'mas. oylik'); }
       else if (type === 'spend') { fNameLbl.textContent = T('wallet.cat_lbl', 'Nima uchun'); fName.placeholder = T('wallet.cat_ph', 'mas. maktab to\'lovi'); }
@@ -321,25 +339,57 @@
       fDateLbl.textContent = (type === 'plan') ? T('wallet.date_start_lbl', 'Boshlanish sanasi')
         : ((type === 'exp-in') ? T('wallet.date_exp_lbl', 'Qachon kutilmoqda') : T('wallet.date_lbl', 'Sana'));
       rowWeeks.style.display = (type === 'plan') ? '' : 'none';
+      if (rowApprox) rowApprox.style.display = (type === 'plan') ? '' : 'none';
       setPeriod('week');
+      if (entry) {   // TAHRIRLASH — mavjud qiymatlar bilan to'ldirish
+        fUnit.value = '1';
+        fAmount.value = num(entry.amount) || '';
+        fName.value = entry.source || entry.cat || '';
+        if (entry.method) setMethod(entry.method);
+        if (entry.date) fDate.value = entry.date;
+        if (type === 'plan') {
+          fWeeks.value = (entry.count != null) ? entry.count : (entry.weeks || 4);
+          setPeriod(entry.unit === 'day' ? 'day' : 'week');
+          if (fApprox) fApprox.checked = !!entry.approx;
+        }
+        updatePreview();
+      }
       ov.classList.add('show');
       setTimeout(function () { fAmount.focus(); }, 80);
     }
-    function closeSheet() { ov.classList.remove('show'); curType = null; }
+    function closeSheet() { ov.classList.remove('show'); curType = null; curEdit = null; }
+
+    function startEdit(kind, id) {
+      var d = load(), arr = kind === 'inc' ? d.incomes : (kind === 'exp' ? d.expenses : d.planned), entry = null;
+      for (var k = 0; k < arr.length; k++) { if (String(arr[k].id) === id) { entry = arr[k]; break; } }
+      if (!entry) return;
+      var type = kind === 'inc' ? (entry.expected ? 'exp-in' : 'in') : (kind === 'exp' ? 'spend' : 'plan');
+      curEdit = { kind: kind, id: id };
+      openSheet(type, entry);
+    }
 
     function saveSheet() {
       var a = calcAmount();
       if (!(a > 0)) { fAmount.focus(); return; }
       var name = fName.value.trim();
-      var d = load(), id = String(Date.now()) + Math.floor(Math.random() * 999), ti = todayIso();
+      var d = load(), ti = todayIso();
       var dt = /^\d{4}-\d{2}-\d{2}$/.test(fDate.value) ? fDate.value : ti;
-      if (curType === 'in' || curType === 'exp-in') {
-        d.incomes.push({ id: id, amount: a, source: name, method: curMethod, expected: (curType === 'exp-in'), date: dt });
-      } else if (curType === 'spend') {
-        d.expenses.push({ id: id, amount: a, cat: name, method: curMethod, date: dt });
-      } else if (curType === 'plan') {
-        var cnt = Math.max(1, Math.min(365, parseInt(fWeeks.value, 10) || 1));
-        d.planned.push({ id: id, amount: a, cat: name, unit: curPeriod, count: cnt, date: dt });
+      var cnt = Math.max(1, Math.min(365, parseInt(fWeeks.value, 10) || 1));
+      var isApprox = !!(fApprox && fApprox.checked);
+      if (curEdit) {   // MAVJUDNI YANGILASH
+        var arr = curEdit.kind === 'inc' ? d.incomes : (curEdit.kind === 'exp' ? d.expenses : d.planned), it = null;
+        for (var k = 0; k < arr.length; k++) { if (String(arr[k].id) === curEdit.id) { it = arr[k]; break; } }
+        if (it) {
+          it.amount = a; it.date = dt;
+          if (curType === 'in' || curType === 'exp-in') { it.source = name; it.method = curMethod; it.expected = (curType === 'exp-in'); }
+          else if (curType === 'spend') { it.cat = name; it.method = curMethod; }
+          else if (curType === 'plan') { it.cat = name; it.unit = curPeriod; it.count = cnt; it.approx = isApprox; }
+        }
+      } else {         // YANGI QO'SHISH
+        var id = String(Date.now()) + Math.floor(Math.random() * 999);
+        if (curType === 'in' || curType === 'exp-in') d.incomes.push({ id: id, amount: a, source: name, method: curMethod, expected: (curType === 'exp-in'), date: dt });
+        else if (curType === 'spend') d.expenses.push({ id: id, amount: a, cat: name, method: curMethod, date: dt });
+        else if (curType === 'plan') d.planned.push({ id: id, amount: a, cat: name, unit: curPeriod, count: cnt, date: dt, approx: isApprox });
       }
       save(d);
       if (window.MVOW_DATA && MVOW_DATA.fxSuccess) MVOW_DATA.fxSuccess();
