@@ -104,6 +104,10 @@
     <div id="listPlan"></div>
     <div style="margin-top:8px;text-align:right;"><button class="addb b" data-add="plan" data-i18n="wallet.add_plan">+ Reja</button></div>
   </div>
+
+  <div style="margin-top:30px;text-align:center;">
+    <button id="clearAll" type="button" style="background:none;border:none;color:var(--text-dim,#9CA0A8);font-size:13px;text-decoration:underline;cursor:pointer;font-family:inherit;">🗑 <span data-i18n="wallet.clear_all">Hammasini tozalash</span></button>
+  </div>
 </div>
 
 <div class="ov" id="ov">
@@ -354,6 +358,13 @@
     ov.addEventListener('click', function (e) { if (e.target === ov) closeSheet(); });
     document.querySelectorAll('[data-add]').forEach(function (b) {
       b.addEventListener('click', function () { openSheet(b.getAttribute('data-add')); });
+    });
+    var clearBtn = document.getElementById('clearAll');
+    if (clearBtn) clearBtn.addEventListener('click', function () {
+      if (confirm(T('wallet.clear_confirm', "Barcha hamyon yozuvlari o'chirilsinmi?"))) {
+        try { localStorage.removeItem('mvow.wallet'); } catch (e) {}
+        render();
+      }
     });
 
     try { document.title = T('wallet.page_title', 'FOCUS AI — Hamyon'); } catch (e) {}
