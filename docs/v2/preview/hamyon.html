@@ -58,6 +58,7 @@
   .seg button { flex: 1; padding: 11px; border-radius: 10px; border: 1px solid var(--border-default, rgba(255,255,255,.14)); background: transparent; color: var(--text-mid, #B8BBC2); font-size: 14px; font-weight: 600; cursor: pointer; font-family: inherit; }
   .seg button.on { background: var(--accent, #F4845F); border-color: var(--accent, #F4845F); color: #fff; }
   .preview { font-size: 13px; color: var(--text-dim, #9CA0A8); margin-top: 6px; min-height: 16px; }
+  #fPreview { color: var(--accent, #F4845F); font-weight: 800; font-size: 16px; }
   .row2 { display: flex; gap: 10px; margin-top: 18px; }
   .btn { flex: 1; padding: 14px; border-radius: 12px; font-size: 16px; font-weight: 700; cursor: pointer; font-family: inherit; border: none; }
   .btn.cancel { background: transparent; border: 1px solid var(--border-default, rgba(255,255,255,.15)); color: var(--text-mid, #B8BBC2); }
@@ -112,9 +113,9 @@
     <div class="amtrow">
       <input id="fAmount" class="fld" type="number" inputmode="numeric" min="0" step="any" placeholder="0">
       <select id="fUnit" class="fld" style="flex:0 0 100px;">
-        <option value="1000000" data-i18n="wallet.unit_mln">mln</option>
-        <option value="1000" data-i18n="wallet.unit_ming">ming</option>
         <option value="1" data-i18n="wallet.unit_som">so'm</option>
+        <option value="1000" data-i18n="wallet.unit_ming">ming</option>
+        <option value="1000000" data-i18n="wallet.unit_mln">mln</option>
       </select>
     </div>
     <div class="preview" id="fPreview"></div>
@@ -302,7 +303,7 @@
 
     function openSheet(type) {
       curType = type; setMethod('card');
-      fAmount.value = ''; fName.value = ''; fWeeks.value = '4';
+      fAmount.value = ''; fName.value = ''; fWeeks.value = '4'; fUnit.value = '1';
       document.getElementById('fPreview').textContent = ''; document.getElementById('fWeekPreview').textContent = '';
       var titles = { 'in': T('wallet.add_in', '+ Kirim'), 'exp-in': T('wallet.add_expected', '+ Kutilayotgan'), 'spend': T('wallet.add_exp', '+ Rasxod'), 'plan': T('wallet.add_plan', '+ Reja') };
       document.getElementById('ovTitle').textContent = titles[type] || '';
