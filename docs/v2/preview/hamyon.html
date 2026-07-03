@@ -93,6 +93,7 @@
 
   <div class="sec">
     <div class="sec-hd"><span class="t r" data-i18n="wallet.spent">Ishlatilgan</span><span class="tot" id="totSpent">0</span></div>
+    <div class="free" id="daySpend" style="margin-top:0;margin-bottom:8px;"></div>
     <div id="listSpent"></div>
     <div style="margin-top:8px;text-align:right;"><button class="addb r" data-add="spend" data-i18n="wallet.add_exp">+ Rasxod</button></div>
   </div>
@@ -132,8 +133,14 @@
     </div>
 
     <div id="rowWeeks" style="display:none;">
-      <label class="lbl" data-i18n="wallet.weeks">Necha haftaga bo'lib</label>
-      <input id="fWeeks" class="fld" type="number" inputmode="numeric" min="1" max="52" step="1" value="4">
+      <label class="lbl" data-i18n="wallet.split_lbl">Necha muddatga bo'lib</label>
+      <div class="amtrow">
+        <input id="fWeeks" class="fld" type="number" inputmode="numeric" min="1" max="365" step="1" value="4">
+        <div class="seg" style="flex:0 0 150px;">
+          <button type="button" id="uWeek" class="on" data-i18n="wallet.unit_week">Hafta</button>
+          <button type="button" id="uDay" data-i18n="wallet.unit_day">Kun</button>
+        </div>
+      </div>
       <div class="preview" id="fWeekPreview"></div>
     </div>
 
@@ -172,9 +179,12 @@
     function save(d) { try { localStorage.setItem('mvow.wallet', JSON.stringify(d)); } catch (e) {} }
 
     function num(x) { var n = Number(x); return isFinite(n) ? n : 0; }
+    function todayIso() { try { if (window.MVOW_DATA && MVOW_DATA.today) return MVOW_DATA.today.iso; } catch (e) {} var d = new Date(); return d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0'); }
+    function planSplit(amount, unit, count) { count = Math.max(1, parseInt(count, 10) || 1); var totalDays = (unit === 'day') ? count : count * 7; return { perWeek: amount / (totalDays / 7), perDay: amount / totalDays, count: count }; }
 
     function compute(d) {
       var recIn = 0, expIn = 0, spent = 0, planned = 0, cardBal = 0, cashBal = 0;
+      var ti = todayIso(), spentToday = 0, datedSpent = 0, days = {};
       d.incomes.forEach(function (i) {
         var a = num(i.amount);
         if (i.expected) { expIn += a; }
@@ -183,9 +193,12 @@
       d.expenses.forEach(function (e) {
         var a = num(e.amount); spent += a;
         if (e.method === 'cash') cashBal -= a; else cardBal -= a;
+        if (e.date) { if (e.date === ti) spentToday += a; datedSpent += a; days[e.date] = 1; }
       });
       d.planned.forEach(function (p) { planned += num(p.amount); });
-      return { recIn: recIn, expIn: expIn, spent: spent, planned: planned, balance: recIn - spent, free: recIn - spent - planned, cardBal: cardBal, cashBal: cashBal };
+      var nd = Object.keys(days).length;
+      return { recIn: recIn, expIn: expIn, spent: spent, planned: planned, balance: recIn - spent, free: recIn - spent - planned, cardBal: cardBal, cashBal: cashBal,
+        spentToday: spentToday, avgDay: nd ? datedSpent / nd : 0, hasDaily: nd > 0 };
     }
 
     function itemRow(text, sub, amount, cls, delAttr) {
@@ -212,6 +225,11 @@
       document.getElementById('totSpent').textContent = fmt(c.spent) + ' ' + SOM();
       document.getElementById('totPlan').textContent = fmt(c.planned) + ' ' + SOM();
 
+      var daySpend = document.getElementById('daySpend');
+      daySpend.innerHTML = c.hasDaily
+        ? (T('wallet.today', 'Bugun') + ': <b>' + fmt(c.spentToday) + ' ' + SOM() + '</b> · ' + T('wallet.avg_day', 'kuniga o\'rtacha') + ': <b>' + fmt(c.avgDay) + ' ' + SOM() + '</b>')
+        : '';
+
       var received = d.incomes.filter(function (i) { return !i.expected; });
       var expected = d.incomes.filter(function (i) { return i.expected; });
       document.getElementById('listIn').innerHTML = received.length
@@ -225,9 +243,11 @@
         : '<div class="empty">' + T('wallet.empty_exp', "Hali rasxod yo'q") + '</div>';
       document.getElementById('listPlan').innerHTML = d.planned.length
         ? d.planned.map(function (p) {
-            var w = Math.max(1, parseInt(p.weeks, 10) || 1);
-            var per = num(p.amount) / w;
-            var sub = fmt(per) + ' ' + SOM() + ' · ' + w + ' ' + T('wallet.weeks_short', 'hafta') + ' (' + T('wallet.per_week', 'haftasiga') + ')';
+            var unit = p.unit || 'week';
+            var count = (p.count != null) ? p.count : p.weeks;   // eski yozuvlar migratsiyasi
+            var sp = planSplit(num(p.amount), unit, count);
+            var unitLbl = (unit === 'day') ? T('wallet.days_short', 'kun') : T('wallet.weeks_short', 'hafta');
+            var sub = sp.count + ' ' + unitLbl + ' · ' + T('wallet.per_week', 'haftasiga') + ' ' + fmt(sp.perWeek) + ' · ' + T('wallet.per_day', 'kuniga') + ' ' + fmt(sp.perDay);
             return itemRow(p.cat, sub, p.amount, 'b', 'data-del="plan:' + p.id + '"');
           }).join('')
         : '<div class="empty">' + T('wallet.empty_plan', "Hali reja yo'q") + '</div>';
@@ -254,15 +274,19 @@
     var fWeeks = document.getElementById('fWeeks');
     var rowMethod = document.getElementById('rowMethod'), rowWeeks = document.getElementById('rowWeeks');
     var mCard = document.getElementById('mCard'), mCash = document.getElementById('mCash');
-    var curType = null, curMethod = 'card';
+    var uWeek = document.getElementById('uWeek'), uDay = document.getElementById('uDay');
+    var curType = null, curMethod = 'card', curPeriod = 'week';
+    function setPeriod(p) { curPeriod = p; if (uWeek) uWeek.classList.toggle('on', p === 'week'); if (uDay) uDay.classList.toggle('on', p === 'day'); updatePreview(); }
 
     function calcAmount() { return Math.round(num(fAmount.value) * num(fUnit.value)); } // butun so'm — float chang saqlanmasin
     function updatePreview() {
       var a = calcAmount();
       document.getElementById('fPreview').textContent = a > 0 ? ('= ' + fmt(a) + ' ' + SOM()) : '';
       if (rowWeeks.style.display !== 'none') {
-        var w = Math.max(1, parseInt(fWeeks.value, 10) || 1);
-        document.getElementById('fWeekPreview').textContent = a > 0 ? (T('wallet.per_week', 'haftasiga') + ': ' + fmt(a / w) + ' ' + SOM()) : '';
+        var sp = planSplit(a, curPeriod, fWeeks.value);
+        document.getElementById('fWeekPreview').textContent = a > 0
+          ? (T('wallet.per_week', 'haftasiga') + ': ' + fmt(sp.perWeek) + ' ' + SOM() + ' · ' + T('wallet.per_day', 'kuniga') + ': ' + fmt(sp.perDay) + ' ' + SOM())
+          : '';
       }
     }
     function setMethod(m) { curMethod = m; mCard.classList.toggle('on', m === 'card'); mCash.classList.toggle('on', m === 'cash'); }
@@ -279,6 +303,7 @@
       else { fNameLbl.textContent = T('wallet.plan_lbl', 'Reja nomi'); fName.placeholder = T('wallet.plan_ph', 'mas. haftalik xarajat'); }
       rowMethod.style.display = (type === 'plan') ? 'none' : '';
       rowWeeks.style.display = (type === 'plan') ? '' : 'none';
+      setPeriod('week');
       ov.classList.add('show');
       setTimeout(function () { fAmount.focus(); }, 80);
     }
@@ -288,14 +313,14 @@
       var a = calcAmount();
       if (!(a > 0)) { fAmount.focus(); return; }
       var name = fName.value.trim();
-      var d = load(), id = String(Date.now()) + Math.floor(Math.random() * 999);
+      var d = load(), id = String(Date.now()) + Math.floor(Math.random() * 999), ti = todayIso();
       if (curType === 'in' || curType === 'exp-in') {
-        d.incomes.push({ id: id, amount: a, source: name, method: curMethod, expected: (curType === 'exp-in') });
+        d.incomes.push({ id: id, amount: a, source: name, method: curMethod, expected: (curType === 'exp-in'), date: ti });
       } else if (curType === 'spend') {
-        d.expenses.push({ id: id, amount: a, cat: name, method: curMethod });
+        d.expenses.push({ id: id, amount: a, cat: name, method: curMethod, date: ti });
       } else if (curType === 'plan') {
-        var w = Math.max(1, Math.min(52, parseInt(fWeeks.value, 10) || 1));
-        d.planned.push({ id: id, amount: a, cat: name, weeks: w });
+        var cnt = Math.max(1, Math.min(365, parseInt(fWeeks.value, 10) || 1));
+        d.planned.push({ id: id, amount: a, cat: name, unit: curPeriod, count: cnt });
       }
       save(d);
       if (window.MVOW_DATA && MVOW_DATA.fxSuccess) MVOW_DATA.fxSuccess();
@@ -307,6 +332,8 @@
     fWeeks.addEventListener('input', updatePreview);
     mCard.addEventListener('click', function () { setMethod('card'); });
     mCash.addEventListener('click', function () { setMethod('cash'); });
+    if (uWeek) uWeek.addEventListener('click', function () { setPeriod('week'); });
+    if (uDay) uDay.addEventListener('click', function () { setPeriod('day'); });
     document.getElementById('ovCancel').addEventListener('click', closeSheet);
     document.getElementById('ovSave').addEventListener('click', saveSheet);
     ov.addEventListener('click', function (e) { if (e.target === ov) closeSheet(); });
