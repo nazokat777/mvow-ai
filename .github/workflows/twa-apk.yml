@@ -45,11 +45,15 @@ jobs:
           printf '{"jdkPath":"%s","androidSdkPath":"%s"}\n' "$JAVA_HOME" "$ANDROID_HOME" > ~/.bubblewrap/config.json
           cat ~/.bubblewrap/config.json
 
-      - name: Install Android SDK components
+      - name: Accept ALL SDK licenses + install build-tools (build paytida so'ramasin)
         run: |
+          # Litsenziya hash'larini to'g'ridan-to'g'ri yozamiz — gradle auto-download endi so'ramaydi
+          mkdir -p "$ANDROID_HOME/licenses"
+          printf '\n8933bad161af4178b1185d1a37fbf41ea5269c55\nd56f5187479451eabf01fb78af6dfcb131a6481e\n24333f8a63b6825ea9c5514f83c2829b004d1fee\n' > "$ANDROID_HOME/licenses/android-sdk-license"
+          printf '\n84831b9409646a918e30573bab4c9c91346d8abd\n504667f4c0de7af1a06de9f4b1727b84351f2910\n' > "$ANDROID_HOME/licenses/android-sdk-preview-license"
           yes | sdkmanager --licenses >/dev/null 2>&1 || true
-          sdkmanager "platform-tools" "platforms;android-33" "platforms;android-34" "build-tools;34.0.0" >/dev/null 2>&1 || true
-          echo "SDK components installed"
+          sdkmanager "platform-tools" "platforms;android-33" "platforms;android-34" "build-tools;33.0.2" "build-tools;34.0.0" >/dev/null 2>&1 || true
+          echo "Licenses + build-tools tayyor"
 
       - name: Generate signing keystore (demo)
         working-directory: twa
@@ -64,9 +68,9 @@ jobs:
         working-directory: twa
         run: |
           bubblewrap doctor || true
-          # bubblewrap build twa-manifest.json'dan Android loyihani generatsiya qiladi va imzolaydi.
-          # Parollar stdin'dan: keystore paroli + kalit paroli (bir necha promptga chidamli).
-          printf 'focusai2026\nfocusai2026\nfocusai2026\nfocusai2026\n' | bubblewrap build --skipPwaValidation
+          # Litsenziyalar oldindan qabul qilingan -> gradle jim yuklaydi.
+          # Faqat 2 parol prompti qoladi -> yes cheksiz beradi (EOF/uzilish bo'lmaydi).
+          yes 'focusai2026' | bubblewrap build --skipPwaValidation
           echo "--- qurilgan fayllar ---"
           find . -name "*.apk" | sort
 
