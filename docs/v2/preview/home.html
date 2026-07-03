@@ -543,8 +543,12 @@
         host.style.cssText = 'margin-top:18px;';
         tasksList.parentNode.insertBefore(host, tasksList.nextSibling);
       }
+      // Faqat BUGUNGI kun vazifasida bor maqsadlarning bosqichlari (goalId bo'yicha)
+      var _todayPlan = (MVOW_DATA.getTodayPlan && MVOW_DATA.getTodayPlan()) || [];
+      var _todayGoalIds = {};
+      _todayPlan.forEach(function (t) { if (t && t.goalId != null) _todayGoalIds[t.goalId] = 1; });
       var goals = MVOW_DATA.loadGoals().filter(function (g) {
-        return g && Array.isArray(g.milestones) && g.milestones.length && g.milestones.some(function (m) { return !m.done; });
+        return g && _todayGoalIds[g.id] && Array.isArray(g.milestones) && g.milestones.length && g.milestones.some(function (m) { return !m.done; });
       });
       if (!goals.length) { host.innerHTML = ''; return; }
       var totalDone = 0, totalMs = 0;
