@@ -3,9 +3,9 @@
     {
       "source": "/FOCUS-AI.apk",
       "headers": [
-        { "key": "Content-Type", "value": "application/vnd.android.package-archive" },
+        { "key": "Content-Type", "value": "application/octet-stream" },
         { "key": "Content-Disposition", "value": "attachment; filename=FOCUS-AI.apk" },
-        { "key": "Cache-Control", "value": "public, max-age=300" }
+        { "key": "Cache-Control", "value": "no-store" }
       ]
     },
     {
