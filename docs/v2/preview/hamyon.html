@@ -49,6 +49,8 @@
 
   .ov { display: none; position: fixed; inset: 0; z-index: 9998; background: rgba(0,0,0,.6); align-items: flex-end; justify-content: center; padding: 0; }
   .ov.show { display: flex; }
+  #histOv { align-items: stretch; }
+  #histSheet { border-radius: 0; min-height: 100vh; max-width: 480px; margin: 0 auto; overflow-y: auto; }
   .sheet { width: 100%; max-width: 480px; background: var(--card, #11151E); border-radius: 20px 20px 0 0; padding: 22px 18px calc(22px + env(safe-area-inset-bottom, 0px)); border-top: 1px solid var(--border-default, rgba(255,255,255,.12)); }
   .sheet h2 { font-size: 20px; margin-bottom: 14px; }
   .lbl { font-size: 12px; letter-spacing: 1px; text-transform: uppercase; color: var(--text-dim, #9CA0A8); font-weight: 700; margin: 12px 2px 6px; display: block; }
@@ -70,7 +72,10 @@
 </head>
 <body>
 <div class="phone">
-  <h1 data-i18n="wallet.title">Hamyon</h1>
+  <div style="display:flex;align-items:center;justify-content:space-between;gap:10px;">
+    <h1 data-i18n="wallet.title">Hamyon</h1>
+    <button id="histBtn" type="button" style="flex-shrink:0;background:var(--card,#0C0F16);border:1px solid var(--border-default,rgba(255,255,255,.12));color:var(--text,#F5F2EC);border-radius:999px;padding:8px 14px;font-size:13px;font-weight:600;cursor:pointer;font-family:inherit;">🕘 <span data-i18n="wallet.history">Tarix</span></button>
+  </div>
   <div class="sub" data-i18n="wallet.sub">Pul kirim-chiqim va rejalar</div>
 
   <div class="bal">
@@ -177,6 +182,17 @@
   </div>
 </div>
 
+<div class="ov" id="histOv">
+  <div class="sheet" id="histSheet">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;">
+      <h2 data-i18n="wallet.history">Tarix</h2>
+      <button id="histClose" type="button" style="background:none;border:none;color:var(--text-mid,#B8BBC2);font-size:28px;cursor:pointer;line-height:1;">×</button>
+    </div>
+    <div id="histBody"></div>
+  </div>
+</div>
+<div id="wToast" style="position:fixed;left:50%;bottom:30px;transform:translateX(-50%);background:var(--card,#11151E);color:var(--text,#F5F2EC);border:1px solid var(--accent,#F4845F);padding:12px 20px;border-radius:999px;font-size:14px;font-weight:600;box-shadow:0 10px 30px rgba(0,0,0,.4);opacity:0;transition:opacity .3s;pointer-events:none;z-index:10000;max-width:90%;text-align:center;"></div>
+
 <script src="i18n.js?v=29.0.31"></script>
 <script src="lang-switcher.js?v=29.0.31" defer></script>
 <script src="data.js?v=29.0.31" defer></script>
@@ -203,6 +219,24 @@
       return d;
     }
     function save(d) { try { localStorage.setItem('mvow.wallet', JSON.stringify(d)); } catch (e) {} }
+
+    // ── Oylik tarix: yangi oy boshlanganda o'tgan oy avtomatik arxivga ko'chadi ──
+    function ymNow() { var d = new Date(); return d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0'); }
+    function loadHistory() { try { var h = JSON.parse(localStorage.getItem('mvow.walletHistory') || '{}'); return (h && typeof h === 'object') ? h : {}; } catch (e) { return {}; } }
+    function saveHistory(h) { try { localStorage.setItem('mvow.walletHistory', JSON.stringify(h)); } catch (e) {} }
+    function rollover() {
+      var cur = ymNow(), stored = null;
+      try { stored = localStorage.getItem('mvow.walletMonth'); } catch (e) {}
+      if (!stored) { try { localStorage.setItem('mvow.walletMonth', cur); } catch (e) {} return false; }
+      if (stored === cur) return false;
+      var d = load();
+      if (d.incomes.length || d.expenses.length || d.planned.length) {
+        var h = loadHistory(); h[stored] = { incomes: d.incomes, expenses: d.expenses, planned: d.planned }; saveHistory(h);
+      }
+      try { localStorage.removeItem('mvow.wallet'); localStorage.setItem('mvow.walletMonth', cur); } catch (e) {}
+      return true;
+    }
+    function toast(msg) { var t = document.getElementById('wToast'); if (!t) return; t.textContent = msg; t.style.opacity = '1'; setTimeout(function () { t.style.opacity = '0'; }, 3200); }
 
     function num(x) { var n = Number(x); return isFinite(n) ? n : 0; }
     function todayIso() { try { if (window.MVOW_DATA && MVOW_DATA.today) return MVOW_DATA.today.iso; } catch (e) {} var d = new Date(); return d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0'); }
@@ -444,8 +478,48 @@
       }
     });
 
+    // ── Tarix ko'rish (o'tgan oylar) ──
+    var histOv = document.getElementById('histOv');
+    function histRow(name, sub, amt, cls) {
+      return '<div class="item"><div class="nm"><div class="n1">' + esc(name || '—') + '</div>' + (sub ? '<div class="n2">' + sub + '</div>' : '') + '</div><div class="amt ' + cls + '">' + amt + '</div></div>';
+    }
+    function histItemsHtml(data) {
+      function grp(title, arr, html) { return (arr && arr.length) ? ('<div style="font-size:12px;letter-spacing:1px;text-transform:uppercase;color:var(--text-dim);font-weight:700;margin:12px 2px 6px;">' + title + '</div>' + html) : ''; }
+      var rec = data.incomes.filter(function (i) { return !i.expected; });
+      var exp = data.incomes.filter(function (i) { return i.expected; });
+      return grp(T('wallet.in_received', 'Kirgan pul'), rec, rec.map(function (i) { return histRow(i.source, subMeta(i.method, i.date), fmt(i.amount), 'g'); }).join(''))
+        + grp(T('wallet.in_expected', 'Kutilayotgan pul'), exp, exp.map(function (i) { return histRow(i.source, subMeta(i.method, i.date), fmt(i.amount), 'a'); }).join(''))
+        + grp(T('wallet.spent', 'Ishlatilgan'), data.expenses, data.expenses.map(function (e) { return histRow(e.cat, subMeta(e.method, e.date), '−' + fmt(e.amount), 'r'); }).join(''))
+        + grp(T('wallet.planned', 'Rejalangan rasxodlar'), data.planned, data.planned.map(function (p) { return histRow(p.cat, (p.date ? '🗓 ' + fmtDate(p.date) + ' · ' : '') + fmt(p.amount) + ' ' + SOM(), (p.approx ? '≈ ' : '') + fmt(p.amount), 'b'); }).join(''));
+    }
+    function openHistory() {
+      var h = loadHistory(), months = Object.keys(h).sort().reverse();
+      var body = document.getElementById('histBody');
+      if (!months.length) body.innerHTML = '<div class="empty">' + T('wallet.hist_empty', "Hali tarix yo'q — har oy oxirida shu yerga saqlanadi") + '</div>';
+      else {
+        body.innerHTML = months.map(function (m) {
+          var c = compute(h[m]);
+          return '<div style="background:var(--card);border:1px solid var(--border-default);border-radius:16px;padding:14px 16px;margin-bottom:10px;">'
+            + '<div data-hmon="' + m + '" style="display:flex;align-items:center;justify-content:space-between;cursor:pointer;">'
+            + '<span style="font-weight:700;font-size:16px;">' + m + '</span>'
+            + '<span style="color:var(--accent);font-weight:700;">' + fmt(c.balance) + ' ' + SOM() + '</span></div>'
+            + '<div style="font-size:13px;color:var(--text-dim);margin-top:4px;">' + T('wallet.in_received', 'Kirgan') + ': ' + fmt(c.recIn) + ' · ' + T('wallet.spent', 'Ishlatilgan') + ': ' + fmt(c.spent) + '</div>'
+            + '<div class="hm-detail" style="display:none;margin-top:8px;">' + histItemsHtml(h[m]) + '</div></div>';
+        }).join('');
+        body.querySelectorAll('[data-hmon]').forEach(function (hd) {
+          hd.addEventListener('click', function () { var det = hd.parentNode.querySelector('.hm-detail'); if (det) det.style.display = (det.style.display === 'none') ? 'block' : 'none'; });
+        });
+      }
+      histOv.classList.add('show');
+    }
+    document.getElementById('histBtn').addEventListener('click', openHistory);
+    document.getElementById('histClose').addEventListener('click', function () { histOv.classList.remove('show'); });
+    histOv.addEventListener('click', function (e) { if (e.target === histOv) histOv.classList.remove('show'); });
+
+    var didRoll = rollover();   // yangi oy bo'lsa — o'tgan oyni arxivlab, toza boshlaydi
     try { document.title = T('wallet.page_title', 'FOCUS AI — Hamyon'); } catch (e) {}
     render();
+    if (didRoll) toast(T('wallet.month_reset', "Yangi oy boshlandi — o'tgan oy Tarixga saqlandi"));
   })();
 </script>
 <script src="back-btn.js?v=29.0.31"></script>
