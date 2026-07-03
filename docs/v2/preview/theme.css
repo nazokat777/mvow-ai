@@ -94,6 +94,19 @@
 :root[data-theme="light"] .wrap,
 :root[data-theme="light"] .container { background: #f3f4f7 !important; color: #15171c; }
 :root[data-theme="light"] .phone { box-shadow: 0 0 0 8px #e2e5ea, 0 30px 80px rgba(0,0,0,.18) !important; }
+
+/* PLANSHET/keng ekran: telefon maketi emas — to'liq ekran (faqat katta desktop >1100px'da maket qoladi) */
+@media (max-width: 1100px) {
+  body { padding: 0 !important; }
+  .phone,
+  :root[data-theme="light"] .phone,
+  :root[data-theme="dark"] .phone {
+    width: 100vw !important;
+    min-height: 100vh !important;
+    border-radius: 0 !important;
+    box-shadow: none !important;
+  }
+}
 /* Tema almashganda yumshoq o'tish */
 html, body { transition: background 0.3s ease, color 0.3s ease; }
 
