@@ -821,7 +821,7 @@
         bg_toobig: 'Rasm juda katta — kichikrog‘ini tanlang',
         elapsed_label: "o'tgan vaqt",
         done_btn: 'Bajardim',
-        choice_title: 'Qanday boshlaymiz?',
+        choice_title: 'Qanday boshlaymiz?', choice_back: 'Orqaga',
         opt_notimer: 'Taymersiz',
         opt_notimer_desc: 'Siz tayyor bo\'lganda "Bajardim" deysiz',
         opt_timer: 'Oddiy taymer',
@@ -917,7 +917,14 @@
         remind_off: 'Har kuni eslatib tur',
         remind_on: 'Eslatib turiladi ✓',
         remind_card: "orzularingizni o'qing",
-        target_hint: "muddat — ixtiyoriy", until: "gacha", days_left: "kun qoldi", today: "bugun", overdue: "muddat o'tdi"
+        target_hint: "muddat — ixtiyoriy", until: "gacha", days_left: "kun qoldi", today: "bugun", overdue: "muddat o'tdi",
+        push_denied: "Eslatma saqlandi. Telefon bildirishnomasi uchun ruxsat bering."
+      },
+      eslatma: {
+        title: "Eslatmalar", sub: "Belgilangan vaqtda o'zingizga savol / motivatsiya. Ilova yopiq bo'lsa ham telefoningizda chiqadi.",
+        text_ph: "masalan: Bugun ota-onang uchun nima qilding?", add: "+ Qo'shish", my: "Eslatmalarim",
+        push_btn: "🔔 Telefon eslatmalarini yoqish", empty: "Hali eslatma yo'q. Yuqoridan qo'shing.",
+        push_on: "Eslatmalar yoqildi ✅ — endi ilova yopiq bo'lsa ham chiqadi.", push_off: "Yoqilmadi. Bildirishnomaga ruxsat bering."
       },
       mukofot: {
         page_title: "{brand} — Mukofotlar", title: "Mukofotlar", sub: "Tanga va olmoslaringizni o'zingiz belgilagan mukofotlarga sarflang.",
@@ -934,6 +941,16 @@
         clear_confirm: "Shahar butunlay buzilsinmi? (tangalar qaytmaydi)", empty: "Bo'sh maydon. Do'kondan birinchi binongizni quring 👇",
         i_tree: "Daraxt", i_road: "Yo'l", i_house: "Uy", i_car: "Mashina", i_shop: "Do'kon", i_bldg: "Bino",
         i_bridge: "Ko'prik", i_factory: "Zavod", i_stadium: "Stadion", i_tower: "Minora", i_castle: "Qal'a", i_rocket: "Raketa"
+      },
+      otaona: {
+        page_title: "{brand} — Ota-ona nazorati", title: "Ota-ona nazorati",
+        sub: "Telefonni farzandingizga bemalol bering — quyidagi usul bilan u faqat shu ilovada qoladi, boshqa ilovalar (o'yin, ijtimoiy tarmoq)ga o'tolmaydi.",
+        pin_h: "1. Ilova PIN kodi", pin_desc: "FOCUS AI'ni PIN bilan himoyalang — begona ochib maqsad/sozlamalarni o'zgartira olmaydi.",
+        pin_btn: "PIN o'rnatish / o'zgartirish", pin_on: "PIN yoqilgan ✓",
+        lock_h: "2. Telefonni shu ilovaga qulflash", lock_desc: "Telefonning o'z imkoniyati bola faqat shu ilovada qolishini ta'minlaydi (chiqish uchun parol so'raydi):",
+        android_h: "Android", android_steps: "Sozlamalar → Xavfsizlik → «Ilovani mahkamlash» (App pinning) ni yoqing. So'ng FOCUS AI'ni oching → «yaqinda ochilganlar» tugmasi → ilova ustidagi belgiga bosib «Mahkamlash». Chiqish uchun PIN/naqsh so'raladi.",
+        ios_h: "iPhone", ios_steps: "Sozlamalar → Universal kirish → «Yo'naltirilgan kirish» (Guided Access) ni yoqing va parol qo'ying. FOCUS AI'da yon tugmani 3 marta bosing → «Boshlash». Chiqish uchun parol kerak bo'ladi.",
+        note: "Eslatma: hech qanday ilova boshqa ilovalarni to'g'ridan-to'g'ri qulflay olmaydi — bu telefon xavfsizlik qoidasi. Lekin yuqoridagi usul aynan shuni beradi: bola faqat FOCUS AI'da qoladi."
       },
       wallet: {
         page_title: "{brand} — Hamyon", title: "Hamyon", sub: "Pul kirim-chiqim va rejalar",
@@ -1000,7 +1017,7 @@
         row_reminders: 'Eslatmalar',
         row_dreams: 'Orzular daftari',
         row_wallet: 'Hamyon',
-        row_mukofot: 'Mukofotlar', row_shahar: 'Shahringiz',
+        row_mukofot: 'Mukofotlar', row_shahar: 'Shahringiz', row_otaona: 'Ota-ona nazorati',
         row_hardlock: 'Fokus taymeri',
         row_session: 'Bajardim',
         row_evening: 'Kun yakuni',
@@ -1808,7 +1825,7 @@
         bg_toobig: 'Изображение слишком большое — выберите меньше',
         elapsed_label: 'прошло времени',
         done_btn: 'Готово',
-        choice_title: 'Как начнём?',
+        choice_title: 'Как начнём?', choice_back: 'Назад',
         opt_notimer: 'Без таймера',
         opt_notimer_desc: 'Когда будете готовы — нажмёте «Готово»',
         opt_timer: 'Обычный таймер',
@@ -1904,7 +1921,14 @@
         remind_off: 'Напоминать каждый день',
         remind_on: 'Напоминание включено ✓',
         remind_card: 'перечитайте свои мечты',
-        target_hint: 'срок — необязательно', until: 'до', days_left: 'дн. осталось', today: 'сегодня', overdue: 'срок прошёл'
+        target_hint: 'срок — необязательно', until: 'до', days_left: 'дн. осталось', today: 'сегодня', overdue: 'срок прошёл',
+        push_denied: "Напоминание сохранено. Разрешите уведомления на телефоне."
+      },
+      eslatma: {
+        title: "Напоминания", sub: "Вопрос/мотивация себе в заданное время. Придёт на телефон, даже если приложение закрыто.",
+        text_ph: "напр.: Что ты сегодня сделал для родителей?", add: "+ Добавить", my: "Мои напоминания",
+        push_btn: "🔔 Включить напоминания на телефоне", empty: "Напоминаний пока нет. Добавьте сверху.",
+        push_on: "Напоминания включены ✅ — теперь придут даже при закрытом приложении.", push_off: "Не включилось. Разрешите уведомления."
       },
       mukofot: {
         page_title: "{brand} — Награды", title: "Награды", sub: "Тратьте монеты и алмазы на награды, которые задали сами.",
@@ -1921,6 +1945,16 @@
         clear_confirm: "Снести весь город? (монеты не вернутся)", empty: "Пустая площадка. Постройте первое здание из магазина 👇",
         i_tree: "Дерево", i_road: "Дорога", i_house: "Дом", i_car: "Машина", i_shop: "Магазин", i_bldg: "Здание",
         i_bridge: "Мост", i_factory: "Завод", i_stadium: "Стадион", i_tower: "Башня", i_castle: "Замок", i_rocket: "Ракета"
+      },
+      otaona: {
+        page_title: "{brand} — Родительский контроль", title: "Родительский контроль",
+        sub: "Спокойно давайте телефон ребёнку — этим способом он останется только в этом приложении и не сможет открыть другие (игры, соцсети).",
+        pin_h: "1. PIN-код приложения", pin_desc: "Защитите FOCUS AI PIN-кодом — посторонний не изменит цели/настройки.",
+        pin_btn: "Задать / изменить PIN", pin_on: "PIN включён ✓",
+        lock_h: "2. Закрепить телефон на этом приложении", lock_desc: "Встроенная функция телефона удержит ребёнка в этом приложении (для выхода спросит пароль):",
+        android_h: "Android", android_steps: "Настройки → Безопасность → включите «Закрепление приложений» (App pinning). Откройте FOCUS AI → кнопка «недавние» → значок над приложением → «Закрепить». Для выхода спросит PIN/узор.",
+        ios_h: "iPhone", ios_steps: "Настройки → Универсальный доступ → включите «Гид-доступ» (Guided Access) и задайте пароль. В FOCUS AI трижды нажмите боковую кнопку → «Начать». Для выхода нужен пароль.",
+        note: "Примечание: ни одно приложение не может напрямую блокировать другие — это правило безопасности телефона. Но способ выше даёт именно это: ребёнок остаётся только в FOCUS AI."
       },
       wallet: {
         page_title: "{brand} — Кошелёк", title: "Кошелёк", sub: "Доходы, расходы и планы",
@@ -1987,7 +2021,7 @@
         row_reminders: 'Напоминания',
         row_dreams: 'Дневник мечт',
         row_wallet: 'Кошелёк',
-        row_mukofot: 'Награды', row_shahar: 'Ваш город',
+        row_mukofot: 'Награды', row_shahar: 'Ваш город', row_otaona: 'Родительский контроль',
         row_hardlock: 'Таймер фокуса',
         row_session: 'Сделано',
         row_evening: 'Итог дня',
@@ -2795,7 +2829,7 @@
         bg_toobig: 'Image too large — pick a smaller one',
         elapsed_label: 'elapsed',
         done_btn: 'Done',
-        choice_title: 'How shall we start?',
+        choice_title: 'How shall we start?', choice_back: 'Back',
         opt_notimer: 'No timer',
         opt_notimer_desc: 'You\'ll tap "Done" when you\'re ready',
         opt_timer: 'Plain timer',
@@ -2891,7 +2925,14 @@
         remind_off: 'Remind me daily',
         remind_on: 'Reminder on ✓',
         remind_card: 'read your dreams',
-        target_hint: 'deadline — optional', until: 'by', days_left: 'days left', today: 'today', overdue: 'overdue'
+        target_hint: 'deadline — optional', until: 'by', days_left: 'days left', today: 'today', overdue: 'overdue',
+        push_denied: "Reminder saved. Please allow notifications on your phone."
+      },
+      eslatma: {
+        title: "Reminders", sub: "A question/motivation to yourself at a set time. Arrives on your phone even if the app is closed.",
+        text_ph: "e.g.: What did you do for your parents today?", add: "+ Add", my: "My reminders",
+        push_btn: "🔔 Enable phone reminders", empty: "No reminders yet. Add one above.",
+        push_on: "Reminders enabled ✅ — they'll arrive even when the app is closed.", push_off: "Not enabled. Please allow notifications."
       },
       mukofot: {
         page_title: "{brand} — Rewards", title: "Rewards", sub: "Spend your coins and diamonds on rewards you set yourself.",
@@ -2908,6 +2949,16 @@
         clear_confirm: "Demolish the whole city? (coins won't return)", empty: "Empty lot. Build your first structure from the shop 👇",
         i_tree: "Tree", i_road: "Road", i_house: "House", i_car: "Car", i_shop: "Shop", i_bldg: "Building",
         i_bridge: "Bridge", i_factory: "Factory", i_stadium: "Stadium", i_tower: "Tower", i_castle: "Castle", i_rocket: "Rocket"
+      },
+      otaona: {
+        page_title: "{brand} — Parental control", title: "Parental control",
+        sub: "Hand the phone to your child with confidence — this method keeps them inside this app only, unable to open others (games, social media).",
+        pin_h: "1. App PIN code", pin_desc: "Protect FOCUS AI with a PIN — no one can open it and change your goals/settings.",
+        pin_btn: "Set / change PIN", pin_on: "PIN enabled ✓",
+        lock_h: "2. Lock the phone to this app", lock_desc: "The phone's own feature keeps the child inside this app (asks a password to exit):",
+        android_h: "Android", android_steps: "Settings → Security → turn on «App pinning». Open FOCUS AI → «recents» button → tap the icon above the app → «Pin». Exiting asks for the PIN/pattern.",
+        ios_h: "iPhone", ios_steps: "Settings → Accessibility → turn on «Guided Access» and set a passcode. In FOCUS AI triple-click the side button → «Start». Exiting requires the passcode.",
+        note: "Note: no app can directly lock other apps — that's a phone security rule. But the method above gives exactly that: the child stays only in FOCUS AI."
       },
       wallet: {
         page_title: "{brand} — Wallet", title: "Wallet", sub: "Income, spending and plans",
@@ -2974,7 +3025,7 @@
         row_reminders: 'Reminders',
         row_dreams: 'Dream journal',
         row_wallet: 'Wallet',
-        row_mukofot: 'Rewards', row_shahar: 'Your city',
+        row_mukofot: 'Rewards', row_shahar: 'Your city', row_otaona: 'Parental control',
         row_hardlock: 'Focus timer',
         row_session: 'Done',
         row_evening: 'Day summary',

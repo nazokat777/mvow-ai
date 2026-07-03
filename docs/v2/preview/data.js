@@ -824,6 +824,9 @@
   // task.actualStartedAt bo'lsa (taymer'dan), uni ishlatamiz. Aks holda
   // hozirgi vaqtdan dur'ni ayirib hisoblaymiz.
   DATA.markTaskDone = function (task, taskKey, note, actualMinsOverride) {
+    // IDEMPOTENT: allaqachon bajarilgan bo'lsa qayta yozmaymiz — aks holda qayta bosib
+    // cheksiz tanga/sessiya/medal shishardi (bir vazifa = bir marta).
+    try { if (taskKey && DATA.getTaskState(taskKey).status === 'done') return false; } catch (e) {}
     DATA.setTaskState(taskKey, { status: 'done' });
     const completedAt = Date.now();
     const durMin = DATA.parseDurMins(task.dur);

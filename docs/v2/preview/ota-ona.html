@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+<title>FOCUS AI — Ota-ona nazorati</title>
+<link rel="manifest" href="manifest.webmanifest">
+<meta name="theme-color" content="#04060B">
+<link rel="apple-touch-icon" href="assets/mnsm-logo.png?v=2">
+<link rel="icon" type="image/png" href="assets/mnsm-logo.png?v=2">
+<link rel="stylesheet" href="theme.css">
+<style>
+  * { box-sizing: border-box; }
+  body { margin: 0; font-family: 'Inter', sans-serif; background: var(--void, #04060B); color: var(--text, #F5F2EC); }
+  .phone { max-width: 480px; margin: 0 auto; min-height: 100vh; background: var(--void, #04060B); padding: 26px 18px 60px; }
+  h1 { font-size: 28px; margin: 6px 0 4px; }
+  .sub { color: var(--text-dim, #9CA0A8); font-size: 15px; line-height: 1.55; margin-bottom: 20px; }
+  .card { background: var(--card, #0C0F16); border: 1px solid var(--border-default, rgba(255,255,255,.12)); border-radius: 18px; padding: 18px; margin-bottom: 16px; }
+  .card h2 { font-size: 18px; margin: 0 0 8px; }
+  .card p { font-size: 14px; line-height: 1.6; color: var(--text-mid, #B8BBC2); margin: 0 0 12px; }
+  .os { margin-top: 12px; }
+  .os .os-h { font-size: 13px; font-weight: 800; letter-spacing: .5px; color: var(--accent, #F4845F); margin-bottom: 4px; }
+  .os .os-s { font-size: 14px; line-height: 1.6; color: var(--text-mid, #B8BBC2); }
+  .btn { display: inline-block; padding: 12px 20px; border-radius: 12px; border: none; background: var(--accent, #F4845F); color: #fff; font-size: 15px; font-weight: 700; font-family: inherit; cursor: pointer; }
+  .status { font-size: 13px; color: #6BBF7A; margin-top: 10px; font-weight: 700; }
+  .note { font-size: 13px; line-height: 1.6; color: var(--text-dim, #9CA0A8); background: rgba(110,181,255,.08); border: 1px solid rgba(110,181,255,.25); border-radius: 14px; padding: 14px; }
+</style>
+</head>
+<body>
+<div class="phone">
+  <h1 data-i18n="otaona.title">Ota-ona nazorati</h1>
+  <div class="sub" data-i18n="otaona.sub">Telefonni farzandingizga bemalol bering — quyidagi usul bilan u faqat shu ilovada qoladi, boshqa ilovalar (o'yin, ijtimoiy tarmoq)ga o'tolmaydi.</div>
+
+  <div class="card">
+    <h2 data-i18n="otaona.pin_h">1. Ilova PIN kodi</h2>
+    <p data-i18n="otaona.pin_desc">FOCUS AI'ni PIN bilan himoyalang — begona ochib maqsad/sozlamalarni o'zgartira olmaydi.</p>
+    <button class="btn" id="pinBtn" data-i18n="otaona.pin_btn">PIN o'rnatish / o'zgartirish</button>
+    <div class="status" id="pinStatus"></div>
+  </div>
+
+  <div class="card">
+    <h2 data-i18n="otaona.lock_h">2. Telefonni shu ilovaga qulflash</h2>
+    <p data-i18n="otaona.lock_desc">Telefonning o'z imkoniyati bola faqat shu ilovada qolishini ta'minlaydi (chiqish uchun parol so'raydi):</p>
+    <div class="os">
+      <div class="os-h" data-i18n="otaona.android_h">Android</div>
+      <div class="os-s" data-i18n="otaona.android_steps">Sozlamalar → Xavfsizlik → «Ilovani mahkamlash» (App pinning) ni yoqing. So'ng FOCUS AI'ni oching → «yaqinda ochilganlar» tugmasi → ilova ustidagi belgiga bosib «Mahkamlash». Chiqish uchun PIN/naqsh so'raladi.</div>
+    </div>
+    <div class="os">
+      <div class="os-h" data-i18n="otaona.ios_h">iPhone</div>
+      <div class="os-s" data-i18n="otaona.ios_steps">Sozlamalar → Universal kirish → «Yo'naltirilgan kirish» (Guided Access) ni yoqing va parol qo'ying. FOCUS AI'da yon tugmani 3 marta bosing → «Boshlash». Chiqish uchun parol kerak bo'ladi.</div>
+    </div>
+  </div>
+
+  <div class="note" data-i18n="otaona.note">Eslatma: hech qanday ilova boshqa ilovalarni to'g'ridan-to'g'ri qulflay olmaydi — bu telefon xavfsizlik qoidasi. Lekin yuqoridagi usul aynan shuni beradi: bola faqat FOCUS AI'da qoladi.</div>
+</div>
+
+<script src="i18n.js?v=29.0.50"></script>
+<script src="lang-switcher.js?v=29.0.50" defer></script>
+<script src="data.js?v=29.0.50" defer></script>
+<script src="pin-lock.js?v=29.0.50"></script>
+<script src="nav-overlay.js?v=29.0.50" defer></script>
+<script>
+  (function () {
+    function T(k, fb) { return (window.I18N && I18N.t) ? I18N.t(k, fb) : fb; }
+    function syncStatus() {
+      var el = document.getElementById('pinStatus');
+      el.textContent = (window.PinLock && PinLock.has()) ? T('otaona.pin_on', 'PIN yoqilgan ✓') : '';
+    }
+    document.getElementById('pinBtn').addEventListener('click', function () {
+      if (window.PinLock) { PinLock.manage(); setTimeout(syncStatus, 400); }
+    });
+    try { document.title = T('otaona.page_title', 'FOCUS AI — Ota-ona nazorati'); } catch (e) {}
+    syncStatus();
+  })();
+</script>
+<script src="back-btn.js?v=29.0.50"></script>
+</body>
+</html>

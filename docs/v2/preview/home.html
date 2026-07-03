@@ -809,6 +809,7 @@
       tasksList.addEventListener('click', function (e) {
         var row = e.target.closest('.t-row');
         if (!row || !row.dataset.key) return;
+        if (row.classList.contains('done')) return;   // bajarilgan vazifa qayta ochilmaydi
         if (row.dataset.notimer === '1') { openDone(row.dataset.key, row.dataset.time, row.dataset.dur, row.dataset.name); return; }
         openOv(row.dataset.key, row.dataset.time, row.dataset.dur, row.dataset.name);
       });

@@ -125,7 +125,8 @@
       if (t && window.MVOW_DATA && MVOW_DATA.addHistory) {
         var elapsedMin = (Date.now() - t.startedAt) / 60000;
         var actual = Math.max(1, Math.round(Math.min(elapsedMin, t.durSec/60)));
-        try { MVOW_DATA.addHistory({ name: t.name, actualMins: actual, withTimer: true, startedAt: t.startedAt, completedAt: Date.now() }); } catch(e){}
+        try { MVOW_DATA.addHistory({ name: t.name, dateIso: MVOW_DATA.today.iso, actualMins: actual, withTimer: true, startedAt: t.startedAt, completedAt: Date.now() }); } catch(e){}
+        if (window.MvowCelebrate) MvowCelebrate.celebrate();   // tanga/tabrik
       }
       save(load().filter(function(x){ return x.id!==id; })); render(); toast(T('multitimer.finished', 'Tugadi! 🎉'));
     }

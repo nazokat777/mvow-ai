@@ -4,6 +4,11 @@
  * onto every screen so the user can walk through the entire app linearly.
  */
 (function () {
+  // celebrate.js har sahifada bo'lsin — "Bajardingizmi?" (overdue) belgilanganda ham tanga/medal berilsin
+  if (!window.MvowCelebrate && !document.querySelector('script[src*="celebrate.js"]')) {
+    var _cel = document.createElement('script'); _cel.src = 'celebrate.js?v=29.0.50'; _cel.defer = true;
+    document.head.appendChild(_cel);
+  }
   // Replace every gold "mentor presence" orb with the real MNSM logo
   // AND make every screen scroll-friendly on mobile (universal fix).
   function injectLogoStyles() {

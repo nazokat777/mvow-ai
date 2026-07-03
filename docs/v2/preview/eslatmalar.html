@@ -25,19 +25,19 @@
 </head>
 <body>
 <div class="phone">
-  <h1>Eslatmalar</h1>
-  <div class="sub">Belgilangan vaqtda o'zingizga savol / motivatsiya. Ilova yopiq bo'lsa ham telefoningizda chiqadi.</div>
+  <h1 data-i18n="eslatma.title">Eslatmalar</h1>
+  <div class="sub" data-i18n="eslatma.sub">Belgilangan vaqtda o'zingizga savol / motivatsiya. Ilova yopiq bo'lsa ham telefoningizda chiqadi.</div>
 
-  <input id="remText" class="fld" maxlength="120" placeholder="masalan: Bugun ota-onang uchun nima qilding?">
+  <input id="remText" class="fld" maxlength="120" placeholder="masalan: Bugun ota-onang uchun nima qilding?" data-i18n-placeholder="eslatma.text_ph">
   <div class="row">
     <input id="remTime" class="fld" type="time" value="20:00" style="flex:1;">
-    <button id="remAdd" class="btn btn-add" style="width:auto;padding:13px 22px;">+ Qo'shish</button>
+    <button id="remAdd" class="btn btn-add" style="width:auto;padding:13px 22px;" data-i18n="eslatma.add">+ Qo'shish</button>
   </div>
 
-  <div class="sec-lbl">Eslatmalarim</div>
+  <div class="sec-lbl" data-i18n="eslatma.my">Eslatmalarim</div>
   <div id="remList"></div>
 
-  <button id="pushBtn" class="btn btn-push">🔔 Telefon eslatmalarini yoqish</button>
+  <button id="pushBtn" class="btn btn-push" data-i18n="eslatma.push_btn">🔔 Telefon eslatmalarini yoqish</button>
 </div>
 
 <script src="i18n.js?v=28.4.0"></script>
@@ -50,12 +50,13 @@
 <script>
   (function () {
     function esc(s) { return String(s || '').replace(/[&<>"]/g, function (c) { return ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]); }); }
+    function T(k, fb) { return (window.I18N && I18N.t) ? I18N.t(k, fb) : fb; }
     function load() { try { var r = JSON.parse(localStorage.getItem('mvow.reminders') || '[]'); return Array.isArray(r) ? r : []; } catch (e) { return []; } }
     function save(r) { localStorage.setItem('mvow.reminders', JSON.stringify(r)); if (window.PushReminders && PushReminders.isEnabled()) PushReminders.sync(); }
     var listEl = document.getElementById('remList');
     function render() {
       var r = load();
-      if (!r.length) { listEl.innerHTML = '<div class="empty">Hali eslatma yo\'q. Yuqoridan qo\'shing.</div>'; return; }
+      if (!r.length) { listEl.innerHTML = '<div class="empty">' + T('eslatma.empty', "Hali eslatma yo'q. Yuqoridan qo'shing.") + '</div>'; return; }
       r.sort(function (a, b) { return (a.time || '').localeCompare(b.time || ''); });
       listEl.innerHTML = r.map(function (x) {
         return '<div class="rem"><span class="t">' + esc(x.time) + '</span><span>' + esc(x.text) + '</span><button class="x" data-del="' + x.id + '" aria-label="o\'chirish">×</button></div>';
@@ -84,7 +85,7 @@
     document.getElementById('pushBtn').addEventListener('click', function () {
       if (!window.PushReminders) return;
       PushReminders.enable().then(function (res) {
-        alert(res && res.ok ? 'Eslatmalar yoqildi ✅ — endi ilova yopiq bo\'lsa ham chiqadi.' : 'Yoqilmadi. Bildirishnomaga ruxsat bering.');
+        alert(res && res.ok ? T('eslatma.push_on', 'Eslatmalar yoqildi ✅ — endi ilova yopiq bo\'lsa ham chiqadi.') : T('eslatma.push_off', 'Yoqilmadi. Bildirishnomaga ruxsat bering.'));
       });
     });
     render();

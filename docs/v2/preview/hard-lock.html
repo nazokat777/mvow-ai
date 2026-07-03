@@ -231,6 +231,7 @@
         <span style="display:block;font-size:14px;color:#fff;opacity:0.7;letter-spacing:0.5px;text-transform:none;font-weight:500;" id="chPomoDur" data-i18n="hardlock.opt_pomo_desc">25 daq ish + 5 daq dam sikllari</span>
       </button>
     </div>
+    <div style="margin-top:14px;text-align:center;"><a href="home.html" style="color:#9CA0A8;font-size:14px;text-decoration:none;">‹ <span data-i18n="hardlock.choice_back">Orqaga</span></a></div>
     <!-- Fokus foni boshqaruvi taymer ekraniga ko'chirildi -->
 
   </div>
@@ -434,6 +435,9 @@ document.addEventListener('DOMContentLoaded', function () {
 
   const choiceOverlay = document.getElementById('choiceOverlay');
   const askOverlay = document.getElementById('askOverlay');
+  // Qopqon emas — fonga bosish yoki Escape home'ga qaytaradi (tanlov ochiq turganda)
+  choiceOverlay.addEventListener('click', function (e) { if (e.target === choiceOverlay) location.href = 'home.html'; });
+  document.addEventListener('keydown', function (e) { if (e.key === 'Escape' && choiceOverlay.style.display !== 'none') location.href = 'home.html'; });
 
   let mode = null; // 'timer' | 'no-timer'
   let totalSec = WORK_MIN * 60;
@@ -893,7 +897,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
   let idleTimer = null;
   let isDeepLocked = false;
-  const IDLE_MS = 8000; // 8 sekund qaltiraydigan vaqt → keyin qulflanadi
+  const IDLE_MS = 30000; // 30 sekund harakatsizlik → keyin chuqur qulf (oldin 8s edi — o'qish/o'ylashni bo'lardi)
 
   // Wake Lock — telefon ekranini OS qulflashga yo'l qo'ymaslik
   let wakeLockSentinel = null;
@@ -911,8 +915,9 @@ document.addEventListener('DOMContentLoaded', function () {
 
   function showDeepLock() {
     if (isDeepLocked) return;
-    // Faqat taymer rejimida ishlaydi (no-timer rejimida emas)
+    // Faqat taymer rejimida ishlaydi (no-timer rejimida emas); dam fazasida qulflamaydi
     if (mode !== 'timer' && mode !== 'pomodoro') return;
+    if (phase === 'break') return;
     isDeepLocked = true;
     deepLockOverlay.style.display = 'flex';
     // Sync current time

@@ -148,7 +148,9 @@
         r.push({ id: REMIND_ID, time: REMIND_TIME, text: '📖 ' + yr + ' ' + T('orzular.remind_card', 'orzularingizni o\'qing') });
         saveReminders(r);
         syncRemindBtn();
-        if (window.PushReminders && !PushReminders.isEnabled()) PushReminders.enable();
+        if (window.PushReminders) PushReminders.enable().then(function (res) {
+          if (!(res && res.ok)) alert(T('orzular.push_denied', "Eslatma saqlandi. Telefon bildirishnomasi uchun ruxsat bering."));
+        });
       }
     });
 

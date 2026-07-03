@@ -97,8 +97,8 @@
     function saveThawed(t) { try { localStorage.setItem('mvow.thawedDays', JSON.stringify(t)); } catch (e) {} }
     function loadSpent() { try { var s = JSON.parse(localStorage.getItem('mvow.makeupSpent') || 'null'); return (s && s.d) ? s : { d: '', n: 0 }; } catch (e) { return { d: '', n: 0 }; } }
     function saveSpent(s) { try { localStorage.setItem('mvow.makeupSpent', JSON.stringify(s)); } catch (e) {} }
-    function computeFrozen(byDay, thawed) {
-      var dates = Object.keys(byDay); if (!dates.length) return [];
+    function computeFrozen(byCount, thawed) {
+      var dates = Object.keys(byCount); if (!dates.length) return [];
       dates.sort();
       var firstTime = new Date(dates[0] + 'T00:00:00').getTime();
       var today = new Date(); today.setHours(0, 0, 0, 0);
@@ -106,7 +106,7 @@
       var frozen = [], d = new Date(startTime); d.setHours(0, 0, 0, 0);
       while (d.getTime() < today.getTime()) {                                 // bugundan tashqari
         var iso = isoOf(d);
-        if (!(byDay[iso] > 0) && thawed.indexOf(iso) < 0) frozen.push(iso);
+        if (!(byCount[iso] > 0) && thawed.indexOf(iso) < 0) frozen.push(iso);
         d.setDate(d.getDate() + 1);
       }
       return frozen;
@@ -118,10 +118,10 @@
       var byDay = {}, byCount = {};
       hist.forEach(function (h) { if (h.dateIso) { byDay[h.dateIso] = (byDay[h.dateIso] || 0) + (h.actualMins || 0); byCount[h.dateIso] = (byCount[h.dateIso] || 0) + 1; } });
       var thawed = loadThawed();
-      function active(iso) { return (byDay[iso] || 0) > 0 || thawed.indexOf(iso) >= 0; }
+      function active(iso) { return (byCount[iso] || 0) > 0 || thawed.indexOf(iso) >= 0; }   // bajarilish SONI (daqiqa emas — taymersiz ham sanaladi)
       var d = new Date(); if (!active(isoOf(d))) d.setDate(d.getDate() - 1);
       var st = 0; while (active(isoOf(d))) { st++; d.setDate(d.getDate() - 1); }
-      return { N: hist.length, focusH: Math.round(mins / 60 * 10) / 10, streak: st, byDay: byDay, byCount: byCount, thawed: thawed, frozen: computeFrozen(byDay, thawed) };
+      return { N: hist.length, focusH: Math.round(mins / 60 * 10) / 10, streak: st, byDay: byDay, byCount: byCount, thawed: thawed, frozen: computeFrozen(byCount, thawed) };
     }
     function renderWeek(s) {
       var el = document.getElementById('week'); if (!el) return;
@@ -132,7 +132,7 @@
       for (var i = 0; i < 7; i++) {
         var d = new Date(mon); d.setDate(mon.getDate() + i);
         var iso = isoOf(d), isToday = iso === todayIso;
-        var on = (s.byDay[iso] || 0) > 0 || s.thawed.indexOf(iso) >= 0;
+        var on = (s.byCount[iso] || 0) > 0 || s.thawed.indexOf(iso) >= 0;
         var frozen = s.frozen.indexOf(iso) >= 0;
         var mark = on ? '🔥' : (frozen ? '❄️' : '');
         html += '<div class="wd"><div class="dot' + (on ? ' on' : '') + (frozen ? ' frozen' : '') + (isToday ? ' today' : '') + '">' + mark + '</div>'

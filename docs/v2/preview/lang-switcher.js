@@ -118,6 +118,9 @@
   // Har sahifada til tugmasi YONIGA (chapiga) Do'stlar + Sovrinlar ikonkalari
   function buildQuickNav() {
     if (document.getElementById('mvow-quicknav')) return;
+    // Onboarding (tanishuv) ekranlarida ijtimoiy ikonkalar chiqmasin — toza birinchi taassurot
+    var _f = (location.pathname.split('/').pop() || '').toLowerCase();
+    if (['intro.html', 'anketa.html', 'vada.html', 'welcome.html', 'index.html', ''].indexOf(_f) >= 0) return;
     var qn = document.createElement('div');
     qn.id = 'mvow-quicknav';
     qn.style.cssText = 'position:fixed;z-index:99991;display:flex;gap:8px;';
