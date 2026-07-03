@@ -45,6 +45,12 @@ jobs:
           printf '{"jdkPath":"%s","androidSdkPath":"%s"}\n' "$JAVA_HOME" "$ANDROID_HOME" > ~/.bubblewrap/config.json
           cat ~/.bubblewrap/config.json
 
+      - name: Install Android SDK components
+        run: |
+          yes | sdkmanager --licenses >/dev/null 2>&1 || true
+          sdkmanager "platform-tools" "platforms;android-33" "platforms;android-34" "build-tools;34.0.0" >/dev/null 2>&1 || true
+          echo "SDK components installed"
+
       - name: Generate signing keystore (demo)
         working-directory: twa
         run: |
@@ -57,9 +63,10 @@ jobs:
       - name: Build signed APK
         working-directory: twa
         run: |
-          yes | sdkmanager --licenses >/dev/null 2>&1 || true
-          # bubblewrap build twa-manifest.json'dan loyihani generatsiya qiladi; parollar stdin'dan (yes = har promptga parol)
-          yes 'focusai2026' | bubblewrap build --skipPwaValidation
+          bubblewrap doctor || true
+          # bubblewrap build twa-manifest.json'dan Android loyihani generatsiya qiladi va imzolaydi.
+          # Parollar stdin'dan: keystore paroli + kalit paroli (bir necha promptga chidamli).
+          printf 'focusai2026\nfocusai2026\nfocusai2026\nfocusai2026\n' | bubblewrap build --skipPwaValidation
           echo "--- qurilgan fayllar ---"
           find . -name "*.apk" | sort
 
