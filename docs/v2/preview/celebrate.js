@@ -89,6 +89,35 @@
     } catch (e) {}
   }
 
+  // ── Tanga (🪙) va Olmos (💎): har vazifaga 1 tanga; kunlik hamma vazifa bajarilsa 1 olmos ──
+  function walNum(k) { try { return parseInt(localStorage.getItem(k), 10) || 0; } catch (e) { return 0; } }
+  function walSet(k, v) { try { localStorage.setItem(k, String(v)); } catch (e) {} }
+  function allTasksDone() {
+    try {
+      if (!root.MVOW_DATA || !root.MVOW_DATA.getTodayPlan) return false;
+      var plan = root.MVOW_DATA.getTodayPlan() || [];
+      if (!plan.length) return false;
+      var done = root.MVOW_DATA.getCompletedKeysToday ? root.MVOW_DATA.getCompletedKeysToday() : null;
+      if (!done) return false;
+      for (var i = 0; i < plan.length; i++) {
+        var t = plan[i]; if (!t || !t.name) continue;
+        var k = t.time ? root.MVOW_DATA.taskKey(root.MVOW_DATA.today.iso, t.time, t.name) : '';
+        if (!k || !done.has(k)) return false;
+      }
+      return true;
+    } catch (e) { return false; }
+  }
+  function awardCoins() {
+    var coins = walNum('mvow.coins') + 1; walSet('mvow.coins', coins);
+    var gotDiamond = false, today = isoOf(new Date());
+    if (allTasksDone() && localStorage.getItem('mvow.diamondDay') !== today) {
+      walSet('mvow.diamonds', walNum('mvow.diamonds') + 1);
+      try { localStorage.setItem('mvow.diamondDay', today); } catch (e) {}
+      gotDiamond = true;
+    }
+    return { coins: coins, diamonds: walNum('mvow.diamonds'), gotDiamond: gotDiamond };
+  }
+
   // ── KONFETTI + SALYUT (canvas) ──
   function runConfetti(canvas, ms) {
     var ctx = canvas.getContext('2d');
@@ -135,7 +164,8 @@
     var fresh = (opts.checkMedals === false) ? [] : newlyUnlocked();
     var st = stats();
     var lvUp = (opts.checkMedals === false) ? null : newLevel();
-    var big = !!(fresh.length || lvUp);
+    var coin = (opts.checkMedals === false) ? null : awardCoins();
+    var big = !!(fresh.length || lvUp || (coin && coin.gotDiamond));
     maybePraise();
     if (typeof document === 'undefined' || !document.body) { if (opts.onClose) opts.onClose(); return; }
 
@@ -157,12 +187,14 @@
     }
     var streakHtml = (st.streak >= 2) ? '<div style="margin-top:14px;display:inline-flex;align-items:center;gap:8px;background:rgba(244,132,95,.16);border:1px solid rgba(244,132,95,.4);border-radius:999px;padding:8px 16px;font-size:15px;font-weight:700;color:#F4845F;">🔥 ' + st.streak + ' ' + T('celebrate.streak_unit', 'kun ketma-ket') + '</div>' : '';
     var levelHtml = lvUp ? '<div style="margin-top:16px;background:linear-gradient(135deg,rgba(110,181,255,.18),rgba(232,130,180,.12));border:1px solid rgba(110,181,255,.35);border-radius:16px;padding:14px 18px;"><div style="font-size:36px;line-height:1;">' + lvUp.ic + '</div><div style="font-size:16px;font-weight:800;color:#fff;margin-top:4px;">' + levelName(lvUp) + ' ' + T('celebrate.level_up', 'darajasiga chiqdingiz!') + '</div></div>' : '';
+    var coinHtml = coin ? '<div style="margin-top:14px;display:inline-flex;align-items:center;gap:6px;background:rgba(245,194,107,.16);border:1px solid rgba(245,194,107,.4);border-radius:999px;padding:8px 16px;font-size:15px;font-weight:700;color:#F5C26B;">+1 🪙 · ' + coin.coins + ' 🪙</div>' : '';
+    var diamondHtml = (coin && coin.gotDiamond) ? '<div style="margin-top:16px;background:linear-gradient(135deg,rgba(110,181,255,.22),rgba(200,230,255,.12));border:1px solid rgba(110,181,255,.45);border-radius:16px;padding:14px 18px;"><div style="font-size:40px;line-height:1;">💎</div><div style="font-size:16px;font-weight:800;color:#fff;margin-top:4px;">' + T('celebrate.all_done', 'Hamma vazifa bajarildi!') + ' +1 💎</div></div>' : '';
     var title = fresh.length ? T('celebrate.medal_title', 'Yangi medal ochildi!') : T('celebrate.done_title', "Zo'r! Bajarildi");
     var sub = fresh.length ? T('celebrate.medal_sub', 'Ajoyib natija — davom eting') : T('celebrate.done_sub', 'Yana bir qadam maqsad sari');
     ov.innerHTML = '<div style="font-size:66px;line-height:1;animation:celPop .5s cubic-bezier(.16,.84,.32,1);">🎉</div>'
       + '<div style="font-family:Inter,sans-serif;font-size:26px;font-weight:800;color:#fff;margin-top:10px;">' + title + '</div>'
       + '<div style="font-size:15px;color:#B8BBC2;margin-top:6px;">' + sub + '</div>'
-      + streakHtml + levelHtml + medalHtml
+      + streakHtml + coinHtml + levelHtml + diamondHtml + medalHtml
       + '<button id="celClose" type="button" style="margin-top:26px;padding:14px 44px;border:none;border-radius:999px;background:linear-gradient(135deg,#F4845F,#d9663c);color:#fff;font-size:16px;font-weight:700;letter-spacing:1px;cursor:pointer;font-family:Inter,sans-serif;">' + T('celebrate.continue', 'Davom') + '</button>';
 
     if (!document.getElementById('celKeyframes')) {

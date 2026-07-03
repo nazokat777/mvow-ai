@@ -905,7 +905,8 @@
         new_medal: 'Yangi medal',
         continue: 'Davom',
         streak_unit: 'kun ketma-ket',
-        level_up: 'darajasiga chiqdingiz!'
+        level_up: 'darajasiga chiqdingiz!',
+        all_done: 'Hamma vazifa bajarildi!'
       },
       orzular: {
         title: 'Orzular daftari',
@@ -1873,7 +1874,8 @@
         new_medal: 'Новая медаль',
         continue: 'Далее',
         streak_unit: 'дней подряд',
-        level_up: 'уровень достигнут!'
+        level_up: 'уровень достигнут!',
+        all_done: 'Все задачи выполнены!'
       },
       orzular: {
         title: 'Дневник мечт',
@@ -2841,7 +2843,8 @@
         new_medal: 'New medal',
         continue: 'Continue',
         streak_unit: 'day streak',
-        level_up: 'level reached!'
+        level_up: 'level reached!',
+        all_done: 'All tasks done!'
       },
       orzular: {
         title: 'Dream journal',
