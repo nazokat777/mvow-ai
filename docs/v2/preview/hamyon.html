@@ -1,0 +1,323 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+<title>FOCUS AI — Hamyon</title>
+<link rel="manifest" href="manifest.webmanifest">
+<meta name="theme-color" content="#04060B">
+<link rel="apple-touch-icon" href="assets/mnsm-logo.png?v=2">
+<link rel="icon" type="image/png" href="assets/mnsm-logo.png?v=2">
+<link rel="stylesheet" href="theme.css">
+<style>
+  * { box-sizing: border-box; }
+  body { margin: 0; font-family: 'Inter', sans-serif; background: var(--void, #04060B); color: var(--text, #F5F2EC); }
+  .phone { max-width: 480px; margin: 0 auto; min-height: 100vh; background: var(--void, #04060B); padding: 26px 18px 60px; }
+  h1 { font-size: 30px; margin: 6px 0 2px; }
+  .sub { color: var(--text-dim, #9CA0A8); font-size: 14px; margin-bottom: 18px; }
+
+  .bal { background: linear-gradient(135deg, rgba(107,191,122,.14), rgba(110,181,255,.08)); border: 1px solid rgba(107,191,122,.28); border-radius: 18px; padding: 18px 18px 16px; margin-bottom: 16px; }
+  .bal .k { font-size: 12px; letter-spacing: 2px; text-transform: uppercase; color: var(--text-dim, #9CA0A8); font-weight: 700; }
+  .bal .v { font-family: 'Inter', sans-serif; font-size: 34px; font-weight: 800; margin-top: 2px; line-height: 1.1; }
+  .bal .v .u { font-size: 16px; font-weight: 600; color: var(--text-dim, #9CA0A8); }
+  .bal .split { display: flex; gap: 10px; margin-top: 14px; }
+  .chip { flex: 1; background: rgba(255,255,255,.05); border: 1px solid var(--border-default, rgba(255,255,255,.10)); border-radius: 12px; padding: 10px 12px; }
+  .chip .ck { font-size: 11px; letter-spacing: 1px; text-transform: uppercase; color: var(--text-dim, #9CA0A8); }
+  .chip .cv { font-size: 16px; font-weight: 700; margin-top: 2px; }
+  .free { margin-top: 12px; font-size: 13px; color: var(--text-dim, #9CA0A8); }
+  .free b { color: var(--text, #F5F2EC); }
+  .free.neg b { color: #FF7A7A; }
+
+  .sec { margin-top: 20px; }
+  .sec-hd { display: flex; align-items: center; justify-content: space-between; margin: 0 2px 8px; }
+  .sec-hd .t { font-size: 14px; letter-spacing: 1px; text-transform: uppercase; font-weight: 800; }
+  .sec-hd .t.g { color: #6BBF7A; } .sec-hd .t.a { color: #F5C26B; } .sec-hd .t.r { color: #FF7A7A; } .sec-hd .t.b { color: #6EB5FF; }
+  .sec-hd .tot { font-size: 15px; font-weight: 700; color: var(--text, #F5F2EC); }
+  .addb { border: none; border-radius: 999px; padding: 7px 14px; font-size: 13px; font-weight: 700; cursor: pointer; font-family: inherit; color: #04060B; }
+  .addb.g { background: #6BBF7A; } .addb.r { background: #FF7A7A; } .addb.b { background: #6EB5FF; }
+  .item { display: flex; align-items: center; gap: 10px; background: var(--card, #0C0F16); border: 1px solid var(--border-default, rgba(255,255,255,.10)); border-radius: 12px; padding: 12px 14px; margin-top: 8px; }
+  .item .nm { flex: 1; min-width: 0; }
+  .item .nm .n1 { font-size: 15px; font-weight: 600; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .item .nm .n2 { font-size: 12px; color: var(--text-dim, #9CA0A8); margin-top: 2px; }
+  .item .amt { font-size: 15px; font-weight: 800; flex-shrink: 0; }
+  .item .amt.g { color: #6BBF7A; } .item .amt.a { color: #F5C26B; } .item .amt.r { color: #FF7A7A; } .item .amt.b { color: #6EB5FF; }
+  .item .x { background: none; border: none; color: var(--text-dim, #9CA0A8); font-size: 20px; cursor: pointer; flex-shrink: 0; line-height: 1; }
+  .empty { color: var(--text-dim, #9CA0A8); font-size: 14px; padding: 8px 4px; }
+  .tag { display: inline-block; font-size: 11px; font-weight: 700; padding: 1px 7px; border-radius: 6px; margin-left: 6px; vertical-align: middle; }
+  .tag.card { background: rgba(110,181,255,.16); color: #6EB5FF; } .tag.cash { background: rgba(107,191,122,.16); color: #6BBF7A; }
+
+  .ov { display: none; position: fixed; inset: 0; z-index: 9998; background: rgba(0,0,0,.6); align-items: flex-end; justify-content: center; padding: 0; }
+  .ov.show { display: flex; }
+  .sheet { width: 100%; max-width: 480px; background: var(--card, #11151E); border-radius: 20px 20px 0 0; padding: 22px 18px calc(22px + env(safe-area-inset-bottom, 0px)); border-top: 1px solid var(--border-default, rgba(255,255,255,.12)); }
+  .sheet h2 { font-size: 20px; margin-bottom: 14px; }
+  .lbl { font-size: 12px; letter-spacing: 1px; text-transform: uppercase; color: var(--text-dim, #9CA0A8); font-weight: 700; margin: 12px 2px 6px; display: block; }
+  .fld { width: 100%; padding: 13px; background: var(--void, #0C0F16); border: 1px solid var(--border-default, rgba(255,255,255,.12)); border-radius: 12px; color: var(--text, #F5F2EC); font-size: 16px; font-family: inherit; }
+  .amtrow { display: flex; gap: 8px; }
+  .amtrow .fld { flex: 1; }
+  .seg { display: flex; gap: 6px; }
+  .seg button { flex: 1; padding: 11px; border-radius: 10px; border: 1px solid var(--border-default, rgba(255,255,255,.14)); background: transparent; color: var(--text-mid, #B8BBC2); font-size: 14px; font-weight: 600; cursor: pointer; font-family: inherit; }
+  .seg button.on { background: var(--accent, #F4845F); border-color: var(--accent, #F4845F); color: #fff; }
+  .preview { font-size: 13px; color: var(--text-dim, #9CA0A8); margin-top: 6px; min-height: 16px; }
+  .row2 { display: flex; gap: 10px; margin-top: 18px; }
+  .btn { flex: 1; padding: 14px; border-radius: 12px; font-size: 16px; font-weight: 700; cursor: pointer; font-family: inherit; border: none; }
+  .btn.cancel { background: transparent; border: 1px solid var(--border-default, rgba(255,255,255,.15)); color: var(--text-mid, #B8BBC2); }
+  .btn.save { background: var(--accent, #F4845F); color: #fff; }
+</style>
+</head>
+<body>
+<div class="phone">
+  <h1 data-i18n="wallet.title">Hamyon</h1>
+  <div class="sub" data-i18n="wallet.sub">Pul kirim-chiqim va rejalar</div>
+
+  <div class="bal">
+    <div class="k" data-i18n="wallet.balance">Qoldiq</div>
+    <div class="v" id="balV">0 <span class="u" data-i18n="wallet.som">so'm</span></div>
+    <div class="split">
+      <div class="chip"><div class="ck" data-i18n="wallet.card">Plastik</div><div class="cv" id="cardV">0</div></div>
+      <div class="chip"><div class="ck" data-i18n="wallet.cash">Naqd</div><div class="cv" id="cashV">0</div></div>
+    </div>
+    <div class="free" id="freeRow"></div>
+  </div>
+
+  <div class="sec">
+    <div class="sec-hd"><span class="t g" data-i18n="wallet.in_received">Kirgan pul</span><span class="tot" id="totIn">0</span></div>
+    <div id="listIn"></div>
+    <div style="margin-top:8px;text-align:right;"><button class="addb g" data-add="in" data-i18n="wallet.add_in">+ Kirim</button></div>
+  </div>
+
+  <div class="sec">
+    <div class="sec-hd"><span class="t a" data-i18n="wallet.in_expected">Kutilayotgan pul</span><span class="tot" id="totExp">0</span></div>
+    <div id="listExp"></div>
+    <div style="margin-top:8px;text-align:right;"><button class="addb g" data-add="exp-in" style="background:#F5C26B;" data-i18n="wallet.add_expected">+ Kutilayotgan</button></div>
+  </div>
+
+  <div class="sec">
+    <div class="sec-hd"><span class="t r" data-i18n="wallet.spent">Ishlatilgan</span><span class="tot" id="totSpent">0</span></div>
+    <div id="listSpent"></div>
+    <div style="margin-top:8px;text-align:right;"><button class="addb r" data-add="spend" data-i18n="wallet.add_exp">+ Rasxod</button></div>
+  </div>
+
+  <div class="sec">
+    <div class="sec-hd"><span class="t b" data-i18n="wallet.planned">Rejalangan rasxodlar</span><span class="tot" id="totPlan">0</span></div>
+    <div id="listPlan"></div>
+    <div style="margin-top:8px;text-align:right;"><button class="addb b" data-add="plan" data-i18n="wallet.add_plan">+ Reja</button></div>
+  </div>
+</div>
+
+<div class="ov" id="ov">
+  <div class="sheet">
+    <h2 id="ovTitle">—</h2>
+    <label class="lbl" data-i18n="wallet.amount">Summa</label>
+    <div class="amtrow">
+      <input id="fAmount" class="fld" type="number" inputmode="numeric" min="0" step="any" placeholder="0">
+      <select id="fUnit" class="fld" style="flex:0 0 100px;">
+        <option value="1000000" data-i18n="wallet.unit_mln">mln</option>
+        <option value="1000" data-i18n="wallet.unit_ming">ming</option>
+        <option value="1" data-i18n="wallet.unit_som">so'm</option>
+      </select>
+    </div>
+    <div class="preview" id="fPreview"></div>
+
+    <div id="rowName">
+      <label class="lbl" id="fNameLbl">—</label>
+      <input id="fName" class="fld" maxlength="60" placeholder="">
+    </div>
+
+    <div id="rowMethod">
+      <label class="lbl" data-i18n="wallet.method">Turi</label>
+      <div class="seg">
+        <button type="button" id="mCard" data-i18n="wallet.card">Plastik</button>
+        <button type="button" id="mCash" data-i18n="wallet.cash">Naqd</button>
+      </div>
+    </div>
+
+    <div id="rowWeeks" style="display:none;">
+      <label class="lbl" data-i18n="wallet.weeks">Necha haftaga bo'lib</label>
+      <input id="fWeeks" class="fld" type="number" inputmode="numeric" min="1" max="52" step="1" value="4">
+      <div class="preview" id="fWeekPreview"></div>
+    </div>
+
+    <div class="row2">
+      <button class="btn cancel" id="ovCancel" data-i18n="wallet.cancel">Bekor</button>
+      <button class="btn save" id="ovSave" data-i18n="wallet.save">Saqlash</button>
+    </div>
+  </div>
+</div>
+
+<script src="i18n.js?v=29.0.31"></script>
+<script src="lang-switcher.js?v=29.0.31" defer></script>
+<script src="data.js?v=29.0.31" defer></script>
+<script src="nav-overlay.js?v=29.0.31" defer></script>
+<script>
+  (function () {
+    function T(k, fb) { return (window.I18N && I18N.t) ? I18N.t(k, fb) : fb; }
+    function esc(s) { return String(s == null ? '' : s).replace(/[&<>"]/g, function (c) { return ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]); }); }
+    function fmt(n) {
+      n = Math.round(Number(n) || 0);
+      var neg = n < 0; n = Math.abs(n);
+      var s = String(n).replace(/\B(?=(\d{3})+(?!\d))/g, ' ');
+      return (neg ? '−' : '') + s;
+    }
+    var SOM = function () { return T('wallet.som', "so'm"); };
+
+    function load() {
+      var d = null;
+      try { d = JSON.parse(localStorage.getItem('mvow.wallet') || 'null'); } catch (e) {}
+      if (!d || typeof d !== 'object') d = {};
+      if (!Array.isArray(d.incomes)) d.incomes = [];
+      if (!Array.isArray(d.expenses)) d.expenses = [];
+      if (!Array.isArray(d.planned)) d.planned = [];
+      return d;
+    }
+    function save(d) { try { localStorage.setItem('mvow.wallet', JSON.stringify(d)); } catch (e) {} }
+
+    function num(x) { var n = Number(x); return isFinite(n) ? n : 0; }
+
+    function compute(d) {
+      var recIn = 0, expIn = 0, spent = 0, planned = 0, cardBal = 0, cashBal = 0;
+      d.incomes.forEach(function (i) {
+        var a = num(i.amount);
+        if (i.expected) { expIn += a; }
+        else { recIn += a; if (i.method === 'cash') cashBal += a; else cardBal += a; }
+      });
+      d.expenses.forEach(function (e) {
+        var a = num(e.amount); spent += a;
+        if (e.method === 'cash') cashBal -= a; else cardBal -= a;
+      });
+      d.planned.forEach(function (p) { planned += num(p.amount); });
+      return { recIn: recIn, expIn: expIn, spent: spent, planned: planned, balance: recIn - spent, free: recIn - spent - planned, cardBal: cardBal, cashBal: cashBal };
+    }
+
+    function itemRow(text, sub, amount, cls, delAttr) {
+      return '<div class="item"><div class="nm"><div class="n1">' + esc(text || '—') + '</div>'
+        + (sub ? '<div class="n2">' + sub + '</div>' : '')
+        + '</div><div class="amt ' + cls + '">' + fmt(amount) + '</div>'
+        + '<button class="x" ' + delAttr + ' aria-label="o\'chirish">×</button></div>';
+    }
+    function methodTag(m) {
+      return m === 'cash' ? '<span class="tag cash">' + T('wallet.cash', 'Naqd') + '</span>' : '<span class="tag card">' + T('wallet.card', 'Plastik') + '</span>';
+    }
+
+    function render() {
+      var d = load(), c = compute(d);
+      document.getElementById('balV').innerHTML = fmt(c.balance) + ' <span class="u">' + SOM() + '</span>';
+      document.getElementById('cardV').textContent = fmt(c.cardBal);
+      document.getElementById('cashV').textContent = fmt(c.cashBal);
+      var freeRow = document.getElementById('freeRow');
+      freeRow.className = 'free' + (c.free < 0 ? ' neg' : '');
+      freeRow.innerHTML = T('wallet.free', 'Reja ayirilgach erkin') + ': <b>' + fmt(c.free) + ' ' + SOM() + '</b>';
+
+      document.getElementById('totIn').textContent = fmt(c.recIn) + ' ' + SOM();
+      document.getElementById('totExp').textContent = fmt(c.expIn) + ' ' + SOM();
+      document.getElementById('totSpent').textContent = fmt(c.spent) + ' ' + SOM();
+      document.getElementById('totPlan').textContent = fmt(c.planned) + ' ' + SOM();
+
+      var received = d.incomes.filter(function (i) { return !i.expected; });
+      var expected = d.incomes.filter(function (i) { return i.expected; });
+      document.getElementById('listIn').innerHTML = received.length
+        ? received.map(function (i) { return itemRow(i.source, methodTag(i.method), i.amount, 'g', 'data-del="inc:' + i.id + '"'); }).join('')
+        : '<div class="empty">' + T('wallet.empty_in', "Hali kirim yo'q") + '</div>';
+      document.getElementById('listExp').innerHTML = expected.length
+        ? expected.map(function (i) { return itemRow(i.source, methodTag(i.method), i.amount, 'a', 'data-del="inc:' + i.id + '"'); }).join('')
+        : '<div class="empty">' + T('wallet.empty_expected', 'Hali yo\'q') + '</div>';
+      document.getElementById('listSpent').innerHTML = d.expenses.length
+        ? d.expenses.map(function (e) { return itemRow(e.cat, methodTag(e.method), -Math.abs(num(e.amount)), 'r', 'data-del="exp:' + e.id + '"'); }).join('')
+        : '<div class="empty">' + T('wallet.empty_exp', "Hali rasxod yo'q") + '</div>';
+      document.getElementById('listPlan').innerHTML = d.planned.length
+        ? d.planned.map(function (p) {
+            var w = Math.max(1, parseInt(p.weeks, 10) || 1);
+            var per = num(p.amount) / w;
+            var sub = fmt(per) + ' ' + SOM() + ' · ' + w + ' ' + T('wallet.weeks_short', 'hafta') + ' (' + T('wallet.per_week', 'haftasiga') + ')';
+            return itemRow(p.cat, sub, p.amount, 'b', 'data-del="plan:' + p.id + '"');
+          }).join('')
+        : '<div class="empty">' + T('wallet.empty_plan', "Hali reja yo'q") + '</div>';
+
+      document.querySelectorAll('[data-del]').forEach(function (b) {
+        b.addEventListener('click', function () { del(b.getAttribute('data-del')); });
+      });
+    }
+
+    function del(token) {
+      var d = load(), p = token.split(':'), kind = p[0], id = p.slice(1).join(':');
+      if (kind === 'inc') d.incomes = d.incomes.filter(function (x) { return String(x.id) !== id; });
+      else if (kind === 'exp') d.expenses = d.expenses.filter(function (x) { return String(x.id) !== id; });
+      else if (kind === 'plan') d.planned = d.planned.filter(function (x) { return String(x.id) !== id; });
+      save(d);
+      if (window.MVOW_DATA && MVOW_DATA.fxTap) MVOW_DATA.fxTap();
+      render();
+    }
+
+    // ── Qo'shish oynasi (sheet) ──
+    var ov = document.getElementById('ov');
+    var fAmount = document.getElementById('fAmount'), fUnit = document.getElementById('fUnit');
+    var fName = document.getElementById('fName'), fNameLbl = document.getElementById('fNameLbl');
+    var fWeeks = document.getElementById('fWeeks');
+    var rowMethod = document.getElementById('rowMethod'), rowWeeks = document.getElementById('rowWeeks');
+    var mCard = document.getElementById('mCard'), mCash = document.getElementById('mCash');
+    var curType = null, curMethod = 'card';
+
+    function calcAmount() { return Math.round(num(fAmount.value) * num(fUnit.value)); } // butun so'm — float chang saqlanmasin
+    function updatePreview() {
+      var a = calcAmount();
+      document.getElementById('fPreview').textContent = a > 0 ? ('= ' + fmt(a) + ' ' + SOM()) : '';
+      if (rowWeeks.style.display !== 'none') {
+        var w = Math.max(1, parseInt(fWeeks.value, 10) || 1);
+        document.getElementById('fWeekPreview').textContent = a > 0 ? (T('wallet.per_week', 'haftasiga') + ': ' + fmt(a / w) + ' ' + SOM()) : '';
+      }
+    }
+    function setMethod(m) { curMethod = m; mCard.classList.toggle('on', m === 'card'); mCash.classList.toggle('on', m === 'cash'); }
+
+    function openSheet(type) {
+      curType = type; setMethod('card');
+      fAmount.value = ''; fName.value = ''; fWeeks.value = '4';
+      document.getElementById('fPreview').textContent = ''; document.getElementById('fWeekPreview').textContent = '';
+      var titles = { 'in': T('wallet.add_in', '+ Kirim'), 'exp-in': T('wallet.add_expected', '+ Kutilayotgan'), 'spend': T('wallet.add_exp', '+ Rasxod'), 'plan': T('wallet.add_plan', '+ Reja') };
+      document.getElementById('ovTitle').textContent = titles[type] || '';
+      // name label + placeholder
+      if (type === 'in' || type === 'exp-in') { fNameLbl.textContent = T('wallet.source_lbl', 'Manba'); fName.placeholder = T('wallet.source_ph', 'mas. oylik'); }
+      else if (type === 'spend') { fNameLbl.textContent = T('wallet.cat_lbl', 'Nima uchun'); fName.placeholder = T('wallet.cat_ph', 'mas. maktab to\'lovi'); }
+      else { fNameLbl.textContent = T('wallet.plan_lbl', 'Reja nomi'); fName.placeholder = T('wallet.plan_ph', 'mas. haftalik xarajat'); }
+      rowMethod.style.display = (type === 'plan') ? 'none' : '';
+      rowWeeks.style.display = (type === 'plan') ? '' : 'none';
+      ov.classList.add('show');
+      setTimeout(function () { fAmount.focus(); }, 80);
+    }
+    function closeSheet() { ov.classList.remove('show'); curType = null; }
+
+    function saveSheet() {
+      var a = calcAmount();
+      if (!(a > 0)) { fAmount.focus(); return; }
+      var name = fName.value.trim();
+      var d = load(), id = String(Date.now()) + Math.floor(Math.random() * 999);
+      if (curType === 'in' || curType === 'exp-in') {
+        d.incomes.push({ id: id, amount: a, source: name, method: curMethod, expected: (curType === 'exp-in') });
+      } else if (curType === 'spend') {
+        d.expenses.push({ id: id, amount: a, cat: name, method: curMethod });
+      } else if (curType === 'plan') {
+        var w = Math.max(1, Math.min(52, parseInt(fWeeks.value, 10) || 1));
+        d.planned.push({ id: id, amount: a, cat: name, weeks: w });
+      }
+      save(d);
+      if (window.MVOW_DATA && MVOW_DATA.fxSuccess) MVOW_DATA.fxSuccess();
+      closeSheet(); render();
+    }
+
+    fAmount.addEventListener('input', updatePreview);
+    fUnit.addEventListener('change', updatePreview);
+    fWeeks.addEventListener('input', updatePreview);
+    mCard.addEventListener('click', function () { setMethod('card'); });
+    mCash.addEventListener('click', function () { setMethod('cash'); });
+    document.getElementById('ovCancel').addEventListener('click', closeSheet);
+    document.getElementById('ovSave').addEventListener('click', saveSheet);
+    ov.addEventListener('click', function (e) { if (e.target === ov) closeSheet(); });
+    document.querySelectorAll('[data-add]').forEach(function (b) {
+      b.addEventListener('click', function () { openSheet(b.getAttribute('data-add')); });
+    });
+
+    try { document.title = T('wallet.page_title', 'FOCUS AI — Hamyon'); } catch (e) {}
+    render();
+  })();
+</script>
+<script src="back-btn.js?v=29.0.31"></script>
+</body>
+</html>

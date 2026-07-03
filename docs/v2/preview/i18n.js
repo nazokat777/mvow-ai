@@ -916,6 +916,18 @@
         remind_on: 'Eslatib turiladi ✓',
         remind_card: "orzularingizni o'qing"
       },
+      wallet: {
+        page_title: "{brand} — Hamyon", title: "Hamyon", sub: "Pul kirim-chiqim va rejalar",
+        balance: "Qoldiq", som: "so'm", card: "Plastik", cash: "Naqd", free: "Reja ayirilgach erkin",
+        in_received: "Kirgan pul", in_expected: "Kutilayotgan pul", spent: "Ishlatilgan", planned: "Rejalangan rasxodlar",
+        add_in: "+ Kirim", add_expected: "+ Kutilayotgan", add_exp: "+ Rasxod", add_plan: "+ Reja",
+        amount: "Summa", unit_mln: "mln", unit_ming: "ming", unit_som: "so'm",
+        method: "Turi", weeks: "Necha haftaga bo'lib", weeks_short: "hafta", per_week: "haftasiga",
+        source_lbl: "Manba", source_ph: "mas. oylik", cat_lbl: "Nima uchun", cat_ph: "mas. maktab to'lovi",
+        plan_lbl: "Reja nomi", plan_ph: "mas. haftalik xarajat",
+        empty_in: "Hali kirim yo'q", empty_expected: "Hali yo'q", empty_exp: "Hali rasxod yo'q", empty_plan: "Hali reja yo'q",
+        save: "Saqlash", cancel: "Bekor"
+      },
       about: {
         what_lbl: 'Nima bu?',
         what_text: "Bu ilov sizga kunlik rejani tuzish, fokus paytida chalg'imaslik va har kuni bitta qadam tashlashda yordam beradi. Do'st — sizning intizom do'stingiz.",
@@ -962,6 +974,7 @@
         row_alarm: 'Budilnik',
         row_reminders: 'Eslatmalar',
         row_dreams: 'Orzular daftari',
+        row_wallet: 'Hamyon',
         row_hardlock: 'Fokus taymeri',
         row_session: 'Bajardim',
         row_evening: 'Kun yakuni',
@@ -1864,6 +1877,18 @@
         remind_on: 'Напоминание включено ✓',
         remind_card: 'перечитайте свои мечты'
       },
+      wallet: {
+        page_title: "{brand} — Кошелёк", title: "Кошелёк", sub: "Доходы, расходы и планы",
+        balance: "Остаток", som: "сум", card: "Карта", cash: "Наличные", free: "Свободно после плана",
+        in_received: "Поступило", in_expected: "Ожидается", spent: "Потрачено", planned: "Плановые расходы",
+        add_in: "+ Доход", add_expected: "+ Ожидается", add_exp: "+ Расход", add_plan: "+ План",
+        amount: "Сумма", unit_mln: "млн", unit_ming: "тыс", unit_som: "сум",
+        method: "Тип", weeks: "На сколько недель", weeks_short: "нед.", per_week: "в неделю",
+        source_lbl: "Источник", source_ph: "напр. зарплата", cat_lbl: "На что", cat_ph: "напр. оплата школы",
+        plan_lbl: "Название плана", plan_ph: "напр. недельные расходы",
+        empty_in: "Пока нет доходов", empty_expected: "Пока нет", empty_exp: "Пока нет расходов", empty_plan: "Пока нет планов",
+        save: "Сохранить", cancel: "Отмена"
+      },
       about: {
         what_lbl: 'Что это?',
         what_text: 'Это приложение поможет вам составить дневной план, не отвлекаться во время фокуса и каждый день делать один шаг. Друг — ваш друг по дисциплине.',
@@ -1910,6 +1935,7 @@
         row_alarm: 'Будильник',
         row_reminders: 'Напоминания',
         row_dreams: 'Дневник мечт',
+        row_wallet: 'Кошелёк',
         row_hardlock: 'Таймер фокуса',
         row_session: 'Сделано',
         row_evening: 'Итог дня',
@@ -2812,6 +2838,18 @@
         remind_on: 'Reminder on ✓',
         remind_card: 'read your dreams'
       },
+      wallet: {
+        page_title: "{brand} — Wallet", title: "Wallet", sub: "Income, spending and plans",
+        balance: "Balance", som: "so'm", card: "Card", cash: "Cash", free: "Free after plans",
+        in_received: "Money in", in_expected: "Expected income", spent: "Spent", planned: "Planned expenses",
+        add_in: "+ Income", add_expected: "+ Expected", add_exp: "+ Expense", add_plan: "+ Plan",
+        amount: "Amount", unit_mln: "M", unit_ming: "K", unit_som: "so'm",
+        method: "Type", weeks: "Split over weeks", weeks_short: "wk", per_week: "per week",
+        source_lbl: "Source", source_ph: "e.g. salary", cat_lbl: "For what", cat_ph: "e.g. school fee",
+        plan_lbl: "Plan name", plan_ph: "e.g. weekly spending",
+        empty_in: "No income yet", empty_expected: "None yet", empty_exp: "No expenses yet", empty_plan: "No plans yet",
+        save: "Save", cancel: "Cancel"
+      },
       about: {
         what_lbl: 'What is this?',
         what_text: 'This app helps you plan your day, stay focused, and take one step every day. The Mentor — your discipline companion.',
@@ -2858,6 +2896,7 @@
         row_alarm: 'Alarm',
         row_reminders: 'Reminders',
         row_dreams: 'Dream journal',
+        row_wallet: 'Wallet',
         row_hardlock: 'Focus timer',
         row_session: 'Done',
         row_evening: 'Day summary',
