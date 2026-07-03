@@ -68,10 +68,15 @@ jobs:
         working-directory: twa
         run: |
           bubblewrap doctor || true
-          # Litsenziyalar oldindan qabul qilingan -> gradle jim yuklaydi.
-          # Faqat 2 parol prompti qoladi -> yes cheksiz beradi (EOF/uzilish bo'lmaydi).
+          # 1) Android loyiha fayllarini (gradlew, app/) twa-manifest.json'dan generatsiya.
+          #    'build' o'zi qilmaydi -> avval update kerak (aks holda ./gradlew: not found).
+          yes | bubblewrap update || bubblewrap update || true
+          echo "--- update'dan keyin fayllar ---"
+          ls -la
+          chmod +x gradlew 2>/dev/null || true
+          # 2) Qurish + imzolash. Litsenziyalar oldindan qabul; parol cheksiz (yes).
           yes 'focusai2026' | bubblewrap build --skipPwaValidation
-          echo "--- qurilgan fayllar ---"
+          echo "--- qurilgan APK fayllar ---"
           find . -name "*.apk" | sort
 
       - name: Collect APK
