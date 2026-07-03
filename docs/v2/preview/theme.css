@@ -95,17 +95,20 @@
 :root[data-theme="light"] .container { background: #f3f4f7 !important; color: #15171c; }
 :root[data-theme="light"] .phone { box-shadow: 0 0 0 8px #e2e5ea, 0 30px 80px rgba(0,0,0,.18) !important; }
 
-/* PLANSHET/keng ekran: telefon maketi emas — to'liq ekran (faqat katta desktop >1100px'da maket qoladi) */
-@media (max-width: 1100px) {
+/* KENG EKRAN (>480px: planshet/desktop): kulrang "telefon maketi" ramkasi olib tashlandi.
+   App o'z foni ustida markazда, ramkasiz/soyasiz — toza ko'rinish (cho'zilmaydi -> buzilmaydi).
+   Telefonда (<=480px) har sahifa o'zining to'liq-ekran qoidasini ishlatadi. */
+@media (min-width: 481px) {
   body { padding: 0 !important; }
   .phone,
   :root[data-theme="light"] .phone,
   :root[data-theme="dark"] .phone {
-    width: 100vw !important;
-    min-height: 100vh !important;
     border-radius: 0 !important;
     box-shadow: none !important;
+    min-height: 100vh !important;
   }
+  /* Intro va boshqa to'liq-ekran (#stage) sahifalar keng ekranда cho'zilib chala chiqmasin */
+  #stage { max-width: 440px !important; margin: 0 auto !important; }
 }
 /* Tema almashganda yumshoq o'tish */
 html, body { transition: background 0.3s ease, color 0.3s ease; }
