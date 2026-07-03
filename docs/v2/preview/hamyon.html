@@ -330,12 +330,17 @@
 
     function del(token) {
       var d = load(), p = token.split(':'), kind = p[0], id = p.slice(1).join(':');
+      var arr0 = kind === 'inc' ? d.incomes : (kind === 'exp' ? d.expenses : d.planned);
+      var item = null; for (var i = 0; i < arr0.length; i++) { if (String(arr0[i].id) === id) { item = arr0[i]; break; } }
       if (kind === 'inc') d.incomes = d.incomes.filter(function (x) { return String(x.id) !== id; });
       else if (kind === 'exp') d.expenses = d.expenses.filter(function (x) { return String(x.id) !== id; });
       else if (kind === 'plan') d.planned = d.planned.filter(function (x) { return String(x.id) !== id; });
       save(d);
       if (window.MVOW_DATA && MVOW_DATA.fxTap) MVOW_DATA.fxTap();
       render();
+      if (window.MvowUndo && item) MvowUndo.show(T('common.deleted', "O'chirildi"), function () {
+        var dd = load(); (kind === 'inc' ? dd.incomes : (kind === 'exp' ? dd.expenses : dd.planned)).push(item); save(dd); render();
+      });
     }
 
     // ── Qo'shish oynasi (sheet) ──
@@ -522,6 +527,7 @@
     if (didRoll) toast(T('wallet.month_reset', "Yangi oy boshlandi — o'tgan oy Tarixga saqlandi"));
   })();
 </script>
+<script src="undo-toast.js?v=29.0.51"></script>
 <script src="back-btn.js?v=29.0.31"></script>
 </body>
 </html>

@@ -157,7 +157,12 @@
       }).join('') : '<div class="empty">' + T('mukofot.hist_empty', 'Hali mukofot olinmagan') + '</div>';
 
       document.querySelectorAll('[data-del]').forEach(function (b) {
-        b.addEventListener('click', function () { saveR(loadR().filter(function (x) { return String(x.id) !== b.getAttribute('data-del'); })); render(); });
+        b.addEventListener('click', function () {
+          var id = b.getAttribute('data-del'), all = loadR();
+          var item = all.filter(function (x) { return String(x.id) === id; })[0];
+          saveR(all.filter(function (x) { return String(x.id) !== id; })); render();
+          if (window.MvowUndo && item) MvowUndo.show(T('common.deleted', "O'chirildi"), function () { var a = loadR(); a.push(item); saveR(a); render(); });
+        });
       });
       document.querySelectorAll('[data-buy]').forEach(function (b) {
         b.addEventListener('click', function () { buy(b.getAttribute('data-buy')); });
@@ -207,6 +212,7 @@
     render();
   })();
 </script>
+<script src="undo-toast.js?v=29.0.51"></script>
 <script src="back-btn.js?v=29.0.48"></script>
 </body>
 </html>

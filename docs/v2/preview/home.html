@@ -69,6 +69,7 @@
     transition: transform .15s, opacity .2s, box-shadow .2s;
   }
   .t-row:active { transform: scale(.98); }
+  .t-row:not(.done):not(.missed)::after { content: '›'; color: var(--text-dim, #9CA0A8); font-size: 22px; opacity: .45; align-self: center; margin-left: 2px; flex-shrink: 0; }
   .t-row .ord {
     width: 46px; height: 46px;
     border-radius: 50%;

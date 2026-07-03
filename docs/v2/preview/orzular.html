@@ -121,9 +121,11 @@
       });
       root.querySelectorAll('[data-del]').forEach(function (b) {
         b.addEventListener('click', function () {
-          var id = b.getAttribute('data-del');
-          save(load().filter(function (x) { return String(x.id) !== String(id); }));
+          var id = b.getAttribute('data-del'), all = load();
+          var item = all.filter(function (x) { return String(x.id) === String(id); })[0];
+          save(all.filter(function (x) { return String(x.id) !== String(id); }));
           render();
+          if (window.MvowUndo && item) MvowUndo.show(T('common.deleted', "O'chirildi"), function () { var a = load(); a.push(item); save(a); render(); });
         });
       });
     }
@@ -158,6 +160,7 @@
     syncRemindBtn();
   })();
 </script>
+<script src="undo-toast.js?v=29.0.51"></script>
 <script src="back-btn.js?v=29.0.28"></script>
 </body>
 </html>

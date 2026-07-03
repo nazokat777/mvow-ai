@@ -63,17 +63,19 @@
       }).join('');
       listEl.querySelectorAll('[data-del]').forEach(function (b) {
         b.addEventListener('click', function () {
-          var id = b.getAttribute('data-del');
-          save(load().filter(function (x) { return String(x.id) !== String(id); }));
+          var id = b.getAttribute('data-del'), all = load();
+          var item = all.filter(function (x) { return String(x.id) === String(id); })[0];
+          save(all.filter(function (x) { return String(x.id) !== String(id); }));
           if (window.MVOW_DATA && MVOW_DATA.fxTap) MVOW_DATA.fxTap();
           render();
+          if (window.MvowUndo && item) MvowUndo.show(T('common.deleted', "O'chirildi"), function () { var a = load(); a.push(item); save(a); render(); });
         });
       });
     }
     document.getElementById('remAdd').addEventListener('click', function () {
       var t = document.getElementById('remText'), tm = document.getElementById('remTime');
       var text = t.value.trim(), time = tm.value;
-      if (!text || !/^\d{1,2}:\d{2}$/.test(time)) return;
+      if (!text || !/^\d{1,2}:\d{2}$/.test(time)) { var bad = !text ? t : tm; bad.style.borderColor = '#FF6B6B'; bad.focus(); setTimeout(function () { bad.style.borderColor = ''; }, 1500); return; }
       var r = load();
       r.push({ id: Date.now(), text: text, time: time });
       save(r); t.value = '';
@@ -91,6 +93,7 @@
     render();
   })();
 </script>
+<script src="undo-toast.js?v=29.0.51"></script>
 <script src="back-btn.js?v=28.4.0"></script>
 </body>
 </html>

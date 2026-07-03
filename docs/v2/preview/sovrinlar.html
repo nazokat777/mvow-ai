@@ -80,15 +80,15 @@
     }
     function medals(s) {
       return [
-        { ic: '🌱', nm: T('sovrinlar.m1_n','Birinchi qadam'), ds: T('sovrinlar.m1_d','1 sessiya'), ok: s.sessions >= 1 },
-        { ic: '🔥', nm: T('sovrinlar.m2_n','10 nur'), ds: T('sovrinlar.m2_d','10 sessiya'), ok: s.sessions >= 10 },
-        { ic: '⭐', nm: T('sovrinlar.m3_n','50 nur'), ds: T('sovrinlar.m3_d','50 sessiya'), ok: s.sessions >= 50 },
-        { ic: '🏆', nm: T('sovrinlar.m4_n','100 nur'), ds: T('sovrinlar.m4_d','100 sessiya'), ok: s.sessions >= 100 },
-        { ic: '⏳', nm: T('sovrinlar.m5_n','Marafon'), ds: T('sovrinlar.m5_d','10 soat fokus'), ok: s.focusH >= 10 },
-        { ic: '🎯', nm: T('sovrinlar.m6_n','Maqsadli'), ds: T('sovrinlar.m6_d','1 maqsad'), ok: s.goals >= 1 },
-        { ic: '📅', nm: T('sovrinlar.m7_n','3 kun'), ds: T('sovrinlar.m7_d','3 kun ketma-ket'), ok: s.streak >= 3 },
-        { ic: '💪', nm: T('sovrinlar.m8_n','Temir iroda'), ds: T('sovrinlar.m8_d','7 kun ketma-ket'), ok: s.streak >= 7 },
-        { ic: '🤝', nm: T('sovrinlar.m9_n','Jamoa'), ds: T('sovrinlar.m9_d',"1 do'st qo'shildi"), ok: s.friends >= 1 }
+        { ic: '🌱', nm: T('sovrinlar.m1_n','Birinchi qadam'), ds: T('sovrinlar.m1_d','1 sessiya'), ok: s.sessions >= 1, cur: s.sessions, need: 1 },
+        { ic: '🔥', nm: T('sovrinlar.m2_n','10 nur'), ds: T('sovrinlar.m2_d','10 sessiya'), ok: s.sessions >= 10, cur: s.sessions, need: 10 },
+        { ic: '⭐', nm: T('sovrinlar.m3_n','50 nur'), ds: T('sovrinlar.m3_d','50 sessiya'), ok: s.sessions >= 50, cur: s.sessions, need: 50 },
+        { ic: '🏆', nm: T('sovrinlar.m4_n','100 nur'), ds: T('sovrinlar.m4_d','100 sessiya'), ok: s.sessions >= 100, cur: s.sessions, need: 100 },
+        { ic: '⏳', nm: T('sovrinlar.m5_n','Marafon'), ds: T('sovrinlar.m5_d','10 soat fokus'), ok: s.focusH >= 10, cur: s.focusH, need: 10 },
+        { ic: '🎯', nm: T('sovrinlar.m6_n','Maqsadli'), ds: T('sovrinlar.m6_d','1 maqsad'), ok: s.goals >= 1, cur: s.goals, need: 1 },
+        { ic: '📅', nm: T('sovrinlar.m7_n','3 kun'), ds: T('sovrinlar.m7_d','3 kun ketma-ket'), ok: s.streak >= 3, cur: s.streak, need: 3 },
+        { ic: '💪', nm: T('sovrinlar.m8_n','Temir iroda'), ds: T('sovrinlar.m8_d','7 kun ketma-ket'), ok: s.streak >= 7, cur: s.streak, need: 7 },
+        { ic: '🤝', nm: T('sovrinlar.m9_n','Jamoa'), ds: T('sovrinlar.m9_d',"1 do'st qo'shildi"), ok: s.friends >= 1, cur: s.friends, need: 1 }
       ];
     }
     var LEVELS = [
@@ -122,7 +122,7 @@
         var c = COLORS[i % COLORS.length];
         var bg = m.ok ? ('background:linear-gradient(135deg,rgb(' + c[0] + ',' + c[1] + ',' + c[2] + '),rgba(' + c[0] + ',' + c[1] + ',' + c[2] + ',.78));') : '';
         return '<div class="medal ' + (m.ok ? 'on' : 'off') + '" style="' + bg + '">'
-          + (m.ok ? '' : '<span class="lock">🔒</span>')
+          + (m.ok ? '' : '<span class="lock">' + (Math.round((m.cur || 0) * 10) / 10) + '/' + m.need + '</span>')
           + '<div class="ic">' + m.ic + '</div>'
           + '<div class="nm">' + m.nm + '</div>'
           + '<div class="ds">' + m.ds + '</div></div>';
