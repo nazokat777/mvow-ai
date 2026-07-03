@@ -42,6 +42,13 @@
   function build() {
     if (document.querySelector('.lang-switcher')) return;
 
+    // Til tugmasini ixcham qilamiz — faqat globus (UZ/RU/EN matni yashirin), 40px doira
+    if (!document.getElementById('mvow-lang-css')) {
+      var st = document.createElement('style'); st.id = 'mvow-lang-css';
+      st.textContent = '.lang-switcher__btn{width:40px !important;height:40px !important;min-width:0 !important;padding:0 !important;border-radius:50% !important;display:flex !important;align-items:center;justify-content:center;gap:0 !important;}.lang-switcher__code{display:none !important;}.lang-switcher__icon{width:20px;height:20px;}';
+      document.head.appendChild(st);
+    }
+
     const cur = getCurrent();
 
     const wrap = document.createElement('div');
@@ -60,8 +67,7 @@
         '<path d="M3 12h18"/>' +
         '<path d="M12 3a14 14 0 0 1 0 18"/>' +
         '<path d="M12 3a14 14 0 0 0 0 18"/>' +
-      '</svg>' +
-      '<span class="lang-switcher__code">' + LANGS[cur].code + '</span>';
+      '</svg>';
 
     const menu = document.createElement('div');
     menu.className = 'lang-switcher__menu';
@@ -124,6 +130,7 @@
     }
     qn.appendChild(mk('👥', 'dostlar.html', "Do'stlar"));
     qn.appendChild(mk('🏅', 'sovrinlar.html', 'Sovrinlar'));
+    qn.appendChild(mk('🔥', 'fokus-izi.html', 'Seriya'));
     document.body.appendChild(qn);
     function place() {
       var lang = document.querySelector('.lang-switcher');
