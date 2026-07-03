@@ -26,8 +26,9 @@ object NetworkModule {
             .writeTimeout(30, TimeUnit.SECONDS)
 
         if (BuildConfig.DEBUG) {
+            // BASIC — faqat metod/URL/status; HEADERS api-key (x-api-key) ni logga yozardi (xavfsizlik).
             builder.addInterceptor(
-                HttpLoggingInterceptor().apply { level = HttpLoggingInterceptor.Level.HEADERS }
+                HttpLoggingInterceptor().apply { level = HttpLoggingInterceptor.Level.BASIC }
             )
         }
         return builder.build()

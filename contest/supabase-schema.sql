@@ -1,5 +1,10 @@
 -- FOCUS AI ijtimoiy backend (SODDA versiya — auth'siz)
 -- Supabase → SQL Editor → joylang → Run. Tamom.
+--
+-- ⚠️ XAVFSIZLIK: quyidagi "*_all using(true)" siyosatlari ANON kalit bilan HAMMAGA
+-- ochiq (o'qish+yozish). daily_stats maxfiy emas, lekin `messages` (shaxsiy chat) va
+-- `links` uchun bu ZAIF. To'liq yechim — Supabase anonim Auth (auth.uid()) + RLS.
+-- Chatni tez himoyalash (jadvalni yopib, faqat RPC): SETUP-PUSH.md → "Chat hardening".
 
 create table if not exists public.profiles (
   code text primary key,

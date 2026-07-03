@@ -1,0 +1,5 @@
+# Hujjat / sozlash / sir fayllar deploy'ga TUSHMASIN (internetdan o'qilmasin)
+*.md
+*.sql
+*.txt
+SETUP-*

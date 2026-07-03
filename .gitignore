@@ -30,6 +30,7 @@ android/.kotlin/
 *.class
 
 # === Secrets — NEVER commit ===
+VAPID_PRIVATE_NEW.txt
 local.properties
 keystore.properties
 *.jks
@@ -75,3 +76,4 @@ backend/node_modules/
 backend/.wrangler/
 backend/dist/
 backend/.dev.vars
+.gstack/

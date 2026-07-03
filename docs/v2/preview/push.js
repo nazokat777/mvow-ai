@@ -7,7 +7,7 @@
  * Eslatmalar manbai: Taymersiz maqsadlar (noTimer + time + reminderText).
  */
 (function (root) {
-  var VAPID_PUBLIC = 'BFc-v2pcQydO5oN02JF2zIH_1he1rPuYXg0sAH7qqQ0rXtfJHoCupTEJIr5JU8CuE4-_rnNmAiq3j9jndB7Wv4g';
+  var VAPID_PUBLIC = 'BD2IfPLSgmwOr1EVcio5HMN6he4n8sbuN6dGgYV91tpaXWIK8bJIsrql94uj_rojqmjfyyzBcEA04phCNpINtWo';
 
   function urlB64ToU8(b64) {
     var pad = '='.repeat((4 - b64.length % 4) % 4);

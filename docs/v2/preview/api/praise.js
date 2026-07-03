@@ -12,8 +12,10 @@ const webpush = require('web-push');
 
 const SB_URL = 'https://lnqgjkcmiyohbfxgbrfx.supabase.co';
 const SB_KEY = 'sb_publishable_3JpMzsIiCfPCNnZ0qO73pg_v0ZQYIN0';
-const H = { apikey: SB_KEY, Authorization: 'Bearer ' + SB_KEY, 'Content-Type': 'application/json' };
-const VAPID_PUBLIC = 'BFc-v2pcQydO5oN02JF2zIH_1he1rPuYXg0sAH7qqQ0rXtfJHoCupTEJIr5JU8CuE4-_rnNmAiq3j9jndB7Wv4g';
+// RLS yoqilganda jadvalga kirish uchun service_role (Vercel env). O'rnatilmasa anon (eski holat).
+const SRV = process.env.SUPABASE_SERVICE_ROLE || SB_KEY;
+const H = { apikey: SRV, Authorization: 'Bearer ' + SRV, 'Content-Type': 'application/json' };
+const VAPID_PUBLIC = 'BD2IfPLSgmwOr1EVcio5HMN6he4n8sbuN6dGgYV91tpaXWIK8bJIsrql94uj_rojqmjfyyzBcEA04phCNpINtWo';
 
 async function sbGet(path) {
   const r = await fetch(SB_URL + '/rest/v1/' + path, { headers: H });
@@ -21,7 +23,7 @@ async function sbGet(path) {
 }
 
 module.exports = async (req, res) => {
-  res.setHeader('Access-Control-Allow-Origin', '*');
+  res.setHeader('Access-Control-Allow-Origin', 'https://daywarden.vercel.app');
   res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
   if (req.method === 'OPTIONS') { res.status(200).end(); return; }
   if (req.method !== 'POST') { res.status(405).json({ ok: false }); return; }
