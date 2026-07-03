@@ -121,20 +121,32 @@
   }
 
   // ── Chat (suhbat) — bulut rejimida ──
+  // Chat xavfsizligi: jadval RLS bilan yopilsa — SECURITY DEFINER RPC (send_msg/get_msgs) ishlatiladi.
+  // RPC hali qo'shilmagan bo'lsa — to'g'ridan-to'g'ri jadval (eski holat). Ikkala holatda ham ishlaydi.
+  function _directInsert(c, toCode, body) {
+    return c.from('messages').insert({ from_code: myCode(), to_code: toCode, body: body })
+      .then(function (r) { return !(r && r.error); }, function () { return false; });
+  }
+  function _directFetch(c, me, withCode) {
+    var f = 'and(from_code.eq.' + me + ',to_code.eq.' + withCode + '),and(from_code.eq.' + withCode + ',to_code.eq.' + me + ')';
+    return c.from('messages').select('from_code,to_code,body,created_at').or(f).order('created_at', { ascending: true })
+      .then(function (res) { return (res && res.data) || []; }, function () { return []; });
+  }
   function sendMessage(toCode, body) {
-    toCode = (toCode || '').trim().toUpperCase(); body = (body || '').trim();
+    toCode = (toCode || '').trim().toUpperCase(); body = (body || '').trim().slice(0, 500);
     if (!toCode || !body) return Promise.resolve(false);
     var c = client(); if (!c) return Promise.resolve(false);
-    return c.from('messages').insert({ from_code: myCode(), to_code: toCode, body: body })
-      .then(function () { return true; }, function () { return false; });
+    return c.rpc('send_msg', { p_from: myCode(), p_to: toCode, p_body: body })
+      .then(function (r) { return (r && !r.error) ? true : _directInsert(c, toCode, body); },
+            function () { return _directInsert(c, toCode, body); });
   }
   function getMessages(withCode) {
     withCode = (withCode || '').trim().toUpperCase();
     var c = client(); if (!c || !withCode) return Promise.resolve([]);
     var me = myCode();
-    var f = 'and(from_code.eq.' + me + ',to_code.eq.' + withCode + '),and(from_code.eq.' + withCode + ',to_code.eq.' + me + ')';
-    return c.from('messages').select('from_code,to_code,body,created_at').or(f).order('created_at', { ascending: true })
-      .then(function (res) { return (res && res.data) || []; }, function () { return []; });
+    return c.rpc('get_msgs', { p_me: me, p_with: withCode })
+      .then(function (r) { return (r && !r.error && Array.isArray(r.data)) ? r.data : _directFetch(c, me, withCode); },
+            function () { return _directFetch(c, me, withCode); });
   }
   function subscribeMessages(withCode, cb) {
     withCode = (withCode || '').trim().toUpperCase();

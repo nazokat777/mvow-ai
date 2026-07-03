@@ -54,8 +54,8 @@ cron-job.org → Create cronjob → URL (3-banddagi ?key= bilan), Interval: 15 d
 ## Chat hardening (ixtiyoriy — `messages` jadvalини yopish)
 Hozir `messages` anon bilan HAMMAGA ochiq (istalgan odam barcha shaxsiy chatni o'qiy oladi).
 Auth'siz to'liq yechim yo'q, lekin jadvalni yopib faqat funksiya orqali ochish mumkin.
-> DIQQAT: buni qo'llasangiz, klient (`social.js`) ni RPC'ga o'tkazish kerak — aks holda chat ishlamaydi.
-> Buni alohida qadam sifatida qiling (menga ayting — social.js ni moslab beraman).
+> ✅ `social.js` allaqachon RPC'ni qo'llab-quvvatlaydi (RPC yo'q bo'lsa to'g'ridan-to'g'ri jadvalga tushadi).
+> Faqat quyidagi SQL'ni ishga tushiring — chat ishlashда davom etadi (realtime jonli yangilanish o'chadi; xabarlar chat ochilганда yuklanadi).
 ```sql
 alter table public.messages enable row level security;
 drop policy if exists "m_all" on public.messages;
