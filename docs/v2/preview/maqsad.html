@@ -483,13 +483,32 @@
     // Yangi vaqt boshqa maqsad bilan to'qnashadimi?
     function findConflict() {
       if (goalType === 'notimer') return null;   // eslatma slot band qilmaydi
-      const newStart = timeToMin(dailyTime.value);
-      const newDur = parseInt(dailyDur.value, 10) || 60;
-      if (newStart === null || newDur <= 0) return null;
-      const newEnd = newStart + newDur;
-      const slots = getOccupiedSlots();
-      for (const s of slots) {
-        if (s.start < newEnd && s.end > newStart) return s;
+      // Barcha yangi slotlar: asosiy vaqt + "+ Vaqt qo'shish" sessiyalari
+      var newSlots = [];
+      var ms = timeToMin(dailyTime.value), md = parseInt(dailyDur.value, 10) || 60;
+      if (ms !== null && md > 0) newSlots.push({ start: ms, end: ms + md });
+      document.querySelectorAll('#extraTimes .xrow').forEach(function (row) {
+        var xt = row.querySelector('.xtime'), xd = row.querySelector('.xdur');
+        if (!xt) return;
+        var st = timeToMin(xt.value), du = xd ? (parseInt(xd.value, 10) || 60) : 60;
+        if (st !== null && du > 0) newSlots.push({ start: st, end: st + du });
+      });
+      if (!newSlots.length) return null;
+      var occupied = getOccupiedSlots();
+      // 1) boshqa maqsadlar bilan to'qnashuv
+      for (var i = 0; i < newSlots.length; i++) {
+        for (var j = 0; j < occupied.length; j++) {
+          if (occupied[j].start < newSlots[i].end && occupied[j].end > newSlots[i].start) return occupied[j];
+        }
+      }
+      // 2) shu maqsadning o'z vaqtlari o'zaro to'qnashsa
+      for (var a = 0; a < newSlots.length; a++) {
+        for (var b = a + 1; b < newSlots.length; b++) {
+          if (newSlots[a].start < newSlots[b].end && newSlots[a].end > newSlots[b].start) {
+            return { text: (window.I18N ? I18N.t('maqsad.self_overlap', 'shu maqsad vaqtlari') : 'shu maqsad vaqtlari'),
+                     time: minToTime(Math.min(newSlots[a].start, newSlots[b].start)), end: Math.max(newSlots[a].end, newSlots[b].end) };
+          }
+        }
       }
       return null;
     }
@@ -529,6 +548,8 @@
     dailyTime.addEventListener('change', checkStep2);
     dailyDur.addEventListener('input', checkStep2);
     dailyDur.addEventListener('change', checkStep2);
+    // "+ Vaqt qo'shish" sessiyalari o'zgarsa ham konflikt qayta tekshiriladi (delegatsiya)
+    (function () { var ex = document.getElementById('extraTimes'); if (ex) { ex.addEventListener('input', checkStep2); ex.addEventListener('change', checkStep2); } })();
 
     function gotoStep2() {
       currentStep = 2;
