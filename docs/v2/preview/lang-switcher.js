@@ -109,9 +109,40 @@
     document.body.appendChild(wrap);
   }
 
+  // Har sahifada til tugmasi YONIGA (chapiga) Do'stlar + Sovrinlar ikonkalari
+  function buildQuickNav() {
+    if (document.getElementById('mvow-quicknav')) return;
+    var qn = document.createElement('div');
+    qn.id = 'mvow-quicknav';
+    qn.style.cssText = 'position:fixed;z-index:99991;display:flex;gap:8px;';
+    function mk(emoji, href, label) {
+      var a = document.createElement('a');
+      a.href = href; a.title = label; a.setAttribute('aria-label', label);
+      a.style.cssText = 'width:40px;height:40px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:19px;line-height:1;text-decoration:none;background:rgba(8,8,12,0.85);border:1px solid rgba(108,92,231,0.4);-webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px);';
+      a.textContent = emoji;
+      return a;
+    }
+    qn.appendChild(mk('👥', 'dostlar.html', "Do'stlar"));
+    qn.appendChild(mk('🏅', 'sovrinlar.html', 'Sovrinlar'));
+    document.body.appendChild(qn);
+    function place() {
+      var lang = document.querySelector('.lang-switcher');
+      if (!lang) { qn.style.top = '14px'; qn.style.right = '64px'; return; }
+      var r = lang.getBoundingClientRect();
+      if (r.width === 0 && r.height === 0) { qn.style.display = 'none'; return; }  // til tugmasi yashirin (mas. fokusda)
+      qn.style.display = 'flex';
+      qn.style.top = r.top + 'px';
+      qn.style.right = Math.max(8, window.innerWidth - r.left + 8) + 'px';
+    }
+    place();
+    setTimeout(place, 200); setTimeout(place, 700);
+    window.addEventListener('resize', place);
+  }
+
+  function init() { build(); buildQuickNav(); }
   if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', build);
+    document.addEventListener('DOMContentLoaded', init);
   } else {
-    build();
+    init();
   }
 })();

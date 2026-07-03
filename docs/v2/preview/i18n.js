@@ -991,7 +991,7 @@
         row_friends: "Do'stlar",
         row_trace: 'Seriya',
         row_rewards: 'Sovrinlar',
-        sec_social: 'Ijtimoiy'
+        sec_social: 'Ijtimoiy', sec_bonus: 'Bonus funksiyalar'
       },
       sections: {
         intro: 'Tanishuv',
@@ -1959,7 +1959,7 @@
         row_friends: 'Друзья',
         row_trace: 'Серия',
         row_rewards: 'Награды',
-        sec_social: 'Социальное'
+        sec_social: 'Социальное', sec_bonus: 'Бонус-функции'
       },
       sections: {
         intro: 'Знакомство',
@@ -2927,7 +2927,7 @@
         row_friends: 'Friends',
         row_trace: 'Streak',
         row_rewards: 'Rewards',
-        sec_social: 'Social'
+        sec_social: 'Social', sec_bonus: 'Bonus features'
       },
       sections: {
         intro: 'Intro',
