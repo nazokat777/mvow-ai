@@ -42,7 +42,8 @@
         motiv_high: "Ajoyib seriya! To'xtama — sen buni uddalayapsan 🔥",
         share: "↗ Natijani ulashish", dl_done: "Rasm yuklandi — Telegram/Instagram'ga joylang", copied: "Matn nusxalandi",
         card_sub: "Mening seriyam",
-        share_text: "FOCUS AI'da seriyam: {n} kun ketma-ket, {h} soat fokus! Sen ham qo'shil 👉 daywarden.vercel.app"
+        share_text: "FOCUS AI'da seriyam: {n} kun ketma-ket, {h} soat fokus! Sen ham qo'shil 👉 daywarden.vercel.app",
+        frozen_days: "muzlagan kun", frozen_hint: "Bugun vazifani 2 marta bajarib, bitta muzni eriting — yuragingiz tinch bo'ladi.", today_done: "Bugun bajarilgan", for_thaw: "eritishga", thaw_btn: "Muzni eritish", thawed_toast: "Muz eridi! 🔥 Seriya tiklandi."
       },
       sovrinlar: {
         page_title: "{brand} — Sovrinlar", title: "Sovrinlar", sub: "Yig'ilgan medallar — natijangiz bilan ochiladi", medal: "medal",
@@ -1041,7 +1042,8 @@
         motiv_high: "Отличная серия! Не останавливайся 🔥",
         share: "↗ Поделиться результатом", dl_done: "Картинка скачана — отправьте в Telegram/Instagram", copied: "Текст скопирован",
         card_sub: "Моя серия",
-        share_text: "Моя серия в FOCUS AI: {n} дней подряд, {h} ч фокуса! Присоединяйся 👉 daywarden.vercel.app"
+        share_text: "Моя серия в FOCUS AI: {n} дней подряд, {h} ч фокуса! Присоединяйся 👉 daywarden.vercel.app",
+        frozen_days: "замороженных дней", frozen_hint: "Выполните задачу 2 раза сегодня — растопите один лёд, на душе станет легче.", today_done: "Сегодня выполнено", for_thaw: "на разморозку", thaw_btn: "Растопить лёд", thawed_toast: "Лёд растаял! 🔥 Серия восстановлена."
       },
       sovrinlar: {
         page_title: "{brand} — Награды", title: "Награды", sub: "Собранные медали — открываются по результатам", medal: "медалей",
@@ -2027,7 +2029,8 @@
         motiv_high: "Amazing streak! Don't stop 🔥",
         share: "↗ Share result", dl_done: "Image downloaded — post it to Telegram/Instagram", copied: "Text copied",
         card_sub: "My streak",
-        share_text: "My streak on FOCUS AI: {n} days, {h}h of focus! Join me 👉 daywarden.vercel.app"
+        share_text: "My streak on FOCUS AI: {n} days, {h}h of focus! Join me 👉 daywarden.vercel.app",
+        frozen_days: "frozen days", frozen_hint: "Do a task 2× today to thaw one frozen day — your mind will rest easier.", today_done: "Done today", for_thaw: "to thaw", thaw_btn: "Thaw the ice", thawed_toast: "Ice thawed! 🔥 Streak restored."
       },
       sovrinlar: {
         page_title: "{brand} — Rewards", title: "Rewards", sub: "Collected medals — unlocked by your results", medal: "medals",

@@ -14,6 +14,7 @@
   function isoOf(d) { return d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0'); }
   function streakOf(hist) {
     var days = {}; hist.forEach(function (h) { if (h.dateIso) days[h.dateIso] = 1; });
+    try { var t = JSON.parse(localStorage.getItem('mvow.thawedDays') || '[]'); if (Array.isArray(t)) t.forEach(function (iso) { days[iso] = 1; }); } catch (e) {}  // eritilgan muz kunlar
     var d = new Date(); if (!days[isoOf(d)]) d.setDate(d.getDate() - 1);
     var s = 0; while (days[isoOf(d)]) { s++; d.setDate(d.getDate() - 1); } return s;
   }

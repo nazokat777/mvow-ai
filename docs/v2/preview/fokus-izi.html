@@ -26,6 +26,7 @@
   .wd .dot { width: 34px; height: 34px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 17px; background: var(--card, rgba(255,255,255,.05)); border: 1px solid var(--border-default, rgba(255,255,255,.10)); }
   .wd .dot.on { background: linear-gradient(135deg, rgb(244,132,95), #d9663c); border: none; }
   .wd .dot.today { border: 2px solid rgb(244,132,95); }
+  .wd .dot.frozen { background: rgba(110,181,255,.18); border: 1px solid rgba(110,181,255,.42); }
   .wd .lt { font-size: 12px; color: var(--text-dim); font-weight: 700; }
   .card { background: var(--card); border: 1px solid var(--border-default, rgba(255,255,255,.08)); border-radius: 18px; padding: 16px 18px; margin: 22px auto 0; max-width: 360px; text-align: left; }
   .level .lv-top { display: flex; align-items: center; gap: 12px; }
@@ -57,6 +58,7 @@
   <div class="streak-lbl" id="streakLbl" data-i18n="fokusizi.streak_unit">kun ketma-ket</div>
 
   <div class="week" id="week"></div>
+  <div id="frozenCard"></div>
 
   <div class="card level" id="levelCard"></div>
 
@@ -90,14 +92,36 @@
       ru: ['П', 'В', 'С', 'Ч', 'П', 'С', 'В'],
       en: ['M', 'T', 'W', 'T', 'F', 'S', 'S']
     };
+    // ── Muz (❄️) — o'tkazilgan kun; bugun 2 marta bajarib eritiladi (thawed) ──
+    function loadThawed() { try { var t = JSON.parse(localStorage.getItem('mvow.thawedDays') || '[]'); return Array.isArray(t) ? t : []; } catch (e) { return []; } }
+    function saveThawed(t) { try { localStorage.setItem('mvow.thawedDays', JSON.stringify(t)); } catch (e) {} }
+    function loadSpent() { try { var s = JSON.parse(localStorage.getItem('mvow.makeupSpent') || 'null'); return (s && s.d) ? s : { d: '', n: 0 }; } catch (e) { return { d: '', n: 0 }; } }
+    function saveSpent(s) { try { localStorage.setItem('mvow.makeupSpent', JSON.stringify(s)); } catch (e) {} }
+    function computeFrozen(byDay, thawed) {
+      var dates = Object.keys(byDay); if (!dates.length) return [];
+      dates.sort();
+      var firstTime = new Date(dates[0] + 'T00:00:00').getTime();
+      var today = new Date(); today.setHours(0, 0, 0, 0);
+      var startTime = Math.max(firstTime, today.getTime() - 7 * 86400000);   // faqat oxirgi 7 kun
+      var frozen = [], d = new Date(startTime); d.setHours(0, 0, 0, 0);
+      while (d.getTime() < today.getTime()) {                                 // bugundan tashqari
+        var iso = isoOf(d);
+        if (!(byDay[iso] > 0) && thawed.indexOf(iso) < 0) frozen.push(iso);
+        d.setDate(d.getDate() + 1);
+      }
+      return frozen;
+    }
     function stats() {
       var hist = [];
       try { if (window.MVOW_DATA && MVOW_DATA.getHistory) hist = MVOW_DATA.getHistory() || []; } catch (e) {}
       var mins = hist.reduce(function (s, h) { return s + (h.actualMins || 0); }, 0);
-      var byDay = {}; hist.forEach(function (h) { if (h.dateIso) byDay[h.dateIso] = (byDay[h.dateIso] || 0) + (h.actualMins || 0); });
-      var d = new Date(); if (!byDay[isoOf(d)]) d.setDate(d.getDate() - 1);
-      var st = 0; while (byDay[isoOf(d)]) { st++; d.setDate(d.getDate() - 1); }
-      return { N: hist.length, focusH: Math.round(mins / 60 * 10) / 10, streak: st, byDay: byDay };
+      var byDay = {}, byCount = {};
+      hist.forEach(function (h) { if (h.dateIso) { byDay[h.dateIso] = (byDay[h.dateIso] || 0) + (h.actualMins || 0); byCount[h.dateIso] = (byCount[h.dateIso] || 0) + 1; } });
+      var thawed = loadThawed();
+      function active(iso) { return (byDay[iso] || 0) > 0 || thawed.indexOf(iso) >= 0; }
+      var d = new Date(); if (!active(isoOf(d))) d.setDate(d.getDate() - 1);
+      var st = 0; while (active(isoOf(d))) { st++; d.setDate(d.getDate() - 1); }
+      return { N: hist.length, focusH: Math.round(mins / 60 * 10) / 10, streak: st, byDay: byDay, byCount: byCount, thawed: thawed, frozen: computeFrozen(byDay, thawed) };
     }
     function renderWeek(s) {
       var el = document.getElementById('week'); if (!el) return;
@@ -107,11 +131,41 @@
       var letters = WD[lang()] || WD.uz, todayIso = isoOf(new Date()), html = '';
       for (var i = 0; i < 7; i++) {
         var d = new Date(mon); d.setDate(mon.getDate() + i);
-        var iso = isoOf(d), on = (s.byDay[iso] || 0) > 0, isToday = iso === todayIso;
-        html += '<div class="wd"><div class="dot' + (on ? ' on' : '') + (isToday ? ' today' : '') + '">' + (on ? '🔥' : '') + '</div>'
+        var iso = isoOf(d), isToday = iso === todayIso;
+        var on = (s.byDay[iso] || 0) > 0 || s.thawed.indexOf(iso) >= 0;
+        var frozen = s.frozen.indexOf(iso) >= 0;
+        var mark = on ? '🔥' : (frozen ? '❄️' : '');
+        html += '<div class="wd"><div class="dot' + (on ? ' on' : '') + (frozen ? ' frozen' : '') + (isToday ? ' today' : '') + '">' + mark + '</div>'
           + '<div class="lt">' + letters[i] + '</div></div>';
       }
       el.innerHTML = html;
+    }
+    function renderFrozen(s) {
+      var el = document.getElementById('frozenCard'); if (!el) return;
+      if (!s.frozen.length) { el.innerHTML = ''; return; }
+      var todayIso = isoOf(new Date());
+      var spent = loadSpent(), spentN = (spent.d === todayIso) ? spent.n : 0;
+      var todayDone = s.byCount[todayIso] || 0;
+      var avail = Math.max(0, todayDone - spentN), canThaw = avail >= 2;
+      el.innerHTML = '<div style="background:linear-gradient(135deg,rgba(110,181,255,.14),rgba(200,230,255,.05));border:1px solid rgba(110,181,255,.32);border-radius:18px;padding:16px;margin:20px auto 0;max-width:360px;text-align:left;">'
+        + '<div style="font-size:16px;font-weight:800;color:#fff;">❄️ ' + s.frozen.length + ' ' + T('fokusizi.frozen_days', 'muzlagan kun') + '</div>'
+        + '<div style="font-size:14px;color:var(--text-dim);margin-top:6px;line-height:1.5;">' + T('fokusizi.frozen_hint', "Bugun vazifani 2 marta bajarib, bitta muzni eriting — yuragingiz tinch bo'ladi.") + '</div>'
+        + '<div style="font-size:13px;color:var(--text-dim);margin-top:8px;">' + T('fokusizi.today_done', 'Bugun bajarilgan') + ': <b style="color:#F5C26B;">' + todayDone + '</b> · ' + T('fokusizi.for_thaw', 'eritishga') + ': ' + Math.min(avail, 2) + '/2</div>'
+        + '<button id="thawBtn"' + (canThaw ? '' : ' disabled') + ' style="width:100%;margin-top:12px;padding:12px;border:none;border-radius:12px;font-size:15px;font-weight:700;font-family:inherit;cursor:' + (canThaw ? 'pointer' : 'default') + ';' + (canThaw ? 'background:#6EB5FF;color:#04060B;' : 'background:transparent;color:var(--text-dim);border:1px solid var(--border-default,rgba(255,255,255,.14));') + '">❄️ ' + T('fokusizi.thaw_btn', 'Muzni eritish') + '</button></div>';
+      var btn = document.getElementById('thawBtn');
+      if (btn && canThaw) btn.addEventListener('click', function () { doThaw(s); });
+    }
+    function doThaw(s) {
+      if (!s.frozen.length) return;
+      var todayIso = isoOf(new Date());
+      var thawed = loadThawed();
+      thawed.push(s.frozen[s.frozen.length - 1]);   // eng yaqin (oxirgi) muz eriydi
+      saveThawed(thawed);
+      var spent = loadSpent(), spentN = (spent.d === todayIso) ? spent.n : 0;
+      saveSpent({ d: todayIso, n: spentN + 2 });
+      if (window.MVOW_DATA && MVOW_DATA.fxSuccess) MVOW_DATA.fxSuccess();
+      toast(T('fokusizi.thawed_toast', 'Muz eridi! 🔥 Seriya tiklandi.'));
+      init();
     }
     function renderLevel(focusH) {
       var idx = 0; for (var i = 0; i < LEVELS.length; i++) if (focusH >= LEVELS[i].min) idx = i;
@@ -160,7 +214,7 @@
       var s = stats();
       document.getElementById('streakNum').textContent = s.streak;
       document.getElementById('flame').className = 'flame' + (s.streak > 0 ? '' : ' dim');
-      renderWeek(s); renderLevel(s.focusH);
+      renderWeek(s); renderFrozen(s); renderLevel(s.focusH);
       document.getElementById('statsRow').innerHTML =
         '<div class="st"><div class="v">' + s.N + '</div><div class="k">' + T('fokusizi.sessions_unit', 'sessiya') + '</div></div>'
         + '<div class="st"><div class="v">' + s.focusH + '</div><div class="k">' + T('fokusizi.soat', 'soat') + '</div></div>';
