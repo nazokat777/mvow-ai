@@ -59,6 +59,14 @@
     function esc(s) { return String(s || '').replace(/[&<>"]/g, function (c) { return ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]); }); }
     function load() { try { var d = JSON.parse(localStorage.getItem('mvow.dreams') || '[]'); return Array.isArray(d) ? d : []; } catch (e) { return []; } }
     function save(d) { try { localStorage.setItem('mvow.dreams', JSON.stringify(d)); } catch (e) {} }
+    function fmtD(iso) { var m = String(iso || '').match(/^(\d{4})-(\d{2})-(\d{2})$/); return m ? (m[3] + '.' + m[2] + '.' + m[1]) : ''; }
+    function daysLeft(iso) { var m = String(iso || '').match(/^(\d{4})-(\d{2})-(\d{2})$/); if (!m) return null; var t = new Date(+m[1], +m[2] - 1, +m[3]); t.setHours(0, 0, 0, 0); var n = new Date(); n.setHours(0, 0, 0, 0); return Math.round((t - n) / 86400000); }
+    function targetHtml(iso) {
+      var f = fmtD(iso); if (!f) return '';
+      var dl = daysLeft(iso), tail = '';
+      if (dl != null) { if (dl > 0) tail = ' · ' + dl + ' ' + T('orzular.days_left', 'kun qoldi'); else if (dl === 0) tail = ' · ' + T('orzular.today', 'bugun'); else tail = ' · ' + T('orzular.overdue', "muddat o'tdi"); }
+      return '<div style="font-size:12px;color:var(--text-dim,#9CA0A8);margin-top:3px;">🎯 ' + f + ' ' + T('orzular.until', 'gacha') + tail + '</div>';
+    }
 
     var root = document.getElementById('years');
     function render() {
@@ -69,7 +77,7 @@
         var rows = items.length ? items.map(function (d) {
           return '<div class="dream ' + (d.done ? 'done' : '') + '">'
             + '<button class="ck" data-ck="' + d.id + '" aria-label="belgilash">' + (d.done ? '✓' : '') + '</button>'
-            + '<div class="tx">' + esc(d.text) + '</div>'
+            + '<div class="tx">' + esc(d.text) + (d.target ? targetHtml(d.target) : '') + '</div>'
             + '<button class="x" data-del="' + d.id + '" aria-label="o\'chirish">×</button></div>';
         }).join('') : '<div class="empty">' + T('orzular.empty', "Hali orzu yo'q. Birinchisini yozing.") + '</div>';
         return '<div class="year">'
@@ -77,13 +85,16 @@
           + (items.length ? '<span class="cnt">' + done + '/' + items.length + '</span>' : '') + '</div>'
           + '<div class="addrow"><input class="fld" data-add="' + yr + '" maxlength="140" placeholder="' + T('orzular.add_ph', 'Yangi orzu...') + '">'
           + '<button class="addbtn" data-addbtn="' + yr + '" aria-label="qo\'shish">+</button></div>'
+          + '<div style="margin:6px 0 2px;display:flex;align-items:center;gap:8px;"><input class="fld" data-adddate="' + yr + '" type="date" style="flex:0 0 150px;padding:9px 10px;font-size:14px;"><span style="font-size:12px;color:var(--text-dim,#9CA0A8);">🎯 ' + T('orzular.target_hint', 'muddat — ixtiyoriy') + '</span></div>'
           + rows + '</div>';
       }).join('');
       wire();
     }
-    function addDream(yr, text) {
+    function addDream(yr, text, target) {
       text = (text || '').trim(); if (!text) return;
-      var d = load(); d.push({ id: Date.now() + '' + Math.floor(Math.random() * 999), year: yr, text: text, done: false });
+      var obj = { id: Date.now() + '' + Math.floor(Math.random() * 999), year: yr, text: text, done: false };
+      if (/^\d{4}-\d{2}-\d{2}$/.test(target || '')) obj.target = target;
+      var d = load(); d.push(obj);
       save(d);
       if (window.MVOW_DATA && MVOW_DATA.fxSuccess) MVOW_DATA.fxSuccess();
       render();
@@ -92,12 +103,12 @@
       root.querySelectorAll('[data-addbtn]').forEach(function (b) {
         b.addEventListener('click', function () {
           var yr = +b.getAttribute('data-addbtn');
-          var inp = root.querySelector('[data-add="' + yr + '"]');
-          addDream(yr, inp && inp.value); if (inp) inp.value = '';
+          var inp = root.querySelector('[data-add="' + yr + '"]'), dinp = root.querySelector('[data-adddate="' + yr + '"]');
+          addDream(yr, inp && inp.value, dinp && dinp.value); if (inp) inp.value = ''; if (dinp) dinp.value = '';
         });
       });
       root.querySelectorAll('[data-add]').forEach(function (inp) {
-        inp.addEventListener('keydown', function (e) { if (e.key === 'Enter') { addDream(+inp.getAttribute('data-add'), inp.value); inp.value = ''; } });
+        inp.addEventListener('keydown', function (e) { if (e.key === 'Enter') { var yr = +inp.getAttribute('data-add'), dinp = root.querySelector('[data-adddate="' + yr + '"]'); addDream(yr, inp.value, dinp && dinp.value); inp.value = ''; if (dinp) dinp.value = ''; } });
       });
       root.querySelectorAll('[data-ck]').forEach(function (b) {
         b.addEventListener('click', function () {

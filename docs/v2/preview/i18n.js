@@ -914,7 +914,8 @@
         empty: "Hali orzu yo'q. Birinchisini yozing.",
         remind_off: 'Har kuni eslatib tur',
         remind_on: 'Eslatib turiladi ✓',
-        remind_card: "orzularingizni o'qing"
+        remind_card: "orzularingizni o'qing",
+        target_hint: "muddat — ixtiyoriy", until: "gacha", days_left: "kun qoldi", today: "bugun", overdue: "muddat o'tdi"
       },
       wallet: {
         page_title: "{brand} — Hamyon", title: "Hamyon", sub: "Pul kirim-chiqim va rejalar",
@@ -1881,7 +1882,8 @@
         empty: 'Мечт пока нет. Запишите первую.',
         remind_off: 'Напоминать каждый день',
         remind_on: 'Напоминание включено ✓',
-        remind_card: 'перечитайте свои мечты'
+        remind_card: 'перечитайте свои мечты',
+        target_hint: 'срок — необязательно', until: 'до', days_left: 'дн. осталось', today: 'сегодня', overdue: 'срок прошёл'
       },
       wallet: {
         page_title: "{brand} — Кошелёк", title: "Кошелёк", sub: "Доходы, расходы и планы",
@@ -2848,7 +2850,8 @@
         empty: 'No dreams yet. Write your first one.',
         remind_off: 'Remind me daily',
         remind_on: 'Reminder on ✓',
-        remind_card: 'read your dreams'
+        remind_card: 'read your dreams',
+        target_hint: 'deadline — optional', until: 'by', days_left: 'days left', today: 'today', overdue: 'overdue'
       },
       wallet: {
         page_title: "{brand} — Wallet", title: "Wallet", sub: "Income, spending and plans",
