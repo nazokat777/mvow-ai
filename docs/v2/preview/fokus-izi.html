@@ -149,7 +149,7 @@
       var avail = Math.max(0, todayDone - spentN), canThaw = avail >= 2;
       el.innerHTML = '<div style="background:linear-gradient(135deg,rgba(110,181,255,.14),rgba(200,230,255,.05));border:1px solid rgba(110,181,255,.32);border-radius:18px;padding:16px;margin:20px auto 0;max-width:360px;text-align:left;">'
         + '<div style="font-size:16px;font-weight:800;color:#fff;">❄️ ' + s.frozen.length + ' ' + T('fokusizi.frozen_days', 'muzlagan kun') + '</div>'
-        + '<div style="font-size:14px;color:var(--text-dim);margin-top:6px;line-height:1.5;">' + T('fokusizi.frozen_hint', "Bugun vazifani 2 marta bajarib, bitta muzni eriting — yuragingiz tinch bo'ladi.") + '</div>'
+        + '<div style="font-size:14px;color:var(--text-dim);margin-top:6px;line-height:1.5;">' + T('fokusizi.frozen_hint', "Bugun 2 vazifa bajarsangiz, bitta muzni eritasiz — yuragingiz tinch bo'ladi.") + '</div>'
         + '<div style="font-size:13px;color:var(--text-dim);margin-top:8px;">' + T('fokusizi.today_done', 'Bugun bajarilgan') + ': <b style="color:#F5C26B;">' + todayDone + '</b> · ' + T('fokusizi.for_thaw', 'eritishga') + ': ' + Math.min(avail, 2) + '/2</div>'
         + '<button id="thawBtn"' + (canThaw ? '' : ' disabled') + ' style="width:100%;margin-top:12px;padding:12px;border:none;border-radius:12px;font-size:15px;font-weight:700;font-family:inherit;cursor:' + (canThaw ? 'pointer' : 'default') + ';' + (canThaw ? 'background:#6EB5FF;color:#04060B;' : 'background:transparent;color:var(--text-dim);border:1px solid var(--border-default,rgba(255,255,255,.14));') + '">❄️ ' + T('fokusizi.thaw_btn', 'Muzni eritish') + '</button></div>';
       var btn = document.getElementById('thawBtn');

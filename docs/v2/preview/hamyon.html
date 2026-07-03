@@ -477,9 +477,12 @@
     });
     var clearBtn = document.getElementById('clearAll');
     if (clearBtn) clearBtn.addEventListener('click', function () {
-      if (confirm(T('wallet.clear_confirm', "Barcha hamyon yozuvlari o'chirilsinmi?"))) {
-        try { localStorage.removeItem('mvow.wallet'); } catch (e) {}
-        render();
+      var old = localStorage.getItem('mvow.wallet');
+      if (window.MvowUndo) {
+        try { localStorage.removeItem('mvow.wallet'); } catch (e) {} render();
+        MvowUndo.show(T('common.deleted', "O'chirildi"), function () { try { if (old != null) localStorage.setItem('mvow.wallet', old); } catch (e) {} render(); });
+      } else if (confirm(T('wallet.clear_confirm', "Barcha hamyon yozuvlari o'chirilsinmi?"))) {
+        try { localStorage.removeItem('mvow.wallet'); } catch (e) {} render();
       }
     });
 

@@ -43,7 +43,7 @@
         share: "↗ Natijani ulashish", dl_done: "Rasm yuklandi — Telegram/Instagram'ga joylang", copied: "Matn nusxalandi",
         card_sub: "Mening seriyam",
         share_text: "FOCUS AI'da seriyam: {n} kun ketma-ket, {h} soat fokus! Sen ham qo'shil 👉 daywarden.vercel.app",
-        frozen_days: "muzlagan kun", frozen_hint: "Bugun vazifani 2 marta bajarib, bitta muzni eriting — yuragingiz tinch bo'ladi.", today_done: "Bugun bajarilgan", for_thaw: "eritishga", thaw_btn: "Muzni eritish", thawed_toast: "Muz eridi! 🔥 Seriya tiklandi."
+        frozen_days: "muzlagan kun", frozen_hint: "Bugun 2 vazifa bajarsangiz, bitta muzni eritasiz — yuragingiz tinch bo'ladi.", today_done: "Bugun bajarilgan", for_thaw: "eritishga", thaw_btn: "Muzni eritish", thawed_toast: "Muz eridi! 🔥 Seriya tiklandi."
       },
       sovrinlar: {
         page_title: "{brand} — Sovrinlar", title: "Sovrinlar", sub: "Yig'ilgan medallar — natijangiz bilan ochiladi", medal: "medal",
@@ -180,6 +180,13 @@
         s8_h: "8. Aloqa",
         s8_p1: "Savol bo'lsa: <a href=\"mailto:abduazizovanazokat@gmail.com\">abduazizovanazokat@gmail.com</a>",
         footer: "© 2026 Just AI It · FOCUS AI — Intizom do'sti",
+      },
+      coach: {
+        s1_t: 'Maqsadlaringiz', s1_d: "Katta maqsad yozing — AI uni kichik bosqichlarga bo'ladi.",
+        s2_t: 'Kunlik reja', s2_d: 'Bugungi vazifalaringiz shu yerda. Bajarib, belgilaysiz.',
+        s3_t: 'Fokus taymeri', s3_d: "Vazifani tanlab, taymer bilan chalg'imasdan ishlaysiz.",
+        s4_t: 'Natijalar', s4_d: "Fokus soatlari, streak, medallar — o'sishingiz shu yerda.",
+        next: 'Keyingi', got_it: 'Tushundim', skip: "O'tkazib yuborish"
       },
       common: {
         continue: 'Davom',
@@ -602,6 +609,7 @@
         perm_notification_aria: 'Bildirishnoma ruxsati',
         test_notif_btn: 'Bildirishnoma sinovi',
         replay_intro: "Tanishuv ko'rinishini qayta ko'rsatish",
+        sec_security: "Xavfsizlik", pin_lock_lbl: "Ilovani qulflash (PIN)", pin_on: "Yoqilgan ✓", pin_off: "O'chiq ›",
         test_notif_sent: 'Yuborildi ✓',
         test_notif_denied: 'Ruxsat rad qilindi. Brauzer sozlamasidan ruxsat bering.',
         test_notif_unsupported: "Bu brauzerda qo'llab-quvvatlanmaydi.",
@@ -934,7 +942,7 @@
         price_lbl: "Narxi", buy: "Sotib olish", left: "qoldi", buy_q: "sarflansinmi?",
         empty: "Hali mukofot yo'q. O'zingizga bittasini belgilang.", hist_empty: "Hali mukofot olinmagan",
         hint_coin: "Tanga: har vazifa = 1 🪙", hint_dm: "Olmos: har mukammal kun = 1 💎 (kamyob — katta mukofotlarga)",
-        seed1: "Kino kechasi", seed2: "Yangi kitob", save: "Saqlash", cancel: "Bekor"
+        seed1: "Kino kechasi", seed2: "Yangi kitob", save: "Saqlash", cancel: "Bekor", bought: "Olindi"
       },
       shahar: {
         page_title: "{brand} — Shahringiz", title: "Shahringiz", sub: "Har tanga bilan bino quring — intizomingiz shaharni o'stiradi. 🏙️",
@@ -1061,7 +1069,7 @@
         share: "↗ Поделиться результатом", dl_done: "Картинка скачана — отправьте в Telegram/Instagram", copied: "Текст скопирован",
         card_sub: "Моя серия",
         share_text: "Моя серия в FOCUS AI: {n} дней подряд, {h} ч фокуса! Присоединяйся 👉 daywarden.vercel.app",
-        frozen_days: "замороженных дней", frozen_hint: "Выполните задачу 2 раза сегодня — растопите один лёд, на душе станет легче.", today_done: "Сегодня выполнено", for_thaw: "на разморозку", thaw_btn: "Растопить лёд", thawed_toast: "Лёд растаял! 🔥 Серия восстановлена."
+        frozen_days: "замороженных дней", frozen_hint: "Выполните сегодня 2 задачи — и растопите один лёд, на душе станет легче.", today_done: "Сегодня выполнено", for_thaw: "на разморозку", thaw_btn: "Растопить лёд", thawed_toast: "Лёд растаял! 🔥 Серия восстановлена."
       },
       sovrinlar: {
         page_title: "{brand} — Награды", title: "Награды", sub: "Собранные медали — открываются по результатам", medal: "медалей",
@@ -1198,6 +1206,13 @@
         s8_h: "8. Контакты",
         s8_p1: "Если есть вопрос: <a href=\"mailto:abduazizovanazokat@gmail.com\">abduazizovanazokat@gmail.com</a>",
         footer: "© 2026 Just AI It · FOCUS AI — Ваш друг по дисциплине",
+      },
+      coach: {
+        s1_t: 'Ваши цели', s1_d: 'Запишите большую цель — AI разобьёт её на маленькие шаги.',
+        s2_t: 'План на день', s2_d: 'Ваши задачи на сегодня здесь. Выполняете и отмечаете.',
+        s3_t: 'Таймер фокуса', s3_d: 'Выбираете задачу и работаете с таймером без отвлечений.',
+        s4_t: 'Результаты', s4_d: 'Часы фокуса, серия, медали — ваш рост здесь.',
+        next: 'Далее', got_it: 'Понятно', skip: 'Пропустить'
       },
       common: {
         continue: 'Продолжить',
@@ -1620,6 +1635,7 @@
         perm_notification_aria: 'Разрешение на уведомления',
         test_notif_btn: 'Тест уведомления',
         replay_intro: 'Показать вступление заново',
+        sec_security: 'Безопасность', pin_lock_lbl: 'Блокировка приложения (PIN)', pin_on: 'Включён ✓', pin_off: 'Выкл ›',
         test_notif_sent: 'Отправлено ✓',
         test_notif_denied: 'В разрешении отказано. Откройте доступ в настройках браузера.',
         test_notif_unsupported: 'Этот браузер не поддерживается.',
@@ -1939,7 +1955,7 @@
         price_lbl: "Цена", buy: "Получить", left: "осталось", buy_q: "потратить?",
         empty: "Наград пока нет. Задайте себе первую.", hist_empty: "Наград пока не получено",
         hint_coin: "Монеты: за каждую задачу = 1 🪙", hint_dm: "Алмазы: за идеальный день = 1 💎 (редкие — для крупных наград)",
-        seed1: "Вечер кино", seed2: "Новая книга", save: "Сохранить", cancel: "Отмена"
+        seed1: "Вечер кино", seed2: "Новая книга", save: "Сохранить", cancel: "Отмена", bought: "Получено"
       },
       shahar: {
         page_title: "{brand} — Ваш город", title: "Ваш город", sub: "Стройте на монеты — ваша дисциплина растит город. 🏙️",
@@ -2066,7 +2082,7 @@
         share: "↗ Share result", dl_done: "Image downloaded — post it to Telegram/Instagram", copied: "Text copied",
         card_sub: "My streak",
         share_text: "My streak on FOCUS AI: {n} days, {h}h of focus! Join me 👉 daywarden.vercel.app",
-        frozen_days: "frozen days", frozen_hint: "Do a task 2× today to thaw one frozen day — your mind will rest easier.", today_done: "Done today", for_thaw: "to thaw", thaw_btn: "Thaw the ice", thawed_toast: "Ice thawed! 🔥 Streak restored."
+        frozen_days: "frozen days", frozen_hint: "Do 2 tasks today to thaw one frozen day — your mind will rest easier.", today_done: "Done today", for_thaw: "to thaw", thaw_btn: "Thaw the ice", thawed_toast: "Ice thawed! 🔥 Streak restored."
       },
       sovrinlar: {
         page_title: "{brand} — Rewards", title: "Rewards", sub: "Collected medals — unlocked by your results", medal: "medals",
@@ -2203,6 +2219,13 @@
         s8_h: "8. Contact",
         s8_p1: "If you have a question: <a href=\"mailto:abduazizovanazokat@gmail.com\">abduazizovanazokat@gmail.com</a>",
         footer: "© 2026 Just AI It · FOCUS AI — Your discipline friend",
+      },
+      coach: {
+        s1_t: 'Your goals', s1_d: 'Write a big goal — AI breaks it into small steps.',
+        s2_t: "Today's plan", s2_d: 'Your tasks for today are here. Do them and check off.',
+        s3_t: 'Focus timer', s3_d: 'Pick a task and work with the timer, distraction-free.',
+        s4_t: 'Results', s4_d: 'Focus hours, streak, medals — your growth is here.',
+        next: 'Next', got_it: 'Got it', skip: 'Skip'
       },
       common: {
         continue: 'Continue',
@@ -2625,6 +2648,7 @@
         perm_notification_aria: 'Notification permission',
         test_notif_btn: 'Test notification',
         replay_intro: 'Replay the intro',
+        sec_security: 'Security', pin_lock_lbl: 'App lock (PIN)', pin_on: 'On ✓', pin_off: 'Off ›',
         test_notif_sent: 'Sent ✓',
         test_notif_denied: 'Permission denied. Allow it in your browser settings.',
         test_notif_unsupported: 'Not supported in this browser.',
@@ -2944,7 +2968,7 @@
         price_lbl: "Price", buy: "Redeem", left: "left", buy_q: "spend?",
         empty: "No rewards yet. Set one for yourself.", hist_empty: "No rewards redeemed yet",
         hint_coin: "Coins: 1 per task = 1 🪙", hint_dm: "Diamonds: 1 per perfect day = 1 💎 (rare — for big rewards)",
-        seed1: "Movie night", seed2: "New book", save: "Save", cancel: "Cancel"
+        seed1: "Movie night", seed2: "New book", save: "Save", cancel: "Cancel", bought: "Redeemed"
       },
       shahar: {
         page_title: "{brand} — Your city", title: "Your city", sub: "Build with coins — your discipline grows the city. 🏙️",

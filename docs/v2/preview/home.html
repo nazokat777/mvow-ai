@@ -1432,10 +1432,10 @@
   (function coachMark() {
     try { if (localStorage.getItem('mvow.coachSeen')) return; } catch (e) { return; }
     var steps = [
-      { t: 'Maqsadlaringiz', d: "Katta maqsad yozing — AI uni kichik bosqichlarga bo'ladi." },
-      { t: 'Kunlik reja', d: 'Bugungi vazifalaringiz shu yerda. Bajarib, belgilaysiz.' },
-      { t: 'Fokus taymeri', d: "Vazifani tanlab, taymer bilan chalg'imasdan ishlaysiz." },
-      { t: 'Natijalar', d: "Fokus soatlari, streak, medallar — o'sishingiz shu yerda." }
+      { t: T('coach.s1_t', 'Maqsadlaringiz'), d: T('coach.s1_d', "Katta maqsad yozing — AI uni kichik bosqichlarga bo'ladi.") },
+      { t: T('coach.s2_t', 'Kunlik reja'), d: T('coach.s2_d', 'Bugungi vazifalaringiz shu yerda. Bajarib, belgilaysiz.') },
+      { t: T('coach.s3_t', 'Fokus taymeri'), d: T('coach.s3_d', "Vazifani tanlab, taymer bilan chalg'imasdan ishlaysiz.") },
+      { t: T('coach.s4_t', 'Natijalar'), d: T('coach.s4_d', "Fokus soatlari, streak, medallar — o'sishingiz shu yerda.") }
     ];
     var i = 0;
     var ov = document.createElement('div');
@@ -1449,8 +1449,8 @@
       card.innerHTML = '<div style="font-size:12px;letter-spacing:2px;color:var(--accent,#F4845F);font-weight:700;margin-bottom:8px;">' + (i + 1) + ' / ' + steps.length + '</div>'
         + '<div style="font-size:24px;font-weight:700;color:var(--text,#F5F2EC);margin-bottom:10px;">' + s.t + '</div>'
         + '<div style="font-size:16px;color:var(--text-mid,#C9CDD4);line-height:1.55;margin-bottom:22px;">' + s.d + '</div>'
-        + '<button id="cmNext" style="width:100%;padding:14px;background:var(--accent,#F4845F);color:#fff;border:none;border-radius:12px;font-size:16px;font-weight:700;font-family:inherit;cursor:pointer;">' + (last ? 'Tushundim' : 'Keyingi') + '</button>'
-        + (last ? '' : '<div id="cmSkip" style="margin-top:12px;font-size:14px;color:var(--text-dim,#9CA0A8);cursor:pointer;">O’tkazib yuborish</div>');
+        + '<button id="cmNext" style="width:100%;padding:14px;background:var(--accent,#F4845F);color:#fff;border:none;border-radius:12px;font-size:16px;font-weight:700;font-family:inherit;cursor:pointer;">' + (last ? T('coach.got_it', 'Tushundim') : T('coach.next', 'Keyingi')) + '</button>'
+        + (last ? '' : '<div id="cmSkip" style="margin-top:12px;font-size:14px;color:var(--text-dim,#9CA0A8);cursor:pointer;">' + T('coach.skip', "O'tkazib yuborish") + '</div>');
       card.querySelector('#cmNext').addEventListener('click', function () { if (last) close(); else { i++; draw(); } });
       var sk = card.querySelector('#cmSkip'); if (sk) sk.addEventListener('click', close);
     }

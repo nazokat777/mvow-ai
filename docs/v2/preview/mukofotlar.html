@@ -180,6 +180,9 @@
       var h = loadH(); h.push({ name: r.name, emoji: r.emoji, price: price, cur: r.cur, date: todayIso() }); saveH(h);
       if (window.MVOW_DATA && MVOW_DATA.fxSuccess) MVOW_DATA.fxSuccess();
       render();
+      if (window.MvowUndo) MvowUndo.show(T('mukofot.bought', 'Olindi'), function () {
+        setN(key, get(key) + price); var hh = loadH(); hh.pop(); saveH(hh); render();
+      });
     }
 
     // ── Qo'shish oynasi ──

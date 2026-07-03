@@ -123,16 +123,24 @@
       var c = loadCity(); c.push(it.e); saveCity(c);
       if (window.MVOW_DATA && MVOW_DATA.fxSuccess) MVOW_DATA.fxSuccess();
       render();
+      if (window.MvowUndo) MvowUndo.show(T('shahar.built', 'Qurildi'), function () {
+        setN(key, get(key) + it.price); var cc = loadCity(); cc.pop(); saveCity(cc); render();
+      });
     }
 
     document.getElementById('clrBtn').addEventListener('click', function () {
-      if (confirm(T('shahar.clear_confirm', 'Shahar butunlay buzilsinmi? (tangalar qaytmaydi)'))) { saveCity([]); render(); }
+      var old = loadCity(); if (!old.length) return;
+      if (window.MvowUndo) {
+        saveCity([]); render();
+        MvowUndo.show(T('shahar.demolished', 'Shahar buzildi'), function () { saveCity(old); render(); });
+      } else if (confirm(T('shahar.clear_confirm', 'Shahar butunlay buzilsinmi? (tangalar qaytmaydi)'))) { saveCity([]); render(); }
     });
 
     try { document.title = T('shahar.page_title', 'FOCUS AI — Shahringiz'); } catch (e) {}
     render();
   })();
 </script>
+<script src="undo-toast.js?v=29.0.51"></script>
 <script src="back-btn.js?v=29.0.48"></script>
 </body>
 </html>
