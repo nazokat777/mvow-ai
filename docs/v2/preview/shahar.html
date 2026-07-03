@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+<title>FOCUS AI — Shahringiz</title>
+<link rel="manifest" href="manifest.webmanifest">
+<meta name="theme-color" content="#04060B">
+<link rel="apple-touch-icon" href="assets/mnsm-logo.png?v=2">
+<link rel="icon" type="image/png" href="assets/mnsm-logo.png?v=2">
+<link rel="stylesheet" href="theme.css">
+<style>
+  * { box-sizing: border-box; }
+  body { margin: 0; font-family: 'Inter', sans-serif; background: var(--void, #04060B); color: var(--text, #F5F2EC); }
+  .phone { max-width: 480px; margin: 0 auto; min-height: 100vh; background: var(--void, #04060B); padding: 26px 18px 60px; }
+  h1 { font-size: 30px; margin: 6px 0 2px; }
+  .sub { color: var(--text-dim, #9CA0A8); font-size: 14px; line-height: 1.5; margin-bottom: 16px; }
+  .bal { display: flex; gap: 10px; margin-bottom: 16px; }
+  .bal .b { flex: 1; background: var(--card, #0C0F16); border: 1px solid var(--border-default, rgba(255,255,255,.12)); border-radius: 14px; padding: 12px; text-align: center; }
+  .bal .b .v { font-size: 24px; font-weight: 800; }
+  .bal .b.coin .v { color: #F5C26B; } .bal .b.dm .v { color: #6EB5FF; }
+  .bal .b .k { font-size: 12px; color: var(--text-dim, #9CA0A8); margin-top: 2px; }
+  .city { background: linear-gradient(180deg, #0b1730 0%, #123152 55%, #14432f 100%); border: 1px solid var(--border-default, rgba(255,255,255,.12)); border-radius: 18px; padding: 14px 12px 10px; min-height: 150px; display: flex; flex-wrap: wrap; align-content: flex-end; gap: 3px; box-shadow: inset 0 -30px 40px rgba(0,0,0,.25); }
+  .tile { font-size: 30px; line-height: 1.05; }
+  .city.empty-city { align-items: center; justify-content: center; align-content: center; }
+  .city .hint { color: rgba(255,255,255,.55); font-size: 14px; text-align: center; }
+  .meta { display: flex; align-items: center; justify-content: space-between; margin: 10px 2px 0; }
+  .meta .cnt { font-size: 13px; color: var(--text-dim, #9CA0A8); }
+  .meta .clr { background: none; border: none; color: var(--text-dim, #9CA0A8); font-size: 13px; text-decoration: underline; cursor: pointer; font-family: inherit; }
+  .sec-hd { font-size: 14px; letter-spacing: 1px; text-transform: uppercase; font-weight: 800; color: var(--text-mid, #B8BBC2); margin: 22px 2px 8px; }
+  .item { display: flex; align-items: center; gap: 12px; background: var(--card, #0C0F16); border: 1px solid var(--border-default, rgba(255,255,255,.12)); border-radius: 14px; padding: 11px 14px; margin-top: 8px; }
+  .item .em { font-size: 28px; line-height: 1; flex-shrink: 0; }
+  .item .nm { flex: 1; min-width: 0; }
+  .item .nm .n1 { font-size: 15px; font-weight: 600; }
+  .item .nm .n2 { font-size: 13px; margin-top: 1px; }
+  .item.coin .nm .n2 { color: #F5C26B; } .item.dm .nm .n2 { color: #6EB5FF; }
+  .qbtn { border: none; border-radius: 999px; padding: 9px 16px; font-size: 14px; font-weight: 700; font-family: inherit; cursor: pointer; flex-shrink: 0; }
+  .qbtn.ok { background: #6BBF7A; color: #04060B; }
+  .qbtn.no { background: transparent; border: 1px solid var(--border-default, rgba(255,255,255,.14)); color: var(--text-dim, #9CA0A8); cursor: default; }
+</style>
+</head>
+<body>
+<div class="phone">
+  <h1 data-i18n="shahar.title">Shahringiz</h1>
+  <div class="sub" data-i18n="shahar.sub">Har tanga bilan bino quring — intizomingiz shaharni o'stiradi. 🏙️</div>
+
+  <div class="bal">
+    <div class="b coin"><div class="v">🪙 <span id="coinBal">0</span></div><div class="k" data-i18n="shahar.coins">Tanga</div></div>
+    <div class="b dm"><div class="v">💎 <span id="dmBal">0</span></div><div class="k" data-i18n="shahar.diamonds">Olmos</div></div>
+  </div>
+
+  <div class="city" id="city"></div>
+  <div class="meta"><span class="cnt" id="cityCnt"></span><button class="clr" id="clrBtn" data-i18n="shahar.clear">Buzib tashlash</button></div>
+
+  <div class="sec-hd" data-i18n="shahar.shop">Do'kon</div>
+  <div id="shop"></div>
+</div>
+
+<script src="i18n.js?v=29.0.48"></script>
+<script src="lang-switcher.js?v=29.0.48" defer></script>
+<script src="data.js?v=29.0.48" defer></script>
+<script src="nav-overlay.js?v=29.0.48" defer></script>
+<script>
+  (function () {
+    function T(k, fb) { return (window.I18N && I18N.t) ? I18N.t(k, fb) : fb; }
+    function num(x) { var n = parseInt(x, 10); return isFinite(n) ? n : 0; }
+    function get(k) { return num(localStorage.getItem(k)); }
+    function setN(k, v) { try { localStorage.setItem(k, String(v)); } catch (e) {} }
+
+    var CATALOG = [
+      { id: 'tree', e: '🌳', nk: 'shahar.i_tree', nf: 'Daraxt', price: 10, cur: 'coin' },
+      { id: 'road', e: '🛣️', nk: 'shahar.i_road', nf: "Yo'l", price: 15, cur: 'coin' },
+      { id: 'house', e: '🏠', nk: 'shahar.i_house', nf: 'Uy', price: 20, cur: 'coin' },
+      { id: 'car', e: '🚗', nk: 'shahar.i_car', nf: 'Mashina', price: 25, cur: 'coin' },
+      { id: 'shop', e: '🏪', nk: 'shahar.i_shop', nf: "Do'kon", price: 35, cur: 'coin' },
+      { id: 'bldg', e: '🏢', nk: 'shahar.i_bldg', nf: 'Bino', price: 50, cur: 'coin' },
+      { id: 'bridge', e: '🌉', nk: 'shahar.i_bridge', nf: "Ko'prik", price: 65, cur: 'coin' },
+      { id: 'factory', e: '🏭', nk: 'shahar.i_factory', nf: 'Zavod', price: 80, cur: 'coin' },
+      { id: 'stadium', e: '🏟️', nk: 'shahar.i_stadium', nf: 'Stadion', price: 100, cur: 'coin' },
+      { id: 'tower', e: '🗼', nk: 'shahar.i_tower', nf: 'Minora', price: 3, cur: 'diamond' },
+      { id: 'castle', e: '🏰', nk: 'shahar.i_castle', nf: "Qal'a", price: 5, cur: 'diamond' },
+      { id: 'rocket', e: '🚀', nk: 'shahar.i_rocket', nf: 'Raketa', price: 8, cur: 'diamond' }
+    ];
+    function icon(cur) { return cur === 'diamond' ? '💎' : '🪙'; }
+    function balOf(cur) { return cur === 'diamond' ? get('mvow.diamonds') : get('mvow.coins'); }
+
+    function loadCity() { try { var c = JSON.parse(localStorage.getItem('mvow.city') || '[]'); return Array.isArray(c) ? c : []; } catch (e) { return []; } }
+    function saveCity(c) { try { localStorage.setItem('mvow.city', JSON.stringify(c)); } catch (e) {} }
+
+    function render() {
+      document.getElementById('coinBal').textContent = get('mvow.coins');
+      document.getElementById('dmBal').textContent = get('mvow.diamonds');
+
+      var city = loadCity(), cityEl = document.getElementById('city');
+      if (!city.length) {
+        cityEl.className = 'city empty-city';
+        cityEl.innerHTML = '<div class="hint">' + T('shahar.empty', "Bo'sh maydon. Do'kondan birinchi binongizni quring 👇") + '</div>';
+      } else {
+        cityEl.className = 'city';
+        cityEl.innerHTML = city.map(function (e) { return '<span class="tile">' + e + '</span>'; }).join('');
+      }
+      document.getElementById('cityCnt').textContent = city.length + ' ' + T('shahar.count', 'inshoot');
+      document.getElementById('clrBtn').style.display = city.length ? '' : 'none';
+
+      document.getElementById('shop').innerHTML = CATALOG.map(function (it) {
+        var bal = balOf(it.cur), ok = bal >= it.price;
+        return '<div class="item ' + (it.cur === 'diamond' ? 'dm' : 'coin') + '">'
+          + '<span class="em">' + it.e + '</span>'
+          + '<div class="nm"><div class="n1">' + T(it.nk, it.nf) + '</div><div class="n2">' + it.price + ' ' + icon(it.cur) + '</div></div>'
+          + (ok ? '<button class="qbtn ok" data-buy="' + it.id + '">' + T('shahar.build', 'Qur') + '</button>'
+                : '<button class="qbtn no" disabled>' + (it.price - bal) + ' ' + icon(it.cur) + '</button>')
+          + '</div>';
+      }).join('');
+      document.querySelectorAll('[data-buy]').forEach(function (b) { b.addEventListener('click', function () { buy(b.getAttribute('data-buy')); }); });
+    }
+
+    function buy(id) {
+      var it = null; for (var i = 0; i < CATALOG.length; i++) { if (CATALOG[i].id === id) { it = CATALOG[i]; break; } }
+      if (!it) return;
+      var key = it.cur === 'diamond' ? 'mvow.diamonds' : 'mvow.coins';
+      if (get(key) < it.price) return;
+      setN(key, get(key) - it.price);
+      var c = loadCity(); c.push(it.e); saveCity(c);
+      if (window.MVOW_DATA && MVOW_DATA.fxSuccess) MVOW_DATA.fxSuccess();
+      render();
+    }
+
+    document.getElementById('clrBtn').addEventListener('click', function () {
+      if (confirm(T('shahar.clear_confirm', 'Shahar butunlay buzilsinmi? (tangalar qaytmaydi)'))) { saveCity([]); render(); }
+    });
+
+    try { document.title = T('shahar.page_title', 'FOCUS AI — Shahringiz'); } catch (e) {}
+    render();
+  })();
+</script>
+<script src="back-btn.js?v=29.0.48"></script>
+</body>
+</html>

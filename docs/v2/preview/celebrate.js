@@ -108,10 +108,12 @@
     } catch (e) { return false; }
   }
   function awardCoins() {
+    if (localStorage.getItem('mvow.diamondsLifetime') === null) walSet('mvow.diamondsLifetime', walNum('mvow.diamonds')); // seed (prestij)
     var coins = walNum('mvow.coins') + 1; walSet('mvow.coins', coins);
     var gotDiamond = false, today = isoOf(new Date());
     if (allTasksDone() && localStorage.getItem('mvow.diamondDay') !== today) {
       walSet('mvow.diamonds', walNum('mvow.diamonds') + 1);
+      walSet('mvow.diamondsLifetime', walNum('mvow.diamondsLifetime') + 1); // sarflansa ham kamaymaydi
       try { localStorage.setItem('mvow.diamondDay', today); } catch (e) {}
       gotDiamond = true;
     }

@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+<title>FOCUS AI — Mukofotlar</title>
+<link rel="manifest" href="manifest.webmanifest">
+<meta name="theme-color" content="#04060B">
+<link rel="apple-touch-icon" href="assets/mnsm-logo.png?v=2">
+<link rel="icon" type="image/png" href="assets/mnsm-logo.png?v=2">
+<link rel="stylesheet" href="theme.css">
+<style>
+  * { box-sizing: border-box; }
+  body { margin: 0; font-family: 'Inter', sans-serif; background: var(--void, #04060B); color: var(--text, #F5F2EC); }
+  .phone { max-width: 480px; margin: 0 auto; min-height: 100vh; background: var(--void, #04060B); padding: 26px 18px 60px; }
+  h1 { font-size: 30px; margin: 6px 0 2px; }
+  .sub { color: var(--text-dim, #9CA0A8); font-size: 14px; line-height: 1.5; margin-bottom: 16px; }
+  .bal { display: flex; gap: 10px; margin-bottom: 18px; }
+  .bal .b { flex: 1; background: var(--card, #0C0F16); border: 1px solid var(--border-default, rgba(255,255,255,.12)); border-radius: 14px; padding: 14px; text-align: center; }
+  .bal .b .v { font-size: 26px; font-weight: 800; }
+  .bal .b.coin .v { color: #F5C26B; } .bal .b.dm .v { color: #6EB5FF; }
+  .bal .b .k { font-size: 12px; color: var(--text-dim, #9CA0A8); margin-top: 2px; }
+  .sec-hd { display: flex; align-items: center; justify-content: space-between; margin: 22px 2px 8px; }
+  .sec-hd .t { font-size: 14px; letter-spacing: 1px; text-transform: uppercase; font-weight: 800; color: var(--text-mid, #B8BBC2); }
+  .addb { border: none; border-radius: 999px; padding: 7px 14px; font-size: 13px; font-weight: 700; cursor: pointer; font-family: inherit; background: var(--accent, #F4845F); color: #fff; }
+  .rw { background: var(--card, #0C0F16); border: 1px solid var(--border-default, rgba(255,255,255,.12)); border-radius: 16px; padding: 14px 16px; margin-top: 10px; }
+  .rw .top { display: flex; align-items: center; gap: 12px; }
+  .rw .em { font-size: 30px; line-height: 1; flex-shrink: 0; }
+  .rw .nm { flex: 1; min-width: 0; }
+  .rw .nm .n1 { font-size: 16px; font-weight: 600; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .rw .nm .n2 { font-size: 13px; color: var(--text-dim, #9CA0A8); margin-top: 1px; }
+  .rw .x { background: none; border: none; color: var(--text-dim, #9CA0A8); font-size: 20px; cursor: pointer; flex-shrink: 0; }
+  .bar { height: 8px; background: rgba(255,255,255,.08); border-radius: 999px; overflow: hidden; margin-top: 10px; }
+  .bar .fill { height: 100%; border-radius: 999px; transition: width .3s; }
+  .rw.coin .bar .fill { background: linear-gradient(90deg, #F5C26B, #d99a3c); }
+  .rw.dm .bar .fill { background: linear-gradient(90deg, #6EB5FF, #3f7fd0); }
+  .rw .buy { width: 100%; margin-top: 12px; padding: 12px; border: none; border-radius: 12px; font-size: 15px; font-weight: 700; font-family: inherit; cursor: pointer; }
+  .rw .buy.ready { background: #6BBF7A; color: #04060B; }
+  .rw .buy.wait { background: transparent; border: 1px solid var(--border-default, rgba(255,255,255,.14)); color: var(--text-dim, #9CA0A8); cursor: default; }
+  .empty { color: var(--text-dim, #9CA0A8); font-size: 14px; padding: 10px 4px; }
+  .hist { display: flex; align-items: center; gap: 10px; background: var(--card, #0C0F16); border: 1px solid var(--border-default, rgba(255,255,255,.10)); border-radius: 12px; padding: 11px 14px; margin-top: 8px; opacity: .85; }
+  .hist .em { font-size: 22px; } .hist .nm { flex: 1; font-size: 15px; } .hist .dt { font-size: 12px; color: var(--text-dim, #9CA0A8); }
+
+  .ov { display: none; position: fixed; inset: 0; z-index: 9998; background: rgba(0,0,0,.6); align-items: flex-end; justify-content: center; }
+  .ov.show { display: flex; }
+  .sheet { width: 100%; max-width: 480px; background: var(--card, #11151E); border-radius: 20px 20px 0 0; padding: 22px 18px calc(22px + env(safe-area-inset-bottom, 0px)); border-top: 1px solid var(--border-default, rgba(255,255,255,.12)); }
+  .sheet h2 { font-size: 20px; margin-bottom: 14px; }
+  .lbl { font-size: 12px; letter-spacing: 1px; text-transform: uppercase; color: var(--text-dim, #9CA0A8); font-weight: 700; margin: 12px 2px 6px; display: block; }
+  .fld { width: 100%; padding: 13px; background: var(--void, #0C0F16); border: 1px solid var(--border-default, rgba(255,255,255,.12)); border-radius: 12px; color: var(--text, #F5F2EC); font-size: 16px; font-family: inherit; }
+  .row2 { display: flex; gap: 10px; }
+  .seg { display: flex; gap: 6px; }
+  .seg button { flex: 1; padding: 12px; border-radius: 10px; border: 1px solid var(--border-default, rgba(255,255,255,.14)); background: transparent; color: var(--text-mid, #B8BBC2); font-size: 15px; font-weight: 600; cursor: pointer; font-family: inherit; }
+  .seg button.on { background: var(--accent, #F4845F); border-color: var(--accent, #F4845F); color: #fff; }
+  .hint { font-size: 12px; color: var(--text-dim, #9CA0A8); margin-top: 6px; }
+  .actions { display: flex; gap: 10px; margin-top: 18px; }
+  .btn { flex: 1; padding: 14px; border-radius: 12px; font-size: 16px; font-weight: 700; cursor: pointer; font-family: inherit; border: none; }
+  .btn.cancel { background: transparent; border: 1px solid var(--border-default, rgba(255,255,255,.15)); color: var(--text-mid, #B8BBC2); }
+  .btn.save { background: var(--accent, #F4845F); color: #fff; }
+</style>
+</head>
+<body>
+<div class="phone">
+  <h1 data-i18n="mukofot.title">Mukofotlar</h1>
+  <div class="sub" data-i18n="mukofot.sub">Tanga va olmoslaringizni o'zingiz belgilagan mukofotlarga sarflang.</div>
+
+  <div class="bal">
+    <div class="b coin"><div class="v">🪙 <span id="coinBal">0</span></div><div class="k" data-i18n="mukofot.coins">Tanga</div></div>
+    <div class="b dm"><div class="v">💎 <span id="dmBal">0</span></div><div class="k" data-i18n="mukofot.diamonds">Olmos</div></div>
+  </div>
+
+  <div class="sec-hd"><span class="t" data-i18n="mukofot.my">Mukofotlarim</span><button class="addb" id="addBtn" data-i18n="mukofot.add">+ Mukofot</button></div>
+  <div id="list"></div>
+
+  <div class="sec-hd"><span class="t" data-i18n="mukofot.history">Olingan mukofotlar</span></div>
+  <div id="history"></div>
+</div>
+
+<div class="ov" id="ov">
+  <div class="sheet">
+    <h2 id="ovTitle" data-i18n="mukofot.add">+ Mukofot</h2>
+    <label class="lbl" data-i18n="mukofot.name_lbl">Nomi</label>
+    <div class="row2">
+      <input id="fEmoji" class="fld" maxlength="2" style="flex:0 0 60px;text-align:center;font-size:22px;" value="🎁">
+      <input id="fName" class="fld" maxlength="50" style="flex:1;" placeholder="">
+    </div>
+    <label class="lbl" data-i18n="mukofot.cur_lbl">Nima bilan</label>
+    <div class="seg">
+      <button type="button" id="curCoin" class="on" data-i18n="mukofot.cur_coin">🪙 Tanga</button>
+      <button type="button" id="curDm" data-i18n="mukofot.cur_diamond">💎 Olmos</button>
+    </div>
+    <label class="lbl" data-i18n="mukofot.price_lbl">Narxi</label>
+    <input id="fPrice" class="fld" type="number" inputmode="numeric" min="1" step="1" placeholder="150">
+    <div class="hint" id="priceHint"></div>
+    <div class="actions">
+      <button class="btn cancel" id="ovCancel" data-i18n="mukofot.cancel">Bekor</button>
+      <button class="btn save" id="ovSave" data-i18n="mukofot.save">Saqlash</button>
+    </div>
+  </div>
+</div>
+
+<script src="i18n.js?v=29.0.48"></script>
+<script src="lang-switcher.js?v=29.0.48" defer></script>
+<script src="data.js?v=29.0.48" defer></script>
+<script src="nav-overlay.js?v=29.0.48" defer></script>
+<script>
+  (function () {
+    function T(k, fb) { return (window.I18N && I18N.t) ? I18N.t(k, fb) : fb; }
+    function esc(s) { return String(s == null ? '' : s).replace(/[&<>"]/g, function (c) { return ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]); }); }
+    function num(x) { var n = parseInt(x, 10); return isFinite(n) ? n : 0; }
+    function get(k) { return num(localStorage.getItem(k)); }
+    function setN(k, v) { try { localStorage.setItem(k, String(v)); } catch (e) {} }
+    function todayIso() { try { if (window.MVOW_DATA && MVOW_DATA.today) return MVOW_DATA.today.iso; } catch (e) {} var d = new Date(); return d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0'); }
+    function fmtDate(iso) { var m = String(iso || '').match(/^(\d{4})-(\d{2})-(\d{2})$/); return m ? (m[3] + '.' + m[2] + '.' + m[1]) : ''; }
+
+    function loadR() {
+      var d = null; try { d = JSON.parse(localStorage.getItem('mvow.rewards') || 'null'); } catch (e) {}
+      if (!Array.isArray(d)) {   // birinchi kirish — namuna mukofotlar
+        d = [
+          { id: 's1', name: T('mukofot.seed1', 'Kino kechasi'), emoji: '🎬', price: 150, cur: 'coin' },
+          { id: 's2', name: T('mukofot.seed2', 'Yangi kitob'), emoji: '📚', price: 300, cur: 'coin' }
+        ];
+        saveR(d);
+      }
+      return d;
+    }
+    function saveR(d) { try { localStorage.setItem('mvow.rewards', JSON.stringify(d)); } catch (e) {} }
+    function loadH() { try { var h = JSON.parse(localStorage.getItem('mvow.rewardsHistory') || '[]'); return Array.isArray(h) ? h : []; } catch (e) { return []; } }
+    function saveH(h) { try { localStorage.setItem('mvow.rewardsHistory', JSON.stringify(h)); } catch (e) {} }
+
+    function icon(cur) { return cur === 'diamond' ? '💎' : '🪙'; }
+    function balOf(cur) { return cur === 'diamond' ? get('mvow.diamonds') : get('mvow.coins'); }
+
+    function render() {
+      document.getElementById('coinBal').textContent = get('mvow.coins');
+      document.getElementById('dmBal').textContent = get('mvow.diamonds');
+
+      var rewards = loadR();
+      document.getElementById('list').innerHTML = rewards.length ? rewards.map(function (r) {
+        var bal = balOf(r.cur), price = num(r.price) || 1, ready = bal >= price;
+        var pct = Math.max(0, Math.min(100, Math.round(bal / price * 100)));
+        return '<div class="rw ' + (r.cur === 'diamond' ? 'dm' : 'coin') + '">'
+          + '<div class="top"><div class="em">' + esc(r.emoji || '🎁') + '</div>'
+          + '<div class="nm"><div class="n1">' + esc(r.name) + '</div>'
+          + '<div class="n2">' + Math.min(bal, price) + ' / ' + price + ' ' + icon(r.cur) + '</div></div>'
+          + '<button class="x" data-del="' + r.id + '" aria-label="o\'chirish">×</button></div>'
+          + '<div class="bar"><div class="fill" style="width:' + pct + '%"></div></div>'
+          + (ready
+              ? '<button class="buy ready" data-buy="' + r.id + '">' + T('mukofot.buy', 'Sotib olish') + ' (' + price + ' ' + icon(r.cur) + ')</button>'
+              : '<button class="buy wait" disabled>' + (price - bal) + ' ' + icon(r.cur) + ' ' + T('mukofot.left', 'qoldi') + '</button>')
+          + '</div>';
+      }).join('') : '<div class="empty">' + T('mukofot.empty', "Hali mukofot yo'q. O'zingizga bittasini belgilang.") + '</div>';
+
+      var hist = loadH().slice().reverse();
+      document.getElementById('history').innerHTML = hist.length ? hist.map(function (h) {
+        return '<div class="hist"><span class="em">' + esc(h.emoji || '🎁') + '</span><span class="nm">' + esc(h.name) + '</span>'
+          + '<span class="dt">' + fmtDate(h.date) + ' · ' + num(h.price) + ' ' + icon(h.cur) + '</span></div>';
+      }).join('') : '<div class="empty">' + T('mukofot.hist_empty', 'Hali mukofot olinmagan') + '</div>';
+
+      document.querySelectorAll('[data-del]').forEach(function (b) {
+        b.addEventListener('click', function () { saveR(loadR().filter(function (x) { return String(x.id) !== b.getAttribute('data-del'); })); render(); });
+      });
+      document.querySelectorAll('[data-buy]').forEach(function (b) {
+        b.addEventListener('click', function () { buy(b.getAttribute('data-buy')); });
+      });
+    }
+
+    function buy(id) {
+      var rewards = loadR(), r = null;
+      for (var i = 0; i < rewards.length; i++) { if (String(rewards[i].id) === id) { r = rewards[i]; break; } }
+      if (!r) return;
+      var price = num(r.price) || 1, key = r.cur === 'diamond' ? 'mvow.diamonds' : 'mvow.coins';
+      if (get(key) < price) return;
+      if (!confirm('"' + r.name + '" — ' + price + ' ' + icon(r.cur) + ' ' + T('mukofot.buy_q', 'sarflansinmi?'))) return;
+      setN(key, get(key) - price);   // olmos sarflansa ham diamondsLifetime (prestij) kamaymaydi
+      var h = loadH(); h.push({ name: r.name, emoji: r.emoji, price: price, cur: r.cur, date: todayIso() }); saveH(h);
+      if (window.MVOW_DATA && MVOW_DATA.fxSuccess) MVOW_DATA.fxSuccess();
+      render();
+    }
+
+    // ── Qo'shish oynasi ──
+    var ov = document.getElementById('ov'), curCur = 'coin';
+    var fName = document.getElementById('fName'), fEmoji = document.getElementById('fEmoji'), fPrice = document.getElementById('fPrice');
+    function setCur(c) { curCur = c; document.getElementById('curCoin').classList.toggle('on', c === 'coin'); document.getElementById('curDm').classList.toggle('on', c === 'diamond'); hint(); }
+    function hint() { document.getElementById('priceHint').textContent = curCur === 'diamond' ? T('mukofot.hint_dm', 'Olmos: har mukammal kun = 1 💎 (kamyob — katta mukofotlarga)') : T('mukofot.hint_coin', 'Tanga: har vazifa = 1 🪙'); }
+    function openSheet() {
+      fName.value = ''; fEmoji.value = '🎁'; fPrice.value = ''; setCur('coin');
+      fName.placeholder = T('mukofot.name_ph', 'mas. kino kechasi');
+      ov.classList.add('show'); setTimeout(function () { fName.focus(); }, 80);
+    }
+    function closeSheet() { ov.classList.remove('show'); }
+    function saveSheet() {
+      var name = fName.value.trim(), price = num(fPrice.value);
+      if (!name || price < 1) { fName.focus(); return; }
+      var d = loadR(); d.push({ id: String(Date.now()) + Math.floor(Math.random() * 999), name: name, emoji: (fEmoji.value.trim() || '🎁'), price: price, cur: curCur });
+      saveR(d);
+      if (window.MVOW_DATA && MVOW_DATA.fxSuccess) MVOW_DATA.fxSuccess();
+      closeSheet(); render();
+    }
+    document.getElementById('addBtn').addEventListener('click', openSheet);
+    document.getElementById('curCoin').addEventListener('click', function () { setCur('coin'); });
+    document.getElementById('curDm').addEventListener('click', function () { setCur('diamond'); });
+    document.getElementById('ovCancel').addEventListener('click', closeSheet);
+    document.getElementById('ovSave').addEventListener('click', saveSheet);
+    ov.addEventListener('click', function (e) { if (e.target === ov) closeSheet(); });
+
+    try { document.title = T('mukofot.page_title', 'FOCUS AI — Mukofotlar'); } catch (e) {}
+    render();
+  })();
+</script>
+<script src="back-btn.js?v=29.0.48"></script>
+</body>
+</html>

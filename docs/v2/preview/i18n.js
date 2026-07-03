@@ -918,6 +918,22 @@
         remind_card: "orzularingizni o'qing",
         target_hint: "muddat — ixtiyoriy", until: "gacha", days_left: "kun qoldi", today: "bugun", overdue: "muddat o'tdi"
       },
+      mukofot: {
+        page_title: "{brand} — Mukofotlar", title: "Mukofotlar", sub: "Tanga va olmoslaringizni o'zingiz belgilagan mukofotlarga sarflang.",
+        coins: "Tanga", diamonds: "Olmos", my: "Mukofotlarim", history: "Olingan mukofotlar", add: "+ Mukofot",
+        name_lbl: "Nomi", name_ph: "mas. kino kechasi", cur_lbl: "Nima bilan", cur_coin: "🪙 Tanga", cur_diamond: "💎 Olmos",
+        price_lbl: "Narxi", buy: "Sotib olish", left: "qoldi", buy_q: "sarflansinmi?",
+        empty: "Hali mukofot yo'q. O'zingizga bittasini belgilang.", hist_empty: "Hali mukofot olinmagan",
+        hint_coin: "Tanga: har vazifa = 1 🪙", hint_dm: "Olmos: har mukammal kun = 1 💎 (kamyob — katta mukofotlarga)",
+        seed1: "Kino kechasi", seed2: "Yangi kitob", save: "Saqlash", cancel: "Bekor"
+      },
+      shahar: {
+        page_title: "{brand} — Shahringiz", title: "Shahringiz", sub: "Har tanga bilan bino quring — intizomingiz shaharni o'stiradi. 🏙️",
+        coins: "Tanga", diamonds: "Olmos", shop: "Do'kon", build: "Qur", count: "inshoot", clear: "Buzib tashlash",
+        clear_confirm: "Shahar butunlay buzilsinmi? (tangalar qaytmaydi)", empty: "Bo'sh maydon. Do'kondan birinchi binongizni quring 👇",
+        i_tree: "Daraxt", i_road: "Yo'l", i_house: "Uy", i_car: "Mashina", i_shop: "Do'kon", i_bldg: "Bino",
+        i_bridge: "Ko'prik", i_factory: "Zavod", i_stadium: "Stadion", i_tower: "Minora", i_castle: "Qal'a", i_rocket: "Raketa"
+      },
       wallet: {
         page_title: "{brand} — Hamyon", title: "Hamyon", sub: "Pul kirim-chiqim va rejalar",
         balance: "Qoldiq", som: "so'm", card: "Plastik", cash: "Naqd", free: "Reja ayirilgach erkin",
@@ -983,6 +999,7 @@
         row_reminders: 'Eslatmalar',
         row_dreams: 'Orzular daftari',
         row_wallet: 'Hamyon',
+        row_mukofot: 'Mukofotlar', row_shahar: 'Shahringiz',
         row_hardlock: 'Fokus taymeri',
         row_session: 'Bajardim',
         row_evening: 'Kun yakuni',
@@ -1887,6 +1904,22 @@
         remind_card: 'перечитайте свои мечты',
         target_hint: 'срок — необязательно', until: 'до', days_left: 'дн. осталось', today: 'сегодня', overdue: 'срок прошёл'
       },
+      mukofot: {
+        page_title: "{brand} — Награды", title: "Награды", sub: "Тратьте монеты и алмазы на награды, которые задали сами.",
+        coins: "Монеты", diamonds: "Алмазы", my: "Мои награды", history: "Полученные награды", add: "+ Награда",
+        name_lbl: "Название", name_ph: "напр. вечер кино", cur_lbl: "Чем", cur_coin: "🪙 Монеты", cur_diamond: "💎 Алмазы",
+        price_lbl: "Цена", buy: "Получить", left: "осталось", buy_q: "потратить?",
+        empty: "Наград пока нет. Задайте себе первую.", hist_empty: "Наград пока не получено",
+        hint_coin: "Монеты: за каждую задачу = 1 🪙", hint_dm: "Алмазы: за идеальный день = 1 💎 (редкие — для крупных наград)",
+        seed1: "Вечер кино", seed2: "Новая книга", save: "Сохранить", cancel: "Отмена"
+      },
+      shahar: {
+        page_title: "{brand} — Ваш город", title: "Ваш город", sub: "Стройте на монеты — ваша дисциплина растит город. 🏙️",
+        coins: "Монеты", diamonds: "Алмазы", shop: "Магазин", build: "Строить", count: "объектов", clear: "Снести",
+        clear_confirm: "Снести весь город? (монеты не вернутся)", empty: "Пустая площадка. Постройте первое здание из магазина 👇",
+        i_tree: "Дерево", i_road: "Дорога", i_house: "Дом", i_car: "Машина", i_shop: "Магазин", i_bldg: "Здание",
+        i_bridge: "Мост", i_factory: "Завод", i_stadium: "Стадион", i_tower: "Башня", i_castle: "Замок", i_rocket: "Ракета"
+      },
       wallet: {
         page_title: "{brand} — Кошелёк", title: "Кошелёк", sub: "Доходы, расходы и планы",
         balance: "Остаток", som: "сум", card: "Карта", cash: "Наличные", free: "Свободно после плана",
@@ -1952,6 +1985,7 @@
         row_reminders: 'Напоминания',
         row_dreams: 'Дневник мечт',
         row_wallet: 'Кошелёк',
+        row_mukofot: 'Награды', row_shahar: 'Ваш город',
         row_hardlock: 'Таймер фокуса',
         row_session: 'Сделано',
         row_evening: 'Итог дня',
@@ -2856,6 +2890,22 @@
         remind_card: 'read your dreams',
         target_hint: 'deadline — optional', until: 'by', days_left: 'days left', today: 'today', overdue: 'overdue'
       },
+      mukofot: {
+        page_title: "{brand} — Rewards", title: "Rewards", sub: "Spend your coins and diamonds on rewards you set yourself.",
+        coins: "Coins", diamonds: "Diamonds", my: "My rewards", history: "Redeemed rewards", add: "+ Reward",
+        name_lbl: "Name", name_ph: "e.g. movie night", cur_lbl: "With", cur_coin: "🪙 Coins", cur_diamond: "💎 Diamonds",
+        price_lbl: "Price", buy: "Redeem", left: "left", buy_q: "spend?",
+        empty: "No rewards yet. Set one for yourself.", hist_empty: "No rewards redeemed yet",
+        hint_coin: "Coins: 1 per task = 1 🪙", hint_dm: "Diamonds: 1 per perfect day = 1 💎 (rare — for big rewards)",
+        seed1: "Movie night", seed2: "New book", save: "Save", cancel: "Cancel"
+      },
+      shahar: {
+        page_title: "{brand} — Your city", title: "Your city", sub: "Build with coins — your discipline grows the city. 🏙️",
+        coins: "Coins", diamonds: "Diamonds", shop: "Shop", build: "Build", count: "structures", clear: "Demolish",
+        clear_confirm: "Demolish the whole city? (coins won't return)", empty: "Empty lot. Build your first structure from the shop 👇",
+        i_tree: "Tree", i_road: "Road", i_house: "House", i_car: "Car", i_shop: "Shop", i_bldg: "Building",
+        i_bridge: "Bridge", i_factory: "Factory", i_stadium: "Stadium", i_tower: "Tower", i_castle: "Castle", i_rocket: "Rocket"
+      },
       wallet: {
         page_title: "{brand} — Wallet", title: "Wallet", sub: "Income, spending and plans",
         balance: "Balance", som: "so'm", card: "Card", cash: "Cash", free: "Free after plans",
@@ -2921,6 +2971,7 @@
         row_reminders: 'Reminders',
         row_dreams: 'Dream journal',
         row_wallet: 'Wallet',
+        row_mukofot: 'Rewards', row_shahar: 'Your city',
         row_hardlock: 'Focus timer',
         row_session: 'Done',
         row_evening: 'Day summary',
