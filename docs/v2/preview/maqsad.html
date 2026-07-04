@@ -324,6 +324,7 @@
     let currentStep = 1;
     let selectedDuration = null;
     let selectedDays = 0;
+    let allowOverlap = false;   // "Shart qo'shish" — init'da checkStep2 o'qiydi, shuning uchun TEPADA (TDZ oldini olish)
 
     const step1 = document.getElementById('step1');
     const step2 = document.getElementById('step2');
@@ -528,8 +529,7 @@
       return String(s).replace(/[<>"&]/g, c => ({'<':'&lt;','>':'&gt;','"':'&quot;','&':'&amp;'}[c]));
     }
 
-    // "Shart qo'shish" bosilsa -> konflikt bekor qilinadi, 2 maqsad bir vaqtda belgilanadi
-    let allowOverlap = false;
+    // "Shart qo'shish" bosilsa -> konflikt bekor qilinadi (allowOverlap yuqorida e'lon qilingan)
     function checkStep2() {
       const hasText = !!goalText.value.trim();
       const conflict = findConflict();
