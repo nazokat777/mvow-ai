@@ -246,7 +246,10 @@ body {
   // ===== State =====
   var activeIndex = 0;
   var isAnimating = false;
-  var isMobile = window.innerWidth < 640;
+  var stageEl = document.getElementById('stage');
+  // Figura o'lchami STAGE kengligiga qarab (keng ekranда stage 440px -> telefon o'lchami, bosh kesilmaydi)
+  function stageW() { return (stageEl && stageEl.clientWidth) ? stageEl.clientWidth : window.innerWidth; }
+  var isMobile = stageW() < 640;
 
   // Build figure nodes
   var items = IMAGES.map(function (im) {
@@ -348,7 +351,7 @@ body {
 
   // ===== Resize =====
   window.addEventListener('resize', function () {
-    var m = window.innerWidth < 640;
+    var m = stageW() < 640;
     if (m !== isMobile) { isMobile = m; render(); }
     fitGhost();
   });

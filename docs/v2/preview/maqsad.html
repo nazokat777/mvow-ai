@@ -302,6 +302,7 @@
     <!-- Konflikt xabari -->
     <div id="conflictMsg" style="display:none;background:rgba(255,71,87,.08);border:1px solid rgba(255,71,87,.35);border-radius:10px;padding:12px 14px;margin-top:10px;font-size:16px;color:#FF8E97;line-height:1.5;">
       <span id="conflictText" data-i18n="maqsad.conflict_default">Bu vaqt allaqachon band.</span>
+      <button type="button" id="allowOverlapBtn" style="display:none;width:100%;margin-top:10px;padding:9px;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.22);border-radius:8px;color:var(--text,#F5F2EC);font-family:inherit;font-size:14px;font-weight:600;cursor:pointer;" data-i18n="maqsad.allow_overlap">+ Shart qo'shish (baribir belgilash)</button>
     </div>
   </div>
 
@@ -527,29 +528,40 @@
       return String(s).replace(/[<>"&]/g, c => ({'<':'&lt;','>':'&gt;','"':'&quot;','&':'&amp;'}[c]));
     }
 
+    // "Shart qo'shish" bosilsa -> konflikt bekor qilinadi, 2 maqsad bir vaqtda belgilanadi
+    let allowOverlap = false;
     function checkStep2() {
       const hasText = !!goalText.value.trim();
       const conflict = findConflict();
       const conflictMsg = document.getElementById('conflictMsg');
       const conflictText = document.getElementById('conflictText');
-      if (conflict) {
+      const allowBtn = document.getElementById('allowOverlapBtn');
+      if (conflict && !allowOverlap) {
         const endStr = minToTime(conflict.end);
         const prefix = (window.I18N ? I18N.t('maqsad.conflict_prefix', 'Bu vaqt band:') : 'Bu vaqt band:');
         const afterTxt = (window.I18N ? I18N.tWith('maqsad.conflict_after', { time: endStr }) : (endStr + '\'dan keyin tanlang.'));
         conflictText.innerHTML = prefix + ' <strong style="color:#F5F2EC;">' + escapeHtmlMaqsad(conflict.text) + '</strong> ' + conflict.time + '–' + endStr + '. <span style="color:#9CA0A8;">' + afterTxt + '</span>';
+        if (allowBtn) allowBtn.style.display = 'block';
         conflictMsg.style.display = 'block';
       } else {
         conflictMsg.style.display = 'none';
       }
-      nextBtn.classList.toggle('disabled', !hasText || !!conflict);
+      nextBtn.classList.toggle('disabled', !hasText || (!!conflict && !allowOverlap));
     }
+    // Tugma: konfliktga qaramay ruxsat berish
+    (function () {
+      var ab = document.getElementById('allowOverlapBtn');
+      if (ab) ab.addEventListener('click', function () { allowOverlap = true; checkStep2(); });
+    })();
+    // Vaqt/davomiylik o'zgarsa -> yangi vaqt uchun konfliktni qaytadan so'raymiz
+    function resetOverlapCheck() { allowOverlap = false; checkStep2(); }
     goalText.addEventListener('input', checkStep2);
-    dailyTime.addEventListener('input', checkStep2);
-    dailyTime.addEventListener('change', checkStep2);
-    dailyDur.addEventListener('input', checkStep2);
-    dailyDur.addEventListener('change', checkStep2);
+    dailyTime.addEventListener('input', resetOverlapCheck);
+    dailyTime.addEventListener('change', resetOverlapCheck);
+    dailyDur.addEventListener('input', resetOverlapCheck);
+    dailyDur.addEventListener('change', resetOverlapCheck);
     // "+ Vaqt qo'shish" sessiyalari o'zgarsa ham konflikt qayta tekshiriladi (delegatsiya)
-    (function () { var ex = document.getElementById('extraTimes'); if (ex) { ex.addEventListener('input', checkStep2); ex.addEventListener('change', checkStep2); } })();
+    (function () { var ex = document.getElementById('extraTimes'); if (ex) { ex.addEventListener('input', resetOverlapCheck); ex.addEventListener('change', resetOverlapCheck); } })();
 
     function gotoStep2() {
       currentStep = 2;
