@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+<title>FOCUS AI — G'oyalarim</title>
+<link rel="stylesheet" href="theme.css">
+<style>
+  * { box-sizing: border-box; }
+  body { margin: 0; font-family: 'Inter', sans-serif; background: var(--void, #04060B); color: var(--text, #F5F2EC); }
+  .phone { max-width: 480px; margin: 0 auto; min-height: 100vh; background: var(--void, #04060B); padding: 26px 22px 40px; }
+  h1 { font-size: 30px; margin: 6px 0 4px; }
+  .sub { color: var(--text-dim, #9CA0A8); font-size: 15px; line-height: 1.5; margin-bottom: 20px; }
+  .fld { width: 100%; padding: 13px; background: var(--card, #0C0F16); border: 1px solid var(--border-default, rgba(255,255,255,.12)); border-radius: 12px; color: var(--text, #F5F2EC); font-size: 16px; font-family: inherit; margin-bottom: 10px; line-height: 1.5; resize: vertical; }
+  .btn { width: 100%; padding: 14px; border: none; border-radius: 12px; font-size: 16px; font-weight: 700; font-family: inherit; cursor: pointer; }
+  .btn-add { background: var(--accent, #F4845F); color: #fff; }
+  .sec-lbl { font-size: 12px; letter-spacing: 2px; text-transform: uppercase; color: var(--text-dim, #9CA0A8); font-weight: 700; margin: 22px 2px 8px; }
+  .note { background: var(--card, #0C0F16); border: 1px solid var(--border-default, rgba(255,255,255,.12)); border-radius: 14px; padding: 14px 16px; margin-top: 10px; display: flex; gap: 12px; align-items: flex-start; }
+  .note-body { flex: 1; min-width: 0; }
+  .note-txt { font-size: 16px; line-height: 1.55; white-space: pre-wrap; word-wrap: break-word; overflow-wrap: anywhere; }
+  .note-date { font-size: 12px; color: var(--text-dim, #9CA0A8); margin-top: 7px; }
+  .note-acts { display: flex; flex-direction: column; gap: 4px; flex-shrink: 0; }
+  .note-acts button { background: none; border: none; cursor: pointer; font-size: 19px; color: var(--text-dim, #9CA0A8); padding: 2px 6px; line-height: 1; }
+  .note-acts .ed { color: var(--accent, #F4845F); font-size: 17px; }
+  .empty { color: var(--text-dim, #9CA0A8); text-align: center; padding: 24px 8px; font-size: 15px; }
+  .editing-note { border-color: var(--accent, #F4845F); }
+</style>
+</head>
+<body>
+<div class="phone">
+  <h1 data-i18n="goya.title">G'oyalarim</h1>
+  <div class="sub" data-i18n="goya.sub">Xayolingizga kelgan g'oyalarni yo'qotib qo'ymang — shu yerga yozib qo'ying.</div>
+
+  <textarea id="noteText" class="fld" rows="3" maxlength="4000" placeholder="Yangi g'oya…" data-i18n-placeholder="goya.ph"></textarea>
+  <button id="noteAdd" class="btn btn-add" data-i18n="goya.add">+ Saqlash</button>
+
+  <div class="sec-lbl" data-i18n="goya.my">G'oyalarim</div>
+  <div id="list"></div>
+</div>
+
+<script src="i18n.js?v=28.4.0"></script>
+<script src="lang-switcher.js?v=28.4.0" defer></script>
+<script src="data.js?v=28.4.0" defer></script>
+<script src="nav-overlay.js?v=28.4.0" defer></script>
+<script>
+  (function () {
+    var KEY = 'mvow.ideas';
+    function esc(s) { return String(s || '').replace(/[&<>"]/g, function (c) { return ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]); }); }
+    function T(k, fb) { return (window.I18N && I18N.t) ? I18N.t(k, fb) : fb; }
+    function load() { try { var r = JSON.parse(localStorage.getItem(KEY) || '[]'); return Array.isArray(r) ? r : []; } catch (e) { return []; } }
+    function save(r) { localStorage.setItem(KEY, JSON.stringify(r)); }
+    function pad(n) { return String(n).padStart(2, '0'); }
+    function fmtDate(ts) {
+      if (!ts) return '';
+      var d = new Date(ts);
+      return pad(d.getDate()) + '.' + pad(d.getMonth() + 1) + '.' + d.getFullYear() + ' ' + pad(d.getHours()) + ':' + pad(d.getMinutes());
+    }
+
+    var listEl = document.getElementById('list');
+    var input = document.getElementById('noteText');
+    var addBtn = document.getElementById('noteAdd');
+    var editingId = null;
+
+    function clearEditing() {
+      editingId = null;
+      input.value = '';
+      addBtn.textContent = T('goya.add', '+ Saqlash');
+    }
+    function startEditing(id, text) {
+      editingId = id;
+      input.value = text;
+      addBtn.textContent = T('goya.save', 'Saqlash');
+      input.focus();
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    function render() {
+      var r = load();
+      if (!r.length) { listEl.innerHTML = '<div class="empty">' + T('goya.empty', "Hali g'oya yo'q. Yuqoridan yozing.") + '</div>'; return; }
+      r.sort(function (a, b) { return (b.at || 0) - (a.at || 0); });
+      listEl.innerHTML = r.map(function (x) {
+        var cls = (String(x.id) === String(editingId)) ? 'note editing-note' : 'note';
+        return '<div class="' + cls + '"><div class="note-body"><div class="note-txt">' + esc(x.text) +
+          '</div><div class="note-date">' + fmtDate(x.at) + '</div></div><div class="note-acts">' +
+          '<button class="ed" data-ed="' + x.id + '" aria-label="tahrir">✎</button>' +
+          '<button class="x" data-del="' + x.id + '" aria-label="o\'chirish">×</button></div></div>';
+      }).join('');
+      listEl.querySelectorAll('[data-ed]').forEach(function (b) {
+        b.addEventListener('click', function () {
+          var id = b.getAttribute('data-ed'), it = load().filter(function (x) { return String(x.id) === String(id); })[0];
+          if (it) startEditing(it.id, it.text);
+          render();
+        });
+      });
+      listEl.querySelectorAll('[data-del]').forEach(function (b) {
+        b.addEventListener('click', function () {
+          var id = b.getAttribute('data-del'), all = load();
+          var item = all.filter(function (x) { return String(x.id) === String(id); })[0];
+          save(all.filter(function (x) { return String(x.id) !== String(id); }));
+          if (String(id) === String(editingId)) clearEditing();
+          if (window.MVOW_DATA && MVOW_DATA.fxTap) MVOW_DATA.fxTap();
+          render();
+          if (window.MvowUndo && item) MvowUndo.show(T('common.deleted', "O'chirildi"), function () { var a = load(); a.push(item); save(a); render(); });
+        });
+      });
+    }
+
+    addBtn.addEventListener('click', function () {
+      var text = input.value.trim();
+      if (!text) { input.style.borderColor = '#FF6B6B'; input.focus(); setTimeout(function () { input.style.borderColor = ''; }, 1500); return; }
+      var r = load();
+      if (editingId) {
+        var it = r.filter(function (x) { return String(x.id) === String(editingId); })[0];
+        if (it) { it.text = text; it.at = Date.now(); }
+        clearEditing();
+      } else {
+        r.push({ id: Date.now(), text: text, at: Date.now() });
+        input.value = '';
+      }
+      save(r);
+      if (window.MVOW_DATA && MVOW_DATA.fxSuccess) MVOW_DATA.fxSuccess();
+      render();
+    });
+
+    render();
+  })();
+</script>
+<script src="undo-toast.js?v=29.0.51"></script>
+<script src="back-btn.js?v=28.4.0"></script>
+</body>
+</html>

@@ -936,6 +936,16 @@
         push_btn: "🔔 Telefon eslatmalarini yoqish", empty: "Hali eslatma yo'q. Yuqoridan qo'shing.",
         push_on: "Eslatmalar yoqildi ✅ — endi ilova yopiq bo'lsa ham chiqadi.", push_off: "Yoqilmadi. Bildirishnomaga ruxsat bering."
       },
+      blaknot: {
+        title: "Blaknot", sub: "Shaxsiy yozmalaringiz — fikr, reja, eslatma. Faqat shu telefonda saqlanadi.",
+        ph: "Yozmangizni shu yerga yozing…", add: "+ Saqlash", save: "Saqlash", my: "Yozmalarim",
+        empty: "Hali yozma yo'q. Yuqoridan yozing."
+      },
+      goya: {
+        title: "G'oyalarim", sub: "Xayolingizga kelgan g'oyalarni yo'qotib qo'ymang — shu yerga yozib qo'ying.",
+        ph: "Yangi g'oya…", add: "+ Saqlash", save: "Saqlash", my: "G'oyalarim",
+        empty: "Hali g'oya yo'q. Yuqoridan yozing."
+      },
       mukofot: {
         page_title: "{brand} — Mukofotlar", title: "Mukofotlar", sub: "Tanga va olmoslaringizni o'zingiz belgilagan mukofotlarga sarflang.",
         coins: "Tanga", diamonds: "Olmos", my: "Mukofotlarim", history: "Olingan mukofotlar", add: "+ Mukofot",
@@ -1025,7 +1035,7 @@
         row_calendar: 'Kalendar',
         row_alarm: 'Budilnik',
         row_reminders: 'Eslatmalar',
-        row_dreams: 'Orzular daftari',
+        row_dreams: 'Orzular daftari', row_blaknot: 'Blaknot', row_goya: "G'oyalarim",
         row_wallet: 'Hamyon',
         row_mukofot: 'Mukofotlar', row_shahar: 'Shahringiz', row_otaona: 'Ota-ona nazorati',
         row_hardlock: 'Fokus taymeri',
@@ -1950,6 +1960,16 @@
         push_btn: "🔔 Включить напоминания на телефоне", empty: "Напоминаний пока нет. Добавьте сверху.",
         push_on: "Напоминания включены ✅ — теперь придут даже при закрытом приложении.", push_off: "Не включилось. Разрешите уведомления."
       },
+      blaknot: {
+        title: "Блокнот", sub: "Ваши личные записи — мысли, планы, заметки. Хранятся только на этом телефоне.",
+        ph: "Пишите вашу заметку здесь…", add: "+ Сохранить", save: "Сохранить", my: "Мои записи",
+        empty: "Записей пока нет. Добавьте сверху."
+      },
+      goya: {
+        title: "Мои идеи", sub: "Не теряйте идеи, что приходят в голову — записывайте их сюда.",
+        ph: "Новая идея…", add: "+ Сохранить", save: "Сохранить", my: "Мои идеи",
+        empty: "Идей пока нет. Добавьте сверху."
+      },
       mukofot: {
         page_title: "{brand} — Награды", title: "Награды", sub: "Тратьте монеты и алмазы на награды, которые задали сами.",
         coins: "Монеты", diamonds: "Алмазы", my: "Мои награды", history: "Полученные награды", add: "+ Награда",
@@ -2039,7 +2059,7 @@
         row_calendar: 'Календарь',
         row_alarm: 'Будильник',
         row_reminders: 'Напоминания',
-        row_dreams: 'Дневник мечт',
+        row_dreams: 'Дневник мечт', row_blaknot: 'Блокнот', row_goya: 'Мои идеи',
         row_wallet: 'Кошелёк',
         row_mukofot: 'Награды', row_shahar: 'Ваш город', row_otaona: 'Родительский контроль',
         row_hardlock: 'Таймер фокуса',
@@ -2964,6 +2984,16 @@
         push_btn: "🔔 Enable phone reminders", empty: "No reminders yet. Add one above.",
         push_on: "Reminders enabled ✅ — they'll arrive even when the app is closed.", push_off: "Not enabled. Please allow notifications."
       },
+      blaknot: {
+        title: "Notebook", sub: "Your personal notes — thoughts, plans, reminders. Stored only on this phone.",
+        ph: "Write your note here…", add: "+ Save", save: "Save", my: "My notes",
+        empty: "No notes yet. Add one above."
+      },
+      goya: {
+        title: "My Ideas", sub: "Don't lose the ideas that come to mind — jot them down here.",
+        ph: "New idea…", add: "+ Save", save: "Save", my: "My ideas",
+        empty: "No ideas yet. Add one above."
+      },
       mukofot: {
         page_title: "{brand} — Rewards", title: "Rewards", sub: "Spend your coins and diamonds on rewards you set yourself.",
         coins: "Coins", diamonds: "Diamonds", my: "My rewards", history: "Redeemed rewards", add: "+ Reward",
@@ -3053,7 +3083,7 @@
         row_calendar: 'Calendar',
         row_alarm: 'Alarm',
         row_reminders: 'Reminders',
-        row_dreams: 'Dream journal',
+        row_dreams: 'Dream journal', row_blaknot: 'Notebook', row_goya: 'My Ideas',
         row_wallet: 'Wallet',
         row_mukofot: 'Rewards', row_shahar: 'Your city', row_otaona: 'Parental control',
         row_hardlock: 'Focus timer',
