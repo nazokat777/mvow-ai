@@ -633,9 +633,9 @@
     });
 
     function saveGoalToCalendar() {
-      // Xavfsizlik tekshiruvi — agar konflikt bo'lsa, saqlamaymiz
+      // Konflikt bo'lsa saqlamaymiz — LEKIN "Shart qo'shish" bosilgan bo'lsa (allowOverlap) ruxsat
       const conflict = findConflict();
-      if (conflict) {
+      if (conflict && !allowOverlap) {
         checkStep2();
         return;
       }
