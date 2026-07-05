@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+<title>FOCUS AI — Uyqu nazorati</title>
+<link rel="stylesheet" href="theme.css">
+<style>
+  * { box-sizing: border-box; }
+  body { margin: 0; font-family: 'Inter', sans-serif; background: var(--void, #04060B); color: var(--text, #F5F2EC); }
+  .phone { max-width: 480px; margin: 0 auto; min-height: 100vh; background: var(--void, #04060B); padding: 26px 22px 40px; }
+  h1 { font-size: 30px; margin: 6px 0 4px; }
+  .sub { color: var(--text-dim, #9CA0A8); font-size: 15px; line-height: 1.5; margin-bottom: 20px; }
+  .card { background: var(--card, #0C0F16); border: 1px solid var(--border-default, rgba(255,255,255,.12)); border-radius: 16px; padding: 16px 18px; margin-bottom: 14px; }
+  .sec-lbl { font-size: 12px; letter-spacing: 2px; text-transform: uppercase; color: var(--text-dim, #9CA0A8); font-weight: 700; margin: 6px 0 12px; }
+  .rowline { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-bottom: 12px; }
+  .rowline:last-child { margin-bottom: 0; }
+  .rowline label { font-size: 16px; }
+  input[type=time] { background: var(--void-soft, #0C0F16); border: 1px solid var(--border-default, rgba(255,255,255,.14)); border-radius: 10px; color: var(--accent, #F4845F); font-size: 18px; font-weight: 600; font-family: inherit; padding: 9px 12px; }
+  .btn { width: 100%; padding: 14px; border: none; border-radius: 12px; font-size: 16px; font-weight: 700; font-family: inherit; cursor: pointer; }
+  .btn-add { background: var(--accent, #F4845F); color: #fff; }
+  .btn-ghost { background: transparent; border: 1px solid var(--accent, #F4845F); color: var(--accent, #F4845F); }
+  .assess { text-align: center; padding: 18px; border-radius: 16px; margin-bottom: 14px; }
+  .assess .big { font-size: 34px; font-weight: 800; line-height: 1.1; }
+  .assess .lbl { font-size: 14px; margin-top: 5px; letter-spacing: 1px; }
+  .log { display: flex; align-items: center; gap: 10px; padding: 11px 0; border-top: 1px solid rgba(255,255,255,.07); font-size: 15px; }
+  .log:first-child { border-top: none; }
+  .log .d { color: var(--text-dim, #9CA0A8); flex: 1; }
+  .log .h { font-weight: 700; }
+  .log .x { background: none; border: none; color: var(--text-dim, #9CA0A8); font-size: 20px; cursor: pointer; line-height: 1; }
+  .ai-msg { font-size: 16px; line-height: 1.6; color: var(--text, #F5F2EC); margin-top: 12px; white-space: pre-wrap; }
+  .cons { margin: 0; padding-left: 18px; }
+  .cons li { font-size: 15px; line-height: 1.5; margin-bottom: 10px; color: var(--text-mid, #B8BBC2); }
+  .cons li:last-child { margin-bottom: 0; }
+  .cons b { color: var(--text, #F5F2EC); font-weight: 600; }
+  .empty { color: var(--text-dim, #9CA0A8); text-align: center; padding: 18px 8px; font-size: 15px; }
+  .switch { width: 46px; height: 27px; border-radius: 999px; background: rgba(255,255,255,.15); position: relative; cursor: pointer; flex-shrink: 0; transition: background .2s; }
+  .switch.on { background: var(--accent, #F4845F); }
+  .switch::after { content: ''; position: absolute; top: 3px; left: 3px; width: 21px; height: 21px; border-radius: 50%; background: #fff; transition: left .2s; }
+  .switch.on::after { left: 22px; }
+</style>
+</head>
+<body>
+<div class="phone">
+  <h1 data-i18n="uyqu.title">Uyqu nazorati</h1>
+  <div class="sub" data-i18n="uyqu.sub">Uyqungizni kuzating — vaqtida yoting, tetik turing. Yaxshi uyqu — intizomning yarmi.</div>
+
+  <div id="assessBox"></div>
+
+  <div class="card">
+    <div class="sec-lbl" data-i18n="uyqu.goal_lbl">Maqsad vaqtlari</div>
+    <div class="rowline"><label data-i18n="uyqu.bed_lbl">Yotish</label><input type="time" id="bedGoal" value="23:00"></div>
+    <div class="rowline"><label data-i18n="uyqu.wake_lbl">Uyg'onish</label><input type="time" id="wakeGoal" value="07:00"></div>
+    <div id="goalDur" class="sub" style="margin:8px 0 0;"></div>
+  </div>
+
+  <div class="card">
+    <div class="rowline">
+      <div>
+        <div style="font-size:16px;" data-i18n="uyqu.remind_lbl">Yotish vaqti eslatmasi</div>
+        <div class="sub" style="margin:2px 0 0;" data-i18n="uyqu.remind_hint">Belgilangan vaqtda "yotish payti" eslatmasi</div>
+      </div>
+      <div class="switch" id="remindSw"></div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="sec-lbl" data-i18n="uyqu.log_lbl">Kechagi uyquni belgilash</div>
+    <div class="rowline"><label data-i18n="uyqu.log_bed">Nechada yotdingiz?</label><input type="time" id="logBed" value="23:00"></div>
+    <div class="rowline"><label data-i18n="uyqu.log_wake">Nechada uyg'ondingiz?</label><input type="time" id="logWake" value="07:00"></div>
+    <button class="btn btn-add" id="logSave" data-i18n="uyqu.save">+ Saqlash</button>
+  </div>
+
+  <div class="card">
+    <div class="sec-lbl" data-i18n="uyqu.ai_title">AI murabbiy — uyqu maslahati</div>
+    <button class="btn btn-ghost" id="aiBtn" data-i18n="uyqu.ai_btn">💬 Uyqum haqida maslahat ber</button>
+    <div class="ai-msg" id="aiMsg"></div>
+  </div>
+
+  <div class="sec-lbl" style="margin-left:2px;" data-i18n="uyqu.history">Tarix</div>
+  <div id="avgLine" class="sub" style="margin-left:2px;"></div>
+  <div class="card"><div id="histList"></div></div>
+
+  <div class="card">
+    <div class="sec-lbl" data-i18n="uyqu.cons_title">Nega vaqtida yotish muhim</div>
+    <ul class="cons">
+      <li data-i18n="uyqu.cons1">Kam uyqu diqqat, xotira va qaror qabul qilishni pasaytiradi.</li>
+      <li data-i18n="uyqu.cons2">Muntazam kech yotish kayfiyat, sabr va irodani zaiflashtiradi.</li>
+      <li data-i18n="uyqu.cons3">Uyqusizlik energiya va sport natijalarini tushiradi.</li>
+      <li data-i18n="uyqu.cons4">Yetarli uyqu esa ertalabki tetiklik va intizomni osonlashtiradi.</li>
+    </ul>
+  </div>
+</div>
+
+<script src="i18n.js?v=28.4.0"></script>
+<script src="lang-switcher.js?v=28.4.0" defer></script>
+<script src="data.js?v=28.4.0" defer></script>
+<script src="push.js?v=28.4.0" defer></script>
+<script src="nav-overlay.js?v=28.4.0" defer></script>
+<script>
+  (function () {
+    var KEY = 'mvow.sleep';
+    function T(k, fb) { return (window.I18N && I18N.t) ? I18N.t(k, fb) : fb; }
+    function load() { try { var s = JSON.parse(localStorage.getItem(KEY) || '{}'); return (s && typeof s === 'object') ? s : {}; } catch (e) { return {}; } }
+    function save(s) { localStorage.setItem(KEY, JSON.stringify(s)); }
+    function toMin(t) { var m = String(t || '').match(/^(\d{1,2}):(\d{2})$/); return m ? (+m[1]) * 60 + (+m[2]) : null; }
+    function dur(bed, wake) { var b = toMin(bed), w = toMin(wake); if (b == null || w == null) return null; var d = w - b; if (d <= 0) d += 1440; return d; }
+    function hm(mins) { return Math.floor(mins / 60) + T('uyqu.h', 's') + ' ' + (mins % 60) + T('uyqu.m', 'd'); }
+    function pad(n) { return String(n).padStart(2, '0'); }
+
+    var s = load();
+    var bedGoal = document.getElementById('bedGoal'), wakeGoal = document.getElementById('wakeGoal');
+    var logBed = document.getElementById('logBed'), logWake = document.getElementById('logWake');
+    if (s.bedGoal) bedGoal.value = s.bedGoal;
+    if (s.wakeGoal) wakeGoal.value = s.wakeGoal;
+    logBed.value = s.bedGoal || '23:00';
+    logWake.value = s.wakeGoal || '07:00';
+
+    function assessOf(mins) {
+      if (mins < 360) return { k: 'short', c: '#FF6B6B', bg: 'rgba(255,71,87,.1)' };
+      if (mins < 420) return { k: 'ok', c: '#F4C46B', bg: 'rgba(245,196,107,.1)' };
+      if (mins <= 540) return { k: 'good', c: '#6BBF7A', bg: 'rgba(107,191,122,.12)' };
+      return { k: 'long', c: '#F4C46B', bg: 'rgba(245,196,107,.1)' };
+    }
+
+    function renderGoalDur() {
+      var d = dur(bedGoal.value, wakeGoal.value);
+      document.getElementById('goalDur').textContent = (d != null) ? (T('uyqu.target', 'Maqsad') + ': ' + hm(d)) : '';
+    }
+    function saveGoals() { s.bedGoal = bedGoal.value; s.wakeGoal = wakeGoal.value; save(s); renderGoalDur(); if (s.remindOn) applyReminder(true); }
+    bedGoal.addEventListener('change', saveGoals);
+    wakeGoal.addEventListener('change', saveGoals);
+
+    function renderAssess() {
+      var logs = (s.logs || []);
+      var box = document.getElementById('assessBox');
+      if (!logs.length) { box.innerHTML = ''; return; }
+      var last = logs.slice().sort(function (a, b) { return (a.at || 0) - (b.at || 0); }).pop();
+      var a = assessOf(last.mins);
+      box.innerHTML = '<div class="assess" style="background:' + a.bg + ';border:1px solid ' + a.c + '44;">' +
+        '<div class="big" style="color:' + a.c + ';">' + hm(last.mins) + '</div>' +
+        '<div class="lbl" style="color:' + a.c + ';">' + T('uyqu.a_' + a.k, '') + '</div></div>';
+    }
+
+    function renderHist() {
+      var logs = (s.logs || []).slice().sort(function (a, b) { return (b.at || 0) - (a.at || 0); });
+      var list = document.getElementById('histList');
+      if (!logs.length) { list.innerHTML = '<div class="empty">' + T('uyqu.empty', "Hali yozuv yo'q. Kechagi uyquni belgilang.") + '</div>'; document.getElementById('avgLine').textContent = ''; return; }
+      var recent = logs.slice(0, 7);
+      var avg = Math.round(recent.reduce(function (x, l) { return x + l.mins; }, 0) / recent.length);
+      document.getElementById('avgLine').textContent = T('uyqu.avg', "O'rtacha") + ' (' + recent.length + '): ' + hm(avg);
+      list.innerHTML = logs.slice(0, 14).map(function (l) {
+        var a = assessOf(l.mins);
+        return '<div class="log"><span class="d">' + l.date + '</span><span style="color:' + a.c + ';">' + l.bed + '→' + l.wake + '</span><span class="h" style="color:' + a.c + ';">' + hm(l.mins) + '</span><button class="x" data-del="' + l.id + '" aria-label="del">×</button></div>';
+      }).join('');
+      list.querySelectorAll('[data-del]').forEach(function (b) {
+        b.addEventListener('click', function () {
+          var id = b.getAttribute('data-del');
+          var item = (s.logs || []).filter(function (x) { return String(x.id) === String(id); })[0];
+          s.logs = (s.logs || []).filter(function (x) { return String(x.id) !== String(id); });
+          save(s); renderAll();
+          if (window.MvowUndo && item) MvowUndo.show(T('common.deleted', "O'chirildi"), function () { s.logs.push(item); save(s); renderAll(); });
+        });
+      });
+    }
+
+    document.getElementById('logSave').addEventListener('click', function () {
+      var mins = dur(logBed.value, logWake.value);
+      if (mins == null) return;
+      var now = new Date();
+      var date = pad(now.getDate()) + '.' + pad(now.getMonth() + 1);
+      s.logs = s.logs || [];
+      s.logs.push({ id: Date.now(), at: Date.now(), date: date, bed: logBed.value, wake: logWake.value, mins: mins });
+      save(s);
+      if (window.MVOW_DATA && MVOW_DATA.fxSuccess) MVOW_DATA.fxSuccess();
+      renderAll();
+    });
+
+    var sw = document.getElementById('remindSw');
+    function paintSw() { sw.classList.toggle('on', !!s.remindOn); }
+    function applyReminder(on) {
+      var RID = 'sleep-reminder';
+      try {
+        var r = JSON.parse(localStorage.getItem('mvow.reminders') || '[]'); if (!Array.isArray(r)) r = [];
+        r = r.filter(function (x) { return x && x.id !== RID; });
+        if (on) r.push({ id: RID, time: s.bedGoal || '23:00', text: T('uyqu.remind_text', 'Yotish vaqti keldi. Ekranni yoping, tanangizga dam bering.') });
+        localStorage.setItem('mvow.reminders', JSON.stringify(r));
+        if (window.PushReminders && PushReminders.isEnabled()) PushReminders.sync();
+      } catch (e) {}
+    }
+    sw.addEventListener('click', function () {
+      s.remindOn = !s.remindOn; save(s); paintSw(); applyReminder(s.remindOn);
+      if (window.MVOW_DATA && MVOW_DATA.fxTap) MVOW_DATA.fxTap();
+      if (s.remindOn && window.PushReminders && !PushReminders.isEnabled()) PushReminders.enable();
+    });
+
+    function sleepFallback(avgH) {
+      if (avgH && avgH < 6) return T('uyqu.fb_short', 'Keyingi kunlarda kam uxlayapsiz. Bugun maqsad vaqtida yoting — ertaga diqqatingiz yaxshi boladi.');
+      if (avgH && avgH > 9) return T('uyqu.fb_long', 'Uyquingiz uzun. Muntazam bir vaqtda yotib turishga harakat qiling.');
+      return T('uyqu.fb_ok', 'Uyqu — intizomning poydevori. Har kuni bir vaqtda yoting, ekranni yarim soat oldin yoping.');
+    }
+    document.getElementById('aiBtn').addEventListener('click', function () {
+      var btn = this, msg = document.getElementById('aiMsg');
+      var logs = (s.logs || []).slice(-7);
+      var avgH = logs.length ? (Math.round(logs.reduce(function (x, l) { return x + l.mins; }, 0) / logs.length / 6) / 10) : '';
+      var bg = s.bedGoal || '23:00';
+      var lateCount = logs.filter(function (l) {
+        var b = toMin(l.bed), g = toMin(bg); if (b == null || g == null) return false;
+        var lb = b < 360 ? b + 1440 : b, lg = g < 360 ? g + 1440 : g; return lb > lg + 15;
+      }).length;
+      var lang = (function () { try { return localStorage.getItem('mvow.lang') || 'uz'; } catch (e) { return 'uz'; } })();
+      btn.disabled = true; msg.textContent = T('uyqu.ai_loading', '…');
+      fetch('/api/coach', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ mode: 'sleep', avgH: avgH, bedGoal: bg, lateCount: lateCount, lang: lang }) })
+        .then(function (r) { return r.json(); })
+        .then(function (d) { msg.textContent = (d && d.message && d.message.trim()) ? d.message.trim() : sleepFallback(avgH); btn.disabled = false; })
+        .catch(function () { msg.textContent = sleepFallback(avgH); btn.disabled = false; });
+    });
+
+    function renderAll() { renderAssess(); renderHist(); }
+    paintSw(); renderGoalDur(); renderAll();
+  })();
+</script>
+<script src="undo-toast.js?v=29.0.51"></script>
+<script src="back-btn.js?v=28.4.0"></script>
+</body>
+</html>

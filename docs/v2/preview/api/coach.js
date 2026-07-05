@@ -76,6 +76,23 @@ module.exports = async (req, res) => {
     return;
   }
 
+  // ── Uyqu bo'yicha maslahat ──
+  if (c.mode === 'sleep') {
+    if (!key) { res.status(200).json({ message: '' }); return; }
+    try {
+      const langName = ({ uz: "o'zbek", ru: 'rus', en: 'ingliz' })[c.lang] || "o'zbek";
+      const prompt =
+        "Sen foydalanuvchining intizom do'stisan — iliq mentor, hurmat bilan 'siz' shaklida gaplashasan. " +
+        "Foydalanuvchi uyqusi: o'rtacha " + (c.avgH || '?') + " soat uxlaydi, maqsad yotish vaqti " + (c.bedGoal || '23:00') + ", " +
+        "so'nggi kunlarda " + (c.lateCount || 0) + " marta kech yotgan. " +
+        langName + " tilida QISQA (2-3 jumla) yoz: uyqusini iliq baholab, vaqtida yotishga do'stona undab, " +
+        "kech yotishning bitta aniq oqibatini eslatib o't. Qo'rqitmasdan qo'llab-quvvatla. Faqat xabarni yoz, izohsiz.";
+      const t = await gemini(prompt);
+      res.status(200).json({ message: (t || '').trim() });
+    } catch (e) { res.status(200).json({ message: '' }); }
+    return;
+  }
+
   // ── Kun yakuni motivatsiyasi ──
   if (!key) { res.status(200).json({ message: '' }); return; }
   try {
