@@ -189,6 +189,7 @@
         next: 'Keyingi', got_it: 'Tushundim', skip: "O'tkazib yuborish"
       },
       common: {
+        months_long: ['Yanvar','Fevral','Mart','Aprel','May','Iyun','Iyul','Avgust','Sentyabr','Oktyabr','Noyabr','Dekabr'],
         continue: 'Davom',
         start: 'Boshlayman',
         save: 'Saqla',
@@ -626,6 +627,13 @@
         page_title: "Uyg'on"
       },
       home: {
+        ms_title: 'Bosqichlar',
+        tag_timer: 'Taymerli',
+        tag_notimer: 'Taymersiz',
+        done_sub: 'Bajardingizmi? Izoh va (xohlasangiz) soat yozing.',
+        done_note_ph: 'Izoh: masalan, ota-onamga pul berdim',
+        done_hours: 'Necha soat? (ixtiyoriy)',
+        done_btn: 'Bajardim',
         greet: 'Assalomu alaykum',
         greet_morning: 'Xayrli tong',
         greet_day: 'Assalomu alaykum',
@@ -973,6 +981,7 @@
         seed1: "Kino kechasi", seed2: "Yangi kitob", save: "Saqlash", cancel: "Bekor", bought: "Olindi"
       },
       shahar: {
+        built: "Qurildi", demolished: "Shahar buzildi",
         page_title: "{brand} — Shahringiz", title: "Shahringiz", sub: "Har tanga bilan bino quring — intizomingiz shaharni o'stiradi. 🏙️",
         coins: "Tanga", diamonds: "Olmos", shop: "Do'kon", build: "Qur", count: "inshoot", clear: "Buzib tashlash",
         clear_confirm: "Shahar butunlay buzilsinmi? (tangalar qaytmaydi)", empty: "Bo'sh maydon. Do'kondan birinchi binongizni quring 👇",
@@ -1243,6 +1252,7 @@
         next: 'Далее', got_it: 'Понятно', skip: 'Пропустить'
       },
       common: {
+        months_long: ['Январь','Февраль','Март','Апрель','Май','Июнь','Июль','Август','Сентябрь','Октябрь','Ноябрь','Декабрь'],
         continue: 'Продолжить',
         start: 'Начинаю',
         save: 'Сохранить',
@@ -1680,6 +1690,13 @@
         page_title: 'Подъём'
       },
       home: {
+        ms_title: 'Этапы',
+        tag_timer: 'С таймером',
+        tag_notimer: 'Без таймера',
+        done_sub: 'Выполнили? Напишите комментарий и (по желанию) часы.',
+        done_note_ph: 'Комментарий: например, помог родителям',
+        done_hours: 'Сколько часов? (необязательно)',
+        done_btn: 'Выполнил(а)',
         greet: 'Здравствуйте',
         greet_morning: 'Доброе утро',
         greet_day: 'Здравствуйте',
@@ -2014,6 +2031,7 @@
         seed1: "Вечер кино", seed2: "Новая книга", save: "Сохранить", cancel: "Отмена", bought: "Получено"
       },
       shahar: {
+        built: "Построено", demolished: "Город снесён",
         page_title: "{brand} — Ваш город", title: "Ваш город", sub: "Стройте на монеты — ваша дисциплина растит город. 🏙️",
         coins: "Монеты", diamonds: "Алмазы", shop: "Магазин", build: "Строить", count: "объектов", clear: "Снести",
         clear_confirm: "Снести весь город? (монеты не вернутся)", empty: "Пустая площадка. Постройте первое здание из магазина 👇",
@@ -2284,6 +2302,7 @@
         next: 'Next', got_it: 'Got it', skip: 'Skip'
       },
       common: {
+        months_long: ['January','February','March','April','May','June','July','August','September','October','November','December'],
         continue: 'Continue',
         start: 'Start',
         save: 'Save',
@@ -2721,6 +2740,13 @@
         page_title: 'Wake up'
       },
       home: {
+        ms_title: 'Milestones',
+        tag_timer: 'With timer',
+        tag_notimer: 'No timer',
+        done_sub: 'Done? Add a note and (optionally) hours.',
+        done_note_ph: 'Note: e.g., helped my parents',
+        done_hours: 'How many hours? (optional)',
+        done_btn: 'Done',
         greet: 'Hello',
         greet_morning: 'Good morning',
         greet_day: 'Hello',
@@ -3055,6 +3081,7 @@
         seed1: "Movie night", seed2: "New book", save: "Save", cancel: "Cancel", bought: "Redeemed"
       },
       shahar: {
+        built: "Built", demolished: "City demolished",
         page_title: "{brand} — Your city", title: "Your city", sub: "Build with coins — your discipline grows the city. 🏙️",
         coins: "Coins", diamonds: "Diamonds", shop: "Shop", build: "Build", count: "structures", clear: "Demolish",
         clear_confirm: "Demolish the whole city? (coins won't return)", empty: "Empty lot. Build your first structure from the shop 👇",

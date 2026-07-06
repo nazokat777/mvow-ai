@@ -324,7 +324,7 @@
         const keys = Object.keys(localStorage).filter(k => k.startsWith('mvow.'));
         keys.forEach(k => localStorage.removeItem(k));
         resetBtn.textContent = (window.I18N ? I18N.t('settings.reset_done', 'Tozalandi · qaytamiz') : 'Tozalandi · qaytamiz');
-        setTimeout(() => { location.replace('welcome.html'); }, 800);
+        setTimeout(() => { location.replace('app.html'); }, 800);
       } else {
         resetBtn.classList.add('confirm');
         resetBtn.textContent = (window.I18N ? I18N.t('settings.reset_confirm', 'Aniqmisiz? Bosing') : 'Aniqmisiz? Bosing');
