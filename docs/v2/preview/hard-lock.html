@@ -309,30 +309,38 @@ document.addEventListener('DOMContentLoaded', function () {
   // defer bilan yuklanib bo'lgan paytda ishlaydi.
   let current = null;
   let hadExplicitTask = false;
+  const DEFAULT_TASK_NAME = (window.I18N ? I18N.t('hardlock.default_task', 'Ish') : 'Ish');
+  const DEFAULT_DUR = (window.I18N ? I18N.t('hardlock.dur_fallback', '25 daq') : '25 daq');
+
   // 1) Foydalanuvchi home'da "Boshlash" bosib tanlagan ANIQ vazifa (nomi/vaqti/davomiyligi bilan)
   try {
     var _sel = JSON.parse(localStorage.getItem('mvow.activeTask') || 'null');
     if (_sel && _sel.name) { current = _sel; hadExplicitTask = true; }
     localStorage.removeItem('mvow.activeTask'); // bir martalik — o'qigach tozalaymiz
   } catch (e) {}
-  // 2) Aks holda — joriy vaqt bo'yicha rejadan taxmin
-  if (!current && window.MVOW_DATA) {
-    current = MVOW_DATA.currentTaskFromPlan();
+
+  // 2-3) Ma'lumotdan HAQIQIY vazifa nomini topish. Bir joyga yig'ildi, chunki
+  //      Android TWA'da defer/DOMContentLoaded tartibi har doim kafolatlanmaydi —
+  //      MVOW_DATA kech kelsa bu null qaytaradi va pastda qayta urinamiz
+  //      (aks holda taymerda maqsad o'rniga "Ish" chiqib qolardi).
+  function resolveFromData() {
+    if (!window.MVOW_DATA) return null;
+    var t = null;
+    try { t = MVOW_DATA.currentTaskFromPlan(); } catch (e) {}          // rejadan (maqsadlar shu yerga kiradi)
+    if (!t || !t.name) {                                               // real maqsad demo-sessiyadan ustun
+      try {
+        var _g = (typeof MVOW_DATA.loadGoals === 'function') ? MVOW_DATA.loadGoals() : [];
+        var _first = (_g || []).map(function (g) {
+          return { name: g.text || g.name || g.title || g.goal || '', time: g.time || '', dur: g.dur || DEFAULT_DUR };
+        }).filter(function (g) { return g.name; })[0];
+        if (_first) t = _first;
+      } catch (e) {}
+    }
+    if (!t || !t.name) { try { t = MVOW_DATA.currentSession() || (MVOW_DATA.sessions && MVOW_DATA.sessions[0]); } catch (e) {} }
+    return (t && t.name) ? t : null;
   }
-  if (!current && window.MVOW_DATA) {
-    current = MVOW_DATA.currentSession() || (MVOW_DATA.sessions && MVOW_DATA.sessions[0]);
-  }
-  const DEFAULT_TASK_NAME = (window.I18N ? I18N.t('hardlock.default_task', 'Ish') : 'Ish');
-  const DEFAULT_DUR = (window.I18N ? I18N.t('hardlock.dur_fallback', '25 daq') : '25 daq');
-  // 3) Hali ham topilmasa — birinchi maqsad nomini ishlatamiz (taymerda "Ish" emas, maqsad ko'rinsin)
-  if (!current && window.MVOW_DATA && typeof MVOW_DATA.loadGoals === 'function') {
-    try {
-      var _g = MVOW_DATA.loadGoals();
-      if (_g && _g.length && _g[0] && _g[0].text) {
-        current = { name: _g[0].text, time: _g[0].time || '', dur: _g[0].dur || DEFAULT_DUR };
-      }
-    } catch (e) {}
-  }
+
+  if (!current) current = resolveFromData();
   if (!current) current = { name: DEFAULT_TASK_NAME, time: '', dur: DEFAULT_DUR };
 
   const POMO_WORK = 25, POMO_BREAK = 5;
@@ -354,8 +362,9 @@ document.addEventListener('DOMContentLoaded', function () {
   }
   applyTask(current);
 
-  // Vazifa tanlovchisi — menyudan ochilganda "qaysi maqsad?" deb so'raydi (home'dan aniq tanlanmagan bo'lsa)
-  (function buildTaskPicker() {
+  // Vazifa tanlovchisi — menyudan ochilganda "qaysi maqsad?" deb so'raydi (home'dan aniq tanlanmagan bo'lsa).
+  // IDEMPOTENT: race self-heal bir necha marta chaqirishi mumkin — har chaqiruvda qayta quriladi.
+  function buildTaskPicker() {
     if (hadExplicitTask || !window.MVOW_DATA) return;
     var src = [];
     try {
@@ -371,6 +380,7 @@ document.addEventListener('DOMContentLoaded', function () {
     if (uniq.length < 1) return;   // maqsad yo'q — so'ramaymiz, default qoladi
     var picker = document.getElementById('taskPicker'), lbl = document.getElementById('pickLabel');
     if (!picker) return;
+    picker.innerHTML = '';         // idempotent — eski tugmalarni tozalab qayta quramiz
     if (lbl) lbl.style.display = 'block';
     picker.style.display = 'flex';
     var base = 'padding:8px 14px;border-radius:999px;border:1px solid rgba(255,255,255,.18);background:rgba(255,255,255,.06);color:#fff;font-family:inherit;font-size:14px;font-weight:600;cursor:pointer;';
@@ -389,6 +399,26 @@ document.addEventListener('DOMContentLoaded', function () {
     // Agar joriy tanlov ro'yxatda bo'lmasa — birinchisini tanlaymiz (nom har doim haqiqiy)
     if (!uniq.some(function (g) { return g.name === current.name; })) applyTask(uniq[0]);
     restyle();
+  }
+
+  // Race self-heal: MVOW_DATA/plan sahifa yuklanishida kechiksa taymer "Ish" chiqarardi.
+  // Tayyor bo'lgan zahoti haqiqiy vazifa nomini qo'yamiz va picker'ni quramiz.
+  function healTaskName() {
+    if (hadExplicitTask) { buildTaskPicker(); return; }
+    if (!current || current.name === DEFAULT_TASK_NAME) {
+      var t = resolveFromData();
+      if (t) applyTask(t);
+    }
+    buildTaskPicker();
+  }
+  healTaskName();
+  window.addEventListener('load', healTaskName);
+  var _healN = 0;
+  (function retry() {
+    if (hadExplicitTask) return;
+    if (current && current.name && current.name !== DEFAULT_TASK_NAME) return;
+    if (_healN++ >= 8) return;     // ~0.8s davomida qayta urinamiz
+    setTimeout(function () { healTaskName(); retry(); }, 100);
   })();
   let BREAK_MIN = 0;
   let TOTAL_CYC = 1;
