@@ -817,7 +817,7 @@
       },
       hardlock: {
         sub_locked: 'fokusdasiz',
-        pause: 'Pauza', resume: 'Davom', sub_paused: 'pauza',
+        pause: 'Pauza', resume: 'Davom', sub_paused: 'pauza', finish_early: 'Tugatish',
         sub_remain: 'davom etyapsiz',
         ask_open: 'ochmoqchimisiz?',
         stay: 'Fokusda qoling',
@@ -1867,7 +1867,7 @@
       },
       hardlock: {
         sub_locked: 'в фокусе',
-        pause: 'Пауза', resume: 'Продолжить', sub_paused: 'пауза',
+        pause: 'Пауза', resume: 'Продолжить', sub_paused: 'пауза', finish_early: 'Завершить',
         sub_remain: 'продолжаете',
         ask_open: 'хотите открыть?',
         stay: 'Остаться в фокусе',
@@ -2917,7 +2917,7 @@
       },
       hardlock: {
         sub_locked: 'in focus',
-        pause: 'Pause', resume: 'Resume', sub_paused: 'paused',
+        pause: 'Pause', resume: 'Resume', sub_paused: 'paused', finish_early: 'Finish',
         sub_remain: 'going on',
         ask_open: 'want to open?',
         stay: 'Stay in focus',

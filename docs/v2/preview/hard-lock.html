@@ -181,7 +181,10 @@
         </div>
       </div>
       <div class="timer-meta" id="timerMeta"></div>
-      <button class="pause-btn" id="pauseBtn" type="button" data-i18n="hardlock.pause">Pauza</button>
+      <div style="display:flex;gap:10px;justify-content:center;align-items:center;flex-wrap:wrap;">
+        <button class="pause-btn" id="pauseBtn" type="button" data-i18n="hardlock.pause">Pauza</button>
+        <button class="pause-btn" id="finishBtn" type="button" style="border-color:rgba(107,191,122,.5);color:#6BBF7A;" data-i18n="hardlock.finish_early">Tugatish</button>
+      </div>
       <button id="soundBtn" type="button" title="Fokus ovozi" aria-label="Fokus ovozi" style="margin-top:10px;width:46px;height:46px;border-radius:50%;background:transparent;border:1px solid var(--accent);color:var(--accent);font-size:21px;line-height:1;cursor:pointer;">🔇</button>
       <div style="margin-top:14px;display:flex;align-items:center;justify-content:center;gap:8px;flex-wrap:wrap;">
         <input type="file" id="bgFile" accept="image/*" hidden>
@@ -365,7 +368,7 @@ document.addEventListener('DOMContentLoaded', function () {
   // Vazifa tanlovchisi — menyudan ochilganda "qaysi maqsad?" deb so'raydi (home'dan aniq tanlanmagan bo'lsa).
   // IDEMPOTENT: race self-heal bir necha marta chaqirishi mumkin — har chaqiruvda qayta quriladi.
   function buildTaskPicker() {
-    if (hadExplicitTask || !window.MVOW_DATA) return;
+    if (!window.MVOW_DATA) return;
     var src = [];
     try {
       if (typeof MVOW_DATA.getTodayPlan === 'function') src = MVOW_DATA.getTodayPlan() || [];
@@ -377,7 +380,8 @@ document.addEventListener('DOMContentLoaded', function () {
     var seen = {}, uniq = [];
     list.forEach(function (g) { if (!seen[g.name]) { seen[g.name] = 1; uniq.push(g); } });
     uniq.sort(function (a, b) { return (a.time || '99:99').localeCompare(b.time || '99:99'); });
-    if (uniq.length < 1) return;   // maqsad yo'q — so'ramaymiz, default qoladi
+    if (uniq.length < 1) return;                        // maqsad yo'q — so'ramaymiz, default qoladi
+    if (hadExplicitTask && uniq.length < 2) return;     // aniq tanlangan + bitta vazifa — picker keraksiz
     var picker = document.getElementById('taskPicker'), lbl = document.getElementById('pickLabel');
     if (!picker) return;
     picker.innerHTML = '';         // idempotent — eski tugmalarni tozalab qayta quramiz
@@ -396,8 +400,9 @@ document.addEventListener('DOMContentLoaded', function () {
       b.addEventListener('click', function () { applyTask(g); restyle(); });
       picker.appendChild(b);
     });
-    // Agar joriy tanlov ro'yxatda bo'lmasa — birinchisini tanlaymiz (nom har doim haqiqiy)
-    if (!uniq.some(function (g) { return g.name === current.name; })) applyTask(uniq[0]);
+    // Agar joriy tanlov ro'yxatda bo'lmasa — birinchisini tanlaymiz (nom har doim haqiqiy).
+    // MUHIM: aniq tanlangan vazifani (hadExplicitTask) O'ZI almashtirmaydi — user tanlaganicha qoladi.
+    if (!hadExplicitTask && !uniq.some(function (g) { return g.name === current.name; })) applyTask(uniq[0]);
     restyle();
   }
 
@@ -774,6 +779,15 @@ document.addEventListener('DOMContentLoaded', function () {
   const _hlExit = document.getElementById('hlExit');
   if (_hlExit) _hlExit.addEventListener('click', function () { location.href = 'home.html'; });
   if (pauseBtn) pauseBtn.addEventListener('click', togglePause);
+  // Erta tugatish — vaqt tugашини kutmasдан "Bajardingizmi?" so'roqяга o'tadi (Ha=yoziladi, Yo'q=tugaydi).
+  // Taymer/pomodoro'да ko'p vaqt qo'yib qolganda ham chiqib ketish imkonini beradi.
+  var _finishBtn = document.getElementById('finishBtn');
+  if (_finishBtn) _finishBtn.addEventListener('click', function () {
+    if (interval) { clearInterval(interval); interval = null; }
+    paused = true;
+    saveActive();
+    showAskModal();
+  });
   if (soundBtn) soundBtn.addEventListener('click', function () { if (window.FocusAudio) { if (FocusAudio.cycle) FocusAudio.cycle(); else FocusAudio.toggle(); } syncSoundBtn(); });
   window.addEventListener('pagehide', function () { try { if (window.FocusAudio) FocusAudio.stop(); } catch (e) {} });
 
