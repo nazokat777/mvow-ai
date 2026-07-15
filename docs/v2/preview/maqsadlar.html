@@ -451,6 +451,9 @@
     <span style="font-size:24px;">+</span>
     <span data-i18n="maqsadlar.add_btn">Yangi maqsad</span>
   </button>
+
+  <!-- Barcha maqsadlarni qaytadan boshlash (progress nolga; JS matnni to'ldiradi — data-i18n YO'Q, i18n ustidan yozmasin) -->
+  <button id="restartAllBtn" type="button" style="display:none;width:100%;margin-top:10px;padding:13px;border-radius:14px;background:transparent;border:1px solid rgba(255,255,255,.18);color:var(--text-mid,#B8BBC2);font:600 15px 'Inter',sans-serif;cursor:pointer;transition:color .15s,border-color .15s;"></button>
 </div>
 
 <div class="bottom">
@@ -782,16 +785,19 @@
     const sub = document.getElementById('countSub');
 
     var addBtnEl = document.getElementById('addBtn');
+    var restartBtnEl = document.getElementById('restartAllBtn');
     if (!goals.length) {
       list.style.display = 'none';
       empty.style.display = 'block';
       if (addBtnEl) addBtnEl.style.display = 'none';
+      if (restartBtnEl) restartBtnEl.style.display = 'none';
       sub.textContent = (window.I18N ? I18N.tWith('maqsadlar.count', { n: 0 }) : '0 ta maqsad');
       return;
     }
     empty.style.display = 'none';
     list.style.display = 'flex';
     if (addBtnEl) addBtnEl.style.display = '';
+    if (restartBtnEl) restartBtnEl.style.display = '';
     sub.textContent = (window.I18N ? I18N.tWith('maqsadlar.count', { n: goals.length }) : goals.length + ' ta maqsad');
 
     // History — har maqsad uchun bajarilgan kunlar sonini hisoblash uchun
@@ -877,6 +883,7 @@
               <span class="left">${passed} / ${info.days} ${escapeHtml(lblDays)}</span>
               <span class="right" style="color:${gradeColor};font-weight:700;">${donePct}% ${escapeHtml(lblDone)}</span>
             </div>
+            <button class="goal-restart" data-restart="${g.id}" type="button" style="margin-top:8px;padding:7px 14px;border-radius:999px;background:transparent;border:1px solid rgba(255,255,255,.18);color:var(--text-dim,#9CA0A8);font:600 13px 'Inter',sans-serif;cursor:pointer;transition:color .15s,border-color .15s;">${escapeHtml(_t('maqsadlar.restart_one', '🔄 Boshidan boshlash'))}</button>
 
             <div class="goal-sessions" data-goal-sessions="${g.id}">
               <div class="gs-label">${escapeHtml(lblSessions)}</div>
@@ -912,6 +919,26 @@
         const id = parseInt(b.dataset.del, 10);
         if (!confirm(_t('maqsadlar.del_confirm', "Bu maqsadni o'chirasizmi? Kalendaringizdan ham olib tashlanadi."))) return;
         removeGoal(id);
+      });
+    });
+
+    // Per-goal qaytadan boshlash (bittalab) — ikki-tap tasdiq (render faqat tasdiqdan keyin)
+    list.querySelectorAll('[data-restart]').forEach(function (b) {
+      b.addEventListener('click', function (e) {
+        e.stopPropagation();
+        if (!b._armed) {
+          b._armed = true;
+          b.textContent = _t('maqsadlar.restart_one_confirm', "🔄 Aniqmisiz? Yana bosing");
+          b.style.color = '#FF8E97'; b.style.borderColor = '#FF8E97';
+          b._t = setTimeout(function () {
+            b._armed = false;
+            b.textContent = _t('maqsadlar.restart_one', "🔄 Boshidan boshlash");
+            b.style.color = ''; b.style.borderColor = '';
+          }, 3000);
+          return;
+        }
+        if (b._t) clearTimeout(b._t);
+        restartGoal(b.dataset.restart);
       });
     });
 
@@ -1223,6 +1250,55 @@
     if (egIcon) g.icon = egIcon; if (egColor) g.color = egColor;
     saveGoals(goals); closeEditGoal(); render();
   });
+
+  // Bitta (yoki hamma) maqsadni bugundan qayta boshlash — progress oynasi nolga,
+  // bosqichlar tozalanadi; TARIX/TANGA O'CHMAYDI (startDate faqat oldinga suriladi).
+  function _resetGoalObj(g, todayIso) {
+    g.startDate = todayIso;
+    if (Array.isArray(g.milestones)) g.milestones.forEach(function (m) { m.done = false; });
+    var sess = (Array.isArray(g.sessions) && g.sessions.length)
+      ? g.sessions : [{ time: g.time || '07:00', dur: g.dur || '60 daq' }];
+    g.changeLog = [{ fromIso: todayIso, sessions: sess.map(function (s) { return { time: s.time, dur: s.dur }; }) }];
+  }
+  function restartGoal(id) {
+    var goals = loadGoals();
+    var g = goals.find(function (x) { return String(x.id) === String(id); });
+    if (!g) return;
+    _resetGoalObj(g, localIso());
+    saveGoals(goals);
+    if (window.MVOW_DATA && MVOW_DATA.fxSuccess) MVOW_DATA.fxSuccess();
+    render();
+  }
+
+  // ── Hammasini qaytadan boshlash — har maqsad bugundan qayta boshlanadi ──
+  // Ikki-tap tasdiq: adashib bosilsa progress yo'qolmasin.
+  (function () {
+    var btn = document.getElementById('restartAllBtn');
+    if (!btn) return;
+    var LBL = function () { return _t('maqsadlar.restart_btn', "🔄 Hammasini qaytadan boshlash"); };
+    btn.textContent = LBL();
+    var armed = false, timer = null;
+    function disarm() { armed = false; if (timer) clearTimeout(timer); btn.textContent = LBL(); btn.style.color = ''; btn.style.borderColor = ''; }
+    btn.addEventListener('click', function () {
+      if (!armed) {
+        armed = true;
+        btn.textContent = _t('maqsadlar.restart_confirm', "Aniqmisiz? Yana bosing");
+        btn.style.color = '#FF8E97'; btn.style.borderColor = '#FF8E97';
+        timer = setTimeout(disarm, 3000);
+        return;
+      }
+      if (timer) clearTimeout(timer);
+      armed = false;
+      var goals = loadGoals();
+      var today = localIso();
+      goals.forEach(function (g) { _resetGoalObj(g, today); });
+      saveGoals(goals);
+      if (window.MVOW_DATA && MVOW_DATA.fxSuccess) MVOW_DATA.fxSuccess();
+      btn.textContent = _t('maqsadlar.restart_done', "Qaytadan boshlandi ✓");
+      btn.style.color = 'var(--accent)'; btn.style.borderColor = 'var(--accent)';
+      setTimeout(function () { disarm(); render(); }, 1400);
+    });
+  })();
 
   render();
 </script>
