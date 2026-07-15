@@ -39,6 +39,36 @@
     return { focusMins: mins, habits: habits, focusH: Math.round(mins / 60 * 10) / 10 };
   }
 
+  // ── Bekitish (visibility) — BEKITILGAN vazifa serverga UMUMAN yuborilmaydi ──
+  // Faqat lokalda saqlanadi (mvow.hidden.<sana>); do'st/ustoz/ota-ona faqat ko'rinadiganlarni ko'radi.
+  function hiddenKey(iso) { return 'mvow.hidden.' + (iso || todayIso()); }
+  function hiddenSet(iso) {
+    try { var a = JSON.parse(localStorage.getItem(hiddenKey(iso)) || '[]'); return Array.isArray(a) ? a : []; } catch (e) { return []; }
+  }
+  function setHidden(name, hide, iso) {
+    if (!name) return;
+    var set = hiddenSet(iso), i = set.indexOf(name);
+    if (hide && i < 0) set.push(name);
+    if (!hide && i >= 0) set.splice(i, 1);
+    try { localStorage.setItem(hiddenKey(iso), JSON.stringify(set)); } catch (e) {}
+    syncStats();   // viewerlar darhol yangilansin (bekitilgan serverdan chiqadi)
+  }
+  function isHidden(name, iso) { return hiddenSet(iso).indexOf(name) >= 0; }
+  // Bugungi KO'RINADIGAN vazifalar (bekitilganlar chiqarilgan) — server report'i uchun.
+  function myTasksToday() {
+    var out = [], hidden = hiddenSet();
+    try {
+      if (window.MVOW_DATA && MVOW_DATA.getHistory) {
+        MVOW_DATA.getHistory().filter(function (x) { return x.dateIso === todayIso(); }).forEach(function (x) {
+          var nm = x.name || 'Vazifa';
+          if (hidden.indexOf(nm) >= 0) return;   // BEKITILGAN -> serverga bormaydi
+          out.push({ n: nm, m: x.actualMins || 0, t: ((x.withTimer === true) || x.mode === 'timer' || x.mode === 'pomodoro') ? 1 : 0 });
+        });
+      }
+    } catch (e) {}
+    return out;
+  }
+
   // ── Supabase klient (bo'lmasa null) ──
   var sb;
   function client() {
@@ -60,10 +90,19 @@
   function syncStats() {
     var c = client(); if (!c) return Promise.resolve();
     var s = myStats();
-    return c.from('daily_stats').upsert(
+    // 1) Asosiy statistika (reyting uchun) — 'report' ustuni bo'lmasa ham ISHLAYDI.
+    var p = c.from('daily_stats').upsert(
       { code: myCode(), d: todayIso(), focus_mins: s.focusMins, habits: s.habits, updated_at: new Date().toISOString() },
       { onConflict: 'code,d' }
     ).then(function () {}, function () {});
+    // 2) Ko'rinadigan vazifalar (per-task) — ALOHIDA update; ustun hali qo'shilmagan bo'lsa xatoni yutamiz.
+    p.then(function () {
+      try {
+        c.from('daily_stats').update({ report: myTasksToday() })
+          .match({ code: myCode(), d: todayIso() }).then(function () {}, function () {});
+      } catch (e) {}
+    });
+    return p;
   }
 
   // ── Do'stlar (lokal ro'yxat doim saqlanadi; bulutда links ham) ──
@@ -170,13 +209,26 @@
       .then(function (res) {
         var codes = ((res && res.data) || []).map(function (x) { return x.follower; });
         if (!codes.length) return [];
-        return c.from('daily_stats').select('code,focus_mins,habits').eq('d', todayIso()).in('code', codes)
+        // 'report' ustuni bo'lsa — per-task; bo'lmasa xato bermasin (fallback: report'siz so'rov).
+        function build(rows) {
+          var by = {}; (rows || []).forEach(function (s) { by[s.code] = s; });
+          return codes.map(function (cd) {
+            var s = by[cd] || { focus_mins: 0, habits: 0, report: [] };
+            var tasks = Array.isArray(s.report) ? s.report.map(function (t) { return { name: t.n, mins: t.m || 0, timer: !!t.t }; }) : null;
+            return {
+              code: cd, name: cd,
+              focusMins: s.focus_mins || 0, focusH: Math.round((s.focus_mins || 0) / 60 * 10) / 10, habits: s.habits || 0,
+              tasks: tasks   // ko'rinadigan vazifalar (bekitilganlar yo'q); null = ustun yo'q
+            };
+          }).sort(function (a, b) { return (b.focusMins - a.focusMins) || (b.habits - a.habits); });
+        }
+        return c.from('daily_stats').select('code,focus_mins,habits,report').eq('d', todayIso()).in('code', codes)
           .then(function (r2) {
-            var by = {}; ((r2 && r2.data) || []).forEach(function (s) { by[s.code] = s; });
-            return codes.map(function (cd) {
-              var s = by[cd] || { focus_mins: 0, habits: 0 };
-              return { code: cd, name: cd, focusMins: s.focus_mins || 0, focusH: Math.round((s.focus_mins || 0) / 60 * 10) / 10, habits: s.habits || 0 };
-            }).sort(function (a, b) { return (b.focusMins - a.focusMins) || (b.habits - a.habits); });
+            if (r2 && r2.error) {   // 'report' ustuni hali qo'shilmagan -> report'siz qayta
+              return c.from('daily_stats').select('code,focus_mins,habits').eq('d', todayIso()).in('code', codes)
+                .then(function (r3) { return build((r3 && r3.data) || []); });
+            }
+            return build((r2 && r2.data) || []);
           });
       }).catch(function () { return []; });
   }
@@ -184,6 +236,7 @@
   window.Social = {
     myCode: myCode, myStats: myStats, cloud: cloud, syncStats: syncStats, wards: wards,
     friends: friends, addFriend: addFriend, removeFriend: removeFriend, leaderboard: leaderboard,
-    sendMessage: sendMessage, getMessages: getMessages, subscribeMessages: subscribeMessages, unsubscribe: unsubscribe
+    sendMessage: sendMessage, getMessages: getMessages, subscribeMessages: subscribeMessages, unsubscribe: unsubscribe,
+    hiddenSet: hiddenSet, setHidden: setHidden, isHidden: isHidden, myTasksToday: myTasksToday
   };
 })();

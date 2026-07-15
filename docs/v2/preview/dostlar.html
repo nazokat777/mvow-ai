@@ -52,6 +52,13 @@
   .lb-name .you { color: rgb(244,132,95); }
   .lb-stat { font-size: 15px; font-weight: 700; color: var(--text); white-space: nowrap; }
   .lb-stat .hb { color: var(--text-dim); font-weight: 500; font-size: 13px; }
+  /* Ward'ning ko'rinadigan vazifalari (bekitilganlar yo'q) */
+  .ward-tasks { margin: -6px 2px 12px 2px; padding: 8px 12px; background: var(--card); border: 1px solid var(--border-default, rgba(0,0,0,.06)); border-top: none; border-radius: 0 0 14px 14px; }
+  .wt-row { display: flex; align-items: center; justify-content: space-between; gap: 10px; padding: 5px 0; border-bottom: 1px solid rgba(128,128,128,.08); }
+  .wt-row:last-child { border-bottom: none; }
+  .wt-name { font-size: 14px; font-weight: 600; color: var(--text); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .wt-meta { font-size: 12px; color: var(--text-dim); white-space: nowrap; }
+  .ward-tasks-empty { margin: -6px 2px 12px 2px; padding: 8px 12px; font-size: 13px; color: var(--text-dim); background: var(--card); border: 1px solid var(--border-default, rgba(0,0,0,.06)); border-top: none; border-radius: 0 0 14px 14px; }
   .lb-pending { color: var(--text-dim); font-size: 13px; font-style: normal; }
 
   .note { margin-top: 20px; text-align: center; font-size: 13px; color: var(--text-dim); line-height: 1.5; }
@@ -180,7 +187,18 @@
         var html = '<div style="' + lbl + '">' + T('watching', 'Siz nazorat qilyapsiz') + '</div>';
         if (w.length) {
           w.forEach(function (r, i) {
-            html += '<div class="lb-row"><div class="lb-rank">' + (i + 1) + '</div><div class="lb-name">' + escapeHtml(r.name) + '</div><span class="lb-stat">' + (r.focusH || 0) + ' ' + T('hours', 'soat') + ' <span class="hb">· ' + (r.habits || 0) + ' ' + T('habits', 'odat') + '</span></span></div>';
+            html += '<div class="lb-row" style="border-radius:14px 14px ' + ((r.tasks && r.tasks.length) ? '0 0' : '14px 14px') + ';"><div class="lb-rank">' + (i + 1) + '</div><div class="lb-name">' + escapeHtml(r.name) + '</div><span class="lb-stat">' + (r.focusH || 0) + ' ' + T('hours', 'soat') + ' <span class="hb">· ' + (r.habits || 0) + ' ' + T('habits', 'odat') + '</span></span></div>';
+            // Ko'rinadigan vazifalar (bekitilganlar server'ga umuman bormaydi). r.tasks===null -> report ustuni yo'q.
+            if (r.tasks && r.tasks.length) {
+              html += '<div class="ward-tasks">';
+              r.tasks.forEach(function (t) {
+                var badge = t.timer ? T('timer_badge', 'taymerli') : T('notimer_badge', 'taymersiz');
+                html += '<div class="wt-row"><span class="wt-name">' + escapeHtml(t.name) + '</span><span class="wt-meta">' + (t.mins || 0) + ' ' + T('min_short', 'daq') + ' · ' + badge + '</span></div>';
+              });
+              html += '</div>';
+            } else if (r.tasks && r.tasks.length === 0) {
+              html += '<div class="ward-tasks-empty">' + T('ward_no_tasks', "Bugun ko'rinadigan vazifa yo'q") + '</div>';
+            }
           });
         } else {
           html += '<div class="lb-empty">' + T('no_wards', "Hali hech kim sizni ustoz/ota-ona qilib qo'shmagan. Kodingizni farzandingiz yoki o'quvchingizga bering — u sizni qo'shsa, natijasini shu yerda ko'rasiz.") + '</div>';

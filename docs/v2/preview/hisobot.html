@@ -131,10 +131,13 @@ document.addEventListener('DOMContentLoaded', function () {
         seen[p.name] = 1; report.skipped.push({ key: 's' + report.skipped.length, name: p.name });
       });
     }
-    // Sukut bo'yicha hammasi belgilangan
+    // Belgi = KO'RSATILADI (do'st/ustoz/ota-ona ko'radi); belgisiz = BEKITILGAN.
+    // Bajarilgan vazifalar uchun holat Social'da (mvow.hidden) saqlanadi -> viewerlarga ta'sir qiladi.
     sel = {};
-    report.done.forEach(function (d) { sel[d.key] = true; });
-    report.skipped.forEach(function (s) { sel[s.key] = true; });
+    report.done.forEach(function (d) {
+      sel[d.key] = (window.Social && Social.isHidden) ? !Social.isHidden(d.name) : true;
+    });
+    report.skipped.forEach(function (s) { sel[s.key] = true; });   // bajarilmagan — faqat ulashish matni uchun
   }
 
   function selectedMins() {
@@ -171,7 +174,14 @@ document.addEventListener('DOMContentLoaded', function () {
         var meta = isDone ? '<div class="it-meta">' + hm(it.mins) + badge + '</div>' : '';
         row.innerHTML = '<span class="box"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></span>' +
           '<div class="it-body"><div class="it-name">' + esc(it.name) + '</div>' + meta + '</div>';
-        row.addEventListener('click', function () { sel[it.key] = !sel[it.key]; render(); });
+        row.addEventListener('click', function () {
+          sel[it.key] = !sel[it.key];
+          // Bajarilgan vazifa: belgisiz -> BEKITILGAN (serverdan chiqadi, viewerlarga ko'rinmaydi)
+          if (isDone && period === 'today' && window.Social && Social.setHidden) {
+            Social.setHidden(it.name, !sel[it.key]);   // syncStats o'zi ichida chaqiriladi
+          }
+          render();
+        });
         list.appendChild(row);
       });
     }
@@ -280,7 +290,11 @@ document.addEventListener('DOMContentLoaded', function () {
 
   // Init — MVOW_DATA kech kelsa (Android TWA'da defer/DOMContentLoaded race)
   // hisobot bo'sh chiqmasin: tayyor bo'lguncha qayta urinamiz + window.load.
-  function initReport() { D = window.MVOW_DATA; build(); render(); renderFriends(); }
+  function initReport() {
+    D = window.MVOW_DATA; build(); render(); renderFriends();
+    // Ochilganda ko'rinadigan vazifalarni serverga sync qilamiz (viewerlar yangilansin)
+    try { if (window.Social && Social.cloud && Social.cloud()) Social.syncStats(); } catch (e) {}
+  }
   initReport();
   window.addEventListener('load', initReport);
   var _initN = 0;
