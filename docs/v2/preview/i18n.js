@@ -3330,17 +3330,11 @@
   setTimeout(applyAll, 500);
 })();
 
-// ===== PWA: service worker + AVTO-YANGILANISH (eski kesh o'zi tozalanadi, "yana oldingi" qaytmaydi) =====
+// ===== PWA: service worker + AVTO-YANGILANISH =====
+// MUHIM: controllerchange'da location.reload() QILMAYMIZ — u ochilishda "yonib-o'chish"
+// (flash) chiqarardi. SW allaqachon HTML/JS uchun network-first (har navigatsiyada yangi
+// kontent keladi), shuning uchun reload keraksiz edi — faqat flash berardi.
 if ('serviceWorker' in navigator) {
-  // Boshida controller bormi? (birinchi o'rnatishда reload qilmaymiz)
-  var _mvowHadCtrl = !!navigator.serviceWorker.controller;
-  var _mvowReloaded = false;
-  // Yangi SW nazoratni olganda -> sahifani bir marta yangilash (eski keshdan qutulish)
-  navigator.serviceWorker.addEventListener('controllerchange', function() {
-    if (_mvowReloaded || !_mvowHadCtrl) return;
-    _mvowReloaded = true;
-    location.reload();
-  });
   window.addEventListener('load', function() {
     navigator.serviceWorker.register('service-worker.js').then(function(reg) {
       // Har ochilishда yangi versiyani tekshir
