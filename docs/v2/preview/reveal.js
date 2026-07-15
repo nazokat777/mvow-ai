@@ -23,6 +23,7 @@
         || document.querySelector('.wrap')
         || document.querySelector('.container')
         || document.querySelector('main')
+        || document.querySelector('.phone')      // .phone'ни to'g'ridan ishlatadigan sahifalar (hisobot, ota-ona...)
         || null;
   }
 
