@@ -177,6 +177,23 @@ body::before {
 @keyframes dwEnter { from { opacity: 0; transform: translateY(18px); } to { opacity: 1; transform: none; } }
 .wrap, .phone .container { animation: dwEnter 0.5s cubic-bezier(0.16, 0.84, 0.32, 1) both; }
 @media (prefers-reduced-motion: reduce) { .wrap, .phone .container { animation: none !important; } }
+
+/* ── Scroll-reveal / stagger (PRO, minimal) — reveal.js faollashtiradi ──
+   JS'siz YOKI reduced-motion: hech narsa yashirilmaydi, eski dwEnter qoladi (kontent doim ko'rinadi).
+   Faqat html.mvw-reveal-on bo'lganda ishlaydi -> mvw-reveal elementlar avval yashirin, mvw-in bilan paydo bo'ladi. */
+html.mvw-reveal-on .wrap,
+html.mvw-reveal-on .phone .container { animation: none; }   /* kirishni stagger boshqaradi, blok dwEnter emas */
+html.mvw-reveal-on .mvw-reveal {
+  opacity: 0;
+  transform: translateY(12px);
+  transition: opacity 0.34s cubic-bezier(0.16, 0.84, 0.32, 1),
+              transform 0.34s cubic-bezier(0.16, 0.84, 0.32, 1);
+  will-change: opacity, transform;
+}
+html.mvw-reveal-on .mvw-reveal.mvw-in { opacity: 1; transform: none; }
+@media (prefers-reduced-motion: reduce) {
+  html.mvw-reveal-on .mvw-reveal { opacity: 1 !important; transform: none !important; transition: none !important; }
+}
 /* .phone ekranlar (home...) — fon ustiga rang nuri */
 .phone {
   background-image: radial-gradient(95% 42% at 50% 0%, var(--accent-medium), transparent 58%) !important;
