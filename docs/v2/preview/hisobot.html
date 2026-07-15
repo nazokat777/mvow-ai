@@ -85,6 +85,8 @@
 
 <script src="i18n.js?v=29.0.66"></script>
 <script src="lang-switcher.js?v=29.0.66" defer></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2" defer></script>
+<script src="supabase-config.js?v=29.0.66" defer></script>
 <script src="data.js?v=29.0.66" defer></script>
 <script src="social.js?v=29.0.66" defer></script>
 <script src="nav-overlay.js?v=29.0.66" defer></script>
@@ -253,7 +255,16 @@ document.addEventListener('DOMContentLoaded', function () {
   document.getElementById('tabToday').addEventListener('click', function () { switchTab('today'); });
   document.getElementById('tabWeek').addEventListener('click', function () { switchTab('week'); });
 
-  build(); render(); renderFriends();
+  // Init — MVOW_DATA kech kelsa (Android TWA'da defer/DOMContentLoaded race)
+  // hisobot bo'sh chiqmasin: tayyor bo'lguncha qayta urinamiz + window.load.
+  function initReport() { D = window.MVOW_DATA; build(); render(); renderFriends(); }
+  initReport();
+  window.addEventListener('load', initReport);
+  var _initN = 0;
+  (function retryInit() {
+    if (window.MVOW_DATA || _initN++ >= 8) return;   // ~0.8s
+    setTimeout(function () { initReport(); retryInit(); }, 100);
+  })();
   try { document.title = T('hisobot.page_title', 'FOCUS AI — Hisobot'); } catch (e) {}
 });
 </script>
