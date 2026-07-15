@@ -1,0 +1,262 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+<title>FOCUS AI — Hisobot</title>
+<link rel="manifest" href="manifest.webmanifest">
+<meta name="theme-color" content="#04060B">
+<link rel="apple-touch-icon" href="assets/mnsm-logo.png?v=2">
+<link rel="icon" type="image/png" href="assets/mnsm-logo.png?v=2">
+<link rel="stylesheet" href="theme.css">
+<style>
+  * { box-sizing: border-box; }
+  body { margin: 0; font-family: 'Inter', sans-serif; background: var(--void, #04060B); color: var(--text, #F5F2EC); }
+  .phone { max-width: 480px; margin: 0 auto; min-height: 100vh; padding: 26px 18px 60px; }
+  h1 { font-size: 28px; margin: 6px 0 4px; }
+  .sub { color: var(--text-dim, #9CA0A8); font-size: 14px; line-height: 1.55; margin-bottom: 18px; }
+
+  .tabs { display: flex; gap: 8px; margin-bottom: 16px; }
+  .tab { flex: 1; padding: 10px; border-radius: 12px; border: 1px solid var(--border-default, rgba(255,255,255,.12));
+    background: var(--card, #0C0F16); color: var(--text-mid, #B8BBC2); font: 600 14px 'Inter', sans-serif; cursor: pointer; }
+  .tab.on { background: var(--accent, #F4845F); border-color: var(--accent, #F4845F); color: #fff; }
+
+  .total { background: linear-gradient(135deg, rgba(244,132,95,.16), rgba(244,132,95,.04));
+    border: 1px solid rgba(244,132,95,.3); border-radius: 18px; padding: 20px; margin-bottom: 16px; text-align: center; }
+  .total .big { font-size: 34px; font-weight: 800; letter-spacing: -.5px; color: var(--accent-bright, #F4845F); }
+  .total .lbl { font-size: 13px; color: var(--text-dim, #9CA0A8); text-transform: uppercase; letter-spacing: 1px; margin-top: 2px; }
+
+  .grp-h { font-size: 13px; font-weight: 800; letter-spacing: .5px; margin: 18px 2px 8px; text-transform: uppercase; }
+  .grp-h.done { color: #6BBF7A; }
+  .grp-h.skip { color: #E8825F; }
+
+  .item { display: flex; align-items: center; gap: 11px; background: var(--card, #0C0F16);
+    border: 1px solid var(--border-default, rgba(255,255,255,.12)); border-radius: 13px; padding: 12px 13px; margin-bottom: 8px; cursor: pointer; }
+  .item.off { opacity: .42; }
+  .box { flex: none; width: 21px; height: 21px; border-radius: 6px; border: 2px solid var(--accent, #F4845F);
+    display: flex; align-items: center; justify-content: center; background: transparent; }
+  .box svg { width: 12px; height: 12px; color: #fff; opacity: 0; }
+  .item.on .box { background: var(--accent, #F4845F); }
+  .item.on .box svg { opacity: 1; }
+  .it-body { flex: 1; min-width: 0; }
+  .it-name { font-size: 15px; font-weight: 600; }
+  .it-meta { font-size: 12.5px; color: var(--text-dim, #9CA0A8); margin-top: 2px; }
+  .badge { display: inline-block; font-size: 11px; font-weight: 700; padding: 1px 7px; border-radius: 999px; margin-left: 6px; vertical-align: middle; }
+  .badge.timer { background: rgba(110,181,255,.16); color: #6EB5FF; }
+  .badge.notimer { background: rgba(107,191,122,.16); color: #6BBF7A; }
+
+  .empty { text-align: center; color: var(--text-dim, #9CA0A8); font-size: 14px; padding: 24px 10px; }
+
+  .actions { margin-top: 22px; display: flex; flex-direction: column; gap: 10px; }
+  .btn { padding: 14px; border-radius: 13px; border: none; font: 700 16px 'Inter', sans-serif; cursor: pointer; }
+  .btn-main { background: var(--accent, #F4845F); color: #fff; }
+  .btn-friend { background: transparent; border: 1px solid var(--accent, #F4845F); color: var(--accent, #F4845F); font-size: 14px; padding: 12px; }
+  .friend-row { display: flex; flex-wrap: wrap; gap: 8px; }
+  .friend-row .btn-friend { flex: 1; min-width: 120px; }
+  .toast { position: fixed; left: 50%; bottom: 30px; transform: translateX(-50%); background: #1b8f57; color: #fff;
+    padding: 11px 20px; border-radius: 999px; font-size: 14px; font-weight: 600; opacity: 0; transition: opacity .25s; pointer-events: none; z-index: 50; }
+  .toast.show { opacity: 1; }
+</style>
+</head>
+<body>
+<div class="phone">
+  <h1 data-i18n="hisobot.title">Hisobot</h1>
+  <div class="sub" data-i18n="hisobot.sub">Mehnatingizni do'st, ustoz yoki ota-onangizga ulashing. Qaysi vazifalar ko'rinishini o'zingiz belgilaysiz.</div>
+
+  <div class="tabs">
+    <button class="tab on" id="tabToday" type="button" data-i18n="hisobot.tab_today">Bugun</button>
+    <button class="tab" id="tabWeek" type="button" data-i18n="hisobot.tab_week">7 kun</button>
+  </div>
+
+  <div class="total">
+    <div class="big" id="totalVal">0</div>
+    <div class="lbl" data-i18n="hisobot.total_lbl">Jami mehnat</div>
+  </div>
+
+  <div id="hint" style="font-size:12.5px;color:var(--text-dim,#9CA0A8);margin:0 2px 6px;" data-i18n="hisobot.select_hint">Ulashiladiganlarni belgilang</div>
+  <div id="list"></div>
+
+  <div class="actions" id="actions" style="display:none;">
+    <button class="btn btn-main" id="shareBtn" type="button" data-i18n="hisobot.share_btn">Ulashish</button>
+    <div class="friend-row" id="friendRow"></div>
+  </div>
+</div>
+<div class="toast" id="toast"></div>
+
+<script src="i18n.js?v=29.0.66"></script>
+<script src="lang-switcher.js?v=29.0.66" defer></script>
+<script src="data.js?v=29.0.66" defer></script>
+<script src="social.js?v=29.0.66" defer></script>
+<script src="nav-overlay.js?v=29.0.66" defer></script>
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+  'use strict';
+  function T(k, fb) { return (window.I18N && I18N.t) ? I18N.t(k, fb) : fb; }
+  var D = window.MVOW_DATA;
+  var period = 'today';          // 'today' | 'week'
+  var report = { done: [], skipped: [], totalMins: 0 };
+  var sel = {};                  // key -> bool (belgilangan)
+
+  function hm(mins) {
+    if (D && D.fmtHM) return D.fmtHM(mins);
+    var h = Math.floor(mins / 60), m = mins % 60;
+    return (h ? h + ' ' + T('hisobot.hour_short', 'soat') + ' ' : '') + m + ' ' + T('hisobot.min_short', 'daq');
+  }
+  function isTimer(x) { return (x.withTimer === true) || (x.mode === 'timer') || (x.mode === 'pomodoro'); }
+  function last7() {
+    var arr = [], base = new Date();
+    for (var i = 0; i < 7; i++) { var d = new Date(base); d.setDate(base.getDate() - i); arr.push(D.localDateIso(d)); }
+    return arr;
+  }
+
+  function build() {
+    report = { done: [], skipped: [], totalMins: 0 };
+    if (!D) return;
+    var hist = D.getHistory ? D.getHistory() : [];
+    var isos = period === 'today' ? [D.today.iso] : last7();
+    var inSet = {}; isos.forEach(function (x) { inSet[x] = 1; });
+    var rows = hist.filter(function (x) { return inSet[x.dateIso]; });
+    report.done = rows.map(function (x, i) {
+      return { key: 'd' + i, name: x.name || T('hisobot.task_fb', 'Vazifa'), timer: isTimer(x), mins: x.actualMins || 0 };
+    });
+    // Bajarilmagan — faqat "Bugun" (bugungi rejadan bajarilmaganlar)
+    if (period === 'today') {
+      var doneNames = {}; report.done.forEach(function (d) { doneNames[d.name] = 1; });
+      var planned = []; try { planned = D.getTodayPlan() || []; } catch (e) {}
+      var seen = {};
+      planned.forEach(function (p) {
+        if (!p || !p.name || doneNames[p.name] || seen[p.name]) return;
+        seen[p.name] = 1; report.skipped.push({ key: 's' + report.skipped.length, name: p.name });
+      });
+    }
+    // Sukut bo'yicha hammasi belgilangan
+    sel = {};
+    report.done.forEach(function (d) { sel[d.key] = true; });
+    report.skipped.forEach(function (s) { sel[s.key] = true; });
+  }
+
+  function selectedMins() {
+    return report.done.reduce(function (s, d) { return s + (sel[d.key] ? d.mins : 0); }, 0);
+  }
+
+  function render() {
+    document.getElementById('totalVal').textContent = hm(selectedMins());
+    var list = document.getElementById('list');
+    list.innerHTML = '';
+    var hint = document.getElementById('hint');
+
+    if (!report.done.length && !report.skipped.length) {
+      hint.style.display = 'none';
+      document.getElementById('actions').style.display = 'none';
+      var e = document.createElement('div'); e.className = 'empty';
+      e.textContent = T('hisobot.empty_all', "Bu davr uchun ma'lumot yo'q");
+      list.appendChild(e);
+      return;
+    }
+    hint.style.display = 'block';
+    document.getElementById('actions').style.display = 'flex';
+
+    function grp(titleKey, titleFb, cls, items, isDone) {
+      if (!items.length) return;
+      var h = document.createElement('div'); h.className = 'grp-h ' + cls;
+      h.textContent = T(titleKey, titleFb) + ' (' + items.length + ')';
+      list.appendChild(h);
+      items.forEach(function (it) {
+        var row = document.createElement('div');
+        row.className = 'item' + (sel[it.key] ? ' on' : ' off');
+        var badge = isDone ? '<span class="badge ' + (it.timer ? 'timer' : 'notimer') + '">' +
+          (it.timer ? T('hisobot.timer_badge', 'taymerli') : T('hisobot.notimer_badge', 'taymersiz')) + '</span>' : '';
+        var meta = isDone ? '<div class="it-meta">' + hm(it.mins) + badge + '</div>' : '';
+        row.innerHTML = '<span class="box"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></span>' +
+          '<div class="it-body"><div class="it-name">' + esc(it.name) + '</div>' + meta + '</div>';
+        row.addEventListener('click', function () { sel[it.key] = !sel[it.key]; render(); });
+        list.appendChild(row);
+      });
+    }
+    grp('hisobot.done_h', 'Bajarilgan', 'done', report.done, true);
+    grp('hisobot.skipped_h', 'Bajarilmagan', 'skip', report.skipped, false);
+  }
+
+  function esc(s) { return String(s || '').replace(/[&<>"]/g, function (c) { return ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]); }); }
+
+  function buildText() {
+    var name = '';
+    try { name = localStorage.getItem('mvow.userName') || ''; } catch (e) {}
+    if (!name && window.Social) name = Social.myCode();
+    var when = period === 'today' ? (D.today.label || D.today.iso) : T('hisobot.tab_week', '7 kun');
+    var lines = [];
+    lines.push('📊 FOCUS AI — ' + when + ' ' + T('hisobot.report_word', 'hisoboti'));
+    if (name) lines.push('👤 ' + name);
+    lines.push('');
+    lines.push('⏱ ' + T('hisobot.total_lbl', 'Jami mehnat') + ': ' + hm(selectedMins()));
+    var doneSel = report.done.filter(function (d) { return sel[d.key]; });
+    if (doneSel.length) {
+      lines.push('');
+      lines.push('✅ ' + T('hisobot.done_h', 'Bajarilgan') + ':');
+      doneSel.forEach(function (d) {
+        lines.push('• ' + d.name + ' — ' + hm(d.mins) + ' (' +
+          (d.timer ? T('hisobot.timer_badge', 'taymerli') : T('hisobot.notimer_badge', 'taymersiz')) + ')');
+      });
+    }
+    var skipSel = report.skipped.filter(function (s) { return sel[s.key]; });
+    if (skipSel.length) {
+      lines.push('');
+      lines.push('⭕ ' + T('hisobot.skipped_h', 'Bajarilmagan') + ':');
+      skipSel.forEach(function (s) { lines.push('• ' + s.name); });
+    }
+    return lines.join('\n');
+  }
+
+  function toast(msg) {
+    var t = document.getElementById('toast');
+    t.textContent = msg; t.classList.add('show');
+    setTimeout(function () { t.classList.remove('show'); }, 1800);
+  }
+
+  document.getElementById('shareBtn').addEventListener('click', function () {
+    var txt = buildText();
+    if (navigator.share) {
+      navigator.share({ title: 'FOCUS AI', text: txt }).catch(function () {});
+    } else if (navigator.clipboard) {
+      navigator.clipboard.writeText(txt).then(function () { toast(T('hisobot.copy_ok', 'Nusxalandi ✓')); }, function () {});
+    } else {
+      toast(T('hisobot.copy_ok', 'Nusxalandi ✓'));
+    }
+  });
+
+  function renderFriends() {
+    var row = document.getElementById('friendRow');
+    row.innerHTML = '';
+    if (!window.Social || !Social.cloud || !Social.cloud()) return;   // faqat bulut ulanganda
+    var fr = Social.friends ? Social.friends() : [];
+    if (!fr.length) return;
+    fr.slice(0, 4).forEach(function (f) {
+      var b = document.createElement('button');
+      b.type = 'button'; b.className = 'btn btn-friend';
+      var roleLbl = f.role === 'mentor' ? T('hisobot.role_mentor', 'ustoz') : T('hisobot.role_friend', "do'st");
+      b.textContent = '➤ ' + f.code + ' (' + roleLbl + ')';
+      b.addEventListener('click', function () {
+        Social.sendMessage(f.code, buildText()).then(function (ok) {
+          toast(ok ? T('hisobot.sent_ok', 'Yuborildi ✓') : T('hisobot.send_fail', 'Yuborilmadi'));
+        });
+      });
+      row.appendChild(b);
+    });
+  }
+
+  function switchTab(p) {
+    period = p;
+    document.getElementById('tabToday').classList.toggle('on', p === 'today');
+    document.getElementById('tabWeek').classList.toggle('on', p === 'week');
+    build(); render();
+  }
+  document.getElementById('tabToday').addEventListener('click', function () { switchTab('today'); });
+  document.getElementById('tabWeek').addEventListener('click', function () { switchTab('week'); });
+
+  build(); render(); renderFriends();
+  try { document.title = T('hisobot.page_title', 'FOCUS AI — Hisobot'); } catch (e) {}
+});
+</script>
+<script src="back-btn.js?v=29.0.66"></script>
+</body>
+</html>

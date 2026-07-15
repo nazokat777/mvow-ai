@@ -988,6 +988,18 @@
         i_tree: "Daraxt", i_road: "Yo'l", i_house: "Uy", i_car: "Mashina", i_shop: "Do'kon", i_bldg: "Bino",
         i_bridge: "Ko'prik", i_factory: "Zavod", i_stadium: "Stadion", i_tower: "Minora", i_castle: "Qal'a", i_rocket: "Raketa"
       },
+      hisobot: {
+        page_title: 'FOCUS AI — Hisobot', title: 'Hisobot',
+        sub: "Mehnatingizni do'st, ustoz yoki ota-onangizga ulashing. Qaysi vazifalar ko'rinishini o'zingiz belgilaysiz.",
+        tab_today: 'Bugun', tab_week: '7 kun', total_lbl: 'Jami mehnat',
+        select_hint: 'Ulashiladiganlarni belgilang', share_btn: 'Ulashish',
+        done_h: 'Bajarilgan', skipped_h: 'Bajarilmagan',
+        timer_badge: 'taymerli', notimer_badge: 'taymersiz',
+        empty_all: "Bu davr uchun ma'lumot yo'q", copy_ok: 'Nusxalandi ✓',
+        sent_ok: 'Yuborildi ✓', send_fail: 'Yuborilmadi',
+        role_mentor: 'ustoz', role_friend: "do'st",
+        report_word: 'hisoboti', task_fb: 'Vazifa', hour_short: 'soat', min_short: 'daq'
+      },
       otaona: {
         page_title: "{brand} — Ota-ona nazorati", title: "Ota-ona nazorati",
         sub: "Telefonni farzandingizga bemalol bering — quyidagi usul bilan u faqat shu ilovada qoladi, boshqa ilovalar (o'yin, ijtimoiy tarmoq)ga o'tolmaydi.",
@@ -1063,7 +1075,7 @@
         row_reminders: 'Eslatmalar',
         row_dreams: 'Orzular daftari', row_blaknot: 'Blaknot', row_goya: "G'oyalarim", row_uyqu: 'Uyqu nazorati',
         row_wallet: 'Hamyon',
-        row_mukofot: 'Mukofotlar', row_shahar: 'Shahringiz', row_otaona: 'Ota-ona nazorati',
+        row_mukofot: 'Mukofotlar', row_shahar: 'Shahringiz', row_otaona: 'Ota-ona nazorati', row_hisobot: 'Hisobot / Ulashish',
         row_hardlock: 'Fokus taymeri',
         row_session: 'Bajardim',
         row_evening: 'Kun yakuni',
@@ -2038,6 +2050,18 @@
         i_tree: "Дерево", i_road: "Дорога", i_house: "Дом", i_car: "Машина", i_shop: "Магазин", i_bldg: "Здание",
         i_bridge: "Мост", i_factory: "Завод", i_stadium: "Стадион", i_tower: "Башня", i_castle: "Замок", i_rocket: "Ракета"
       },
+      hisobot: {
+        page_title: 'FOCUS AI — Отчёт', title: 'Отчёт',
+        sub: 'Поделитесь своим трудом с другом, наставником или родителями. Какие задачи показать — выбираете вы.',
+        tab_today: 'Сегодня', tab_week: '7 дней', total_lbl: 'Всего труда',
+        select_hint: 'Отметьте, чем поделиться', share_btn: 'Поделиться',
+        done_h: 'Выполнено', skipped_h: 'Не выполнено',
+        timer_badge: 'с таймером', notimer_badge: 'без таймера',
+        empty_all: 'Нет данных за этот период', copy_ok: 'Скопировано ✓',
+        sent_ok: 'Отправлено ✓', send_fail: 'Не отправлено',
+        role_mentor: 'наставник', role_friend: 'друг',
+        report_word: 'отчёт', task_fb: 'Задача', hour_short: 'ч', min_short: 'мин'
+      },
       otaona: {
         page_title: "{brand} — Родительский контроль", title: "Родительский контроль",
         sub: "Спокойно давайте телефон ребёнку — этим способом он останется только в этом приложении и не сможет открыть другие (игры, соцсети).",
@@ -2113,7 +2137,7 @@
         row_reminders: 'Напоминания',
         row_dreams: 'Дневник мечт', row_blaknot: 'Блокнот', row_goya: 'Мои идеи', row_uyqu: 'Контроль сна',
         row_wallet: 'Кошелёк',
-        row_mukofot: 'Награды', row_shahar: 'Ваш город', row_otaona: 'Родительский контроль',
+        row_mukofot: 'Награды', row_shahar: 'Ваш город', row_otaona: 'Родительский контроль', row_hisobot: 'Отчёт / Поделиться',
         row_hardlock: 'Таймер фокуса',
         row_session: 'Сделано',
         row_evening: 'Итог дня',
@@ -3088,6 +3112,18 @@
         i_tree: "Tree", i_road: "Road", i_house: "House", i_car: "Car", i_shop: "Shop", i_bldg: "Building",
         i_bridge: "Bridge", i_factory: "Factory", i_stadium: "Stadium", i_tower: "Tower", i_castle: "Castle", i_rocket: "Rocket"
       },
+      hisobot: {
+        page_title: 'FOCUS AI — Report', title: 'Report',
+        sub: 'Share your effort with a friend, mentor or parents. You choose which tasks are shown.',
+        tab_today: 'Today', tab_week: '7 days', total_lbl: 'Total effort',
+        select_hint: 'Select what to share', share_btn: 'Share',
+        done_h: 'Done', skipped_h: 'Not done',
+        timer_badge: 'timed', notimer_badge: 'untimed',
+        empty_all: 'No data for this period', copy_ok: 'Copied ✓',
+        sent_ok: 'Sent ✓', send_fail: 'Not sent',
+        role_mentor: 'mentor', role_friend: 'friend',
+        report_word: 'report', task_fb: 'Task', hour_short: 'h', min_short: 'min'
+      },
       otaona: {
         page_title: "{brand} — Parental control", title: "Parental control",
         sub: "Hand the phone to your child with confidence — this method keeps them inside this app only, unable to open others (games, social media).",
@@ -3163,7 +3199,7 @@
         row_reminders: 'Reminders',
         row_dreams: 'Dream journal', row_blaknot: 'Notebook', row_goya: 'My Ideas', row_uyqu: 'Sleep tracker',
         row_wallet: 'Wallet',
-        row_mukofot: 'Rewards', row_shahar: 'Your city', row_otaona: 'Parental control',
+        row_mukofot: 'Rewards', row_shahar: 'Your city', row_otaona: 'Parental control', row_hisobot: 'Report / Share',
         row_hardlock: 'Focus timer',
         row_session: 'Done',
         row_evening: 'Day summary',
