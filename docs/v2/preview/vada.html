@@ -230,8 +230,10 @@
     }, 300);
   });
 
-  // Oldin va'da berilgan bo'lsa, darrov tasdiq ko'rsatish
-  if (localStorage.getItem('mvow.vowGiven') === '1') {
+  // Onboarding oqimida (anketadan kelganda) va'da MAROSIMI har doim ko'rsatiladi.
+  // Faqat keyin (menyudan qayta kirilganda) allaqachon berilgan bo'lsa darrov tasdiq.
+  var _fromAnketa = /anketa\.html/.test(document.referrer || '');
+  if (!_fromAnketa && localStorage.getItem('mvow.vowGiven') === '1') {
     askBlock.classList.add('gone');
     confirmedBlock.classList.add('show');
     bottomBar.classList.add('show');

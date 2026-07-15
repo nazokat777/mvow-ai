@@ -342,7 +342,7 @@
       anketa: {
         section_lbl: 'Tanishuv',
         page_title: '{brand} — Tanishuv',
-        done_title: 'Tayyor',
+        done_title: 'Tayyor', done_sub: 'Profilingiz tayyor — endi maqsadingizni belgilaymiz.',
         q_name_title: 'Ismingiz nima?',
         q_name_ph: 'Ism',
         q_age_title: 'Yoshingiz nechada?',
@@ -1419,7 +1419,7 @@
       anketa: {
         section_lbl: 'Знакомство',
         page_title: '{brand} — Знакомство',
-        done_title: 'Готово',
+        done_title: 'Готово', done_sub: 'Профиль готов — теперь выберем вашу цель.',
         q_name_title: 'Как Вас зовут?',
         q_name_ph: 'Имя',
         q_age_title: 'Сколько Вам лет?',
@@ -2483,7 +2483,7 @@
       anketa: {
         section_lbl: 'Getting to know',
         page_title: '{brand} — Getting to know you',
-        done_title: 'Ready',
+        done_title: 'Ready', done_sub: 'Your profile is ready — now choose your goal.',
         q_name_title: 'What is your name?',
         q_name_ph: 'Name',
         q_age_title: 'How old are you?',
