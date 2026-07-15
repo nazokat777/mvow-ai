@@ -226,6 +226,27 @@ document.addEventListener('DOMContentLoaded', function () {
     }
   });
 
+  // Chat xabari 500 belgiga cheklangan (send_msg RPC left(body,500)).
+  // Uzun hisobotni qatorlar chegarasida ≤480-belgili bo'laklarga bo'lib, ketma-ket to'liq yuboramiz.
+  function chunkText(text, max) {
+    var lines = String(text).split('\n'), chunks = [], cur = '';
+    lines.forEach(function (ln) {
+      if (ln.length > max) ln = ln.slice(0, max);   // bitta qator juda uzun bo'lsa (deyarli bo'lmaydi)
+      if (cur && (cur.length + 1 + ln.length) > max) { chunks.push(cur); cur = ln; }
+      else { cur = cur ? (cur + '\n' + ln) : ln; }
+    });
+    if (cur) chunks.push(cur);
+    return chunks.length ? chunks : [''];
+  }
+  function sendReportTo(code, text) {
+    var chunks = chunkText(text, 480), okAll = true, i = 0;
+    function next() {
+      if (i >= chunks.length) return Promise.resolve(okAll);
+      return Social.sendMessage(code, chunks[i++]).then(function (ok) { okAll = okAll && ok; return next(); });
+    }
+    return next();
+  }
+
   function renderFriends() {
     var row = document.getElementById('friendRow');
     row.innerHTML = '';
@@ -238,7 +259,9 @@ document.addEventListener('DOMContentLoaded', function () {
       var roleLbl = f.role === 'mentor' ? T('hisobot.role_mentor', 'ustoz') : T('hisobot.role_friend', "do'st");
       b.textContent = '➤ ' + f.code + ' (' + roleLbl + ')';
       b.addEventListener('click', function () {
-        Social.sendMessage(f.code, buildText()).then(function (ok) {
+        b.disabled = true;
+        sendReportTo(f.code, buildText()).then(function (ok) {
+          b.disabled = false;
           toast(ok ? T('hisobot.sent_ok', 'Yuborildi ✓') : T('hisobot.send_fail', 'Yuborilmadi'));
         });
       });
