@@ -220,7 +220,10 @@
     }
     var cb = ov.querySelector('#celClose'); if (cb) cb.addEventListener('click', close);
     ov.addEventListener('click', function (e) { if (e.target === ov) close(); });
-    if (!big) setTimeout(close, 2400);   // medal/daraja yo'q — o'zi yopiladi
+    // MUHIM: bayram DOIM o'zi yopiladi — aks holda medal/olmos yutilganda foydalanuvchi
+    // "Davom"ni topmasa taymer ustida tiqilib qolardi ("tugadi ammo tugamadi" bug'i).
+    // Medal bo'lsa ko'proq (admire), bo'lmasa qisqa; ikkalasida ham onClose ishga tushadi.
+    setTimeout(close, big ? 6000 : 2400);
     return close;
   }
 
