@@ -55,11 +55,9 @@
       left: '12px',
       display: 'flex',
       alignItems: 'center',
-      background: 'rgba(255,255,255,0.10)',
+      background: 'rgba(20,22,30,0.92)',
       border: '1px solid rgba(255,255,255,0.22)',
       borderRadius: '999px',
-      backdropFilter: 'blur(8px)',
-      WebkitBackdropFilter: 'blur(8px)',
       overflow: 'hidden',
       zIndex: '100000',
       boxShadow: '0 4px 14px rgba(0,0,0,0.40)'

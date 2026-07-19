@@ -214,3 +214,29 @@
     init();
   }
 })();
+
+// ── Chrome guard: to'liq ekranli modal ochilganda tepa navigatsiyani yashiramiz ──
+// Fokusni buzmasin va "ikkita orqaga" (modal ichidagi + tepadagi ‹) bo'lmasin.
+(function () {
+  var CHROME = ['#globalNavCaps', '#mvow-quicknav', '.lang-switcher', '.seq-history', '.seq-top-bar'];
+  var OVERLAYS = ['.choice-overlay', '.chat-ov', '#deepLockOverlay', '.ask-q-overlay', '.reflect-overlay', '.session-overlay', '.vow-overlay'];
+  var st = document.createElement('style');
+  st.textContent = 'html.mvow-modal ' + CHROME.join(', html.mvow-modal ') +
+    ' { opacity: 0 !important; pointer-events: none !important; transition: opacity .2s; }';
+  (document.head || document.documentElement).appendChild(st);
+  function overlayOpen() {
+    for (var i = 0; i < OVERLAYS.length; i++) {
+      var el = document.querySelector(OVERLAYS[i]); if (!el) continue;
+      var cs = getComputedStyle(el);
+      if (cs.display === 'none' || cs.visibility === 'hidden' || parseFloat(cs.opacity || '1') < 0.05) continue;
+      var r = el.getBoundingClientRect();
+      if (r.width > window.innerWidth * 0.6 && r.height > window.innerHeight * 0.5) return true;
+    }
+    return false;
+  }
+  function tick() { try { document.documentElement.classList.toggle('mvow-modal', overlayOpen()); } catch (e) {} }
+  tick();
+  setTimeout(tick, 300); setTimeout(tick, 900);
+  setInterval(tick, 450);
+  document.addEventListener('click', function () { setTimeout(tick, 60); }, true);
+})();
