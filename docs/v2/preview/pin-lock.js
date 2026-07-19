@@ -225,16 +225,19 @@
   // Avtomatik qulf. USTUVORLIK: 1) funksiyaning O'Z PIN'i, 2) ilova PIN'i (butun ilova/app-PIN'li funksiya).
   var _file = (location.pathname.split('/').pop() || '').toLowerCase();
   var _feat = FEATURES[_file];
+  // ⋮ boshqaruv (nom o'zgartirish / yashirish / PIN) FAQAT shu 4 funksiyada bo'ladi.
+  var MANAGE_KEYS = ['hamyon', 'orzular', 'blaknot', 'goyalar'];
+  function canManage() { return _feat && MANAGE_KEYS.indexOf(_feat) >= 0; }
   // Funksiya sahifasida ⋮ boshqaruv tugmasi (qulf ochilgach ko'rinadi)
   function injectManageBtn() {
-    if (!_feat || document.getElementById('mvow-feat-manage')) return;
+    if (!canManage() || document.getElementById('mvow-feat-manage')) return;
     var b = document.createElement('button');
     b.id = 'mvow-feat-manage'; b.type = 'button'; b.textContent = '⋮'; b.title = 'Sozlash'; b.setAttribute('aria-label', 'Sozlash');
     b.style.cssText = 'position:fixed;top:max(12px,env(safe-area-inset-top,12px));left:116px;z-index:99992;width:40px;height:40px;border-radius:50%;border:1px solid rgba(108,92,231,0.4);background:rgba(12,14,20,0.94);color:#fff;font-size:22px;line-height:1;cursor:pointer;';
     b.onclick = function () { manageFeature(_feat); };
     document.body.appendChild(b);
   }
-  if (_feat) { if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', injectManageBtn); else injectManageBtn(); }
+  if (canManage()) { if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', injectManageBtn); else injectManageBtn(); }
   function _autoGate() {
     // Yashirilgan + PIN'li funksiya -> "Mavjud emas" niqob (PIN bilan ochiladi).
     if (_feat && isHidden(_feat) && hasFeatPin(_feat) && !featUnlocked(_feat)) { disguiseOverlay(getFeatPin(_feat), function () { markFeatUnlocked(_feat); }); return; }
