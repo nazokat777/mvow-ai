@@ -1,9 +1,16 @@
-name: APK (PWA -> Android TWA)
+name: Android (TWA) — APK + AAB
 
-# PWA'ni (daywarden.vercel.app) Android APK'ga o'raydi (Bubblewrap TWA).
-# Ishga tushgach -> APK "Releases" (apk-latest) va Actions artifact'ida paydo bo'ladi.
-# Eslatma: har build yangi imzo kaliti yaratadi (demo uchun). Brauzer URL chizig'ini
-# yashirish (assetlinks) keyin qo'shiladi.
+# PWA'ni (daywarden.vercel.app) Android ilovaga o'raydi (Bubblewrap TWA).
+# Chiqishlar (Releases -> apk-latest):
+#   - app-release-signed.apk  -> telefonga sideload (sinov uchun)
+#   - app-release-bundle.aab  -> GOOGLE PLAY'ga yuklanadigan fayl
+#
+# IMZO KALITI (Play uchun MUHIM — kalit DOIMIY bo'lishi shart, aks holda yangilash imkonsiz):
+#   GitHub secrets qo'ysangiz (Settings -> Secrets -> Actions), o'sha doimiy kalit ishlatiladi:
+#     ANDROID_KEYSTORE_B64       = android.keystore faylining base64'i
+#     ANDROID_KEYSTORE_PASSWORD  = keystore/kalit paroli
+#   Secret bo'lmasa -> vaqtinchalik demo kalit yaratiladi (faqat sideload sinovi uchun; Play'ga YARAMAYDI).
+#   Doimiy kalitni yaratish: "keystore-gen" workflow'ini bir marta ishga tushiring.
 
 on:
   workflow_dispatch:
@@ -43,62 +50,82 @@ jobs:
         run: |
           mkdir -p ~/.bubblewrap
           printf '{"jdkPath":"%s","androidSdkPath":"%s"}\n' "$JAVA_HOME" "$ANDROID_HOME" > ~/.bubblewrap/config.json
-          cat ~/.bubblewrap/config.json
 
-      - name: Accept ALL SDK licenses + install build-tools (build paytida so'ramasin)
+      - name: Accept SDK licenses + build-tools
         run: |
-          # Litsenziya hash'larini to'g'ridan-to'g'ri yozamiz — gradle auto-download endi so'ramaydi
           mkdir -p "$ANDROID_HOME/licenses"
           printf '\n8933bad161af4178b1185d1a37fbf41ea5269c55\nd56f5187479451eabf01fb78af6dfcb131a6481e\n24333f8a63b6825ea9c5514f83c2829b004d1fee\n' > "$ANDROID_HOME/licenses/android-sdk-license"
           printf '\n84831b9409646a918e30573bab4c9c91346d8abd\n504667f4c0de7af1a06de9f4b1727b84351f2910\n' > "$ANDROID_HOME/licenses/android-sdk-preview-license"
           yes | sdkmanager --licenses >/dev/null 2>&1 || true
           sdkmanager "platform-tools" "platforms;android-33" "platforms;android-34" "build-tools;33.0.2" "build-tools;34.0.0" >/dev/null 2>&1 || true
-          echo "Licenses + build-tools tayyor"
 
-      - name: Generate signing keystore (demo)
+      - name: Restore or create signing keystore
+        working-directory: twa
+        env:
+          KS_B64: ${{ secrets.ANDROID_KEYSTORE_B64 }}
+          KS_PASS: ${{ secrets.ANDROID_KEYSTORE_PASSWORD }}
+        run: |
+          if [ -n "$KS_B64" ]; then
+            echo "Doimiy imzo kaliti (secret) ishlatilyapti — Play uchun to'g'ri."
+            echo "$KS_B64" | base64 -d > android.keystore
+            echo "KEY_PASS=$KS_PASS" >> "$GITHUB_ENV"
+          else
+            echo "::warning::ANDROID_KEYSTORE_B64 secret yo'q — VAQTINCHALIK demo kalit yaratildi. Bu faqat sideload sinovi uchun; Google Play'ga YARAMAYDI (yangilash imkonsiz bo'ladi). Doimiy kalit uchun keystore-gen workflow'ini ishlating."
+            keytool -genkeypair -v \
+              -keystore android.keystore -alias focusai \
+              -keyalg RSA -keysize 2048 -validity 10000 \
+              -storepass focusai2026 -keypass focusai2026 \
+              -dname "CN=FOCUS AI, OU=Just AI It, O=Just AI It, L=Tashkent, C=UZ"
+            echo "KEY_PASS=focusai2026" >> "$GITHUB_ENV"
+          fi
+
+      - name: Print signing key SHA-256 (assetlinks uchun)
         working-directory: twa
         run: |
-          keytool -genkeypair -v \
-            -keystore android.keystore -alias focusai \
-            -keyalg RSA -keysize 2048 -validity 10000 \
-            -storepass focusai2026 -keypass focusai2026 \
-            -dname "CN=FOCUS AI, OU=Just AI It, O=Just AI It, L=Tashkent, C=UZ"
+          echo "=============================================================="
+          echo " assetlinks.json uchun SHA-256 (UPLOAD kaliti):"
+          keytool -list -v -keystore android.keystore -alias focusai -storepass "$KEY_PASS" 2>/dev/null | grep -i "SHA256:" || true
+          echo " Eslatma: Google Play App Signing yoqilsa, ASOSIY fingerprint"
+          echo " Play Console -> App integrity'dan olinadi va assetlinks'ga qo'yiladi."
+          echo "=============================================================="
 
-      - name: Build signed APK
+      - name: Build signed APK + AAB
         working-directory: twa
         run: |
           bubblewrap doctor || true
-          # 1) Android loyiha fayllarini (gradlew, app/) twa-manifest.json'dan generatsiya.
-          #    'build' o'zi qilmaydi -> avval update kerak (aks holda ./gradlew: not found).
           yes | bubblewrap update || bubblewrap update || true
-          echo "--- update'dan keyin fayllar ---"
-          ls -la
           chmod +x gradlew 2>/dev/null || true
-          # 2) Qurish + imzolash. Litsenziyalar oldindan qabul; parol cheksiz (yes).
-          yes 'focusai2026' | bubblewrap build --skipPwaValidation
-          echo "--- qurilgan APK fayllar ---"
-          find . -name "*.apk" | sort
+          # bubblewrap build -> app-release-signed.apk (sideload) + app-release-bundle.aab (Play)
+          yes "$KEY_PASS" | bubblewrap build --skipPwaValidation
+          echo "--- chiqishlar ---"
+          find . -name "*.apk" -o -name "*.aab" | sort
 
-      - name: Collect APK
+      - name: Collect outputs
         working-directory: twa
         run: |
           mkdir -p out
-          find . -path ./out -prune -o -name "*.apk" -print -exec cp {} out/ \;
+          find . -path ./out -prune -o \( -name "*.apk" -o -name "*.aab" \) -print -exec cp {} out/ \;
           ls -la out
 
       - name: Upload artifact
         uses: actions/upload-artifact@v4
         with:
-          name: focus-ai-apk
-          path: twa/out/*.apk
+          name: focus-ai-android
+          path: |
+            twa/out/*.apk
+            twa/out/*.aab
           if-no-files-found: error
 
       - name: Publish to Releases
         uses: softprops/action-gh-release@v2
         with:
           tag_name: apk-latest
-          name: FOCUS AI — Android APK
+          name: FOCUS AI — Android (APK + AAB)
           body: |
-            FOCUS AI Android APK (PWA TWA o'rami). Telefonga yuklab, sideload qilib o'rnating.
+            FOCUS AI Android (PWA TWA o'rami).
+            - app-release-signed.apk -> telefonga sideload (sinov uchun)
+            - app-release-bundle.aab -> Google Play Console'ga yuklanadi
             Internet bilan barcha funksiya ishlaydi (AI, bildirishnoma, audio).
-          files: twa/out/*.apk
+          files: |
+            twa/out/*.apk
+            twa/out/*.aab
