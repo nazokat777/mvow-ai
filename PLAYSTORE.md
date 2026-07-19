@@ -56,10 +56,12 @@ Keyin commit → push (Vercel deploy qiladi). Tekshirish: https://daywarden.verc
 **Inglizcha nom:** FOCUS AI — discipline friend
 **Inglizcha qisqa:** Reach your goals with discipline: AI coach, focus timer, habits.
 
-## 6) Kerakli rasmlar (Play talab qiladi)
-- **Ilova ikonkasi:** 512×512 PNG — `assets/mnsm-512.png` bor ✓
-- **Feature graphic:** 1024×500 PNG — YASASH KERAK (men yordam beraman, ayting).
-- **Telefon skrinshotlari:** kamida 2 ta (1080×1920 tavsiya) — home, taymer, do'stlar, mukofotlar.
+## 6) Kerakli rasmlar (Play talab qiladi) — TAYYOR ✓
+Hammasi `docs/v2/preview/assets/playstore/` da (yoki jonli: daywarden.vercel.app/assets/playstore/...):
+- **Ilova ikonkasi:** 512×512 — `assets/mnsm-512.png` ✓
+- **Feature graphic (1024×500):** `playstore/feature-graphic-1024x500.png` ✓
+- **Telefon skrinshotlari (430×932):** `playstore/ss1-home.png`, `ss2-timer.png`, `ss3-dostlar.png`, `ss4-mukofot.png` ✓
+Play Console'da shu fayllarni yuklaysiz (kamida 2 ta skrinshot shart — bizda 4 ta).
 
 ## 7) Play Console qo'shimcha bo'limlar
 - **Privacy policy:** https://daywarden.vercel.app/privacy.html
