@@ -23,7 +23,14 @@
     + '.mfx-shine::after{content:"";position:absolute;top:0;left:0;width:42%;height:100%;z-index:2;pointer-events:none;'
     + 'background:linear-gradient(100deg,transparent,rgba(255,255,255,.32),transparent);transform:translateX(-180%) skewX(-18deg);opacity:0}'
     + '.mfx-shine.mfx-sweep::after{animation:mfxSweep .9s ease-out}'
-    + '@keyframes mfxSweep{0%{transform:translateX(-180%) skewX(-18deg);opacity:0}12%{opacity:1}100%{transform:translateX(320%) skewX(-18deg);opacity:0}}';
+    + '@keyframes mfxSweep{0%{transform:translateX(-180%) skewX(-18deg);opacity:0}12%{opacity:1}100%{transform:translateX(320%) skewX(-18deg);opacity:0}}'
+    // Ripple (bosgan joydan to'lqin)
+    + '.mfx-rippleable{position:relative;overflow:hidden}'
+    + '.mfx-ripple{position:absolute;border-radius:50%;background:currentColor;opacity:.22;transform:scale(0);pointer-events:none;z-index:0;animation:mfxRipple .6s ease-out forwards}'
+    + '@keyframes mfxRipple{to{transform:scale(1);opacity:0}}'
+    // Raqam "pop" (count-up tugagach)
+    + '.mfx-pop{animation:mfxPop .42s ease-out}'
+    + '@keyframes mfxPop{0%{transform:scale(1)}42%{transform:scale(1.16)}100%{transform:scale(1)}}';
   document.head.appendChild(st);
 
   if (reduce) return;  // bezak harakatlari o'chadi
@@ -38,12 +45,14 @@
     if (target <= 0) return;
     el.__mfx = 1;
     var dur = Math.min(1100, 360 + target * 7), start = null;
+    try { el.style.display = 'inline-block'; } catch (e) {}   // transform pop uchun
     el.textContent = '0';
     function step(ts) {
       if (start == null) start = ts;
       var p = Math.min(1, (ts - start) / dur);
       el.textContent = String(Math.round(easeOut(p) * target));
-      if (p < 1) requestAnimationFrame(step); else el.textContent = String(target);
+      if (p < 1) requestAnimationFrame(step);
+      else { el.textContent = String(target); el.classList.add('mfx-pop'); setTimeout(function () { el.classList.remove('mfx-pop'); }, 460); }
     }
     requestAnimationFrame(step);
   }
@@ -69,7 +78,49 @@
     });
   }
 
-  function init() { setTimeout(function () { runCountUp(); enhanceCTA(); }, 340); }
+  // ── 3) Tap ripple (Material-uslub) ──
+  function ripple(e) {
+    var el = e.currentTarget;
+    var r = el.getBoundingClientRect();
+    var d = Math.max(r.width, r.height) * 1.05;
+    var pt = (e.touches && e.touches[0]) ? e.touches[0] : e;
+    var x = (pt.clientX != null ? pt.clientX : r.left + r.width / 2) - r.left;
+    var y = (pt.clientY != null ? pt.clientY : r.top + r.height / 2) - r.top;
+    var s = document.createElement('span');
+    s.className = 'mfx-ripple';
+    s.style.width = s.style.height = d + 'px';
+    s.style.left = (x - d / 2) + 'px'; s.style.top = (y - d / 2) + 'px';
+    el.appendChild(s);
+    setTimeout(function () { if (s.parentNode) s.parentNode.removeChild(s); }, 640);
+  }
+  function enableRipple() {
+    var sel = '.cta,.btn,.buy,.addb,.ai-reward-card,.report-link,.tab,.seg button,.ai-chip';
+    var nodes; try { nodes = document.querySelectorAll(sel); } catch (e) { return; }
+    Array.prototype.forEach.call(nodes, function (el) {
+      if (el.__mfxr) return; el.__mfxr = 1;
+      el.classList.add('mfx-rippleable');
+      el.addEventListener('pointerdown', ripple);
+    });
+  }
+
+  // ── 4) Progress bar'lar 0'dan to'ladi ──
+  function animBars() {
+    var sel = '.bar .fill, .seq-progress-fill';
+    var nodes; try { nodes = document.querySelectorAll(sel); } catch (e) { return; }
+    Array.prototype.forEach.call(nodes, function (f) {
+      if (f.__mfxb) return; f.__mfxb = 1;
+      f.style.transformOrigin = 'left';
+      f.style.transform = 'scaleX(0)';
+      requestAnimationFrame(function () {
+        requestAnimationFrame(function () {
+          f.style.transition = (f.style.transition ? f.style.transition + ',' : '') + 'transform .75s cubic-bezier(.22,1,.36,1)';
+          f.style.transform = 'scaleX(1)';
+        });
+      });
+    });
+  }
+
+  function init() { setTimeout(function () { runCountUp(); enhanceCTA(); enableRipple(); animBars(); }, 340); }
   if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', init);
   else init();
 })();
