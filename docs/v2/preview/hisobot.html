@@ -91,21 +91,8 @@
     <div class="lbl" data-i18n="hisobot.total_lbl">Jami mehnat</div>
   </div>
 
-  <!-- Do'st/ustoz SIZNI qanday ko'radi (o'zingiz tekshirasiz) — aynan sync bo'layotgan narsa. -->
-  <div class="pv-card" id="previewCard" style="display:none;">
-    <div class="pv-title" id="pvTitle">👁 Do'stingiz/ustozingiz shuni ko'radi</div>
-    <div class="pv-stats"><b id="pvHours">—</b> <span id="pvTasksSep">·</span> <b id="pvTasks">—</b></div>
-    <div id="pvTasksList"></div>
-  </div>
-
-  <!-- Do'st/ustoz/ota-onaga LIVE ko'rinishi: nimani ko'rsatish. Berkitilgani serverga BORMAYDI. -->
-  <div class="vis-panel" id="visPanel" style="display:none;">
-    <div class="vis-title" data-i18n="hisobot.vis_title">Do'st/ustozga ko'rinsin:</div>
-    <label class="vis-row"><span data-i18n="hisobot.vis_hours">Fokus soati</span><input type="checkbox" id="visHours"><span class="sw"></span></label>
-    <label class="vis-row"><span data-i18n="hisobot.vis_tasks">Vazifalar soni</span><input type="checkbox" id="visTasks"><span class="sw"></span></label>
-    <label class="vis-row"><span data-i18n="hisobot.vis_notimer">Taymerli / taymersiz belgisi</span><input type="checkbox" id="visNotimer"><span class="sw"></span></label>
-    <div class="vis-note" data-i18n="hisobot.vis_note">Berkitilgani ularga umuman ko'rinmaydi (telefoningizda qoladi).</div>
-  </div>
+  <!-- Do'stga ko'rsatish/berkitish va "do'st shuni ko'radi" preview -> Do'stlar sahifasiga ko'chirildi. -->
+  <div style="font-size:13px;color:var(--text-dim,#9CA0A8);margin:2px 2px 14px;line-height:1.5;" data-i18n-html="hisobot.moved_note">Do'st/ustozga nima ko'rinishini <b>Do'stlar</b> sahifasidagi "Siz" bo'limida sozlaysiz.</div>
 
   <div id="hint" style="font-size:12.5px;color:var(--text-dim,#9CA0A8);margin:0 2px 6px;" data-i18n="hisobot.select_hint">Ulashiladiganlarni belgilang</div>
   <div id="list"></div>
