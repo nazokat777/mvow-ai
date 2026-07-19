@@ -176,7 +176,12 @@
     ];
     chooseModal(opts, function (i) {
       if (i === 0) { var nm = prompt("Yangi nom (bo'sh = asl nom):", featName(key)); if (nm !== null) { setFeatName(key, (nm || '').trim()); toast('Saqlandi ✓'); setTimeout(function () { location.reload(); }, 400); } }
-      else if (i === 1) { setHidden(key, !isHidden(key)); toast(isHidden(key) ? 'Menyudan yashirildi' : "Menyuda ko'rsatiladi"); }
+      else if (i === 1) {
+        var willHide = !isHidden(key); setHidden(key, willHide);
+        toast(willHide ? 'Menyudan yashirildi ✓' : "Menyuda ko'rsatiladi ✓");
+        // Menyuga o'tkazamiz — natijani DARHOL ko'rsin (yashirilgan qator yo'q / qaytgan).
+        setTimeout(function () { location.href = 'menu.html'; }, 650);
+      }
       else { if (hasFeatPin(key)) disableFeaturePin(key); else setFeaturePin(key); }
     }, featName(key));
   }
@@ -189,7 +194,7 @@
     if (!_feat || document.getElementById('mvow-feat-manage')) return;
     var b = document.createElement('button');
     b.id = 'mvow-feat-manage'; b.type = 'button'; b.textContent = '⋮'; b.title = 'Sozlash'; b.setAttribute('aria-label', 'Sozlash');
-    b.style.cssText = 'position:fixed;top:max(12px,env(safe-area-inset-top,12px));left:116px;z-index:99992;width:40px;height:40px;border-radius:50%;border:1px solid rgba(108,92,231,0.4);background:rgba(8,8,12,0.85);color:#fff;font-size:22px;line-height:1;cursor:pointer;-webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px);';
+    b.style.cssText = 'position:fixed;top:max(12px,env(safe-area-inset-top,12px));left:116px;z-index:99992;width:40px;height:40px;border-radius:50%;border:1px solid rgba(108,92,231,0.4);background:rgba(12,14,20,0.94);color:#fff;font-size:22px;line-height:1;cursor:pointer;';
     b.onclick = function () { manageFeature(_feat); };
     document.body.appendChild(b);
   }

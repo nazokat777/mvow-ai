@@ -175,7 +175,7 @@
     function mk(emoji, href, label) {
       var a = document.createElement('a');
       a.href = href; a.title = label; a.setAttribute('aria-label', label);
-      a.style.cssText = 'width:40px;height:40px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:19px;line-height:1;text-decoration:none;background:rgba(8,8,12,0.85);border:1px solid rgba(108,92,231,0.4);-webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px);';
+      a.style.cssText = 'width:40px;height:40px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:19px;line-height:1;text-decoration:none;background:rgba(12,14,20,0.94);border:1px solid rgba(108,92,231,0.4);';
       a.textContent = emoji;
       return a;
     }
@@ -189,8 +189,10 @@
     qn.appendChild(mk('🏅', 'sovrinlar.html', 'Sovrinlar'));
     qn.appendChild(mk('🔥', 'fokus-izi.html', 'Seriya'));
     document.body.appendChild(qn);
-    renderChatBadge();               // localStorage'dan darhol (barcha sahifada)
-    setTimeout(computeChatUnread, 900);  // Supabase yuklangach qayta hisoblaydi
+    renderChatBadge();               // localStorage'dan darhol (barcha sahifada, tez)
+    // Og'ir hisob (har do'st uchun RPC) faqat home/dostlar'da — boshqa sahifada sekinlatmaydi.
+    var _pg = (location.pathname.split('/').pop() || '').toLowerCase();
+    if (_pg === 'home.html' || _pg === 'dostlar.html' || _pg === '') setTimeout(computeChatUnread, 1200);
     function place() {
       var lang = document.querySelector('.lang-switcher');
       if (!lang) { qn.style.top = '14px'; qn.style.right = '64px'; return; }

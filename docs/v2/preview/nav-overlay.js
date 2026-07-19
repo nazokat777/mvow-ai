@@ -259,9 +259,7 @@
       width: 44px; height: 44px;
       border-radius: 50%;
       border: 1px solid rgba(108, 92, 231,0.55);
-      background: rgba(8,8,12,0.85);
-      backdrop-filter: blur(8px);
-      -webkit-backdrop-filter: blur(8px);
+      background: rgba(12,14,20,0.94);
       color: var(--accent-bright);
       font-size: 28px;
       font-weight: 500;
@@ -402,9 +400,7 @@
         width: 44px; height: 44px;
         border-radius: 50%;
         border: 1px solid rgba(108, 92, 231,0.45);
-        background: rgba(8,8,12,0.85);
-        backdrop-filter: blur(8px);
-        -webkit-backdrop-filter: blur(8px);
+        background: rgba(12,14,20,0.94);
         color: var(--accent-bright);
         display: flex; align-items: center; justify-content: center;
         cursor: pointer; user-select: none;
@@ -443,8 +439,7 @@
     askStyle.textContent = `
       .ask-q-overlay {
         position: fixed; inset: 0;
-        background: rgba(4,6,11,.92);
-        backdrop-filter: blur(10px);
+        background: rgba(4,6,11,.97);
         z-index: 100000;
         display: none;
         align-items: center; justify-content: center;
