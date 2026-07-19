@@ -54,15 +54,32 @@
     syncStats();   // viewerlar darhol yangilansin (bekitilgan serverdan chiqadi)
   }
   function isHidden(name, iso) { return hiddenSet(iso).indexOf(name) >= 0; }
+
+  // ── Ko'rinish sozlamasi (vis) — do'st/ustozga NIMA ko'rinsin ──
+  // hours=fokus soati, tasks=vazifalar soni, notimer=taymerli/taymersiz belgisi.
+  // Berkitilgani serverga null/olib tashlangan holda boradi (viewer ko'rmaydi).
+  var VIS_KEY = 'mvow.vis';
+  function visGet() {
+    try { var v = JSON.parse(localStorage.getItem(VIS_KEY) || '{}');
+      return { hours: v.hours !== false, tasks: v.tasks !== false, notimer: v.notimer !== false }; }
+    catch (e) { return { hours: true, tasks: true, notimer: true }; }
+  }
+  function visSet(key, val) {
+    var v = visGet(); v[key] = !!val;
+    try { localStorage.setItem(VIS_KEY, JSON.stringify(v)); } catch (e) {}
+    syncStats();
+  }
   // Bugungi KO'RINADIGAN vazifalar (bekitilganlar chiqarilgan) — server report'i uchun.
   function myTasksToday() {
-    var out = [], hidden = hiddenSet();
+    var out = [], hidden = hiddenSet(), vis = visGet();
     try {
       if (window.MVOW_DATA && MVOW_DATA.getHistory) {
         MVOW_DATA.getHistory().filter(function (x) { return x.dateIso === todayIso(); }).forEach(function (x) {
           var nm = x.name || 'Vazifa';
           if (hidden.indexOf(nm) >= 0) return;   // BEKITILGAN -> serverga bormaydi
-          out.push({ n: nm, m: x.actualMins || 0, t: ((x.withTimer === true) || x.mode === 'timer' || x.mode === 'pomodoro') ? 1 : 0 });
+          var task = { n: nm, m: x.actualMins || 0 };
+          if (vis.notimer) task.t = ((x.withTimer === true) || x.mode === 'timer' || x.mode === 'pomodoro') ? 1 : 0;  // taymer belgisi ko'rsatilsagina
+          out.push(task);
         });
       }
     } catch (e) {}
@@ -110,10 +127,14 @@
   }
   function syncStats() {
     var c = client(); if (!c) return Promise.resolve();
-    var s = myStats();
+    var s = myStats(), vis = visGet();
     // 1) Asosiy statistika (reyting uchun) — 'report' ustuni bo'lmasa ham ISHLAYDI.
+    //    Berkitilgan (vis=false) -> null yuboriladi, viewer ko'rmaydi ("—").
     var p = c.from('daily_stats').upsert(
-      { code: myCode(), d: todayIso(), focus_mins: s.focusMins, habits: s.habits, updated_at: new Date().toISOString() },
+      { code: myCode(), d: todayIso(),
+        focus_mins: vis.hours ? s.focusMins : null,
+        habits: vis.tasks ? s.habits : null,
+        updated_at: new Date().toISOString() },
       { onConflict: 'code,d' }
     ).then(function () {}, function () {});
     // 2) Ko'rinadigan vazifalar (per-task) — ALOHIDA update; ustun hali qo'shilmagan bo'lsa xatoni yutamiz.
@@ -185,14 +206,18 @@
     }).then(function (rr) {
       var res = rr[0], pn = rr[1] || {};
       var by = {}; (res && res.data || []).forEach(function (r) { by[r.code] = r; });
+      var meS = myStats();
       var list = codes.map(function (cd) {
-        var r = by[cd] || { focus_mins: 0, habits: 0 };
+        var r = by[cd] || {}; var isMe = cd === myCode();
+        // O'zimnikida haqiqiy qiymat; boshqalarda berkitilgan bo'lsa null ("—").
+        var fm = isMe ? meS.focusMins : (r.focus_mins == null ? null : r.focus_mins);
+        var hb = isMe ? meS.habits    : (r.habits == null ? null : r.habits);
         return {
-          code: cd, name: cd === myCode() ? 'Siz' : (manualName(cd, kind) || pn[cd] || cd), me: cd === myCode(),
-          focusMins: r.focus_mins || 0, focusH: Math.round((r.focus_mins || 0) / 60 * 10) / 10, habits: r.habits || 0
+          code: cd, name: isMe ? 'Siz' : (manualName(cd, kind) || pn[cd] || cd), me: isMe,
+          focusMins: fm, focusH: (fm == null ? null : Math.round(fm / 60 * 10) / 10), habits: hb
         };
       });
-      list.sort(function (a, b) { return (b.focusMins - a.focusMins) || (b.habits - a.habits); });
+      list.sort(function (a, b) { return ((b.focusMins || 0) - (a.focusMins || 0)) || ((b.habits || 0) - (a.habits || 0)); });
       return list;
     }).catch(function () { return localBoard(kind); });
   }
@@ -252,14 +277,15 @@
         function build(rows) {
           var by = {}; (rows || []).forEach(function (s) { by[s.code] = s; });
           return codes.map(function (cd) {
-            var s = by[cd] || { focus_mins: 0, habits: 0, report: [] };
-            var tasks = Array.isArray(s.report) ? s.report.map(function (t) { return { name: t.n, mins: t.m || 0, timer: !!t.t }; }) : null;
+            var s = by[cd] || {};
+            var tasks = Array.isArray(s.report) ? s.report.map(function (t) { return { name: t.n, mins: t.m || 0, timer: (t.t == null ? null : !!t.t) }; }) : null;
+            var fm = (s.focus_mins == null ? null : s.focus_mins), hb = (s.habits == null ? null : s.habits);
             return {
               code: cd, name: pn[cd] || cd,   // avto profil ismi > kod
-              focusMins: s.focus_mins || 0, focusH: Math.round((s.focus_mins || 0) / 60 * 10) / 10, habits: s.habits || 0,
+              focusMins: fm, focusH: (fm == null ? null : Math.round(fm / 60 * 10) / 10), habits: hb,
               tasks: tasks   // ko'rinadigan vazifalar (bekitilganlar yo'q); null = ustun yo'q
             };
-          }).sort(function (a, b) { return (b.focusMins - a.focusMins) || (b.habits - a.habits); });
+          }).sort(function (a, b) { return ((b.focusMins || 0) - (a.focusMins || 0)) || ((b.habits || 0) - (a.habits || 0)); });
         }
         return c.from('daily_stats').select('code,focus_mins,habits,report').eq('d', todayIso()).in('code', codes)
           .then(function (r2) {
@@ -277,6 +303,7 @@
     myCode: myCode, myStats: myStats, cloud: cloud, syncStats: syncStats, wards: wards,
     friends: friends, addFriend: addFriend, removeFriend: removeFriend, renameFriend: renameFriend, nameOf: nameOf, leaderboard: leaderboard,
     sendMessage: sendMessage, getMessages: getMessages, subscribeMessages: subscribeMessages, unsubscribe: unsubscribe,
-    hiddenSet: hiddenSet, setHidden: setHidden, isHidden: isHidden, myTasksToday: myTasksToday
+    hiddenSet: hiddenSet, setHidden: setHidden, isHidden: isHidden, myTasksToday: myTasksToday,
+    visGet: visGet, visSet: visSet
   };
 })();

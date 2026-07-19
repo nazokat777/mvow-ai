@@ -147,7 +147,7 @@
 <script src="lang-switcher.js?v=28.54.0" defer></script>
 <script src="focus-indicator.js?v=28.4.0" defer></script>
 <script src="data.js?v=28.54.0" defer></script>
-<script src="social.js?v=29.0.81" defer></script>
+<script src="social.js?v=29.0.82" defer></script>
 <script src="nav-overlay.js?v=28.54.0" defer></script>
 <script>
   (function () {
@@ -170,7 +170,7 @@
           var top = i === 0 && r.focusMins > 0;
           var stat = r.pending
             ? '<span class="lb-pending">' + T('pending', 'kutilmoqda…') + '</span>'
-            : '<span class="lb-stat">' + (r.focusH || 0) + ' ' + T('hours', 'soat') + ' <span class="hb">· ' + (r.habits || 0) + ' ' + T('habits', 'odat') + '</span></span>';
+            : '<span class="lb-stat">' + (r.focusH == null ? '—' : r.focusH) + ' ' + T('hours', 'soat') + ' <span class="hb">· ' + (r.habits == null ? '—' : r.habits) + ' ' + T('habits', 'odat') + '</span></span>';
           html += '<div class="lb-row' + (r.me ? ' me' : '') + (top ? ' top' : '') + '"' + (r.me ? '' : ' data-chat="' + escapeHtml(r.code) + '"') + '>'
             + '<div class="lb-rank">' + (i + 1) + '</div>'
             + '<div class="lb-name">' + (r.me ? '<span class="you">' + T('you', 'Siz') + '</span>' : escapeHtml(r.name)) + '</div>'
@@ -189,13 +189,13 @@
         var html = '<div style="' + lbl + '">' + T('watching', 'Siz nazorat qilyapsiz') + '</div>';
         if (w.length) {
           w.forEach(function (r, i) {
-            html += '<div class="lb-row" style="border-radius:14px 14px ' + ((r.tasks && r.tasks.length) ? '0 0' : '14px 14px') + ';"><div class="lb-rank">' + (i + 1) + '</div><div class="lb-name">' + escapeHtml(r.name) + '</div><span class="lb-stat">' + (r.focusH || 0) + ' ' + T('hours', 'soat') + ' <span class="hb">· ' + (r.habits || 0) + ' ' + T('habits', 'odat') + '</span></span></div>';
+            html += '<div class="lb-row" style="border-radius:14px 14px ' + ((r.tasks && r.tasks.length) ? '0 0' : '14px 14px') + ';"><div class="lb-rank">' + (i + 1) + '</div><div class="lb-name">' + escapeHtml(r.name) + '</div><span class="lb-stat">' + (r.focusH == null ? '—' : r.focusH) + ' ' + T('hours', 'soat') + ' <span class="hb">· ' + (r.habits == null ? '—' : r.habits) + ' ' + T('habits', 'odat') + '</span></span></div>';
             // Ko'rinadigan vazifalar (bekitilganlar server'ga umuman bormaydi). r.tasks===null -> report ustuni yo'q.
             if (r.tasks && r.tasks.length) {
               html += '<div class="ward-tasks">';
               r.tasks.forEach(function (t) {
-                var badge = t.timer ? T('timer_badge', 'taymerli') : T('notimer_badge', 'taymersiz');
-                html += '<div class="wt-row"><span class="wt-name">' + escapeHtml(t.name) + '</span><span class="wt-meta">' + (t.mins || 0) + ' ' + T('min_short', 'daq') + ' · ' + badge + '</span></div>';
+                var badge = (t.timer == null) ? '' : (' · ' + (t.timer ? T('timer_badge', 'taymerli') : T('notimer_badge', 'taymersiz')));
+                html += '<div class="wt-row"><span class="wt-name">' + escapeHtml(t.name) + '</span><span class="wt-meta">' + (t.mins || 0) + ' ' + T('min_short', 'daq') + badge + '</span></div>';
               });
               html += '</div>';
             } else if (r.tasks && r.tasks.length === 0) {
