@@ -189,11 +189,9 @@
       <div id="pinStatus" style="color:var(--text-dim);font-size:15px;">›</div>
     </div>
     <label class="row lock-row"><span class="lbl" data-i18n="settings.applock_lbl">Ochilganda butun ilovani qulflash</span><input type="checkbox" id="appLockToggle"><span class="sw"></span></label>
-    <div class="row" id="featLockRow" style="cursor:pointer;">
-      <div class="lbl" data-i18n="settings.featlock_lbl">Funksiyalarni alohida qulflash</div>
-      <div id="featLockArrow" style="color:var(--text-dim);font-size:15px;">›</div>
+    <div class="row" style="align-items:flex-start;">
+      <div class="lbl" style="font-size:13px;color:var(--text-dim);line-height:1.5;" data-i18n="settings.feat_hint">Har funksiyani alohida qulflash / yashirish / nomlash — o'sha funksiya sahifasidagi ⋮ tugmadan.</div>
     </div>
-    <div id="featLockList" style="display:none;padding:2px 0 6px;"></div>
 
     <div class="section" style="margin-top:24px;">
       <button class="intensity-pill" type="button" id="replayIntro" data-i18n="settings.replay_intro" style="width:100%;">Tanishuv ko'rinishini qayta ko'rsatish</button>
@@ -283,54 +281,7 @@
     if (window.PinLock) PinLock.setAppLock(appTog.checked);
   });
 
-  // Funksiyalarni alohida qulflash
-  var featRow = document.getElementById('featLockRow'), featList = document.getElementById('featLockList'), featArrow = document.getElementById('featLockArrow');
-  var LABELS = { hamyon: 'Hamyon', blaknot: 'Blaknot', goyalar: "G'oyalarim", orzular: 'Orzular', uyqu: 'Uyqu', mukofot: 'Mukofotlar', shahar: 'Shahringiz', eslatma: 'Eslatmalar', hisobot: 'Hisobot', dostlar: "Do'stlar" };
-  function featName(key) { try { var n = JSON.parse(localStorage.getItem('mvow.featNames') || '{}'); return n[key] || LABELS[key] || key; } catch (e) { return LABELS[key] || key; } }
-  function setFeatName(key, name) { try { var n = JSON.parse(localStorage.getItem('mvow.featNames') || '{}'); if (name) n[key] = name; else delete n[key]; localStorage.setItem('mvow.featNames', JSON.stringify(n)); } catch (e) {} }
-  function hiddenFeats() { try { var a = JSON.parse(localStorage.getItem('mvow.hiddenFeatures') || '[]'); return Array.isArray(a) ? a : []; } catch (e) { return []; } }
-  function isFeatHidden(key) { return hiddenFeats().indexOf(key) >= 0; }
-  function setFeatHidden(key, on) { var a = hiddenFeats(), i = a.indexOf(key); if (on && i < 0) a.push(key); if (!on && i >= 0) a.splice(i, 1); try { localStorage.setItem('mvow.hiddenFeatures', JSON.stringify(a)); } catch (e) {} }
-  function esc(s) { return String(s || '').replace(/[&<>"]/g, function (c) { return ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]); }); }
-  function renderFeats() {
-    if (!featList || !window.PinLock) return;
-    featList.innerHTML = '';
-    var feats = PinLock.FEATURES || {}, seen = {};
-    Object.keys(feats).forEach(function (page) {
-      var key = feats[page]; if (seen[key]) return; seen[key] = 1;
-      var row = document.createElement('div');
-      row.className = 'feat-item';
-      row.innerHTML = '<span class="fn" title="' + T('settings.feat_open', 'Ochish') + '" style="cursor:pointer;text-decoration:underline;text-underline-offset:3px;">' + esc(featName(key)) + '</span>'
-        + '<span class="feat-rename" title="' + T('settings.feat_rename_t', "Nomini o'zgartirish") + '">✎</span>'
-        + '<label class="mini"><span>' + T('settings.feat_hide', 'Berkit') + '</span><input type="checkbox" class="hcb"><span class="sw2"></span></label>'
-        + '<label class="mini"><span>' + T('settings.feat_lock', 'PIN') + '</span><input type="checkbox" class="lcb"><span class="sw2"></span></label>';
-      var hcb = row.querySelector('.hcb'), lcb = row.querySelector('.lcb');
-      hcb.checked = isFeatHidden(key);
-      lcb.checked = PinLock.hasFeatPin(key);   // funksiyaning O'Z PIN'i bormi
-      hcb.addEventListener('change', function () { setFeatHidden(key, hcb.checked); });
-      lcb.addEventListener('change', function () {
-        // Har funksiyaga ALOHIDA PIN: yoqilganda o'rnatadi, o'chirilganda joriy PINni so'raydi.
-        if (lcb.checked) PinLock.setFeaturePin(key, function () { lcb.checked = PinLock.hasFeatPin(key); });
-        else PinLock.disableFeaturePin(key, function () { lcb.checked = PinLock.hasFeatPin(key); });
-      });
-      // Nomga bosilsa — funksiya ochiladi (BERKITILGAN bo'lsa ham shu yerdan kiriladi).
-      row.querySelector('.fn').addEventListener('click', function () { location.href = page; });
-      row.querySelector('.feat-rename').addEventListener('click', function (e) {
-        e.preventDefault(); e.stopPropagation();
-        var nm = prompt(T('settings.feat_rename_ask', "Yangi nom (bo'sh qoldirsangiz — asl nom):"), featName(key));
-        if (nm === null) return;
-        setFeatName(key, (nm || '').trim());
-        row.querySelector('.fn').textContent = featName(key);
-      });
-      featList.appendChild(row);
-    });
-  }
-  if (featRow) featRow.onclick = function () {
-    var open = featList.style.display === 'none';
-    featList.style.display = open ? 'block' : 'none';
-    if (featArrow) featArrow.textContent = open ? '⌄' : '›';
-    if (open) renderFeats();
-  };
+  // Per-funksiya qulf/yashirish/nom endi HAR funksiya sahifasidagi ⋮ tugmada (soddaroq).
   syncApp();
 })();
 </script>

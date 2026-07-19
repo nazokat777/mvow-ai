@@ -75,18 +75,22 @@
   }
 
   // Tanlov modali (o'zgartirish / o'chirish)
-  function chooseModal(opts, onPick) {
+  function chooseModal(opts, onPick, title) {
     var ov = document.createElement('div');
     ov.style.cssText = 'position:fixed;inset:0;z-index:2147483600;background:rgba(0,0,0,.55);display:flex;align-items:center;justify-content:center;padding:24px;font-family:Inter,sans-serif;';
     var card = document.createElement('div');
-    card.style.cssText = 'background:#16161a;color:#fff;border-radius:18px;max-width:320px;width:100%;padding:20px;box-shadow:0 20px 60px rgba(0,0,0,.5);';
-    card.innerHTML = '<div style="font-weight:800;font-size:17px;text-align:center;margin-bottom:16px;">PIN qulf</div>';
+    card.style.cssText = 'background:#16161a;color:#fff;border-radius:18px;max-width:340px;width:100%;padding:20px;box-shadow:0 20px 60px rgba(0,0,0,.5);';
+    card.innerHTML = '<div style="font-weight:800;font-size:18px;text-align:center;margin-bottom:16px;">' + (title || 'PIN qulf') + '</div>';
     opts.forEach(function (o, i) {
       var b = document.createElement('button'); b.type = 'button'; b.textContent = o.label;
-      b.style.cssText = 'display:block;width:100%;margin-bottom:10px;padding:13px;border-radius:12px;border:' + (o.danger ? 'none' : '1px solid rgba(125,125,125,.3)') + ';background:' + (o.danger ? '#e0483c' : 'transparent') + ';color:#fff;font-weight:700;font-size:15px;cursor:pointer;font-family:Inter;';
+      b.style.cssText = 'display:block;width:100%;margin-bottom:10px;padding:14px;border-radius:12px;border:' + (o.danger ? 'none' : '1px solid rgba(125,125,125,.3)') + ';background:' + (o.danger ? '#e0483c' : 'transparent') + ';color:#fff;font-weight:700;font-size:15px;cursor:pointer;font-family:Inter;text-align:left;';
       b.onclick = function () { if (ov.parentNode) document.body.removeChild(ov); onPick(i); };
       card.appendChild(b);
     });
+    var cancel = document.createElement('button'); cancel.type = 'button'; cancel.textContent = 'Yopish';
+    cancel.style.cssText = 'display:block;width:100%;margin-top:4px;padding:12px;border:none;background:none;color:#9aa;font-weight:600;font-size:15px;cursor:pointer;font-family:Inter;';
+    cancel.onclick = function () { if (ov.parentNode) document.body.removeChild(ov); };
+    card.appendChild(cancel);
     ov.appendChild(card); document.body.appendChild(ov);
   }
 
@@ -155,9 +159,41 @@
     }, true, function () { if (onDone) onDone(false); });
   }
 
+  // ── Yashirish + nom (markazlashgan API) ──
+  function hiddenFeats() { try { var a = JSON.parse(localStorage.getItem('mvow.hiddenFeatures') || '[]'); return Array.isArray(a) ? a : []; } catch (e) { return []; } }
+  function isHidden(key) { return hiddenFeats().indexOf(key) >= 0; }
+  function setHidden(key, on) { var a = hiddenFeats(), i = a.indexOf(key); if (on && i < 0) a.push(key); if (!on && i >= 0) a.splice(i, 1); try { localStorage.setItem('mvow.hiddenFeatures', JSON.stringify(a)); } catch (e) {} }
+  var LABELS = { hamyon: 'Hamyon', blaknot: 'Blaknot', goyalar: "G'oyalarim", orzular: 'Orzular', uyqu: 'Uyqu', mukofot: 'Mukofotlar', shahar: 'Shahringiz', eslatma: 'Eslatmalar', hisobot: 'Hisobot', dostlar: "Do'stlar" };
+  function featName(key) { try { var n = JSON.parse(localStorage.getItem('mvow.featNames') || '{}'); return n[key] || LABELS[key] || key; } catch (e) { return LABELS[key] || key; } }
+  function setFeatName(key, name) { try { var n = JSON.parse(localStorage.getItem('mvow.featNames') || '{}'); if (name) n[key] = name; else delete n[key]; localStorage.setItem('mvow.featNames', JSON.stringify(n)); } catch (e) {} }
+
+  // Funksiyani O'Z sahifasidan boshqarish — ⋮ menyu (Nom / Yashirish / PIN). Sozlamalar shart emas.
+  function manageFeature(key) {
+    var opts = [
+      { label: "✏️  Nom o'zgartirish" },
+      { label: isHidden(key) ? "👁  Menyuda ko'rsatish" : "🙈  Menyudan yashirish" },
+      { label: hasFeatPin(key) ? "🔓  PIN qulfni o'chirish" : "🔒  PIN qulf qo'yish" }
+    ];
+    chooseModal(opts, function (i) {
+      if (i === 0) { var nm = prompt("Yangi nom (bo'sh = asl nom):", featName(key)); if (nm !== null) { setFeatName(key, (nm || '').trim()); toast('Saqlandi ✓'); setTimeout(function () { location.reload(); }, 400); } }
+      else if (i === 1) { setHidden(key, !isHidden(key)); toast(isHidden(key) ? 'Menyudan yashirildi' : "Menyuda ko'rsatiladi"); }
+      else { if (hasFeatPin(key)) disableFeaturePin(key); else setFeaturePin(key); }
+    }, featName(key));
+  }
+
   // Avtomatik qulf. USTUVORLIK: 1) funksiyaning O'Z PIN'i, 2) ilova PIN'i (butun ilova/app-PIN'li funksiya).
   var _file = (location.pathname.split('/').pop() || '').toLowerCase();
   var _feat = FEATURES[_file];
+  // Funksiya sahifasida ⋮ boshqaruv tugmasi (qulf ochilgach ko'rinadi)
+  function injectManageBtn() {
+    if (!_feat || document.getElementById('mvow-feat-manage')) return;
+    var b = document.createElement('button');
+    b.id = 'mvow-feat-manage'; b.type = 'button'; b.textContent = '⋮'; b.title = 'Sozlash'; b.setAttribute('aria-label', 'Sozlash');
+    b.style.cssText = 'position:fixed;top:max(12px,env(safe-area-inset-top,12px));left:116px;z-index:99992;width:40px;height:40px;border-radius:50%;border:1px solid rgba(108,92,231,0.4);background:rgba(8,8,12,0.85);color:#fff;font-size:22px;line-height:1;cursor:pointer;-webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px);';
+    b.onclick = function () { manageFeature(_feat); };
+    document.body.appendChild(b);
+  }
+  if (_feat) { if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', injectManageBtn); else injectManageBtn(); }
   function _autoGate() {
     if (_feat && hasFeatPin(_feat) && !featUnlocked(_feat)) { gate(getFeatPin(_feat), function () { markFeatUnlocked(_feat); }); return; }
     if (has() && !unlocked() && (appLockOn() || (_feat && isFeatureLocked(_feat)))) { gate(); }
@@ -172,6 +208,7 @@
     appLockOn: appLockOn, setAppLock: setAppLock,
     lockedFeatures: lockedFeatures, isFeatureLocked: isFeatureLocked, setFeatureLocked: setFeatureLocked,
     hasFeatPin: hasFeatPin, getFeatPin: getFeatPin, setFeaturePin: setFeaturePin, disableFeaturePin: disableFeaturePin, clearFeatPin: clearFeatPin,
+    isHidden: isHidden, setHidden: setHidden, featName: featName, setFeatName: setFeatName, labelOf: function (k) { return LABELS[k] || k; }, manageFeature: manageFeature,
     FEATURES: FEATURES
   };
 })();
