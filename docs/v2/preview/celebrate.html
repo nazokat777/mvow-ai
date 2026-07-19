@@ -35,6 +35,46 @@
   .hero .sub { font-family:'Inter',sans-serif; font-style:normal; font-size: 20px; color: var(--text-mid); }
   .hero { position: relative; } /* anchor for milestoneMark overlay so injected DOM is contained, not pushed into page flow */
   .hero .big { position: relative; z-index: 1; } /* keep the +70% numeral above any mark overlay */
+
+  /* ── HAFTALIK METAFORA SAHNASI (8 variant, har hafta almashadi) ──
+     Faqat CSS gradient qatlamlari: qo'shimcha element yo'q, uzluksiz animatsiya YO'Q (perf).
+     Metaforalar neytral: tog', daryo, nur, tong, o'choq, langar, ko'prik, hosil. */
+  .scene { position: absolute; left: -14px; right: -14px; top: -46px; height: 210px; z-index: 0; border-radius: 22px;
+    pointer-events: none; opacity: 0; transform: translateY(8px); }
+  @media (prefers-reduced-motion: no-preference) { .scene { transition: opacity .7s ease, transform .7s cubic-bezier(.22,1,.36,1); } }
+  .scene.in { opacity: 1; transform: none; }
+  .sc-tog { background:
+      linear-gradient(158deg, transparent 54%, rgba(108,92,231,.26) 54.6%, transparent 79%),
+      linear-gradient(-158deg, transparent 58%, rgba(244,132,95,.22) 58.6%, transparent 83%),
+      radial-gradient(58% 46% at 50% 96%, rgba(244,132,95,.20), transparent 72%); }
+  .sc-daryo { background:
+      linear-gradient(180deg, transparent 46%, rgba(110,181,255,.20) 52%, transparent 58%),
+      linear-gradient(180deg, transparent 62%, rgba(110,181,255,.14) 68%, transparent 74%),
+      radial-gradient(70% 40% at 50% 100%, rgba(108,92,231,.16), transparent 70%); }
+  .sc-nur { background:
+      linear-gradient(90deg, transparent 42%, rgba(245,194,107,.22) 50%, transparent 58%),
+      radial-gradient(30% 60% at 50% 10%, rgba(245,194,107,.26), transparent 70%),
+      radial-gradient(80% 30% at 50% 100%, rgba(244,132,95,.14), transparent 70%); }
+  .sc-tong { background:
+      radial-gradient(70% 70% at 50% 104%, rgba(244,132,95,.30), rgba(245,194,107,.12) 45%, transparent 72%),
+      linear-gradient(180deg, rgba(108,92,231,.16), transparent 60%); }
+  .sc-ochoq { background:
+      radial-gradient(45% 45% at 50% 88%, rgba(244,132,95,.34), transparent 70%),
+      radial-gradient(26% 26% at 38% 76%, rgba(245,194,107,.22), transparent 72%),
+      radial-gradient(22% 22% at 63% 80%, rgba(245,194,107,.18), transparent 72%); }
+  .sc-langar { background:
+      radial-gradient(26% 34% at 50% 62%, rgba(110,181,255,.22), transparent 70%),
+      radial-gradient(44% 52% at 50% 62%, rgba(110,181,255,.12), transparent 72%),
+      radial-gradient(64% 70% at 50% 62%, rgba(108,92,231,.10), transparent 74%); }
+  .sc-koprik { background:
+      radial-gradient(64% 90% at 50% 122%, transparent 58%, rgba(244,132,95,.26) 59%, transparent 66%),
+      linear-gradient(180deg, transparent 70%, rgba(108,92,231,.14) 100%); }
+  .sc-hosil { background:
+      linear-gradient(180deg, transparent 58%, rgba(245,194,107,.22) 64%, transparent 70%),
+      linear-gradient(180deg, transparent 72%, rgba(245,194,107,.16) 78%, transparent 84%),
+      radial-gradient(70% 36% at 50% 100%, rgba(244,132,95,.16), transparent 72%); }
+  .metaphor { position: relative; z-index: 1; margin-top: 10px; font-size: 15px; letter-spacing: 1.5px;
+    text-transform: uppercase; color: var(--accent, #F4845F); font-weight: 600; }
   @media (prefers-reduced-motion: reduce) { .hero [data-milestone-mark] { animation: none !important; opacity: 1 !important; } }
 
   .chains {
@@ -67,8 +107,10 @@
     <div class="stamp" id="celStamp">7 kun · tugadi</div>
 
     <div class="hero">
+      <div class="scene" id="celScene" aria-hidden="true"></div>
       <div class="big">+70%</div>
       <div class="sub" data-i18n="celebrate.sub">oldingi sizdan kuchliroqsiz</div>
+      <div class="metaphor" id="celMetaphor"></div>
     </div>
 
     <div class="chains" id="chains"></div>
@@ -87,6 +129,24 @@
 <script src="nav-overlay.js?v=28.4.0" defer></script>
 <script>
   document.addEventListener('DOMContentLoaded', () => {
+    // ── HAFTALIK METAFORA: 8 variant, hafta raqamiga qarab almashadi (takrorlanish charchog'i yo'q) ──
+    (function () {
+      var V = [
+        { c: 'sc-tog',    k: 'v_tog',    f: "Cho'qqiga chiqdingiz" },
+        { c: 'sc-daryo',  k: 'v_daryo',  f: "Daryodan o'tdingiz" },
+        { c: 'sc-nur',    k: 'v_nur',    f: 'Nur ustuni qad rostladi' },
+        { c: 'sc-tong',   k: 'v_tong',   f: 'Yangi tong otdi' },
+        { c: 'sc-ochoq',  k: 'v_ochoq',  f: "O'choq alangalandi" },
+        { c: 'sc-langar', k: 'v_langar', f: 'Langaringiz mustahkam' },
+        { c: 'sc-koprik', k: 'v_koprik', f: "Ko'prik qurildi" },
+        { c: 'sc-hosil',  k: 'v_hosil',  f: "Hosil yig'ildi" }
+      ];
+      var wk = Math.floor(Date.now() / 604800000);              // 7 kunda bir o'zgaradi
+      var v = V[((wk % V.length) + V.length) % V.length];
+      var sc = document.getElementById('celScene'), mt = document.getElementById('celMetaphor');
+      if (sc) { sc.className = 'scene ' + v.c; requestAnimationFrame(function () { sc.classList.add('in'); }); }
+      if (mt) mt.textContent = (window.I18N && I18N.t) ? I18N.t('celebrate.' + v.k, v.f) : v.f;
+    })();
     if (!window.MVOW_DATA) return;
     const list = document.getElementById('chains');
     const daysUnit = (window.I18N ? I18N.t('celebrate.days_unit', 'kun') : 'kun');
