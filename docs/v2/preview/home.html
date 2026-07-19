@@ -432,11 +432,12 @@
     <p class="bio" id="bioLine"></p>
 
     <div class="actions">
-      <a class="cta" id="primaryCta" href="hard-lock.html" data-i18n="home.cta_start">Boshlash</a>
+      <!-- data-i18n YO'Q: matnni JS boshqaradi (bo'sh holat -> "Maqsad qo'shing", tayyor -> "Boshlayman"). Aks holda i18n applyAll uni qayta yozadi. -->
+      <a class="cta" id="primaryCta" href="hard-lock.html">Boshlash</a>
 
       <!-- Tanlovlar — istalganini bos -->
       <div id="tileGrid" style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:6px;">
-        <a class="ghost" href="maqsadlar.html" style="margin:0;--bc:244, 132, 95;"><span class="gi">🎯</span><span data-i18n="home.tile_goals">Maqsadlar</span></a>
+        <a class="ghost" id="tileGoals" href="maqsadlar.html" style="margin:0;--bc:244, 132, 95;"><span class="gi">🎯</span><span data-i18n="home.tile_goals">Maqsadlar</span></a>
         <a class="ghost" href="weekly-review.html" style="margin:0;--bc:244, 132, 95;"><span class="gi">📊</span><span data-i18n="home.tile_history">Tarix</span></a>
       </div>
     </div>
@@ -956,12 +957,22 @@
     } catch {}
 
     const Ti = (k, def) => (window.I18N ? I18N.t(k, def) : def);
+    // Bo'sh holatda ortiqcha "maqsadga o'tish" takrorlari yashiriladi — bitta aniq harakat qoladi.
+    const _moreGoal = document.getElementById('moreGoalBtn');
+    const _tileGoals = document.getElementById('tileGoals');
     if (!hasGoals || !plan.length) {
       cta.textContent = Ti('home.cta_add_goal', "Maqsad qo'shing");
       cta.href = 'maqsadlar.html';
+      // CTA endi "Maqsad qo'shing" — pastdagi "Maqsadlar" plitka va "Yana maqsad qo'shish" ortiqcha.
+      if (_tileGoals) _tileGoals.style.display = 'none';
+      if (_moreGoal && !hasGoals) _moreGoal.style.display = 'none';
+      var _tg = document.getElementById('tileGrid'); if (_tg) _tg.style.gridTemplateColumns = '1fr';
     } else {
       cta.textContent = Ti('home.cta_start', 'Boshlash');
       cta.href = 'hard-lock.html';
+      if (_tileGoals) _tileGoals.style.display = '';
+      if (_moreGoal) _moreGoal.style.display = '';
+      var _tg2 = document.getElementById('tileGrid'); if (_tg2) _tg2.style.gridTemplateColumns = '1fr 1fr';
       // Umumiy "Boshlash": faqat 1 ta bajarilmagan vazifa bo'lsa — to'g'ridan-to'g'ri nomi bilan.
       // Ko'p yoki vaqti o'tib ketgan (overdue) bo'lsa — activeTask o'rnatilmaydi,
       // hard-lock "Qaysi vazifa ustida ishlaysiz?" deb so'raydi (picker).
