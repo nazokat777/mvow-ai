@@ -32,6 +32,112 @@
     min-height: 100vh;
     display: flex; flex-direction: column;
     justify-content: center;
+    position: relative; z-index: 1;
+  }
+
+  /* ===== VA'DA MAROSIMI — sahna (ambient nur + uchqunlar) ===== */
+  .fx-stage {
+    position: fixed; inset: 0; z-index: 0;
+    pointer-events: none; overflow: hidden;
+  }
+  .aura {
+    position: absolute; left: 50%; top: 42%;
+    width: 130vmin; height: 130vmin;
+    transform: translate(-50%,-50%);
+    background: radial-gradient(circle,
+      rgba(244,132,95,.13) 0%,
+      rgba(108,92,231,.07) 38%,
+      transparent 65%);
+    opacity: .75;
+  }
+  #emberCanvas { position: absolute; inset: 0; width: 100%; height: 100%; }
+
+  /* Qasam muhri — savol tepasidagi emblema */
+  .oath-seal { display: flex; justify-content: center; margin-bottom: 28px; }
+  .oath-seal svg { width: 84px; height: 84px; overflow: visible; }
+  .oath-seal .ring  { fill: none; stroke: var(--accent); stroke-width: 2.5; stroke-linecap: round; opacity: .9; }
+  .oath-seal .ring2 { fill: none; stroke: rgba(108,92,231,.55); stroke-width: 1.2; }
+  .oath-seal .spark { fill: var(--accent-bright); }
+
+  /* Muhrlash oni — yorug'lik chaqnashi va to'lqin halqalari */
+  .flash {
+    position: fixed; inset: 0; z-index: 8; pointer-events: none; opacity: 0;
+    background: radial-gradient(circle at 50% 45%,
+      rgba(247,155,127,.55), rgba(108,92,231,.18) 45%, transparent 70%);
+  }
+  .pulse-ring {
+    position: fixed; left: 50%; top: 45%; z-index: 7;
+    width: 120px; height: 120px; margin: -60px 0 0 -60px;
+    border: 2px solid rgba(247,155,127,.8);
+    border-radius: 50%; opacity: 0; pointer-events: none;
+  }
+  .pulse-ring.p2 { border-color: rgba(108,92,231,.6); }
+
+  /* Muhr nuri (stamp orqasida) va imzo chizig'i */
+  .seal-glow {
+    position: absolute; left: 50%; top: 50%;
+    width: 260px; height: 260px;
+    transform: translate(-50%,-50%) scale(1);
+    background: radial-gradient(circle,
+      rgba(244,132,95,.32), rgba(108,92,231,.12) 45%, transparent 70%);
+    border-radius: 50%; opacity: .6; pointer-events: none;
+  }
+  .sig-line {
+    width: 120px; height: 2px; margin: -22px auto 30px;
+    background: linear-gradient(90deg, transparent, var(--accent), transparent);
+    transform: scaleX(1);
+  }
+
+  @media (prefers-reduced-motion: no-preference) {
+    .aura { animation: auraBreathe 7s ease-in-out infinite; }
+    @keyframes auraBreathe {
+      0%,100% { transform: translate(-50%,-50%) scale(1);    opacity: .6;  }
+      50%     { transform: translate(-50%,-50%) scale(1.12); opacity: .95; }
+    }
+    /* Tantanali kirish — muhr, so'z, tugma birin-ketin ko'tariladi */
+    .ask .oath-seal { animation: riseIn .8s cubic-bezier(.16,.84,.32,1) both; }
+    .ask .question  { animation: riseIn .9s cubic-bezier(.16,.84,.32,1) .25s both; }
+    .ask .yes-btn   { animation: riseIn .8s cubic-bezier(.16,.84,.32,1) .55s both; }
+    @keyframes riseIn {
+      from { opacity: 0; transform: translateY(26px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+    /* Muhr halqasi o'zini chizadi, markazda uchqun yonadi */
+    .oath-seal .ring {
+      stroke-dasharray: 233; stroke-dashoffset: 233;
+      animation: sealDraw 1.6s ease .2s forwards;
+    }
+    @keyframes sealDraw { to { stroke-dashoffset: 0; } }
+    .oath-seal .spark {
+      transform-origin: 42px 42px; transform: scale(0);
+      animation: sparkIn .5s cubic-bezier(.34,1.56,.64,1) 1.5s forwards;
+    }
+    @keyframes sparkIn { to { transform: scale(1); } }
+
+    body.sealed .flash { animation: flashOut .9s ease-out forwards; }
+    @keyframes flashOut { 0% { opacity: 0; } 12% { opacity: 1; } 100% { opacity: 0; } }
+    .pulse-ring.go { animation: ringOut 1s cubic-bezier(.16,.84,.32,1) forwards; }
+    .pulse-ring.p2.go { animation-duration: 1.35s; animation-delay: .12s; }
+    @keyframes ringOut {
+      0%   { transform: scale(.3);  opacity: .9; }
+      100% { transform: scale(3.4); opacity: 0; }
+    }
+    .seal-glow { opacity: 0; transform: translate(-50%,-50%) scale(.4); }
+    .confirmed.show .seal-glow { animation: glowIn 1.4s ease .25s forwards; }
+    @keyframes glowIn {
+      0%   { opacity: 0;   transform: translate(-50%,-50%) scale(.4); }
+      45%  { opacity: 1; }
+      100% { opacity: .75; transform: translate(-50%,-50%) scale(1); }
+    }
+    .sig-line { transform: scaleX(0); }
+    .confirmed.show .sig-line { animation: sigDraw .8s cubic-bezier(.16,.84,.32,1) 1.25s forwards; }
+    @keyframes sigDraw { to { transform: scaleX(1); } }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .question { animation: none; }
+    .stamp { animation: none; transform: rotate(-12deg) scale(1); opacity: 1; }
+    .quote { animation: none; opacity: 1; }
+    .confirmed.show { animation: none; }
   }
 
   .ask { transition: opacity .4s, transform .4s; }
@@ -90,6 +196,7 @@
   }
 
   .stamp-wrap {
+    position: relative;
     display: flex; justify-content: center;
     margin-bottom: 36px;
     perspective: 600px;
@@ -171,9 +278,22 @@
 </head>
 <body>
 
+<div class="fx-stage" aria-hidden="true">
+  <div class="aura"></div>
+  <canvas id="emberCanvas"></canvas>
+</div>
+<div class="flash" id="sealFlash" aria-hidden="true"></div>
+
 <div class="wrap">
 
   <div class="ask" id="askBlock">
+    <div class="oath-seal" aria-hidden="true">
+      <svg viewBox="0 0 84 84">
+        <circle class="ring2" cx="42" cy="42" r="30"/>
+        <circle class="ring" cx="42" cy="42" r="37" transform="rotate(-90 42 42)"/>
+        <polygon class="spark" points="42,33 49,42 42,51 35,42"/>
+      </svg>
+    </div>
     <h1 class="question">
       <span class="em" data-i18n="vada.question_em1">Intizomli</span> <span data-i18n="vada.question_mid">bo'lishga,</span><br>
       <span class="em" data-i18n="vada.question_em2">rejangizga sodiq</span> <span data-i18n="vada.question_end">qolishga</span><br>
@@ -184,12 +304,14 @@
 
   <div class="confirmed" id="confirmedBlock">
     <div class="stamp-wrap">
+      <div class="seal-glow" aria-hidden="true"></div>
       <div class="stamp" data-i18n="vada.stamp">Tasdiqlandi</div>
     </div>
     <p class="quote">
       <span data-i18n="vada.quote_a">Tartibga amal qilish —</span><br>
       <span class="em" data-i18n="vada.quote_em">o'zini hurmat qilish</span><span data-i18n="vada.quote_b">likdir.</span>
     </p>
+    <div class="sig-line" aria-hidden="true"></div>
     <a href="#" id="rereadVow" style="display:inline-block;margin-top:14px;color:var(--text-dim,#9CA0A8);font-size:14px;text-decoration:underline;" data-i18n="vada.reread">Va'dani qayta o'qish</a>
   </div>
 
@@ -238,6 +360,119 @@
     confirmedBlock.classList.add('show');
     bottomBar.classList.add('show');
   }
+</script>
+
+<script>
+  /* ===== VA'DA MAROSIMI — nur zarralari (canvas) + muhrlash chaqnashi ===== */
+  (function () {
+    var motionOK = !(window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches);
+    var cv = document.getElementById('emberCanvas');
+    var ctx = cv ? cv.getContext('2d') : null;
+    var parts = [], raf = 0, W = 0, H = 0, DPR = 1;
+
+    function resize() {
+      if (!cv) return;
+      DPR = Math.min(window.devicePixelRatio || 1, 2);
+      W = window.innerWidth; H = window.innerHeight;
+      cv.width = Math.round(W * DPR); cv.height = Math.round(H * DPR);
+      if (ctx) ctx.setTransform(DPR, 0, 0, DPR, 0, 0);
+    }
+
+    function mote() {
+      var warm = Math.random() < 0.72;
+      return {
+        kind: 'mote',
+        x: Math.random() * W,
+        y: H * (0.3 + Math.random() * 0.8),
+        r: 0.8 + Math.random() * 1.5,
+        vx: (Math.random() - 0.5) * 0.08,
+        vy: -(0.06 + Math.random() * 0.18),
+        a: 0,
+        aMax: 0.25 + Math.random() * 0.4,
+        phase: Math.random() * Math.PI * 2,
+        col: warm ? '244,132,95' : '124,108,240'
+      };
+    }
+
+    function seed() {
+      parts = [];
+      var n = W < 420 ? 16 : 24;
+      for (var i = 0; i < n; i++) parts.push(mote());
+    }
+
+    function burst() {
+      var cx = W / 2, cy = H * 0.45;
+      for (var i = 0; i < 54; i++) {
+        var ang = Math.random() * Math.PI * 2;
+        var sp = 1.2 + Math.random() * 4.2;
+        var warm = Math.random() < 0.78;
+        parts.push({
+          kind: 'burst',
+          x: cx, y: cy,
+          r: 1 + Math.random() * 2.2,
+          vx: Math.cos(ang) * sp,
+          vy: Math.sin(ang) * sp - 1.1,
+          a: 0.9,
+          decay: 0.012 + Math.random() * 0.016,
+          col: warm ? '247,155,127' : '124,108,240'
+        });
+      }
+    }
+
+    function tick() {
+      raf = 0;
+      if (!ctx) return;
+      ctx.clearRect(0, 0, W, H);
+      for (var i = parts.length - 1; i >= 0; i--) {
+        var p = parts[i];
+        p.x += p.vx; p.y += p.vy;
+        if (p.kind === 'mote') {
+          p.phase += 0.015;
+          p.a = p.aMax * (0.55 + 0.45 * Math.sin(p.phase));
+          if (p.y < -8) { parts[i] = mote(); parts[i].y = H + 6; continue; }
+        } else {
+          p.vx *= 0.985; p.vy = p.vy * 0.985 - 0.012;   // sekinlashadi, yuqoriga suzadi
+          p.a -= p.decay;
+          if (p.a <= 0) { parts.splice(i, 1); continue; }
+        }
+        ctx.beginPath();
+        ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
+        ctx.fillStyle = 'rgba(' + p.col + ',' + p.a.toFixed(3) + ')';
+        ctx.fill();
+      }
+      if (!document.hidden && parts.length) raf = requestAnimationFrame(tick);
+    }
+
+    function start() { if (!raf && motionOK && ctx) raf = requestAnimationFrame(tick); }
+
+    if (motionOK && ctx) {
+      resize(); seed(); start();
+      window.addEventListener('resize', function () { resize(); seed(); });
+      document.addEventListener('visibilitychange', function () {
+        if (document.hidden) { if (raf) cancelAnimationFrame(raf); raf = 0; }
+        else start();
+      });
+    } else if (cv) {
+      cv.style.display = 'none';
+    }
+
+    /* Muhrlash oni: chaqnash + halqa to'lqinlari + uchqun portlashi + haptika */
+    var yb = document.getElementById('yesBtn');
+    if (yb) yb.addEventListener('click', function () {
+      if (navigator.vibrate) { try { navigator.vibrate([16, 40, 28]); } catch (e) {} }
+      if (!motionOK) return;
+      document.body.classList.add('sealed');
+      ['', 'p2'].forEach(function (extra) {
+        var r = document.createElement('div');
+        r.className = 'pulse-ring' + (extra ? ' ' + extra : '');
+        r.setAttribute('aria-hidden', 'true');
+        document.body.appendChild(r);
+        requestAnimationFrame(function () { r.classList.add('go'); });
+        setTimeout(function () { if (r.parentNode) r.parentNode.removeChild(r); }, 1700);
+      });
+      burst(); start();
+    });
+  })();
 </script>
 
 <script src="back-btn.js?v=28.4.0"></script>
