@@ -121,40 +121,72 @@
     return { coins: coins, diamonds: walNum('mvow.diamonds'), gotDiamond: gotDiamond };
   }
 
-  // ── KONFETTI + SALYUT (canvas) ──
-  function runConfetti(canvas, ms) {
+  // ── KONFETTI + SALYUT + UCHQUN + SHOCKWAVE (canvas, PRO) ──
+  function runConfetti(canvas, ms, big) {
+    var reduce = false; try { reduce = matchMedia('(prefers-reduced-motion: reduce)').matches; } catch (e) {}
     var ctx = canvas.getContext('2d');
-    var W = canvas.width = root.innerWidth, H = canvas.height = root.innerHeight;
-    var cols = ['#F4845F', '#6BBF7A', '#E882B4', '#6EB5FF', '#F5C26B', '#ffffff'];
-    var P = [];
-    // yomg'irsimon tushuvchi konfetti
-    for (var i = 0; i < 150; i++) {
-      P.push({ x: Math.random() * W, y: -20 - Math.random() * H * 0.5, r: 4 + Math.random() * 6,
-        c: cols[i % cols.length], vx: -2 + Math.random() * 4, vy: 2 + Math.random() * 4.5,
-        rot: Math.random() * 6.28, vr: -0.25 + Math.random() * 0.5, sq: Math.random() < 0.55 });
+    var dpr = Math.min(root.devicePixelRatio || 1, 2);
+    var W = root.innerWidth, H = root.innerHeight;
+    canvas.width = W * dpr; canvas.height = H * dpr;
+    canvas.style.width = W + 'px'; canvas.style.height = H + 'px';
+    ctx.scale(dpr, dpr);
+    if (reduce) { return function () { try { ctx.clearRect(0, 0, W, H); } catch (e) {} }; }  // harakatsiz — bo'sh
+    var cols = ['#F4845F', '#6BBF7A', '#E882B4', '#6EB5FF', '#F5C26B', '#8E7BF0', '#ffffff'];
+    var P = [], sparks = [], rings = [];
+    // Yomg'irsimon konfetti — flutter (chayqalish) + turli shakllar: 0 to'rtburchak, 1 doira, 2 lenta, 3 uchburchak
+    var N = big ? 220 : 150;
+    for (var i = 0; i < N; i++) {
+      P.push({ x: Math.random() * W, y: -20 - Math.random() * H * 0.6, r: 4 + Math.random() * 7, c: cols[i % cols.length],
+        vx: -1.5 + Math.random() * 3, vy: 2 + Math.random() * 4, rot: Math.random() * 6.28, vr: -0.3 + Math.random() * 0.6,
+        shape: (Math.random() * 4) | 0, ph: Math.random() * 6.28, amp: 0.6 + Math.random() * 1.6, delay: 0 });
     }
-    // salyut — 3 markazdan otiladigan portlash
-    var bursts = [[W * 0.5, H * 0.32], [W * 0.28, H * 0.42], [W * 0.72, H * 0.42]];
+    // Salyut portlashlari + har biriga zarba to'lqini (shockwave)
+    var bursts = big ? [[W * 0.5, H * 0.34], [W * 0.24, H * 0.44], [W * 0.76, H * 0.44]] : [[W * 0.5, H * 0.36]];
     bursts.forEach(function (b, bi) {
-      for (var k = 0; k < 40; k++) {
-        var ang = (k / 40) * 6.28, sp = 3 + Math.random() * 4;
+      rings.push({ x: b[0], y: b[1], r: 0, a: 0.5, delay: bi * 170 });
+      var cnt = big ? 56 : 40;
+      for (var k = 0; k < cnt; k++) {
+        var ang = (k / cnt) * 6.28 + Math.random() * 0.2, sp = 3.2 + Math.random() * 4.2;
         P.push({ x: b[0], y: b[1], r: 3 + Math.random() * 4, c: cols[k % cols.length],
-          vx: Math.cos(ang) * sp, vy: Math.sin(ang) * sp - 1, rot: 0, vr: 0, sq: Math.random() < 0.5, delay: bi * 220 });
+          vx: Math.cos(ang) * sp, vy: Math.sin(ang) * sp - 1.2, rot: Math.random() * 6.28, vr: -0.3 + Math.random() * 0.6,
+          shape: (Math.random() * 3) | 0, ph: 0, amp: 0, delay: bi * 170 });
       }
     });
+    // Ko'tariluvchi oltin uchqunlar (twinkle)
+    var sN = big ? 46 : 28;
+    for (var j = 0; j < sN; j++) {
+      sparks.push({ x: Math.random() * W, y: H + 10 + Math.random() * H * 0.3, r: 1.5 + Math.random() * 2.5,
+        vy: -(1 + Math.random() * 2), tw: Math.random() * 6.28, tws: 0.09 + Math.random() * 0.14 });
+    }
     var start = null, raf;
     function frame(t) {
       if (!start) start = t;
       var el = t - start;
       ctx.clearRect(0, 0, W, H);
-      for (var i = 0; i < P.length; i++) {
-        var p = P[i];
-        if (p.delay && el < p.delay) continue;
-        p.x += p.vx; p.y += p.vy; p.vy += 0.06; p.rot += p.vr; p.vx *= 0.995;
-        ctx.save(); ctx.translate(p.x, p.y); ctx.rotate(p.rot); ctx.fillStyle = p.c; ctx.globalAlpha = 0.9;
-        if (p.sq) ctx.fillRect(-p.r / 2, -p.r / 2, p.r, p.r * 0.6);
-        else { ctx.beginPath(); ctx.arc(0, 0, p.r / 2, 0, 6.29); ctx.fill(); }
+      // Zarba to'lqinlari
+      for (var ri = 0; ri < rings.length; ri++) {
+        var g = rings[ri]; if (el < g.delay) continue;
+        g.r += 3.6; g.a *= 0.955;
+        if (g.a > 0.02) { ctx.beginPath(); ctx.strokeStyle = 'rgba(255,255,255,' + g.a + ')'; ctx.lineWidth = 2; ctx.arc(g.x, g.y, g.r, 0, 6.29); ctx.stroke(); }
+      }
+      // Konfetti
+      for (var i2 = 0; i2 < P.length; i2++) {
+        var p = P[i2]; if (p.delay && el < p.delay) continue;
+        if (p.amp) { p.ph += 0.1; p.x += Math.sin(p.ph) * p.amp; }
+        p.x += p.vx; p.y += p.vy; p.vy += 0.055; p.rot += p.vr; p.vx *= 0.996;
+        ctx.save(); ctx.translate(p.x, p.y); ctx.rotate(p.rot); ctx.fillStyle = p.c; ctx.globalAlpha = 0.92;
+        if (p.shape === 0) ctx.fillRect(-p.r / 2, -p.r / 2, p.r, p.r * 0.55);
+        else if (p.shape === 1) { ctx.beginPath(); ctx.arc(0, 0, p.r / 2, 0, 6.29); ctx.fill(); }
+        else if (p.shape === 2) ctx.fillRect(-p.r * 0.18, -p.r * 0.95, p.r * 0.36, p.r * 1.9);
+        else { ctx.beginPath(); ctx.moveTo(0, -p.r * 0.6); ctx.lineTo(p.r * 0.5, p.r * 0.5); ctx.lineTo(-p.r * 0.5, p.r * 0.5); ctx.closePath(); ctx.fill(); }
         ctx.restore();
+      }
+      // Uchqunlar
+      for (var s2 = 0; s2 < sparks.length; s2++) {
+        var sp = sparks[s2]; sp.y += sp.vy; sp.tw += sp.tws;
+        var a = 0.35 + 0.65 * Math.abs(Math.sin(sp.tw));
+        ctx.beginPath(); ctx.fillStyle = 'rgba(245,210,120,' + a.toFixed(2) + ')'; ctx.arc(sp.x, sp.y, sp.r, 0, 6.29); ctx.fill();
+        if (sp.y < -10) { sp.y = H + 10; sp.x = Math.random() * W; }
       }
       if (el < ms) raf = requestAnimationFrame(frame); else ctx.clearRect(0, 0, W, H);
     }
@@ -177,7 +209,7 @@
     document.body.appendChild(canvas);
 
     var ov = document.createElement('div');
-    ov.style.cssText = 'position:fixed;inset:0;z-index:100050;display:flex;flex-direction:column;align-items:center;justify-content:center;background:rgba(4,6,11,.72);-webkit-backdrop-filter:blur(6px);backdrop-filter:blur(6px);padding:28px;text-align:center;opacity:0;transition:opacity .3s;';
+    ov.style.cssText = 'position:fixed;inset:0;z-index:100050;display:flex;flex-direction:column;align-items:center;justify-content:center;background:radial-gradient(120% 90% at 50% 35%, rgba(20,14,40,.86), rgba(4,6,11,.9));padding:28px;text-align:center;opacity:0;transition:opacity .3s;';
 
     var medalHtml = '';
     if (fresh.length) {
@@ -194,7 +226,7 @@
     var diamondHtml = (coin && coin.gotDiamond) ? '<div style="margin-top:16px;background:linear-gradient(135deg,rgba(110,181,255,.22),rgba(200,230,255,.12));border:1px solid rgba(110,181,255,.45);border-radius:16px;padding:14px 18px;"><div style="font-size:40px;line-height:1;">💎</div><div style="font-size:16px;font-weight:800;color:#fff;margin-top:4px;">' + T('celebrate.all_done', 'Hamma vazifa bajarildi!') + ' +1 💎</div></div>' : '';
     var title = fresh.length ? T('celebrate.medal_title', 'Yangi medal ochildi!') : T('celebrate.done_title', "Zo'r! Bajarildi");
     var sub = fresh.length ? T('celebrate.medal_sub', 'Ajoyib natija — davom eting') : T('celebrate.done_sub', 'Yana bir qadam maqsad sari');
-    ov.innerHTML = '<div style="font-size:66px;line-height:1;animation:celPop .5s cubic-bezier(.16,.84,.32,1);">🎉</div>'
+    ov.innerHTML = '<div style="font-size:70px;line-height:1;animation:celPop .6s cubic-bezier(.16,.84,.32,1);text-shadow:0 0 34px rgba(244,132,95,.6),0 0 60px rgba(142,123,240,.4);">🎉</div>'
       + '<div style="font-family:Inter,sans-serif;font-size:26px;font-weight:800;color:#fff;margin-top:10px;">' + title + '</div>'
       + '<div style="font-size:15px;color:#B8BBC2;margin-top:6px;">' + sub + '</div>'
       + streakHtml + coinHtml + levelHtml + diamondHtml + medalHtml
@@ -202,13 +234,13 @@
 
     if (!document.getElementById('celKeyframes')) {
       var st = document.createElement('style'); st.id = 'celKeyframes';
-      st.textContent = '@keyframes celPop{from{transform:scale(.4);opacity:0}to{transform:scale(1);opacity:1}}';
+      st.textContent = '@keyframes celPop{0%{transform:scale(.3) rotate(-14deg);opacity:0}55%{transform:scale(1.18) rotate(7deg);opacity:1}78%{transform:scale(.94) rotate(-3deg)}100%{transform:scale(1) rotate(0);opacity:1}}';
       document.head.appendChild(st);
     }
     document.body.appendChild(ov);
     requestAnimationFrame(function () { ov.style.opacity = '1'; });
 
-    var stopC = runConfetti(canvas, big ? 4200 : 2600);
+    var stopC = runConfetti(canvas, big ? 4200 : 2600, big);
     try { if (root.navigator && root.navigator.vibrate) root.navigator.vibrate(big ? [40, 60, 40] : 30); } catch (e) {}
 
     var closed = false;

@@ -6,7 +6,7 @@
 (function () {
   // celebrate.js har sahifada bo'lsin — "Bajardingizmi?" (overdue) belgilanganda ham tanga/medal berilsin
   if (!window.MvowCelebrate && !document.querySelector('script[src*="celebrate.js"]')) {
-    var _cel = document.createElement('script'); _cel.src = 'celebrate.js?v=29.0.50'; _cel.defer = true;
+    var _cel = document.createElement('script'); _cel.src = 'celebrate.js?v=29.0.118'; _cel.defer = true;
     document.head.appendChild(_cel);
   }
   // Replace every gold "mentor presence" orb with the real MNSM logo

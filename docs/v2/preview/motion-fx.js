@@ -38,7 +38,12 @@
     + '@keyframes mfxRipple{to{transform:scale(1);opacity:0}}'
     // Raqam "pop" (count-up tugagach)
     + '.mfx-pop{animation:mfxPop .42s ease-out}'
-    + '@keyframes mfxPop{0%{transform:scale(1)}42%{transform:scale(1.16)}100%{transform:scale(1)}}';
+    + '@keyframes mfxPop{0%{transform:scale(1)}42%{transform:scale(1.16)}100%{transform:scale(1)}}'
+    // Medal pop-in + shahar binolari ko'tarilishi (JS stagger delay bilan)
+    + '.mfx-popin{animation:mfxPopIn .52s cubic-bezier(.22,1.35,.36,1) backwards}'
+    + '@keyframes mfxPopIn{from{opacity:0;transform:scale(.45)}to{opacity:1;transform:scale(1)}}'
+    + '.mfx-rise{animation:mfxRise .55s cubic-bezier(.22,1,.36,1) backwards}'
+    + '@keyframes mfxRise{from{opacity:0;transform:translateY(26px) scale(.92)}to{opacity:1;transform:none}}';
   document.head.appendChild(st);
 
   if (reduce) return;  // bezak harakatlari o'chadi
@@ -76,7 +81,7 @@
     setTimeout(function () { el.classList.remove('mfx-sweep'); }, 950);
   }
   function enhanceCTA() {
-    var sel = '.cta, .btn.save, .ai-reward-card, .code-card, .buy.ready, .yes-btn';
+    var sel = '.cta, .btn.save, .ai-reward-card, .code-card, .buy.ready, .yes-btn, .medal.on, .level-card';
     var nodes; try { nodes = document.querySelectorAll(sel); } catch (e) { return; }
     Array.prototype.forEach.call(nodes, function (c, i) {
       if (c.__mfxs) return; c.__mfxs = 1;
@@ -150,7 +155,22 @@
     });
   }
 
-  function init() { setTimeout(function () { runCountUp(); enhanceCTA(); enableRipple(); animBars(); }, 340); }
+  // ── 5) Staggered kirish (medallar pop, shahar binolari ko'tarilish) ──
+  function staggerIn(sel, cls, step) {
+    var nodes; try { nodes = document.querySelectorAll(sel); } catch (e) { return; }
+    Array.prototype.forEach.call(nodes, function (el, i) {
+      if (el.__mfxin) return; el.__mfxin = 1;
+      el.style.animationDelay = (Math.min(i, 16) * step) + 's';
+      el.classList.add(cls);
+    });
+  }
+  function init() {
+    setTimeout(function () {
+      runCountUp(); enhanceCTA(); enableRipple(); animBars();
+      staggerIn('.medal', 'mfx-popin', 0.045);
+      staggerIn('.tile', 'mfx-rise', 0.03);
+    }, 340);
+  }
   if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', init);
   else init();
 })();
