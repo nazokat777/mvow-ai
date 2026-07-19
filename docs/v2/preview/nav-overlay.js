@@ -636,3 +636,24 @@
     }
   }
 })();
+
+// ── Funksiya nomini o'zgartirish: sahifa sarlavhasini yangilash (faqat asl nomga TENG bo'lsa — xavfsiz) ──
+(function () {
+  try {
+    var MAP = { 'hamyon.html':'hamyon','blaknot.html':'blaknot','goyalar.html':'goyalar','orzular.html':'orzular','uyqu.html':'uyqu','mukofotlar.html':'mukofot','shahar.html':'shahar','eslatmalar.html':'eslatma','hisobot.html':'hisobot','dostlar.html':'dostlar' };
+    var LABELS = { hamyon:'Hamyon', blaknot:'Blaknot', goyalar:"G'oyalarim", orzular:'Orzular', uyqu:'Uyqu', mukofot:'Mukofotlar', shahar:'Shahringiz', eslatma:'Eslatmalar', hisobot:'Hisobot', dostlar:"Do'stlar" };
+    var file = (location.pathname.split('/').pop() || '').toLowerCase();
+    var key = MAP[file]; if (!key) return;
+    var names = {}; try { names = JSON.parse(localStorage.getItem('mvow.featNames') || '{}'); } catch (e) {}
+    var custom = names[key]; if (!custom) return;
+    var dflt = LABELS[key];
+    function apply() {
+      document.querySelectorAll('h1, .title, .page-title, .hd-title, .sub-title').forEach(function (el) {
+        if (el.children.length === 0 && el.textContent.trim() === dflt) { el.textContent = custom; el.removeAttribute('data-i18n'); }
+      });
+      if (document.title && document.title.indexOf(dflt) >= 0) document.title = document.title.replace(dflt, custom);
+    }
+    if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', apply); else apply();
+    setTimeout(apply, 400);  // i18n kech qo'ysa ham (asl nomga qaytса) qayta almashtiramiz
+  } catch (e) {}
+})();

@@ -276,6 +276,9 @@
   // Funksiyalarni alohida qulflash
   var featRow = document.getElementById('featLockRow'), featList = document.getElementById('featLockList'), featArrow = document.getElementById('featLockArrow');
   var LABELS = { hamyon: 'Hamyon', blaknot: 'Blaknot', goyalar: "G'oyalarim", orzular: 'Orzular', uyqu: 'Uyqu', mukofot: 'Mukofotlar', shahar: 'Shahringiz', eslatma: 'Eslatmalar', hisobot: 'Hisobot', dostlar: "Do'stlar" };
+  function featName(key) { try { var n = JSON.parse(localStorage.getItem('mvow.featNames') || '{}'); return n[key] || LABELS[key] || key; } catch (e) { return LABELS[key] || key; } }
+  function setFeatName(key, name) { try { var n = JSON.parse(localStorage.getItem('mvow.featNames') || '{}'); if (name) n[key] = name; else delete n[key]; localStorage.setItem('mvow.featNames', JSON.stringify(n)); } catch (e) {} }
+  function esc(s) { return String(s || '').replace(/[&<>"]/g, function (c) { return ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]); }); }
   function renderFeats() {
     if (!featList || !window.PinLock) return;
     featList.innerHTML = '';
@@ -284,12 +287,21 @@
       var key = feats[page]; if (seen[key]) return; seen[key] = 1;
       var wrap = document.createElement('label');
       wrap.className = 'row lock-row'; wrap.style.paddingLeft = '14px';
-      wrap.innerHTML = '<span class="lbl" style="font-size:15px;">' + (LABELS[key] || key) + '</span><input type="checkbox"><span class="sw"></span>';
+      wrap.innerHTML = '<span class="lbl fn" style="font-size:15px;">' + esc(featName(key)) + '</span>'
+        + '<span class="feat-rename" title="' + T('settings.feat_rename_t', "Nomini o'zgartirish") + '" style="color:var(--text-dim);cursor:pointer;padding:0 12px;font-size:15px;">✎</span>'
+        + '<input type="checkbox"><span class="sw"></span>';
       var cb = wrap.querySelector('input');
       cb.checked = PinLock.isFeatureLocked(key);
       cb.addEventListener('change', function () {
         if (cb.checked && !needPin()) { cb.checked = false; return; }
         PinLock.setFeatureLocked(key, cb.checked);
+      });
+      wrap.querySelector('.feat-rename').addEventListener('click', function (e) {
+        e.preventDefault(); e.stopPropagation();
+        var nm = prompt(T('settings.feat_rename_ask', "Yangi nom (bo'sh qoldirsangiz — asl nom):"), featName(key));
+        if (nm === null) return;
+        setFeatName(key, (nm || '').trim());
+        wrap.querySelector('.fn').textContent = featName(key);
       });
       featList.appendChild(wrap);
     });
