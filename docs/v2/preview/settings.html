@@ -16,7 +16,8 @@
   :root { --void:#04060B; --text:#F5F2EC; --text-mid:#B8BBC2; --text-dim:#9CA0A8; }
   body { background: var(--void); font-family:'Inter',sans-serif; color: var(--text); min-height: 100vh; display:flex; justify-content:center; align-items:flex-start; padding: 24px; -webkit-font-smoothing: antialiased; }
   .phone { width: 380px; min-height: 800px; background: var(--void); border-radius: 40px; overflow: hidden; position: relative; box-shadow: 0 0 0 8px #1a1d24, 0 30px 80px rgba(0,0,0,.7); }
-  .container { padding: 80px 32px 100px; }
+  /* padding-bottom 140px: fixed "Davom" bari (~100px) oxirgi qatorni yopmasin. */
+  .container { padding: 80px 32px 140px; }
 
   .me { text-align:center; margin-bottom: 48px; }
   .me .name { font-family:'Inter',sans-serif; font-size: 36px; font-weight: 500; }
@@ -59,25 +60,30 @@
     font-family: 'Inter', sans-serif;
   }
 
+  /* Toggle — .lock-row .sw bilan bir xil: yorug'/to'q fonda ham ko'rinadigan trek + oq knob.
+     Oldin trek rgba(255,255,255,.08) (yorug'da ko'rinmasdi) + knob var(--text) (yorug'da qora)
+     = yolg'iz qora nuqta bo'lib, toggle emasdek edi. */
   .toggle {
-    width: 44px; height: 26px;
-    background: rgba(255,255,255,.08);
-    border-radius: 13px;
+    width: 44px; height: 25px;
+    background: rgba(150,150,150,.3);
+    border-radius: 999px;
     cursor: pointer;
     position: relative;
+    flex: none;
     transition: background .2s;
   }
   .toggle::after {
     content: '';
     position: absolute;
-    top: 3px; left: 3px;
-    width: 20px; height: 20px;
+    top: 2px; left: 2px;
+    width: 21px; height: 21px;
     border-radius: 50%;
-    background: var(--text);
+    background: #fff;
+    box-shadow: 0 1px 3px rgba(0,0,0,.3);
     transition: transform .2s;
   }
   .toggle.on { background: var(--accent); }
-  .toggle.on::after { transform: translateX(18px); background: var(--void); }
+  .toggle.on::after { transform: translateX(19px); background: #fff; }
 
   .section-lbl {
     font-size: 14px;
