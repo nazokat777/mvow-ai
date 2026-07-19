@@ -131,15 +131,17 @@
   document.addEventListener('DOMContentLoaded', () => {
     // ── HAFTALIK METAFORA: 8 variant, hafta raqamiga qarab almashadi (takrorlanish charchog'i yo'q) ──
     (function () {
+      // Zamonaviy, ilmiy asoslangan motivatsiya (neyroplastika, identity-based habits,
+      // compound effect, avtomatizm, o'z-o'zini boshqarish) — folklor metafora EMAS.
       var V = [
-        { c: 'sc-tog',    k: 'v_tog',    f: "Cho'qqiga chiqdingiz" },
-        { c: 'sc-daryo',  k: 'v_daryo',  f: "Daryodan o'tdingiz" },
-        { c: 'sc-nur',    k: 'v_nur',    f: 'Nur ustuni qad rostladi' },
-        { c: 'sc-tong',   k: 'v_tong',   f: 'Yangi tong otdi' },
-        { c: 'sc-ochoq',  k: 'v_ochoq',  f: "O'choq alangalandi" },
-        { c: 'sc-langar', k: 'v_langar', f: 'Langaringiz mustahkam' },
-        { c: 'sc-koprik', k: 'v_koprik', f: "Ko'prik qurildi" },
-        { c: 'sc-hosil',  k: 'v_hosil',  f: "Hosil yig'ildi" }
+        { c: 'sc-nur',    k: 'v_rewire',      f: 'Miyangiz qayta simlandi' },
+        { c: 'sc-tog',    k: 'v_pathway',     f: "Yangi neyron yo'li" },
+        { c: 'sc-tong',   k: 'v_identity',    f: "Siz — o'sha odamsiz" },
+        { c: 'sc-hosil',  k: 'v_compound',    f: "Har kuni 1% — birikadi" },
+        { c: 'sc-ochoq',  k: 'v_will',        f: 'Iroda muskuli kuchaydi' },
+        { c: 'sc-daryo',  k: 'v_auto',        f: 'Avtomatizm boshlandi' },
+        { c: 'sc-langar', k: 'v_dopamine',    f: 'Intizom > dofamin' },
+        { c: 'sc-koprik', k: 'v_consistency', f: 'Izchillik — ustunligingiz' }
       ];
       var wk = Math.floor(Date.now() / 604800000);              // 7 kunda bir o'zgaradi
       var v = V[((wk % V.length) + V.length) % V.length];
