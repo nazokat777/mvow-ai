@@ -2,33 +2,40 @@
 <html lang="uz">
 <head>
 <meta charset="utf-8">
+<script>
+  // Temani DARHOL qo'llaymiz — home bilan AYNAN bir xil fon.
+  // Aks holda: to'q app.html -> yorug' home = "o'chib-ochilgandek" sakrash chiqardi.
+  (function () {
+    try {
+      var dark = (localStorage.getItem('mvow.theme') === 'dark');
+      document.documentElement.setAttribute('data-theme', dark ? 'dark' : 'light');
+      window.__bg = dark ? '#04060B' : '#f3f4f7';
+    } catch (e) { window.__bg = '#f3f4f7'; }
+  })();
+</script>
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>FOCUS AI</title>
 <link rel="manifest" href="manifest.webmanifest">
-<meta name="theme-color" content="#04060B">
+<meta name="theme-color" id="tc" content="#04060B">
 <link rel="apple-touch-icon" href="assets/mnsm-logo.png?v=2">
 <link rel="icon" type="image/png" href="assets/mnsm-logo.png?v=2">
 <link rel="preload" as="image" href="assets/mnsm-maskable-512.png">
 <style>
-  /* UZLUKSIZ SPLASH:
-     Telefonda (TWA) Android o'z splash ekranida shu logoni shu fonda ko'rsatadi.
-     Bu sahifa AYNAN o'shani (animatsiyasiz, markazda) chizadi — Android splash
-     so'nganda ekran O'ZGARMAYDI (bo'sh/qora oraliq yo'q).
-     Keyin home/intro chizilguncha shu logo ekranda turadi -> "yopilib-ochildi" yo'qoladi.
-     MUHIM: hech qanday animatsiya YO'Q — aks holda logo "qaytadan ochilgandek" tuyuladi. */
   * { margin: 0; box-sizing: border-box; }
-  html, body { height: 100%; background: #04060B; overflow: hidden; }
+  html, body { height: 100%; overflow: hidden; }
+  /* Fon home bilan bir xil (tema bo'yicha) — uzluksiz o'tish, sakrash yo'q */
+  html[data-theme="dark"], html[data-theme="dark"] body { background: #04060B; }
+  html[data-theme="light"], html[data-theme="light"] body { background: #f3f4f7; }
   body { display: flex; align-items: center; justify-content: center; }
-  .logo {
-    width: 120px; height: 120px; display: block;
-    /* animatsiya yo'q — Android splash bilan uzluksiz */
-  }
+  .logo { width: 120px; height: 120px; display: block; border-radius: 26px; }
 </style>
 </head>
 <body>
   <img class="logo" src="assets/mnsm-maskable-512.png" alt="FOCUS AI">
   <noscript><a href="intro.html" style="position:fixed;inset:0;display:flex;align-items:center;justify-content:center;color:#F4845F;font-family:system-ui,sans-serif;">FOCUS AI — davom etish</a></noscript>
   <script>
+    // theme-color meta ni tema foniga moslaymiz (status bar ham bir xil)
+    try { var _m = document.getElementById('tc'); if (_m && window.__bg) _m.setAttribute('content', window.__bg); } catch (e) {}
     (function () {
       function target() {
         try {
@@ -40,13 +47,9 @@
       }
       var url = target();
       function go() { try { location.replace(url); } catch (e) { location.href = url; } }
-      // Logo CHIZILGACH yo'naltiramiz. Shunda brauzer yangi sahifa chizilguncha
-      // shu logoni ekranda ushlab turadi -> bo'sh oraliq (yopilish) ko'rinmaydi.
-      if (typeof requestAnimationFrame === 'function') {
-        requestAnimationFrame(function () { requestAnimationFrame(go); });
-      } else {
-        setTimeout(go, 32);
-      }
+      // Logo chizilgach yo'naltiramiz (brauzer yangi sahifa chizilguncha shu fonni ushlab turadi).
+      if (typeof requestAnimationFrame === 'function') { requestAnimationFrame(function () { requestAnimationFrame(go); }); }
+      else { setTimeout(go, 32); }
     })();
   </script>
 </body>
