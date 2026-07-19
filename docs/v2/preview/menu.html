@@ -14,9 +14,10 @@
 <style>
   * { box-sizing: border-box; margin: 0; padding: 0; }
   :root { --void:#04060B; --text:#F5F2EC; --text-mid:#B8BBC2; --text-dim:#9CA0A8; }
-  /* padding-top 92px: tepa-o'ngdagi quicknav ikonkalari markazlashgan sarlavha bilan to'qnashmasin. */
-  body { background: var(--void); font-family:'Inter',sans-serif; color: var(--text); min-height: 100vh; padding: 92px 24px 60px; -webkit-font-smoothing: antialiased; }
-  .wrap { max-width: 420px; margin: 0 auto; }
+  body { background: var(--void); font-family:'Inter',sans-serif; color: var(--text); min-height: 100vh; padding: 0 24px 60px; -webkit-font-smoothing: antialiased; }
+  /* padding-top .wrap'da: nav-overlay mobilda body padding'ni 0 qiladi, .wrap'ga tegmaydi.
+     Tepa-o'ngdagi quicknav ikonkalari markazlashgan sarlavha bilan to'qnashmasin. */
+  .wrap { max-width: 420px; margin: 0 auto; padding-top: 76px; }
   .h { text-align:center; margin-bottom: 40px; }
   .h .title { font-family:'Inter',sans-serif; font-size: 36px; font-weight: 500; }
   .h .sub { font-size: 15px; letter-spacing: 3px; color: var(--text-mid); text-transform: uppercase; margin-top: 6px; }
