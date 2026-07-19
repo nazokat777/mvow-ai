@@ -67,6 +67,14 @@
   .toast { position: fixed; left: 50%; bottom: 30px; transform: translateX(-50%); background: var(--card); color: var(--text); border: 1px solid rgba(244,132,95,.4); padding: 12px 20px; border-radius: 999px; font-size: 14px; font-weight: 600; box-shadow: 0 10px 30px rgba(0,0,0,.3); opacity: 0; transition: opacity .25s; pointer-events: none; z-index: 999; }
   .toast.show { opacity: 1; }
 
+  /* "Siz" qatori — ochilib do'st/ustoz nimani ko'rishini ko'rsatadi */
+  .lb-row.self { cursor: pointer; }
+  .lb-row.self:active { transform: scale(.99); }
+  .self-hint { font-weight: 500; color: var(--text-dim); font-size: 12.5px; }
+  .lb-row.self .chev { display: inline-block; transition: transform .2s; }
+  .lb-row.self.open .chev { transform: rotate(180deg); }
+  .self-preview .wt-name .tick { color: rgb(244,132,95); }
+
   /* Chat */
   .lb-row[data-chat] { cursor: pointer; }
   .lb-row[data-chat]:active { transform: scale(.99); }
@@ -172,10 +180,11 @@
           var stat = r.pending
             ? '<span class="lb-pending">' + T('pending', 'kutilmoqda…') + '</span>'
             : '<span class="lb-stat">' + (r.focusH == null ? '—' : r.focusH) + ' ' + T('hours', 'soat') + ' <span class="hb">· ' + (r.habits == null ? '—' : r.habits) + ' ' + T('habits', 'odat') + '</span></span>';
-          html += '<div class="lb-row' + (r.me ? ' me' : '') + (top ? ' top' : '') + '"' + (r.me ? '' : ' data-chat="' + escapeHtml(r.code) + '"') + '>'
+          html += '<div class="lb-row' + (r.me ? ' me self' : '') + (top ? ' top' : '') + '"' + (r.me ? ' data-self="1"' : ' data-chat="' + escapeHtml(r.code) + '"') + '>'
             + '<div class="lb-rank">' + (i + 1) + '</div>'
-            + '<div class="lb-name">' + (r.me ? '<span class="you">' + T('you', 'Siz') + '</span>' : escapeHtml(r.name)) + '</div>'
+            + '<div class="lb-name">' + (r.me ? '<span class="you">' + T('you', 'Siz') + '</span><span class="self-hint"> · ' + T('pv_tap', "do'stingiz nimani ko'radi") + ' <span class="chev">▾</span></span>' : escapeHtml(r.name)) + '</div>'
             + stat + (r.me ? '' : '<span class="rename-ic" data-rename="' + escapeHtml(r.code) + '" data-kind="friend" title="' + T('name_give', 'Ism berish') + '">✎</span><span class="chat-ic">💬</span>') + '</div>';
+          if (r.me) html += selfPreviewHtml();
         });
         if (!hasFriends) {
           html += '<div class="lb-empty">' + T('empty_friend', 'Hali do\'st yo\'q — kodingizni ulashing va musobaqani boshlang!') + '</div>';
@@ -224,6 +233,29 @@
       });
     }
     function escapeHtml(s) { return String(s).replace(/[<>&"]/g, function (c) { return ({ '<': '&lt;', '>': '&gt;', '&': '&amp;', '"': '&quot;' })[c]; }); }
+
+    // Do'st/ustoz AYNAN nimani ko'radi — foydalanuvchi o'zi tekshiradi (berkitilgan chiqmaydi).
+    function selfPreviewHtml() {
+      if (!Social.visGet || !Social.myStats) return '';
+      var vis = Social.visGet(), st = Social.myStats();
+      var tasks = Social.myTasksToday ? Social.myTasksToday() : [];
+      var hiddenN = (Social.hiddenSet ? Social.hiddenSet() : []).length;
+      var hid = '🙈 ' + T('pv_hidden', 'berkitilgan');
+      var rows = '';
+      rows += '<div class="wt-row"><span class="wt-name">' + T('pv_focus', 'Fokus vaqti') + '</span><span class="wt-meta">' + (vis.hours ? (st.focusH + ' ' + T('hours', 'soat')) : hid) + '</span></div>';
+      rows += '<div class="wt-row"><span class="wt-name">' + T('pv_habits', 'Bajarilgan odatlar') + '</span><span class="wt-meta">' + (vis.tasks ? (st.habits + ' ' + T('habits', 'odat')) : hid) + '</span></div>';
+      if (tasks.length) {
+        tasks.forEach(function (t) {
+          var badge = (t.t == null) ? '' : (' · ' + (t.t ? T('timer_badge', 'taymerli') : T('notimer_badge', 'taymersiz')));
+          rows += '<div class="wt-row"><span class="wt-name"><span class="tick">✓</span> ' + escapeHtml(t.n) + '</span><span class="wt-meta">' + (t.m || 0) + ' ' + T('min_short', 'daq') + badge + '</span></div>';
+        });
+      } else {
+        rows += '<div class="wt-row"><span class="wt-name" style="color:var(--text-dim)">' + T('pv_no_tasks', "Ko'rinadigan vazifa yo'q") + '</span><span></span></div>';
+      }
+      if (hiddenN) rows += '<div class="wt-row"><span class="wt-name" style="color:var(--text-dim)">🙈 ' + T('pv_hidden_n', '{n} ta vazifa berkitilgan (ko\'rinmaydi)', { n: hiddenN }) + '</span><span></span></div>';
+      return '<div class="ward-tasks self-preview" style="display:none;"><div style="font-size:11px;letter-spacing:1px;text-transform:uppercase;color:var(--text-dim);margin-bottom:6px;">👁 ' + T('pv_head', "Do'st va ustozingiz shuni ko'radi") + '</div>' + rows
+        + '<div style="font-size:11.5px;color:var(--text-dim);margin-top:8px;line-height:1.45;">' + T('pv_foot', "O'zgartirish: Hisobot sahifasida ko'rsatish/berkitishni sozlaysiz.") + '</div></div>';
+    }
 
     // ── Chat (suhbat) ──
     var chatCode = null, chatCh = null;
@@ -305,6 +337,14 @@
         if (nm === null) return;
         if (Social.renameFriend) Social.renameFriend(code, kind, nm);
         render();
+      });
+      // "Siz" qatori — bosilsa do'st/ustoz ko'radigan preview ochiladi/yopiladi.
+      $('lbList').addEventListener('click', function (e) {
+        var srow = e.target.closest && e.target.closest('[data-self]');
+        if (!srow) return;
+        srow.classList.toggle('open');
+        var pv = srow.nextElementSibling;
+        if (pv && pv.classList.contains('self-preview')) pv.style.display = (srow.classList.contains('open')) ? 'block' : 'none';
       });
       $('lbList').addEventListener('click', function (e) {
         if (e.target.closest && e.target.closest('[data-rename]')) return;   // ism tugmasi — chat ochilmasin
