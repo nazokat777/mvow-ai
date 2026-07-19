@@ -14,10 +14,18 @@
   // ── Tap feedback + shine uslublari (press feedback reduced-motion'da ham qoladi — u bezak emas) ──
   var st = document.createElement('style');
   st.textContent =
-    '.cta,.btn,.ghost,.chip,.ai-chip,.report-link,.lb-row,.row,.t-row,.rw,.seg button{transition:transform .13s cubic-bezier(.34,1.56,.64,1)}'
+    '.cta,.btn,.ghost,.chip,.ai-chip,.report-link,.lb-row,.row,.t-row,.rw,.seg button,.next-btn,.yes-btn,.navbtn,.choice{transition:transform .13s cubic-bezier(.34,1.56,.64,1)}'
     + '@media (hover:none){'
-    + '.cta:active,.btn:active,.ghost:active,.chip:active,.ai-chip:active,.report-link:active,.lb-row:active,.rw:active,.seg button:active{transform:scale(.965)}'
+    + '.cta:active,.btn:active,.ghost:active,.chip:active,.ai-chip:active,.report-link:active,.lb-row:active,.rw:active,.seg button:active,.next-btn:active,.yes-btn:active,.navbtn:active,.choice:active{transform:scale(.965)}'
     + '}'
+    // Anketa variantlari — ketma-ket (stagger) kirish
+    + '@media (prefers-reduced-motion:no-preference){'
+    + '.choices .choice{animation:mfxChoiceIn .42s cubic-bezier(.22,1,.36,1) backwards}'
+    + '.choices .choice:nth-child(2){animation-delay:.05s}.choices .choice:nth-child(3){animation-delay:.1s}'
+    + '.choices .choice:nth-child(4){animation-delay:.15s}.choices .choice:nth-child(5){animation-delay:.2s}'
+    + '.choices .choice:nth-child(6){animation-delay:.25s}.choices .choice:nth-child(7){animation-delay:.3s}'
+    + '}'
+    + '@keyframes mfxChoiceIn{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:none}}'
     + '.mfx-shine{position:relative;overflow:hidden}'
     + '.mfx-shine>*{position:relative;z-index:1}'
     + '.mfx-shine::after{content:"";position:absolute;top:0;left:0;width:42%;height:100%;z-index:2;pointer-events:none;'
@@ -68,7 +76,7 @@
     setTimeout(function () { el.classList.remove('mfx-sweep'); }, 950);
   }
   function enhanceCTA() {
-    var sel = '.cta, .btn.save, .ai-reward-card, .code-card, .buy.ready';
+    var sel = '.cta, .btn.save, .ai-reward-card, .code-card, .buy.ready, .yes-btn';
     var nodes; try { nodes = document.querySelectorAll(sel); } catch (e) { return; }
     Array.prototype.forEach.call(nodes, function (c, i) {
       if (c.__mfxs) return; c.__mfxs = 1;
@@ -94,7 +102,7 @@
     setTimeout(function () { if (s.parentNode) s.parentNode.removeChild(s); }, 640);
   }
   function enableRipple() {
-    var sel = '.cta,.btn,.buy,.addb,.ai-reward-card,.report-link,.tab,.seg button,.ai-chip';
+    var sel = '.cta,.btn,.buy,.addb,.ai-reward-card,.report-link,.tab,.seg button,.ai-chip,.next-btn,.yes-btn,.choice';
     var nodes; try { nodes = document.querySelectorAll(sel); } catch (e) { return; }
     Array.prototype.forEach.call(nodes, function (el) {
       if (el.__mfxr) return; el.__mfxr = 1;
