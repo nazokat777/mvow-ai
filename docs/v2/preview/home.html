@@ -293,14 +293,25 @@
 <body>
 
 <script>
-  // Skelet miltillashini oldini olamiz ("vazifa yo'q" -> yonib-o'chib -> "vazifalar bor").
-  // Kontent JS render tugaguncha yashirin turadi, keyin yumshoq paydo bo'ladi. Zaxira: 1.5s da baribir ko'rsatiladi.
+  // "Bo'sh vazifalar -> o'chib-yonib -> vazifalar" ni yo'q qilamiz. app.html splash bilan AYNAN bir xil
+  // logo overlay'ni home ustida ushlab turamiz — vazifalar chizilguncha. Uzluksiz: native splash -> app.html
+  // logo -> home logo -> vazifalar. O'rtada bo'sh/skelet ekran KO'RINMAYDI.
   (function () {
-    try { document.documentElement.classList.add('home-loading'); } catch (e) {}
-    setTimeout(function () { try { document.documentElement.classList.remove('home-loading'); } catch (e) {} }, 1500);
+    try { window.__splashBg = (localStorage.getItem('mvow.theme') === 'dark') ? '#04060B' : '#f3f4f7'; }
+    catch (e) { window.__splashBg = '#f3f4f7'; }
   })();
 </script>
-<style>html.home-loading .container { opacity: 0; } .container { transition: opacity .28s ease; }</style>
+<div id="homeSplash" style="position:fixed;inset:0;z-index:99998;display:flex;align-items:center;justify-content:center;transition:opacity .35s ease;">
+  <img src="assets/mnsm-maskable-512.png" alt="" style="width:120px;height:120px;border-radius:26px;display:block;">
+</div>
+<script>
+  (function () {
+    var s = document.getElementById('homeSplash');
+    if (s && window.__splashBg) s.style.background = window.__splashBg;
+    // Zaxira: JS render ishlamasa ham 1.6s da splash so'nadi.
+    setTimeout(function () { if (s) { s.style.opacity = '0'; setTimeout(function () { if (s.parentNode) s.parentNode.removeChild(s); }, 420); } }, 1600);
+  })();
+</script>
 
 <div class="phone">
   <div class="container">
@@ -695,8 +706,11 @@
     }
     renderTasks();
     renderNowCard();
-    // Kontent tayyor — miltillashsiz yumshoq ko'rsatamiz.
-    requestAnimationFrame(function () { try { document.documentElement.classList.remove('home-loading'); } catch (e) {} });
+    // Vazifalar chizildi — splash logoni yumshoq so'ndiramiz (ostida tayyor kontent turibdi).
+    requestAnimationFrame(function () {
+      var s = document.getElementById('homeSplash');
+      if (s) { s.style.opacity = '0'; setTimeout(function () { if (s.parentNode) s.parentNode.removeChild(s); }, 420); }
+    });
 
     // ── Orzular eslatmasi — 3 kunda bir "orzularingizni o'qing" kartasi ──
     (function renderDreamCard() {
