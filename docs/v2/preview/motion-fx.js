@@ -86,14 +86,14 @@
     });
   }
 
-  // ── 3) Tap ripple (Material-uslub) ──
-  function ripple(e) {
-    var el = e.currentTarget;
+  // ── 3) Tap ripple (Material-uslub) — DELEGATSIYA (dinamik elementlarni ham qamraydi) ──
+  var RIP_SEL = '.cta,.btn,.buy,.addb,.ai-reward-card,.report-link,.tab,.seg button,.ai-chip,.next-btn,.yes-btn,.choice';
+  function ripple(el, e) {
     var r = el.getBoundingClientRect();
+    if (!r.width) return;
     var d = Math.max(r.width, r.height) * 1.05;
-    var pt = (e.touches && e.touches[0]) ? e.touches[0] : e;
-    var x = (pt.clientX != null ? pt.clientX : r.left + r.width / 2) - r.left;
-    var y = (pt.clientY != null ? pt.clientY : r.top + r.height / 2) - r.top;
+    var x = (e.clientX != null ? e.clientX : r.left + r.width / 2) - r.left;
+    var y = (e.clientY != null ? e.clientY : r.top + r.height / 2) - r.top;
     var s = document.createElement('span');
     s.className = 'mfx-ripple';
     s.style.width = s.style.height = d + 'px';
@@ -102,13 +102,13 @@
     setTimeout(function () { if (s.parentNode) s.parentNode.removeChild(s); }, 640);
   }
   function enableRipple() {
-    var sel = '.cta,.btn,.buy,.addb,.ai-reward-card,.report-link,.tab,.seg button,.ai-chip,.next-btn,.yes-btn,.choice';
-    var nodes; try { nodes = document.querySelectorAll(sel); } catch (e) { return; }
-    Array.prototype.forEach.call(nodes, function (el) {
-      if (el.__mfxr) return; el.__mfxr = 1;
-      el.classList.add('mfx-rippleable');
-      el.addEventListener('pointerdown', ripple);
-    });
+    if (window.__mfxRip) return; window.__mfxRip = 1;
+    document.addEventListener('pointerdown', function (e) {
+      var el = (e.target && e.target.closest) ? e.target.closest(RIP_SEL) : null;
+      if (!el) return;
+      if (!el.classList.contains('mfx-rippleable')) el.classList.add('mfx-rippleable');
+      ripple(el, e);
+    }, true);
   }
 
   // ── 4) Progress bar'lar 0'dan to'ladi ──
