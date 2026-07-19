@@ -250,6 +250,16 @@
   .lock-row .sw::after { content: ''; position: absolute; top: 2px; left: 2px; width: 21px; height: 21px; border-radius: 50%; background: #fff; transition: transform .2s; box-shadow: 0 1px 3px rgba(0,0,0,.3); }
   .lock-row input:checked ~ .sw { background: var(--accent, #F4845F); }
   .lock-row input:checked ~ .sw::after { transform: translateX(19px); }
+  /* Funksiya boshqaruvi: nom + rename + Berkit + Qulf */
+  .feat-item { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; padding: 11px 14px; border-bottom: 1px solid rgba(150,150,150,.12); }
+  .feat-item .fn { flex: 1 1 90px; min-width: 90px; font-size: 15px; }
+  .feat-item .feat-rename { color: var(--text-dim); cursor: pointer; font-size: 15px; }
+  .feat-item .mini { display: flex; align-items: center; gap: 5px; font-size: 12px; color: var(--text-dim); cursor: pointer; }
+  .feat-item .mini input { position: absolute; opacity: 0; width: 0; height: 0; }
+  .feat-item .sw2 { position: relative; width: 34px; height: 20px; border-radius: 999px; background: rgba(150,150,150,.32); flex: none; transition: background .2s; }
+  .feat-item .sw2::after { content: ''; position: absolute; top: 2px; left: 2px; width: 16px; height: 16px; border-radius: 50%; background: #fff; transition: transform .2s; box-shadow: 0 1px 2px rgba(0,0,0,.3); }
+  .feat-item .mini input:checked ~ .sw2 { background: var(--accent, #F4845F); }
+  .feat-item .mini input:checked ~ .sw2::after { transform: translateX(14px); }
 </style>
 <script>
 (function () {
@@ -278,6 +288,9 @@
   var LABELS = { hamyon: 'Hamyon', blaknot: 'Blaknot', goyalar: "G'oyalarim", orzular: 'Orzular', uyqu: 'Uyqu', mukofot: 'Mukofotlar', shahar: 'Shahringiz', eslatma: 'Eslatmalar', hisobot: 'Hisobot', dostlar: "Do'stlar" };
   function featName(key) { try { var n = JSON.parse(localStorage.getItem('mvow.featNames') || '{}'); return n[key] || LABELS[key] || key; } catch (e) { return LABELS[key] || key; } }
   function setFeatName(key, name) { try { var n = JSON.parse(localStorage.getItem('mvow.featNames') || '{}'); if (name) n[key] = name; else delete n[key]; localStorage.setItem('mvow.featNames', JSON.stringify(n)); } catch (e) {} }
+  function hiddenFeats() { try { var a = JSON.parse(localStorage.getItem('mvow.hiddenFeatures') || '[]'); return Array.isArray(a) ? a : []; } catch (e) { return []; } }
+  function isFeatHidden(key) { return hiddenFeats().indexOf(key) >= 0; }
+  function setFeatHidden(key, on) { var a = hiddenFeats(), i = a.indexOf(key); if (on && i < 0) a.push(key); if (!on && i >= 0) a.splice(i, 1); try { localStorage.setItem('mvow.hiddenFeatures', JSON.stringify(a)); } catch (e) {} }
   function esc(s) { return String(s || '').replace(/[&<>"]/g, function (c) { return ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]); }); }
   function renderFeats() {
     if (!featList || !window.PinLock) return;
@@ -285,25 +298,28 @@
     var feats = PinLock.FEATURES || {}, seen = {};
     Object.keys(feats).forEach(function (page) {
       var key = feats[page]; if (seen[key]) return; seen[key] = 1;
-      var wrap = document.createElement('label');
-      wrap.className = 'row lock-row'; wrap.style.paddingLeft = '14px';
-      wrap.innerHTML = '<span class="lbl fn" style="font-size:15px;">' + esc(featName(key)) + '</span>'
-        + '<span class="feat-rename" title="' + T('settings.feat_rename_t', "Nomini o'zgartirish") + '" style="color:var(--text-dim);cursor:pointer;padding:0 12px;font-size:15px;">✎</span>'
-        + '<input type="checkbox"><span class="sw"></span>';
-      var cb = wrap.querySelector('input');
-      cb.checked = PinLock.isFeatureLocked(key);
-      cb.addEventListener('change', function () {
-        if (cb.checked && !needPin()) { cb.checked = false; return; }
-        PinLock.setFeatureLocked(key, cb.checked);
+      var row = document.createElement('div');
+      row.className = 'feat-item';
+      row.innerHTML = '<span class="fn">' + esc(featName(key)) + '</span>'
+        + '<span class="feat-rename" title="' + T('settings.feat_rename_t', "Nomini o'zgartirish") + '">✎</span>'
+        + '<label class="mini"><span>' + T('settings.feat_hide', 'Berkit') + '</span><input type="checkbox" class="hcb"><span class="sw2"></span></label>'
+        + '<label class="mini"><span>' + T('settings.feat_lock', 'Qulf') + '</span><input type="checkbox" class="lcb"><span class="sw2"></span></label>';
+      var hcb = row.querySelector('.hcb'), lcb = row.querySelector('.lcb');
+      hcb.checked = isFeatHidden(key);
+      lcb.checked = PinLock.isFeatureLocked(key);
+      hcb.addEventListener('change', function () { setFeatHidden(key, hcb.checked); });
+      lcb.addEventListener('change', function () {
+        if (lcb.checked && !needPin()) { lcb.checked = false; return; }
+        PinLock.setFeatureLocked(key, lcb.checked);
       });
-      wrap.querySelector('.feat-rename').addEventListener('click', function (e) {
+      row.querySelector('.feat-rename').addEventListener('click', function (e) {
         e.preventDefault(); e.stopPropagation();
         var nm = prompt(T('settings.feat_rename_ask', "Yangi nom (bo'sh qoldirsangiz — asl nom):"), featName(key));
         if (nm === null) return;
         setFeatName(key, (nm || '').trim());
-        wrap.querySelector('.fn').textContent = featName(key);
+        row.querySelector('.fn').textContent = featName(key);
       });
-      featList.appendChild(wrap);
+      featList.appendChild(row);
     });
   }
   if (featRow) featRow.onclick = function () {
