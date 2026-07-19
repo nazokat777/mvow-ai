@@ -34,6 +34,23 @@
   .bar .fill { height: 100%; border-radius: 999px; transition: width .3s; }
   .rw.coin .bar .fill { background: linear-gradient(90deg, #F5C26B, #d99a3c); }
   .rw.dm .bar .fill { background: linear-gradient(90deg, #6EB5FF, #3f7fd0); }
+  /* WOW (minimal): tayyor mukofot sokin "nafas oladi", progress nur kabi oqadi, olish oni — vazmin uchqun */
+  .rw { position: relative; }
+  .rw.ready-glow::before { content: ""; position: absolute; inset: -1px; border-radius: 16px; border: 1px solid rgba(107,191,122,.55);
+    box-shadow: 0 0 20px rgba(107,191,122,.16); pointer-events: none; opacity: .5; }
+  .bar .fill { position: relative; overflow: hidden; }
+  .mk-spark { position: fixed; z-index: 10050; width: 7px; height: 7px; border-radius: 50%; pointer-events: none; opacity: 0; }
+  @media (prefers-reduced-motion: no-preference) {
+    .rw.ready-glow::before { animation: rwBreath 3.6s ease-in-out infinite; }
+    .bar .fill::after { content: ""; position: absolute; top: 0; bottom: 0; left: 0; width: 46px; pointer-events: none;
+      background: linear-gradient(90deg, transparent, rgba(255,255,255,.4), transparent); transform: translateX(-60px);
+      animation: barSheen 5s ease-in-out infinite; }
+    .rw:nth-child(even) .bar .fill::after { animation-delay: 2.3s; }
+    .mk-spark { animation: mkSpark .9s cubic-bezier(.16,.84,.4,1) forwards; }
+  }
+  @keyframes rwBreath { 0%,100% { opacity: .22; } 50% { opacity: .85; } }
+  @keyframes barSheen { 0%,62% { transform: translateX(-60px); } 100% { transform: translateX(440px); } }
+  @keyframes mkSpark { 0% { transform: translate(0,0) scale(1); opacity: .95; } 100% { transform: translate(var(--dx,0), var(--dy,-40px)) scale(.3); opacity: 0; } }
   .rw .buy { width: 100%; margin-top: 12px; padding: 12px; border: none; border-radius: 12px; font-size: 15px; font-weight: 700; font-family: inherit; cursor: pointer; }
   .rw .buy.ready { background: #6BBF7A; color: #04060B; }
   .rw .buy.wait { background: transparent; border: 1px solid var(--border-default, rgba(255,255,255,.14)); color: var(--text-dim, #9CA0A8); cursor: default; }
@@ -183,7 +200,7 @@
       document.getElementById('list').innerHTML = rewards.length ? rewards.map(function (r) {
         var bal = balOf(r.cur), price = num(r.price) || 1, ready = bal >= price;
         var pct = Math.max(0, Math.min(100, Math.round(bal / price * 100)));
-        return '<div class="rw ' + (r.cur === 'diamond' ? 'dm' : 'coin') + '">'
+        return '<div class="rw ' + (r.cur === 'diamond' ? 'dm' : 'coin') + (ready ? ' ready-glow' : '') + '">'
           + '<div class="top"><div class="em">' + esc(r.emoji || '🎁') + '</div>'
           + '<div class="nm"><div class="n1">' + esc(r.name) + '</div>'
           + '<div class="n2">' + Math.min(bal, price) + ' / ' + price + ' ' + icon(r.cur) + '</div></div>'
@@ -210,20 +227,43 @@
         });
       });
       document.querySelectorAll('[data-buy]').forEach(function (b) {
-        b.addEventListener('click', function () { buy(b.getAttribute('data-buy')); });
+        b.addEventListener('click', function () { buy(b.getAttribute('data-buy'), b); });
       });
     }
 
-    function buy(id) {
+    // "Siz bunga munosib" oni — vazmin uchqunlar yuqoriga ko'tarilib so'nadi (o'yin nayrangi emas, e'tirof)
+    function claimBurst(rect, cur) {
+      try {
+        if (!rect || !matchMedia('(prefers-reduced-motion: no-preference)').matches) return;
+        var cx = rect.left + rect.width / 2, cy = rect.top + rect.height / 2;
+        var col = cur === 'diamond' ? '#6EB5FF' : '#F5C26B';
+        for (var i = 0; i < 8; i++) {
+          var s = document.createElement('span');
+          s.className = 'mk-spark';
+          var a = Math.PI + (i / 7) * Math.PI, d = 30 + Math.random() * 34;   // yuqori yarim doira — yengil ko'tarilish
+          s.style.left = cx + 'px'; s.style.top = cy + 'px';
+          s.style.background = col; s.style.boxShadow = '0 0 8px ' + col;
+          s.style.setProperty('--dx', (Math.cos(a) * d).toFixed(0) + 'px');
+          s.style.setProperty('--dy', (Math.sin(a) * d - 16).toFixed(0) + 'px');
+          document.body.appendChild(s);
+          (function (el) { setTimeout(function () { if (el.parentNode) el.parentNode.removeChild(el); }, 950); })(s);
+        }
+        if (navigator.vibrate) navigator.vibrate([14, 40, 14]);
+      } catch (e) {}
+    }
+
+    function buy(id, btn) {
       var rewards = loadR(), r = null;
       for (var i = 0; i < rewards.length; i++) { if (String(rewards[i].id) === id) { r = rewards[i]; break; } }
       if (!r) return;
       var price = num(r.price) || 1, key = r.cur === 'diamond' ? 'mvow.diamonds' : 'mvow.coins';
       if (get(key) < price) return;
+      var rect = null; try { if (btn) rect = btn.getBoundingClientRect(); } catch (e) {}
       if (!confirm('"' + r.name + '" — ' + price + ' ' + icon(r.cur) + ' ' + T('mukofot.buy_q', 'sarflansinmi?'))) return;
       setN(key, get(key) - price);   // olmos sarflansa ham diamondsLifetime (prestij) kamaymaydi
       var h = loadH(); h.push({ name: r.name, emoji: r.emoji, price: price, cur: r.cur, date: todayIso() }); saveH(h);
       if (window.MVOW_DATA && MVOW_DATA.fxSuccess) MVOW_DATA.fxSuccess();
+      claimBurst(rect, r.cur);
       render();
       if (window.MvowUndo) MvowUndo.show(T('mukofot.bought', 'Olindi'), function () {
         setN(key, get(key) + price); var hh = loadH(); hh.pop(); saveH(hh); render();
