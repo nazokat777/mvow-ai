@@ -21,7 +21,7 @@
   }
 
   // Raqamli PIN oynasi — 4 raqam yig'adi, onDone(pin) chaqiradi. cancelable bo'lsa orqaga tugmasi bor.
-  function padOverlay(title, onDone, cancelable) {
+  function padOverlay(title, onDone, cancelable, onCancel) {
     var ov = document.createElement('div');
     ov.style.cssText = 'position:fixed;inset:0;z-index:2147483600;background:#0a0610;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:24px;font-family:Inter,sans-serif;color:#fff;';
     ov.innerHTML = '<div style="font-size:40px;margin-bottom:10px;">🔒</div>'
@@ -57,15 +57,17 @@
       };
       pad.appendChild(b);
     });
-    if (cancelable) ov.querySelector('.pcancel').onclick = function () { if (ov.parentNode) document.documentElement.removeChild(ov); };
+    if (cancelable) ov.querySelector('.pcancel').onclick = function () { if (ov.parentNode) document.documentElement.removeChild(ov); if (typeof onCancel === 'function') onCancel(); };
     return { shake: function (m) { msg.textContent = m; msg.style.color = '#ff6b6b'; entered = ''; renderDots(); } };
   }
 
-  // Ilova ochilganda qulf
-  function gate() {
+  // Qulf oynasi — kutilgan PIN'ga tekshiradi (ilova PIN'i YOKI funksiya PIN'i). Cancelsiz.
+  function gate(expected, onOk) {
+    expected = (expected != null) ? expected : get();
+    onOk = onOk || markUnlocked;
     function ask() {
-      var ui = padOverlay('PIN kodni kiriting', function check(p) {
-        if (p === get()) { markUnlocked(); }
+      padOverlay('PIN kodni kiriting', function (p) {
+        if (p === expected) { onOk(); }
         else { ask(); /* qayta */ }
       }, false);
     }
@@ -127,18 +129,49 @@
     'shahar.html': 'shahar', 'eslatmalar.html': 'eslatma', 'hisobot.html': 'hisobot', 'dostlar.html': 'dostlar'
   };
 
-  // Avtomatik qulf: PIN o'rnatilgan + bu sessiyada ochilmagan + (butun ilova YOKI joriy funksiya qulflangan).
+  // ── Har funksiyaga ALOHIDA (o'z) PIN kodi — ilova PIN'idan va bir-biridan farqli ──
+  function featPins() { try { var m = JSON.parse(localStorage.getItem('mvow.featPins') || '{}'); return (m && typeof m === 'object') ? m : {}; } catch (e) { return {}; } }
+  function getFeatPin(key) { return featPins()[key] || ''; }
+  function hasFeatPin(key) { return !!getFeatPin(key); }
+  function setFeatPin(key, pin) { var m = featPins(); m[key] = String(pin); try { localStorage.setItem('mvow.featPins', JSON.stringify(m)); } catch (e) {} }
+  function clearFeatPin(key) { var m = featPins(); delete m[key]; try { localStorage.setItem('mvow.featPins', JSON.stringify(m)); sessionStorage.removeItem('mvow.funlock.' + key); } catch (e) {} }
+  function featUnlocked(key) { try { return sessionStorage.getItem('mvow.funlock.' + key) === '1'; } catch (e) { return false; } }
+  function markFeatUnlocked(key) { try { sessionStorage.setItem('mvow.funlock.' + key, '1'); } catch (e) {} }
+  // Funksiyaga yangi PIN o'rnatish (2 marta so'rab). onDone(true/false).
+  function setFeaturePin(key, onDone) {
+    padOverlay('Yangi PIN (4 raqam)', function (p1) {
+      padOverlay('PINni takrorlang', function (p2) {
+        if (p1 === p2) { setFeatPin(key, p1); markFeatUnlocked(key); toast("Qulf o'rnatildi ✓"); if (onDone) onDone(true); }
+        else { toast('PIN mos kelmadi'); if (onDone) onDone(false); }
+      }, true, function () { if (onDone) onDone(false); });
+    }, true, function () { if (onDone) onDone(false); });
+  }
+  // Funksiya PIN'ini o'chirish — joriy PINni so'rab. onDone(true/false).
+  function disableFeaturePin(key, onDone) {
+    if (!hasFeatPin(key)) { if (onDone) onDone(true); return; }
+    padOverlay('Joriy PINni kiriting', function (p) {
+      if (p === getFeatPin(key)) { clearFeatPin(key); toast("Qulf o'chirildi"); if (onDone) onDone(true); }
+      else { toast("Noto'g'ri PIN"); if (onDone) onDone(false); }
+    }, true, function () { if (onDone) onDone(false); });
+  }
+
+  // Avtomatik qulf. USTUVORLIK: 1) funksiyaning O'Z PIN'i, 2) ilova PIN'i (butun ilova/app-PIN'li funksiya).
   var _file = (location.pathname.split('/').pop() || '').toLowerCase();
   var _feat = FEATURES[_file];
-  if (has() && !unlocked() && (appLockOn() || (_feat && isFeatureLocked(_feat)))) {
-    if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', gate);
-    else gate();
+  function _autoGate() {
+    if (_feat && hasFeatPin(_feat) && !featUnlocked(_feat)) { gate(getFeatPin(_feat), function () { markFeatUnlocked(_feat); }); return; }
+    if (has() && !unlocked() && (appLockOn() || (_feat && isFeatureLocked(_feat)))) { gate(); }
+  }
+  if ((_feat && hasFeatPin(_feat) && !featUnlocked(_feat)) || (has() && !unlocked() && (appLockOn() || (_feat && isFeatureLocked(_feat))))) {
+    if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', _autoGate);
+    else _autoGate();
   }
 
   window.PinLock = {
     has: has, manage: manage, clear: clearPin,
     appLockOn: appLockOn, setAppLock: setAppLock,
     lockedFeatures: lockedFeatures, isFeatureLocked: isFeatureLocked, setFeatureLocked: setFeatureLocked,
+    hasFeatPin: hasFeatPin, getFeatPin: getFeatPin, setFeaturePin: setFeaturePin, disableFeaturePin: disableFeaturePin, clearFeatPin: clearFeatPin,
     FEATURES: FEATURES
   };
 })();

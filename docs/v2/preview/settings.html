@@ -300,18 +300,21 @@
       var key = feats[page]; if (seen[key]) return; seen[key] = 1;
       var row = document.createElement('div');
       row.className = 'feat-item';
-      row.innerHTML = '<span class="fn">' + esc(featName(key)) + '</span>'
+      row.innerHTML = '<span class="fn" title="' + T('settings.feat_open', 'Ochish') + '" style="cursor:pointer;text-decoration:underline;text-underline-offset:3px;">' + esc(featName(key)) + '</span>'
         + '<span class="feat-rename" title="' + T('settings.feat_rename_t', "Nomini o'zgartirish") + '">✎</span>'
         + '<label class="mini"><span>' + T('settings.feat_hide', 'Berkit') + '</span><input type="checkbox" class="hcb"><span class="sw2"></span></label>'
-        + '<label class="mini"><span>' + T('settings.feat_lock', 'Qulf') + '</span><input type="checkbox" class="lcb"><span class="sw2"></span></label>';
+        + '<label class="mini"><span>' + T('settings.feat_lock', 'PIN') + '</span><input type="checkbox" class="lcb"><span class="sw2"></span></label>';
       var hcb = row.querySelector('.hcb'), lcb = row.querySelector('.lcb');
       hcb.checked = isFeatHidden(key);
-      lcb.checked = PinLock.isFeatureLocked(key);
+      lcb.checked = PinLock.hasFeatPin(key);   // funksiyaning O'Z PIN'i bormi
       hcb.addEventListener('change', function () { setFeatHidden(key, hcb.checked); });
       lcb.addEventListener('change', function () {
-        if (lcb.checked && !needPin()) { lcb.checked = false; return; }
-        PinLock.setFeatureLocked(key, lcb.checked);
+        // Har funksiyaga ALOHIDA PIN: yoqilganda o'rnatadi, o'chirilganda joriy PINni so'raydi.
+        if (lcb.checked) PinLock.setFeaturePin(key, function () { lcb.checked = PinLock.hasFeatPin(key); });
+        else PinLock.disableFeaturePin(key, function () { lcb.checked = PinLock.hasFeatPin(key); });
       });
+      // Nomga bosilsa — funksiya ochiladi (BERKITILGAN bo'lsa ham shu yerdan kiriladi).
+      row.querySelector('.fn').addEventListener('click', function () { location.href = page; });
       row.querySelector('.feat-rename').addEventListener('click', function (e) {
         e.preventDefault(); e.stopPropagation();
         var nm = prompt(T('settings.feat_rename_ask', "Yangi nom (bo'sh qoldirsangiz — asl nom):"), featName(key));
