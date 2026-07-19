@@ -87,6 +87,7 @@
         pv_hidden_n: "{n} ta vazifa berkitilgan (ko'rinmaydi)",
         pv_foot: "O'zgartirish: Hisobot sahifasida ko'rsatish/berkitishni sozlaysiz.",
         pv_controls: "Ko'rsatish / berkitish", pv_timer_lbl: "Taymerli / taymersiz belgisi", pv_foot2: "Alohida vazifani berkitish — vazifa bajarilganda so'raladi.",
+        report_link: "Hisobot / Ulashish", report_sub: "Bugungi mehnatingiz — ko'ring va ulashing",
       },
       rejalar: {
         page_title: "{brand} — Rejalar",
@@ -1178,6 +1179,7 @@
         pv_hidden_n: "{n} задач скрыто (не видно)",
         pv_foot: "Изменить: настройте показ/скрытие на странице Отчёт.",
         pv_controls: "Показывать / скрывать", pv_timer_lbl: "Метка с таймером / без", pv_foot2: "Скрыть отдельную задачу — спросим при её выполнении.",
+        report_link: "Отчёт / Поделиться", report_sub: "Ваш сегодняшний труд — посмотрите и поделитесь",
       },
       rejalar: {
         page_title: "{brand} — Планы",
@@ -2256,6 +2258,7 @@
         pv_hidden_n: "{n} task(s) hidden (not visible)",
         pv_foot: "To change: adjust show/hide on the Report page.",
         pv_controls: "Show / hide", pv_timer_lbl: "Timed / untimed badge", pv_foot2: "Hide a specific task — asked when you complete it.",
+        report_link: "Report / Share", report_sub: "Your work today — view and share",
       },
       rejalar: {
         page_title: "{brand} — Plans",
