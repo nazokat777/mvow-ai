@@ -266,6 +266,6 @@
   function tick() { try { document.documentElement.classList.toggle('mvow-modal', overlayOpen()); } catch (e) {} }
   tick();
   setTimeout(tick, 300); setTimeout(tick, 900);
-  setInterval(tick, 450);
+  setInterval(function () { if (!document.hidden) tick(); }, 550);   // yashirin sahifada to'xtaydi (tejamkor)
   document.addEventListener('click', function () { setTimeout(tick, 60); }, true);
 })();
