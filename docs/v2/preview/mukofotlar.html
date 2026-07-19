@@ -68,6 +68,31 @@
     <div class="b dm"><div class="v">💎 <span id="dmBal">0</span></div><div class="k" data-i18n="mukofot.diamonds">Olmos</div></div>
   </div>
 
+  <style>
+    .ai-reward-card{display:flex;align-items:center;gap:12px;width:100%;text-align:left;margin:2px 0 18px;padding:14px 16px;border:none;border-radius:16px;cursor:pointer;background:linear-gradient(135deg,#6C5CE7,#8E7BF0);color:#fff;box-shadow:0 10px 26px rgba(108,92,231,.35);font-family:inherit;}
+    .ai-reward-card:active{transform:scale(.98);}
+    .ai-reward-card .ai-ic{font-size:26px;flex:none;}
+    .ai-reward-card .ai-t{font-size:16px;font-weight:800;}
+    .ai-reward-card .ai-s{font-size:12.5px;opacity:.92;margin-top:2px;line-height:1.3;}
+    .ai-reward-card .ai-arrow{margin-left:auto;font-size:20px;opacity:.85;}
+    #aiOv .sheet{max-height:90vh;overflow-y:auto;}
+    .ai-chips{display:flex;flex-wrap:wrap;gap:8px;margin:2px 0 6px;}
+    .ai-chip{padding:9px 13px;border-radius:999px;border:1.5px solid var(--border-default,rgba(255,255,255,.16));background:transparent;color:var(--text,#f5f2ec);font-size:14px;cursor:pointer;font-family:inherit;}
+    .ai-chip.on{border-color:#6C5CE7;background:rgba(108,92,231,.16);color:#8E7BF0;}
+    .ai-res{margin-top:14px;display:flex;flex-direction:column;gap:10px;}
+    .ai-item{background:var(--card,rgba(255,255,255,.05));border:1px solid var(--border-default,rgba(255,255,255,.1));border-radius:12px;padding:12px 14px;}
+    .ai-item .it-title{font-size:15px;font-weight:700;color:var(--text,#f5f2ec);}
+    .ai-item .it-why{font-size:13px;color:var(--text-dim,#9CA0A8);margin:4px 0 9px;line-height:1.4;}
+    .ai-links{display:flex;flex-wrap:wrap;gap:6px;}
+    .ai-links a{font-size:12.5px;font-weight:600;text-decoration:none;padding:6px 10px;border-radius:8px;background:rgba(108,92,231,.14);color:#8E7BF0;border:1px solid rgba(108,92,231,.3);}
+    .ai-loading{text-align:center;color:var(--text-dim,#9CA0A8);font-size:14px;padding:18px;}
+  </style>
+  <button class="ai-reward-card" id="aiRewardBtn" type="button">
+    <div class="ai-ic">🎬</div>
+    <div class="ai-txt"><div class="ai-t" data-i18n="mukofot.ai_title">AI tavsiyasi</div><div class="ai-s" data-i18n="mukofot.ai_sub">Qiziqishingizga mos jahon top kino/kitoblari + ko'rish havolasi</div></div>
+    <div class="ai-arrow">→</div>
+  </button>
+
   <div class="sec-hd"><span class="t" data-i18n="mukofot.my">Mukofotlarim</span><button class="addb" id="addBtn" data-i18n="mukofot.add">+ Mukofot</button></div>
   <div id="list"></div>
 
@@ -95,6 +120,25 @@
       <button class="btn cancel" id="ovCancel" data-i18n="mukofot.cancel">Bekor</button>
       <button class="btn save" id="ovSave" data-i18n="mukofot.save">Saqlash</button>
     </div>
+  </div>
+</div>
+
+<div class="ov" id="aiOv">
+  <div class="sheet">
+    <h2 data-i18n="mukofot.ai_title">AI tavsiyasi</h2>
+    <div class="hint" data-i18n="mukofot.ai_hint">Intizom mukofoti — qiziqishingizni tanlang, AI jahon top asarlaridan tavsiya qiladi.</div>
+    <div class="seg" style="margin-top:10px;">
+      <button type="button" id="aiFilm" class="on" data-i18n="mukofot.ai_movie">🎬 Film</button>
+      <button type="button" id="aiBook" data-i18n="mukofot.ai_book">📚 Kitob</button>
+    </div>
+    <label class="lbl" data-i18n="mukofot.ai_interest">Qiziqishingiz</label>
+    <div class="ai-chips" id="aiChips"></div>
+    <input id="aiCustom" class="fld" maxlength="40" data-i18n-placeholder="mukofot.ai_custom_ph" placeholder="Yoki o'zingiz yozing…">
+    <div class="actions">
+      <button class="btn cancel" id="aiCancel" data-i18n="mukofot.cancel">Bekor</button>
+      <button class="btn save" id="aiGo" data-i18n="mukofot.ai_go">Tavsiya ber</button>
+    </div>
+    <div class="ai-res" id="aiRes"></div>
   </div>
 </div>
 
@@ -214,6 +258,88 @@
 
     try { document.title = T('mukofot.page_title', 'FOCUS AI — Mukofotlar'); } catch (e) {}
     render();
+  })();
+</script>
+<script>
+  // ── AI mukofot: kino/kitob tavsiyasi (qiziqish + til) + ishonchli qidiruv havolalari ──
+  (function () {
+    function T(k, fb) { return (window.I18N && I18N.t) ? I18N.t(k, fb) : fb; }
+    function esc(s) { return String(s == null ? '' : s).replace(/[&<>"]/g, function (c) { return ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]); }); }
+    function lang() { return (window.I18N && I18N.lang) || 'uz'; }
+    var curKind = 'movie', curChip = '';
+    var CHIPS = {
+      movie: {
+        uz: ['Jangari', 'Komediya', 'Drama', 'Fantastika', 'Triller', 'Tarixiy', 'Sarguzasht', 'Multfilm'],
+        ru: ['Боевик', 'Комедия', 'Драма', 'Фантастика', 'Триллер', 'Исторический', 'Приключения', 'Мультфильм'],
+        en: ['Action', 'Comedy', 'Drama', 'Sci-Fi', 'Thriller', 'Historical', 'Adventure', 'Animation']
+      },
+      book: {
+        uz: ['Motivatsiya', 'Biznes', 'Psixologiya', 'Badiiy', 'Tarix', 'Fantastika', 'Biografiya', 'Rivojlanish'],
+        ru: ['Мотивация', 'Бизнес', 'Психология', 'Художественная', 'История', 'Фантастика', 'Биография', 'Развитие'],
+        en: ['Motivation', 'Business', 'Psychology', 'Fiction', 'History', 'Sci-Fi', 'Biography', 'Growth']
+      }
+    };
+    var FALLBACK = {
+      movie: ['The Shawshank Redemption', 'Inception', 'Forrest Gump', 'Parasite'],
+      book: ['Atomic Habits', 'Sapiens', 'The Alchemist', 'Deep Work']
+    };
+    function chipList() { var m = CHIPS[curKind]; return (m && (m[lang()] || m.uz)) || []; }
+    function renderChips() {
+      var box = document.getElementById('aiChips'); if (!box) return;
+      box.innerHTML = chipList().map(function (g) {
+        return '<button type="button" class="ai-chip' + (g === curChip ? ' on' : '') + '" data-g="' + esc(g) + '">' + esc(g) + '</button>';
+      }).join('');
+      box.querySelectorAll('.ai-chip').forEach(function (b) {
+        b.onclick = function () { curChip = b.getAttribute('data-g'); var c = document.getElementById('aiCustom'); if (c) c.value = ''; renderChips(); };
+      });
+    }
+    function links(kind, title) {
+      var q = encodeURIComponent, L = lang();
+      if (kind === 'book') {
+        var read = ({ uz: " kitobini onlayn o'qish bepul", ru: ' читать онлайн бесплатно', en: ' read online free' })[L] || ' read online free';
+        return [
+          { t: '📖 ' + T('mukofot.ai_read', "O'qish"), u: 'https://www.google.com/search?q=' + q(title + read) },
+          { t: '📚 Google Books', u: 'https://www.google.com/search?tbm=bks&q=' + q(title) }
+        ];
+      }
+      var yt = ({ uz: " to'liq kino", ru: ' фильм полностью', en: ' full movie' })[L] || ' full movie';
+      var free = ({ uz: " to'liq kino onlayn ko'rish bepul", ru: ' смотреть онлайн бесплатно', en: ' watch full movie free online' })[L] || ' watch free online';
+      return [
+        { t: '▶ YouTube', u: 'https://www.youtube.com/results?search_query=' + q(title + yt) },
+        { t: '🔎 ' + T('mukofot.ai_free', 'Bepul qidirish'), u: 'https://www.google.com/search?q=' + q(title + free) },
+        { t: '📼 Archive', u: 'https://archive.org/search?query=' + q(title) }
+      ];
+    }
+    function renderRes(items) {
+      var el = document.getElementById('aiRes'); if (!el) return;
+      if (!items || !items.length) items = FALLBACK[curKind].map(function (t) { return { title: t, year: '', why: '' }; });
+      el.innerHTML = items.map(function (it) {
+        var ls = links(curKind, it.title).map(function (l) { return '<a href="' + l.u + '" target="_blank" rel="noopener">' + l.t + '</a>'; }).join('');
+        return '<div class="ai-item"><div class="it-title">' + esc(it.title) + (it.year ? ' (' + esc(it.year) + ')' : '') + '</div>'
+          + (it.why ? '<div class="it-why">' + esc(it.why) + '</div>' : '') + '<div class="ai-links">' + ls + '</div></div>';
+      }).join('');
+    }
+    function go() {
+      var interest = (curChip || (document.getElementById('aiCustom') || {}).value || '').trim();
+      var res = document.getElementById('aiRes');
+      res.innerHTML = '<div class="ai-loading">' + T('mukofot.ai_loading', "AI o'ylayapti…") + '</div>';
+      fetch('/api/coach', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ mode: 'reward', kind: curKind, interest: interest, lang: lang() }) })
+        .then(function (r) { return r.json(); })
+        .then(function (d) { renderRes(d && d.items); })
+        .catch(function () { renderRes(null); });   // xatoda ham fallback ro'yxat
+    }
+    function openOv() { renderChips(); document.getElementById('aiRes').innerHTML = ''; document.getElementById('aiOv').classList.add('show'); }
+    function closeOv() { document.getElementById('aiOv').classList.remove('show'); }
+    function wire() {
+      var btn = document.getElementById('aiRewardBtn'); if (btn) btn.onclick = openOv;
+      var cancel = document.getElementById('aiCancel'); if (cancel) cancel.onclick = closeOv;
+      var go1 = document.getElementById('aiGo'); if (go1) go1.onclick = go;
+      var film = document.getElementById('aiFilm'), book = document.getElementById('aiBook');
+      if (film) film.onclick = function () { curKind = 'movie'; curChip = ''; film.classList.add('on'); if (book) book.classList.remove('on'); renderChips(); document.getElementById('aiRes').innerHTML = ''; };
+      if (book) book.onclick = function () { curKind = 'book'; curChip = ''; book.classList.add('on'); if (film) film.classList.remove('on'); renderChips(); document.getElementById('aiRes').innerHTML = ''; };
+      var ov = document.getElementById('aiOv'); if (ov) ov.addEventListener('click', function (e) { if (e.target === ov) closeOv(); });
+    }
+    if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', wire); else wire();
   })();
 </script>
 <script src="undo-toast.js?v=29.0.51"></script>

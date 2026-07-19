@@ -93,6 +93,36 @@ module.exports = async (req, res) => {
     return;
   }
 
+  // ── AI mukofot: kino/kitob tavsiyasi (qiziqish + til bo'yicha) ──
+  // AI faqat NOM + nega arziydi beradi; havolalarni klient qidiruvdan yasaydi (xato URL bo'lmasin).
+  if (c.mode === 'reward') {
+    if (!key) { res.status(200).json({ items: [] }); return; }
+    try {
+      const langName = ({ uz: "o'zbek", ru: 'rus', en: 'ingliz' })[c.lang] || "o'zbek";
+      const kind = (c.kind === 'book') ? (({ uz: 'kitob', ru: 'книга', en: 'book' })[c.lang] || 'kitob')
+                                       : (({ uz: 'film', ru: 'фильм', en: 'movie' })[c.lang] || 'film');
+      const interest = (c.interest || '').toString().slice(0, 60);
+      const prompt =
+        'Foydalanuvchi qiziqishi: "' + (interest || 'umumiy') + '". ' +
+        'Jahon bo\'yicha eng top, mashhur, yuqori baholangan ' + kind + 'lardan 4 tasini tavsiya qil. ' +
+        'Har birini ALOHIDA QATORDA AYNAN shu formatda yoz: Nomi (Yil) — bir jumla nega arziydi. ' +
+        'Nomi asl nomida (inglizcha bo\'lsa inglizcha), izoh ' + langName + ' tilida. ' +
+        'Faqat 4 ta qator yoz — raqamsiz, sarlavhasiz, boshqa izohsiz.';
+      const t = await gemini(prompt);
+      const items = (t || '').split('\n').map(function (line) {
+        line = line.replace(/^\s*(?:[-*•]|\d+[.)])\s*/, '').trim();
+        if (!line) return null;
+        var m = line.match(/^(.*?)\s*\((\d{4})\)\s*[—–\-:]\s*(.+)$/);
+        if (m) return { title: m[1].trim(), year: m[2], why: m[3].trim() };
+        var m2 = line.match(/^(.*?)\s*[—–\-:]\s*(.+)$/);
+        if (m2) return { title: m2[1].trim(), year: '', why: m2[2].trim() };
+        return { title: line, year: '', why: '' };
+      }).filter(Boolean).slice(0, 4);
+      res.status(200).json({ items: items });
+    } catch (e) { res.status(200).json({ items: [] }); }
+    return;
+  }
+
   // ── Kun yakuni motivatsiyasi ──
   if (!key) { res.status(200).json({ message: '' }); return; }
   try {

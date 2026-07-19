@@ -990,7 +990,11 @@
         price_lbl: "Narxi", buy: "Sotib olish", left: "qoldi", buy_q: "sarflansinmi?",
         empty: "Hali mukofot yo'q. O'zingizga bittasini belgilang.", hist_empty: "Hali mukofot olinmagan",
         hint_coin: "Tanga: har vazifa = 1 🪙", hint_dm: "Olmos: har mukammal kun = 1 💎 (kamyob — katta mukofotlarga)",
-        seed1: "Kino kechasi", seed2: "Yangi kitob", save: "Saqlash", cancel: "Bekor", bought: "Olindi"
+        seed1: "Kino kechasi", seed2: "Yangi kitob", save: "Saqlash", cancel: "Bekor", bought: "Olindi",
+        ai_title: "AI tavsiyasi", ai_sub: "Qiziqishingizga mos jahon top kino/kitoblari + ko'rish havolasi",
+        ai_hint: "Intizom mukofoti — qiziqishingizni tanlang, AI jahon top asarlaridan tavsiya qiladi.",
+        ai_movie: "🎬 Film", ai_book: "📚 Kitob", ai_interest: "Qiziqishingiz", ai_custom_ph: "Yoki o'zingiz yozing…",
+        ai_go: "Tavsiya ber", ai_loading: "AI o'ylayapti…", ai_read: "O'qish", ai_free: "Bepul qidirish"
       },
       shahar: {
         built: "Qurildi", demolished: "Shahar buzildi",
@@ -2064,7 +2068,11 @@
         price_lbl: "Цена", buy: "Получить", left: "осталось", buy_q: "потратить?",
         empty: "Наград пока нет. Задайте себе первую.", hist_empty: "Наград пока не получено",
         hint_coin: "Монеты: за каждую задачу = 1 🪙", hint_dm: "Алмазы: за идеальный день = 1 💎 (редкие — для крупных наград)",
-        seed1: "Вечер кино", seed2: "Новая книга", save: "Сохранить", cancel: "Отмена", bought: "Получено"
+        seed1: "Вечер кино", seed2: "Новая книга", save: "Сохранить", cancel: "Отмена", bought: "Получено",
+        ai_title: "AI-рекомендация", ai_sub: "Топовые мировые фильмы/книги по вашим интересам + ссылки для просмотра",
+        ai_hint: "Награда за дисциплину — выберите интерес, AI подберёт из лучших мировых произведений.",
+        ai_movie: "🎬 Фильм", ai_book: "📚 Книга", ai_interest: "Ваш интерес", ai_custom_ph: "Или напишите сами…",
+        ai_go: "Подобрать", ai_loading: "AI думает…", ai_read: "Читать", ai_free: "Искать бесплатно"
       },
       shahar: {
         built: "Построено", demolished: "Город снесён",
@@ -3138,7 +3146,11 @@
         price_lbl: "Price", buy: "Redeem", left: "left", buy_q: "spend?",
         empty: "No rewards yet. Set one for yourself.", hist_empty: "No rewards redeemed yet",
         hint_coin: "Coins: 1 per task = 1 🪙", hint_dm: "Diamonds: 1 per perfect day = 1 💎 (rare — for big rewards)",
-        seed1: "Movie night", seed2: "New book", save: "Save", cancel: "Cancel", bought: "Redeemed"
+        seed1: "Movie night", seed2: "New book", save: "Save", cancel: "Cancel", bought: "Redeemed",
+        ai_title: "AI recommendation", ai_sub: "Top world movies/books for your interest + links to watch",
+        ai_hint: "A discipline reward — pick your interest, AI suggests from the world's best.",
+        ai_movie: "🎬 Movie", ai_book: "📚 Book", ai_interest: "Your interest", ai_custom_ph: "Or type your own…",
+        ai_go: "Recommend", ai_loading: "AI is thinking…", ai_read: "Read", ai_free: "Search free"
       },
       shahar: {
         built: "Built", demolished: "City demolished",
