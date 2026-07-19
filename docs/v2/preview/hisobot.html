@@ -343,8 +343,13 @@ document.addEventListener('DOMContentLoaded', function () {
   // Do'st/ustoz SIZNI qanday ko'radi — aynan sync bo'layotgan narsa (o'zingiz tekshirasiz).
   function renderPreview() {
     var card = document.getElementById('previewCard'); if (!card) return;
-    var hasFr = window.Social && Social.cloud && Social.cloud() && Social.friends && Social.friends().length > 0;
-    if (!hasFr) { card.style.display = 'none'; return; }
+    // Bugungi bajarilgan vazifa bo'lsa ko'rsatamiz — do'st ulanmagan bo'lsa ham
+    // (nima ulushilishini OLDINDAN ko'rasiz). Faqat "Bugun" tabida.
+    if (period !== 'today' || !window.Social || !Social.myTasksToday || !report.done || !report.done.length) { card.style.display = 'none'; return; }
+    // Do'st bor bo'lsa sarlavha aniqroq, yo'q bo'lsa "ulasangiz shu ko'rinadi"
+    var hasFr = Social.friends && Social.friends().length > 0;
+    var tEl = document.getElementById('pvTitle');
+    if (tEl) tEl.textContent = hasFr ? T('hisobot.pv_title', '👁 Do\'stingiz/ustozingiz shuni ko\'radi') : T('hisobot.pv_title_no', '👁 Do\'st ulasangiz shuni ko\'radi');
     card.style.display = 'block';
     var vis = Social.visGet ? Social.visGet() : { hours: true, tasks: true, notimer: true };
     var st = Social.myStats ? Social.myStats() : { focusH: 0, habits: 0 };
