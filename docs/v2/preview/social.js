@@ -83,9 +83,30 @@
   }
   function cloud() { return !!client(); }
 
+  // Foydalanuvchining O'Z ismi (anketada saqlangan) — do'st/ustoz kod bilan ulaganda
+  // avtomat shu ism ko'rinadi (kod emas). Faqat ism yuboriladi (PII minimal).
+  function myName() { try { return (localStorage.getItem('mvow.userName') || '').trim().slice(0, 24); } catch (e) { return ''; } }
   function ensureProfile() {
     var c = client(); if (!c) return Promise.resolve();
-    return c.from('profiles').upsert({ code: myCode() }, { onConflict: 'code' }).then(function () {}, function () {});
+    var nm = myName();
+    // name ustuni bo'lmasa xatoni yutamiz; bo'lsa ismni ham yozamiz.
+    return c.from('profiles').upsert(nm ? { code: myCode(), name: nm } : { code: myCode() }, { onConflict: 'code' })
+      .then(function (r) {
+        if (r && r.error && nm) return c.from('profiles').upsert({ code: myCode() }, { onConflict: 'code' }).then(function () {}, function () {});
+      }, function () {});
+  }
+  // Berilgan kodlar uchun profil ismlarini oladi (kod -> ism). Xatoda bo'sh.
+  function fetchNames(codes) {
+    var c = client(); if (!c || !codes || !codes.length) return Promise.resolve({});
+    return c.from('profiles').select('code,name').in('code', codes)
+      .then(function (res) { var m = {}; ((res && res.data) || []).forEach(function (r) { if (r && r.name) m[r.code] = r.name; }); return m; },
+            function () { return {}; });
+  }
+  // User o'zi bergan (qo'lda) ism — bor bo'lsa u ustidan yozadi (override); yo'q bo'lsa ''.
+  function manualName(code, kind) {
+    kind = kind || 'friend';
+    var x = friends().filter(function (y) { return y.code === code && y.role === kind; })[0];
+    return (x && x.name) ? x.name : '';
   }
   function syncStats() {
     var c = client(); if (!c) return Promise.resolve();
@@ -157,13 +178,17 @@
     if (!c) return Promise.resolve(localBoard(kind));
     var codes = [myCode()].concat(friends().filter(function (x) { return x.role === kind; }).map(function (x) { return x.code; }));
     return Promise.all([ensureProfile(), syncStats()]).then(function () {
-      return c.from('daily_stats').select('code,focus_mins,habits').eq('d', todayIso()).in('code', codes);
-    }).then(function (res) {
+      return Promise.all([
+        c.from('daily_stats').select('code,focus_mins,habits').eq('d', todayIso()).in('code', codes),
+        fetchNames(codes)
+      ]);
+    }).then(function (rr) {
+      var res = rr[0], pn = rr[1] || {};
       var by = {}; (res && res.data || []).forEach(function (r) { by[r.code] = r; });
       var list = codes.map(function (cd) {
         var r = by[cd] || { focus_mins: 0, habits: 0 };
         return {
-          code: cd, name: cd === myCode() ? 'Siz' : nameOf(cd, kind), me: cd === myCode(),
+          code: cd, name: cd === myCode() ? 'Siz' : (manualName(cd, kind) || pn[cd] || cd), me: cd === myCode(),
           focusMins: r.focus_mins || 0, focusH: Math.round((r.focus_mins || 0) / 60 * 10) / 10, habits: r.habits || 0
         };
       });
@@ -222,6 +247,7 @@
       .then(function (res) {
         var codes = ((res && res.data) || []).map(function (x) { return x.follower; });
         if (!codes.length) return [];
+        return fetchNames(codes).then(function (pn) {   // ward'larning avto profil ismlari
         // 'report' ustuni bo'lsa — per-task; bo'lmasa xato bermasin (fallback: report'siz so'rov).
         function build(rows) {
           var by = {}; (rows || []).forEach(function (s) { by[s.code] = s; });
@@ -229,7 +255,7 @@
             var s = by[cd] || { focus_mins: 0, habits: 0, report: [] };
             var tasks = Array.isArray(s.report) ? s.report.map(function (t) { return { name: t.n, mins: t.m || 0, timer: !!t.t }; }) : null;
             return {
-              code: cd, name: cd,
+              code: cd, name: pn[cd] || cd,   // avto profil ismi > kod
               focusMins: s.focus_mins || 0, focusH: Math.round((s.focus_mins || 0) / 60 * 10) / 10, habits: s.habits || 0,
               tasks: tasks   // ko'rinadigan vazifalar (bekitilganlar yo'q); null = ustun yo'q
             };
@@ -243,6 +269,7 @@
             }
             return build((r2 && r2.data) || []);
           });
+        });
       }).catch(function () { return []; });
   }
 
