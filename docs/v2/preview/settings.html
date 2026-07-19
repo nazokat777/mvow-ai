@@ -139,7 +139,7 @@
 
     <div class="me">
       <div class="name" id="userName">—</div>
-      <div class="sub"><span class="em" id="streakN">0</span> <span data-i18n="settings.sub">kun yo'l</span></div>
+      <div class="sub" style="font-size:16px;"><span style="color:var(--accent,#F4845F);">🔥</span> <span class="em" id="streakN" style="color:var(--accent,#F4845F);font-weight:800;">0</span> <span data-i18n="settings.sub">kun yo'l</span></div>
     </div>
 
     <div class="section-lbl" data-i18n="settings.sec_appearance">Ko'rinish</div>
@@ -149,16 +149,23 @@
       <div class="toggle" id="themeToggle" role="switch" tabindex="0" aria-label="Yorug' rejim" aria-checked="false"></div>
     </div>
 
-    <div class="section-lbl" data-i18n="settings.sec_permissions">Ruxsatlar</div>
-
-    <div class="row">
-      <div class="lbl" data-i18n="settings.perm_screen_time">Ekran vaqti</div>
-      <div class="toggle" data-perm="screenTime" role="switch" tabindex="0" data-i18n-aria="settings.perm_screen_time_aria" aria-label="Ekran vaqti ruxsati" aria-checked="false"></div>
+    <label class="row lock-row"><span class="lbl" data-i18n="settings.reduce_motion">Harakatni kamaytirish</span><input type="checkbox" id="motionToggle"><span class="sw"></span></label>
+    <div class="row" style="align-items:flex-start;padding-top:0;">
+      <div class="lbl" style="font-size:12px;color:var(--text-dim);line-height:1.5;" data-i18n="settings.reduce_motion_hint">Animatsiya va effektlarni o'chiradi (tinch, tejamkor).</div>
     </div>
 
-    <div class="row">
+    <div class="section-lbl" data-i18n="settings.sec_permissions">Ruxsatlar</div>
+
+    <div class="row" style="flex-wrap:wrap;">
+      <div class="lbl" data-i18n="settings.perm_screen_time">Ekran vaqti</div>
+      <div class="toggle" data-perm="screenTime" role="switch" tabindex="0" data-i18n-aria="settings.perm_screen_time_aria" aria-label="Ekran vaqti ruxsati" aria-checked="false"></div>
+      <div class="lbl" style="flex-basis:100%;font-size:12px;color:var(--text-dim);line-height:1.5;margin-top:4px;" data-i18n="settings.perm_screen_time_hint">Boshqa ilovalarda qancha vaqt o'tkazganingizni ko'rish uchun.</div>
+    </div>
+
+    <div class="row" style="flex-wrap:wrap;">
       <div class="lbl" data-i18n="settings.perm_notification">Bildirishnomalar</div>
       <div class="toggle" data-perm="notification" role="switch" tabindex="0" data-i18n-aria="settings.perm_notification_aria" aria-label="Bildirishnoma ruxsati" aria-checked="false"></div>
+      <div class="lbl" style="flex-basis:100%;font-size:12px;color:var(--text-dim);line-height:1.5;margin-top:4px;" data-i18n="settings.perm_notification_hint">Eslatma va vazifa vaqtida sizni ogohlantirish uchun.</div>
     </div>
 
     <div class="section-lbl" data-i18n="settings.sec_wake">Uyg'onish</div>
@@ -241,6 +248,16 @@
     function toggle(){ apply(cur() === 'light' ? 'dark' : 'light'); }
     btn.addEventListener('click', toggle);
     btn.addEventListener('keydown', function(e){ if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); toggle(); } });
+  })();
+  /* Harakatni kamaytirish — mvow.motion.intensity='minimal' (reveal.js + motion-fx.js hurmat qiladi) */
+  (function(){
+    var m = document.getElementById('motionToggle');
+    if (!m) return;
+    try { m.checked = localStorage.getItem('mvow.motion.intensity') === 'minimal'; } catch(e){}
+    m.addEventListener('change', function(){
+      try { if (m.checked) localStorage.setItem('mvow.motion.intensity','minimal'); else localStorage.removeItem('mvow.motion.intensity'); } catch(e){}
+      setTimeout(function(){ location.reload(); }, 140);
+    });
   })();
 </script>
 <script src="lang-switcher.js?v=28.4.0" defer></script>

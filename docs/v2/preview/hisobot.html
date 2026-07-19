@@ -32,15 +32,19 @@
 
   .item { display: flex; align-items: center; gap: 11px; background: var(--card, #0C0F16);
     border: 1px solid var(--border-default, rgba(255,255,255,.12)); border-radius: 13px; padding: 12px 13px; margin-bottom: 8px; cursor: pointer; }
-  .item.off { opacity: .42; }
-  .box { flex: none; width: 21px; height: 21px; border-radius: 6px; border: 2px solid var(--accent, #F4845F);
+  .item.off { opacity: .62; }
+  /* KO'Z toggle: bekik=kulrang xira ko'z, ko'rinadi=to'q sariq to'ldirilgan */
+  .box { flex: none; width: 24px; height: 24px; border-radius: 7px; border: 1.5px solid var(--border-default, rgba(255,255,255,.2));
     display: flex; align-items: center; justify-content: center; background: transparent; }
-  .box svg { width: 12px; height: 12px; color: #fff; opacity: 0; }
-  .item.on .box { background: var(--accent, #F4845F); }
-  .item.on .box svg { opacity: 1; }
+  .box svg { width: 15px; height: 15px; color: var(--text-dim, #9CA0A8); opacity: .55; }
+  .item.on .box { background: var(--accent, #F4845F); border-color: var(--accent, #F4845F); }
+  .item.on .box svg { color: #fff; opacity: 1; }
   .it-body { flex: 1; min-width: 0; }
   .it-name { font-size: 15px; font-weight: 600; }
   .it-meta { font-size: 12.5px; color: var(--text-dim, #9CA0A8); margin-top: 2px; }
+  .shflag { flex: none; font-size: 11px; font-weight: 700; padding: 3px 9px; border-radius: 999px; }
+  .item.on .shflag { background: rgba(107,191,122,.18); color: #6BBF7A; }
+  .item.off .shflag { background: rgba(150,150,150,.16); color: var(--text-dim, #9CA0A8); }
   .badge { display: inline-block; font-size: 11px; font-weight: 700; padding: 1px 7px; border-radius: 999px; margin-left: 6px; vertical-align: middle; }
   .badge.timer { background: rgba(110,181,255,.16); color: #6EB5FF; }
   .badge.notimer { background: rgba(107,191,122,.16); color: #6BBF7A; }
@@ -94,7 +98,7 @@
   <!-- Do'stga ko'rsatish/berkitish va "do'st shuni ko'radi" preview -> Do'stlar sahifasiga ko'chirildi. -->
   <div style="font-size:13px;color:var(--text-dim,#9CA0A8);margin:2px 2px 14px;line-height:1.5;" data-i18n-html="hisobot.moved_note">Do'st/ustozga nima ko'rinishini <b>Do'stlar</b> sahifasidagi "Siz" bo'limida sozlaysiz.</div>
 
-  <div id="hint" style="font-size:12.5px;color:var(--text-dim,#9CA0A8);margin:0 2px 6px;" data-i18n="hisobot.select_hint">Ulashiladiganlarni belgilang</div>
+  <div id="hint" style="font-size:12.5px;color:var(--text-dim,#9CA0A8);margin:0 2px 8px;line-height:1.5;" data-i18n-html="hisobot.select_hint2">👁 bosilgan vazifalar do'st/ustozga <b>ko'rinadi</b>. Bekitilgani ularga ko'rinmaydi.</div>
   <div id="list"></div>
 
   <div class="actions" id="actions" style="display:none;">
@@ -159,7 +163,7 @@ document.addEventListener('DOMContentLoaded', function () {
     report.done.forEach(function (d) {
       sel[d.key] = (window.Social && Social.isHidden) ? !Social.isHidden(d.name) : true;
     });
-    report.skipped.forEach(function (s) { sel[s.key] = true; });   // bajarilmagan — faqat ulashish matni uchun
+    report.skipped.forEach(function (s) { sel[s.key] = false; });   // bajarilmagan — ODATIY BEKIK (mag'lubiyat majburan ulashilmaydi; xohlasa ochadi)
   }
 
   function selectedMins() {
@@ -194,8 +198,10 @@ document.addEventListener('DOMContentLoaded', function () {
         var badge = isDone ? '<span class="badge ' + (it.timer ? 'timer' : 'notimer') + '">' +
           (it.timer ? T('hisobot.timer_badge', 'taymerli') : T('hisobot.notimer_badge', 'taymersiz')) + '</span>' : '';
         var meta = isDone ? '<div class="it-meta">' + hm(it.mins) + badge + '</div>' : '';
-        row.innerHTML = '<span class="box"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></span>' +
-          '<div class="it-body"><div class="it-name">' + esc(it.name) + '</div>' + meta + '</div>';
+        // Belgi = KO'Z (do'stga KO'RINADI degani; "bajarildi" emas). Bajarilgan/bajarilmagan holati alohida (yorliq).
+        row.innerHTML = '<span class="box"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1.5 12S5.5 5 12 5s10.5 7 10.5 7-4 7-10.5 7S1.5 12 1.5 12z"/><circle cx="12" cy="12" r="3"/></svg></span>' +
+          '<div class="it-body"><div class="it-name">' + esc(it.name) + '</div>' + meta + '</div>' +
+          '<span class="shflag">' + (sel[it.key] ? T('hisobot.fl_shown', "ko'rinadi") : T('hisobot.fl_hidden', 'bekik')) + '</span>';
         row.addEventListener('click', function () {
           sel[it.key] = !sel[it.key];
           // Bajarilgan vazifa: belgisiz -> BEKITILGAN (serverdan chiqadi, viewerlarga ko'rinmaydi)

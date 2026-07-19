@@ -28,6 +28,32 @@
     return 'uz';
   }
 
+  // Bosib turilganda (long-press) nomini ko'rsatuvchi izoh (minimalist — doimiy yorliqsiz).
+  // Oddiy bosish oddiy ishlaydi (navigatsiya/menyu). Faqat uzoq bosishda izoh chiqadi.
+  function attachTip(el, label) {
+    if (!el || !label) return;
+    var timer = null, tip = null, shown = false;
+    function show() {
+      shown = true;
+      tip = document.createElement('div');
+      tip.textContent = label;
+      tip.style.cssText = 'position:fixed;z-index:2147483000;background:rgba(20,22,30,.97);color:#fff;font:600 12px Inter,sans-serif;padding:5px 11px;border-radius:8px;pointer-events:none;white-space:nowrap;box-shadow:0 4px 16px rgba(0,0,0,.45);opacity:0;transition:opacity .15s;';
+      document.body.appendChild(tip);
+      var r = el.getBoundingClientRect(), tr = tip.getBoundingClientRect();
+      tip.style.top = (r.bottom + 6) + 'px';
+      tip.style.left = Math.max(6, Math.min(window.innerWidth - tr.width - 6, r.left + r.width / 2 - tr.width / 2)) + 'px';
+      requestAnimationFrame(function () { if (tip) tip.style.opacity = '1'; });
+      try { if (navigator.vibrate) navigator.vibrate(8); } catch (e) {}
+    }
+    function hide() { if (timer) { clearTimeout(timer); timer = null; } if (tip) { var t = tip; tip = null; t.style.opacity = '0'; setTimeout(function () { if (t.parentNode) t.parentNode.removeChild(t); }, 200); } }
+    el.addEventListener('pointerdown', function () { shown = false; timer = setTimeout(function () { timer = null; show(); }, 420); }, { passive: true });
+    el.addEventListener('pointermove', function () { if (timer) { clearTimeout(timer); timer = null; } }, { passive: true });
+    el.addEventListener('pointerup', hide, { passive: true });
+    el.addEventListener('pointercancel', hide, { passive: true });
+    el.addEventListener('pointerleave', hide, { passive: true });
+    el.addEventListener('click', function (e) { if (shown) { e.preventDefault(); e.stopPropagation(); shown = false; } }, true);
+  }
+
   function setLang(code) {
     if (!LANGS[code]) return;
     try {
@@ -45,7 +71,7 @@
     // Til tugmasini ixcham qilamiz — faqat globus (UZ/RU/EN matni yashirin), 40px doira
     if (!document.getElementById('mvow-lang-css')) {
       var st = document.createElement('style'); st.id = 'mvow-lang-css';
-      st.textContent = '.lang-switcher__btn{width:40px !important;height:40px !important;min-width:0 !important;padding:0 !important;border-radius:50% !important;display:flex !important;align-items:center;justify-content:center;gap:0 !important;}.lang-switcher__code{display:none !important;}.lang-switcher__icon{width:20px;height:20px;}';
+      st.textContent = '.lang-switcher__btn{position:relative !important;width:40px !important;height:40px !important;min-width:0 !important;padding:0 !important;border-radius:50% !important;display:flex !important;align-items:center;justify-content:center;gap:0 !important;}.lang-switcher__code{display:none !important;}.lang-switcher__icon{width:20px;height:20px;}.mvow-lang-cur{position:absolute;bottom:-3px;right:-3px;background:var(--accent,#F4845F);color:#fff;font-size:8.5px;font-weight:800;line-height:1;padding:2px 3px;border-radius:5px;letter-spacing:.3px;box-shadow:0 1px 3px rgba(0,0,0,.4);}';
       document.head.appendChild(st);
     }
 
@@ -67,7 +93,9 @@
         '<path d="M3 12h18"/>' +
         '<path d="M12 3a14 14 0 0 1 0 18"/>' +
         '<path d="M12 3a14 14 0 0 0 0 18"/>' +
-      '</svg>';
+      '</svg>' +
+      '<span class="mvow-lang-cur">' + (LANGS[cur] ? LANGS[cur].code : 'UZ') + '</span>';
+    attachTip(btn, (window.I18N && I18N.t) ? I18N.t('common.language', 'Til') : 'Til');
 
     const menu = document.createElement('div');
     menu.className = 'lang-switcher__menu';
@@ -177,6 +205,7 @@
       a.href = href; a.title = label; a.setAttribute('aria-label', label);
       a.style.cssText = 'width:40px;height:40px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:19px;line-height:1;text-decoration:none;background:rgba(12,14,20,0.94);border:1px solid rgba(108,92,231,0.4);';
       a.textContent = emoji;
+      attachTip(a, label);
       return a;
     }
     var friendsA = mk('👥', 'dostlar.html', "Do'stlar");

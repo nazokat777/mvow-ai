@@ -10,6 +10,15 @@
   'use strict';
   var reduce = false;
   try { reduce = matchMedia('(prefers-reduced-motion: reduce)').matches; } catch (e) {}
+  // Sozlamalardagi "Harakatni kamaytirish" (mvow.motion.intensity=minimal) — butun sahifada bezak harakatini o'chiradi.
+  var minMotion = false;
+  try { minMotion = localStorage.getItem('mvow.motion.intensity') === 'minimal'; } catch (e) {}
+  if (minMotion) {
+    var _ms = document.createElement('style');
+    _ms.textContent = '*,*::before,*::after{animation-duration:.01ms !important;animation-iteration-count:1 !important;transition-duration:.01ms !important;scroll-behavior:auto !important}';
+    (document.head || document.documentElement).appendChild(_ms);
+    reduce = true;
+  }
 
   // ── Tap feedback + shine uslublari (press feedback reduced-motion'da ham qoladi — u bezak emas) ──
   var st = document.createElement('style');
