@@ -83,8 +83,8 @@
   // SANA — joriy sanani markaziy joydan tarqatish
   // ──────────────────────────────────────────────────────────────
   (function fillToday() {
-    const monShort = ['YAN','FEV','MAR','APR','MAY','JUN','IYU','AVG','SEN','OKT','NOY','DEK'];
-    const monFull  = ['Yanvar','Fevral','Mart','Aprel','May','Iyun','Iyul','Avgust','Sentyabr','Oktyabr','Noyabr','Dekabr'];
+    const monShort = ['YAN','FEV','MAR','APR','MAY','IYUN','IYUL','AVG','SEN','OKT','NOY','DEK'];
+    const monFull  = ['Yanvar','Fevral','Mart','Aprel','May','Iyun','Iyul','Avgust','Sentabr','Oktabr','Noyabr','Dekabr'];
     const dayShort = ['YAKSHANBA','DUSHANBA','SESHANBA','CHORSHANBA','PAYSHANBA','JUMA','SHANBA'];
     const d = new Date();
     DATA.today.date      = String(d.getDate()).padStart(2, '0') + '-' + monShort[d.getMonth()];

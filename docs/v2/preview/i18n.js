@@ -198,7 +198,7 @@
         next: 'Keyingi', got_it: 'Tushundim', skip: "O'tkazib yuborish"
       },
       common: {
-        months_long: ['Yanvar','Fevral','Mart','Aprel','May','Iyun','Iyul','Avgust','Sentyabr','Oktyabr','Noyabr','Dekabr'],
+        months_long: ['Yanvar','Fevral','Mart','Aprel','May','Iyun','Iyul','Avgust','Sentabr','Oktabr','Noyabr','Dekabr'],
         continue: 'Davom',
         start: 'Boshlayman',
         save: 'Saqla',
@@ -816,7 +816,7 @@
         name_ph: 'ish nomi',
         add_month_goal: "+ Bu oy uchun maqsad qo'sh",
         mon_short: 'yan,fev,mar,apr,may,iyn,iyl,avg,sen,okt,noy,dek',
-        mon_full: 'Yanvar,Fevral,Mart,Aprel,May,Iyun,Iyul,Avgust,Sentyabr,Oktyabr,Noyabr,Dekabr',
+        mon_full: 'Yanvar,Fevral,Mart,Aprel,May,Iyun,Iyul,Avgust,Sentabr,Oktabr,Noyabr,Dekabr',
         dow_short: 'DU,SE,CH,PA,JU,SH,YA',
         dow_full: 'Dushanba,Seshanba,Chorshanba,Payshanba,Juma,Shanba,Yakshanba',
         dow_mini: 'Du,Se,Ch,Pa,Ju,Sh,Ya'
