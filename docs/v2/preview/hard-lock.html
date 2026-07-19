@@ -297,6 +297,12 @@
     <div class="ctask" id="aTaskName">Ish</div>
     <div class="csub"><span data-i18n="hardlock.ask_done_prefix">Tugadi. Vaqt —</span> <span id="aDur" data-i18n="hardlock.dur_fallback">25 daq</span>.</div>
     <input id="hlNote" type="text" maxlength="60" placeholder="Qisqa izoh (mas. speaking)" data-i18n-placeholder="hardlock.note_ph" style="width:100%;margin-bottom:14px;background:#0C0F16;border:1px solid rgba(255,255,255,.1);border-radius:8px;padding:10px 12px;color:#F5F2EC;font-family:'Inter',sans-serif;font-size:17px;outline:none;">
+    <!-- Do'st/ustoz ulangan bo'lsa: shu vazifa ularga ko'rinsinmi? (default HA). JS ko'rsatadi. -->
+    <label id="visRow" style="display:none;align-items:center;justify-content:space-between;gap:10px;margin-bottom:16px;cursor:pointer;font-size:15px;color:#F5F2EC;">
+      <span data-i18n="hardlock.vis_ask">👥 Do'stingizga ko'rinsinmi?</span>
+      <input type="checkbox" id="visChk" checked style="position:absolute;opacity:0;width:0;height:0;">
+      <span id="visSw" style="position:relative;width:44px;height:25px;border-radius:999px;background:var(--accent,#F4845F);flex:none;transition:background .2s;"><span style="position:absolute;top:2px;left:21px;width:21px;height:21px;border-radius:50%;background:#fff;transition:left .2s;"></span></span>
+    </label>
     <div class="choice-grid">
       <button class="choice-btn secondary" id="askNo" type="button" data-i18n="hardlock.ans_no">Yo'q</button>
       <button class="choice-btn primary" id="askYes" type="button" data-i18n="hardlock.ans_yes">Ha</button>
@@ -527,6 +533,11 @@ document.addEventListener('DOMContentLoaded', function () {
       if (completed) {
         const noteEl = document.getElementById('hlNote');
         const note = noteEl ? noteEl.value.trim() : '';
+        // Do'st/ustozga ko'rinsinmi? — so'ralgan javobni qo'llaymiz (belgisiz = bekitiladi, serverga bormaydi).
+        try {
+          var _vc = document.getElementById('visChk');
+          if (_vc) setTaskHidden(current.name || DEFAULT_TASK_NAME, !_vc.checked);
+        } catch (e) {}
         MVOW_DATA.addHistory({
           name: current.name || DEFAULT_TASK_NAME,
           plannedTime: current.time || '',
@@ -559,8 +570,42 @@ document.addEventListener('DOMContentLoaded', function () {
     else setTimeout(_go, 600);
   }
 
+  // Vazifani do'st/ustozga BEKITISH (mvow.hidden.<sana> — Social bilan bir xil format).
+  // Belgilanmagan vazifa serverga umuman bormaydi; Social bo'lsa darhol sync.
+  function setTaskHidden(name, hide) {
+    if (!name) return;
+    var iso = (window.MVOW_DATA && MVOW_DATA.today) ? MVOW_DATA.today.iso : new Date().toISOString().slice(0, 10);
+    var key = 'mvow.hidden.' + iso, set = [];
+    try { set = JSON.parse(localStorage.getItem(key) || '[]'); if (!Array.isArray(set)) set = []; } catch (e) {}
+    var i = set.indexOf(name);
+    if (hide && i < 0) set.push(name);
+    if (!hide && i >= 0) set.splice(i, 1);
+    try { localStorage.setItem(key, JSON.stringify(set)); } catch (e) {}
+    try { if (window.Social && Social.syncStats) Social.syncStats(); } catch (e) {}
+  }
+  // "Do'stga ko'rinsinmi?" toggle — faqat do'st/ustoz ulangan bo'lsa ko'rsatamiz.
+  (function () {
+    var chk = document.getElementById('visChk'), sw = document.getElementById('visSw');
+    if (!chk || !sw) return;
+    var knob = sw.querySelector('span');
+    function paint() { sw.style.background = chk.checked ? 'var(--accent,#F4845F)' : 'rgba(150,150,150,.35)'; if (knob) knob.style.left = chk.checked ? '21px' : '2px'; }
+    chk.addEventListener('change', paint); paint();
+  })();
   function showAskModal() {
     if (interval) clearInterval(interval);
+    // Do'st/ustoz bormi? (mvow.friends) — bo'lsa "ko'rinsinmi?" toggle chiqadi.
+    try {
+      var _hasFr = false; try { _hasFr = (JSON.parse(localStorage.getItem('mvow.friends') || '[]') || []).length > 0; } catch (e) {}
+      var _vr = document.getElementById('visRow'), _vc = document.getElementById('visChk');
+      if (_vr) _vr.style.display = _hasFr ? 'flex' : 'none';
+      // Default: hozir bekitilmagan bo'lsa — ko'rinadi (checked).
+      if (_vc && window.MVOW_DATA) {
+        var iso = MVOW_DATA.today ? MVOW_DATA.today.iso : new Date().toISOString().slice(0, 10);
+        var hid = []; try { hid = JSON.parse(localStorage.getItem('mvow.hidden.' + iso) || '[]'); } catch (e) {}
+        _vc.checked = hid.indexOf(current.name || DEFAULT_TASK_NAME) < 0;
+        _vc.dispatchEvent(new Event('change'));
+      }
+    } catch (e) {}
     askOverlay.classList.add('show');
   }
 
@@ -755,8 +800,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
   // Taymersiz "Bajardim" → izoh kiritish uchun modal ochiladi
   document.getElementById('doneBtn').addEventListener('click', () => {
-    if (interval) clearInterval(interval);
-    askOverlay.classList.add('show');
+    showAskModal();   // "ko'rinsinmi?" toggle + izoh shu yerda sozlanadi
     setTimeout(() => { const n = document.getElementById('hlNote'); if (n) n.focus(); }, 100);
   });
 
