@@ -109,12 +109,12 @@
   function friends() { try { return JSON.parse(localStorage.getItem(FRIENDS_KEY) || '[]'); } catch (e) { return []; } }
   function saveFriends(f) { try { localStorage.setItem(FRIENDS_KEY, JSON.stringify(f)); } catch (e) {} }
 
-  function addFriend(code, kind) {
+  function addFriend(code, kind, name) {
     code = (code || '').trim().toUpperCase(); kind = kind || 'friend';
     if (!code || code === myCode() || !/^[A-Z]{3}[0-9]{3}$/.test(code)) return Promise.resolve(false);
     var f = friends();
     if (f.some(function (x) { return x.code === code && x.role === kind; })) return Promise.resolve(false);
-    f.push({ code: code, role: kind }); saveFriends(f);
+    f.push({ code: code, role: kind, name: (name || '').trim().slice(0, 24) }); saveFriends(f);
     var c = client();
     if (c) return c.from('links').upsert({ follower: myCode(), target_code: code, kind: kind }, { onConflict: 'follower,target_code,kind' })
       .then(function () { return true; }, function () { return true; });
@@ -126,12 +126,25 @@
     var c = client();
     if (c) c.from('links').delete().match({ follower: myCode(), target_code: code, kind: kind }).then(function () {}, function () {});
   }
+  // Do'st/ustozga user o'zi ISM beradi (kod o'rniga ko'rsatiladi). Faqat lokalda.
+  function renameFriend(code, kind, name) {
+    kind = kind || 'friend';
+    var f = friends();
+    f.forEach(function (x) { if (x.code === code && x.role === kind) x.name = (name || '').trim().slice(0, 24); });
+    saveFriends(f);
+  }
+  // Ko'rsatiladigan nom: user bergan ism bo'lsa u, aks holda kod.
+  function nameOf(code, kind) {
+    kind = kind || 'friend';
+    var x = friends().filter(function (y) { return y.code === code && y.role === kind; })[0];
+    return (x && x.name) ? x.name : code;
+  }
 
   function localBoard(kind) {
     var me = myStats();
     var list = [{ code: myCode(), name: 'Siz', me: true, focusMins: me.focusMins, focusH: me.focusH, habits: me.habits }];
     friends().filter(function (x) { return x.role === kind; }).forEach(function (x) {
-      list.push({ code: x.code, name: x.code, me: false, pending: true, focusMins: -1, focusH: 0, habits: 0 });
+      list.push({ code: x.code, name: nameOf(x.code, kind), me: false, pending: true, focusMins: -1, focusH: 0, habits: 0 });
     });
     list.sort(function (a, b) { return (b.focusMins - a.focusMins) || ((b.habits || 0) - (a.habits || 0)); });
     return list;
@@ -150,7 +163,7 @@
       var list = codes.map(function (cd) {
         var r = by[cd] || { focus_mins: 0, habits: 0 };
         return {
-          code: cd, name: cd === myCode() ? 'Siz' : cd, me: cd === myCode(),
+          code: cd, name: cd === myCode() ? 'Siz' : nameOf(cd, kind), me: cd === myCode(),
           focusMins: r.focus_mins || 0, focusH: Math.round((r.focus_mins || 0) / 60 * 10) / 10, habits: r.habits || 0
         };
       });
@@ -235,7 +248,7 @@
 
   window.Social = {
     myCode: myCode, myStats: myStats, cloud: cloud, syncStats: syncStats, wards: wards,
-    friends: friends, addFriend: addFriend, removeFriend: removeFriend, leaderboard: leaderboard,
+    friends: friends, addFriend: addFriend, removeFriend: removeFriend, renameFriend: renameFriend, nameOf: nameOf, leaderboard: leaderboard,
     sendMessage: sendMessage, getMessages: getMessages, subscribeMessages: subscribeMessages, unsubscribe: unsubscribe,
     hiddenSet: hiddenSet, setHidden: setHidden, isHidden: isHidden, myTasksToday: myTasksToday
   };
