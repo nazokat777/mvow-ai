@@ -101,14 +101,36 @@
     el.appendChild(s);
     setTimeout(function () { if (s.parentNode) s.parentNode.removeChild(s); }, 640);
   }
+  // Haptik (asosiy harakatlarda nozik titrash) + 3D karta egilishi
+  var HAPTIC_SEL = '.cta,.yes-btn,.buy.ready,.ai-reward-card,.addb,.btn.save,.next-btn';
+  var TILT_SEL = '.ai-reward-card,.code-card,.rw,.report-link,.total';
+  var _tiltEl = null;
+  function tiltDown(el, e) {
+    var r = el.getBoundingClientRect(); if (!r.width) return;
+    var px = (e.clientX - r.left) / r.width - 0.5, py = (e.clientY - r.top) / r.height - 0.5;
+    el.style.transition = 'transform .07s ease-out';
+    el.style.transform = 'perspective(760px) rotateX(' + (-py * 5.5).toFixed(2) + 'deg) rotateY(' + (px * 5.5).toFixed(2) + 'deg) scale(.985)';
+    _tiltEl = el;
+  }
+  function tiltReset() {
+    if (!_tiltEl) return;
+    var el = _tiltEl; _tiltEl = null;
+    el.style.transition = 'transform .42s cubic-bezier(.22,1.4,.36,1)';
+    el.style.transform = '';
+  }
   function enableRipple() {
     if (window.__mfxRip) return; window.__mfxRip = 1;
     document.addEventListener('pointerdown', function (e) {
-      var el = (e.target && e.target.closest) ? e.target.closest(RIP_SEL) : null;
-      if (!el) return;
-      if (!el.classList.contains('mfx-rippleable')) el.classList.add('mfx-rippleable');
-      ripple(el, e);
+      var t = e.target; if (!t || !t.closest) return;
+      var rip = t.closest(RIP_SEL);
+      if (rip) { if (!rip.classList.contains('mfx-rippleable')) rip.classList.add('mfx-rippleable'); ripple(rip, e); }
+      if (t.closest(HAPTIC_SEL)) { try { if (navigator.vibrate) navigator.vibrate(9); } catch (x) {} }
+      var tl = t.closest(TILT_SEL);
+      if (tl) tiltDown(tl, e);
     }, true);
+    ['pointerup', 'pointercancel', 'pointerleave'].forEach(function (ev) {
+      document.addEventListener(ev, tiltReset, true);
+    });
   }
 
   // ── 4) Progress bar'lar 0'dan to'ladi ──

@@ -301,8 +301,9 @@
     catch (e) { window.__splashBg = '#f3f4f7'; }
   })();
 </script>
+<style>@media (prefers-reduced-motion:no-preference){.mfx-splash-logo{animation:splashPop .62s cubic-bezier(.22,1.25,.36,1)}}@keyframes splashPop{0%{opacity:0;transform:scale(.8)}55%{opacity:1}100%{transform:scale(1)}}</style>
 <div id="homeSplash" style="position:fixed;inset:0;z-index:99998;display:flex;align-items:center;justify-content:center;transition:opacity .35s ease;">
-  <img src="assets/mnsm-maskable-512.png" alt="" style="width:120px;height:120px;border-radius:26px;display:block;">
+  <img class="mfx-splash-logo" src="assets/mnsm-maskable-512.png" alt="" style="width:120px;height:120px;border-radius:26px;display:block;box-shadow:0 22px 60px rgba(108,92,231,.42);">
 </div>
 <script>
   (function () {
@@ -1464,7 +1465,7 @@
 </script>
 
 <script src="reveal.js?v=29.0.71" defer></script>
-  <script src="motion-fx.js?v=29.0.116" defer></script>
+  <script src="motion-fx.js?v=29.0.117" defer></script>
 <script src="back-btn.js?v=28.4.0"></script>
 <script>
   // Coach-mark — birinchi kirganda yo'l ko'rsatgich (bilmagan odam tushunsin)
