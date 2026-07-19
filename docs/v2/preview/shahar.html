@@ -20,10 +20,33 @@
   .bal .b .v { font-size: 24px; font-weight: 800; }
   .bal .b.coin .v { color: #F5C26B; } .bal .b.dm .v { color: #6EB5FF; }
   .bal .b .k { font-size: 12px; color: var(--text-dim, #9CA0A8); margin-top: 2px; }
-  .city { background: linear-gradient(180deg, #0b1730 0%, #123152 55%, #14432f 100%); border: 1px solid var(--border-default, rgba(255,255,255,.12)); border-radius: 18px; padding: 14px 12px 10px; min-height: 150px; display: flex; flex-wrap: wrap; align-content: flex-end; gap: 3px; box-shadow: inset 0 -30px 40px rgba(0,0,0,.25); }
-  .tile { font-size: 30px; line-height: 1.05; }
+  /* Tirik kechki shahar manzarasi */
+  .city { position: relative; overflow: hidden; border: 1px solid var(--border-default, rgba(255,255,255,.12)); border-radius: 18px; padding: 16px 12px 16px; min-height: 210px; display: flex; flex-wrap: wrap; align-content: flex-end; justify-content: center; gap: 2px 4px;
+    background: linear-gradient(180deg, #070a2a 0%, #1a1550 38%, #3a2260 58%, #4a2a4e 70%, #14311d 100%); box-shadow: inset 0 -40px 60px rgba(0,0,0,.35); }
+  .city .sky, .city .moon, .city .ground, .city .fly { position: absolute; z-index: 0; pointer-events: none; }
+  .city .sky { inset: 0 0 42% 0;
+    background-image:
+      radial-gradient(1.6px 1.6px at 12% 22%, #fff, transparent), radial-gradient(1.4px 1.4px at 28% 40%, #fff, transparent),
+      radial-gradient(1.7px 1.7px at 44% 16%, #fff, transparent), radial-gradient(1.3px 1.3px at 60% 34%, #cfe0ff, transparent),
+      radial-gradient(1.6px 1.6px at 74% 20%, #fff, transparent), radial-gradient(1.4px 1.4px at 86% 42%, #fff, transparent),
+      radial-gradient(1.2px 1.2px at 36% 60%, #fff, transparent), radial-gradient(1.5px 1.5px at 92% 62%, #cfe0ff, transparent),
+      radial-gradient(1.3px 1.3px at 6% 54%, #fff, transparent);
+    animation: skyTwinkle 4.5s ease-in-out infinite; }
+  .city .moon { top: 16px; right: 22px; width: 34px; height: 34px; border-radius: 50%;
+    background: radial-gradient(circle at 34% 34%, #ffffff, #e6ecff 55%, #b9c6ff);
+    box-shadow: 0 0 22px rgba(200,215,255,.6), 0 0 54px rgba(150,175,255,.4); animation: moonGlow 6s ease-in-out infinite; }
+  .city .ground { left: 0; right: 0; bottom: 0; height: 34%; background: linear-gradient(180deg, transparent, rgba(8,24,12,.55) 70%); }
+  .city .fly { width: 4px; height: 4px; border-radius: 50%; background: #ffe08a; box-shadow: 0 0 8px 2px rgba(255,224,138,.7); opacity: .0; }
+  .tile { position: relative; z-index: 1; font-size: 34px; line-height: 1; transform-origin: bottom center; filter: drop-shadow(0 3px 5px rgba(0,0,0,.4)); animation: citySway 3.8s ease-in-out infinite; }
+  .tile.mfx-drop { animation: cityDrop .62s cubic-bezier(.22,1.5,.36,1); }
+  @keyframes skyTwinkle { 0%,100% { opacity: .55; } 50% { opacity: 1; } }
+  @keyframes moonGlow { 0%,100% { box-shadow: 0 0 22px rgba(200,215,255,.55), 0 0 54px rgba(150,175,255,.35); } 50% { box-shadow: 0 0 30px rgba(210,225,255,.75), 0 0 70px rgba(160,185,255,.5); } }
+  @keyframes citySway { 0%,100% { transform: translateY(0) rotate(0deg); } 50% { transform: translateY(-2px) rotate(-1.3deg); } }
+  @keyframes cityDrop { 0% { transform: translateY(-46px) scale(.7); opacity: 0; } 60% { transform: translateY(4px) scale(1.08); opacity: 1; } 100% { transform: translateY(0) scale(1); } }
+  @keyframes flyDrift { 0% { transform: translate(0,0); opacity: 0; } 15% { opacity: .9; } 85% { opacity: .9; } 100% { transform: translate(var(--fx,30px), var(--fy,-40px)); opacity: 0; } }
+  @media (prefers-reduced-motion: reduce) { .city .sky, .city .moon, .tile, .city .fly { animation: none !important; } }
   .city.empty-city { align-items: center; justify-content: center; align-content: center; }
-  .city .hint { color: rgba(255,255,255,.55); font-size: 14px; text-align: center; }
+  .city .hint { position: relative; z-index: 1; color: rgba(255,255,255,.7); font-size: 14px; text-align: center; }
   .meta { display: flex; align-items: center; justify-content: space-between; margin: 10px 2px 0; }
   .meta .cnt { font-size: 13px; color: var(--text-dim, #9CA0A8); }
   .meta .clr { background: none; border: none; color: var(--text-dim, #9CA0A8); font-size: 13px; text-decoration: underline; cursor: pointer; font-family: inherit; }
@@ -93,12 +116,21 @@
       document.getElementById('dmBal').textContent = get('mvow.diamonds');
 
       var city = loadCity(), cityEl = document.getElementById('city');
+      // Sahna qatlamlari: yulduzli osmon + oy + yer + o'tuvchi olovchoqlar (fireflies)
+      var flies = '';
+      for (var f = 0; f < 3; f++) {
+        flies += '<div class="fly" style="left:' + (15 + f * 28) + '%;bottom:' + (32 + f * 7) + '%;--fx:' + (18 + f * 10) + 'px;--fy:-' + (30 + f * 8) + 'px;animation:flyDrift ' + (5 + f) + 's ease-in-out ' + (f * 1.3) + 's infinite;"></div>';
+      }
+      var scene = '<div class="sky"></div><div class="moon"></div><div class="ground"></div>' + flies;
       if (!city.length) {
         cityEl.className = 'city empty-city';
-        cityEl.innerHTML = '<div class="hint">' + T('shahar.empty', "Bo'sh maydon. Do'kondan birinchi binongizni quring 👇") + '</div>';
+        cityEl.innerHTML = scene + '<div class="hint">' + T('shahar.empty', "Bo'sh maydon. Do'kondan birinchi binongizni quring 👇") + '</div>';
       } else {
         cityEl.className = 'city';
-        cityEl.innerHTML = city.map(function (e) { return '<span class="tile">' + e + '</span>'; }).join('');
+        // Har bino manfiy animation-delay bilan — tebranish fazasi turlicha (robot emas)
+        cityEl.innerHTML = scene + city.map(function (e, i) {
+          return '<span class="tile" style="animation-delay:-' + (i % 8 * 0.5).toFixed(2) + 's">' + e + '</span>';
+        }).join('');
       }
       document.getElementById('cityCnt').textContent = city.length + ' ' + T('shahar.count', 'inshoot');
       document.getElementById('clrBtn').style.display = city.length ? '' : 'none';
@@ -124,6 +156,13 @@
       var c = loadCity(); c.push(it.e); saveCity(c);
       if (window.MVOW_DATA && MVOW_DATA.fxSuccess) MVOW_DATA.fxSuccess();
       render();
+      // Yangi bino sakrab tushadi (drop-in) + nozik titrash
+      try {
+        var tiles = document.querySelectorAll('#city .tile');
+        var last = tiles[tiles.length - 1];
+        if (last) { last.classList.add('mfx-drop'); setTimeout(function () { last.classList.remove('mfx-drop'); }, 640); }
+        if (navigator.vibrate) navigator.vibrate(12);
+      } catch (e) {}
       if (window.MvowUndo) MvowUndo.show(T('shahar.built', 'Qurildi'), function () {
         setN(key, get(key) + it.price); var cc = loadCity(); cc.pop(); saveCity(cc); render();
       });
