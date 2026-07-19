@@ -172,10 +172,11 @@
       return;
     }
 
+    const escN = s => String(s == null ? '' : s).replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
     container.innerHTML = evts.map(e => `
       <div class="item ${classFor(e.type)}">
         <span class="at">${fmtTime(e.ts)}</span>
-        <span class="text">${e.text}</span>
+        <span class="text">${escN(e.text)}</span>
       </div>
     `).join('');
   }

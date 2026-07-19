@@ -36,6 +36,9 @@ module.exports = async (req, res) => {
 
   let c = req.body || {};
   if (typeof c === 'string') { try { c = JSON.parse(c); } catch (e) { c = {}; } }
+  // Kiritma chegaralari (xavfsizlik): matn maydonlari kesiladi, raqamlar raqamga o'giriladi
+  const capS = (v, n) => String(v == null ? '' : v).slice(0, n);
+  const capN = (v) => { const x = parseInt(v, 10); return (isFinite(x) && x >= 0) ? Math.min(x, 100000) : 0; };
 
   async function gemini(prompt) {
     // ── Kunlik chegara — bepulda qolish kafolati ──
@@ -65,7 +68,7 @@ module.exports = async (req, res) => {
     if (!key) { res.status(200).json({ steps: [] }); return; }
     try {
       const langName = ({ uz: "o'zbek", ru: 'rus', en: 'ingliz' })[c.lang] || "o'zbek";
-      const prompt = 'Foydalanuvchi maqsadi: "' + (c.goal || '') + '", muddat: ' + (c.duration || "1 oy") + '. '
+      const prompt = 'Foydalanuvchi maqsadi: "' + capS(c.goal, 200) + '", muddat: ' + (capS(c.duration, 40) || "1 oy") + '. '
         + "Bu maqsadga erishish uchun KETMA-KET, aniq, bajariladigan 5-6 ta KICHIK BOSQICH yoz. "
         + "Har bosqich qisqa (3-6 so'z), " + langName + " tilida. "
         + "Faqat bosqichlarni yoz — har birini yangi qatordan, raqamsiz va izohsiz.";
@@ -83,8 +86,8 @@ module.exports = async (req, res) => {
       const langName = ({ uz: "o'zbek", ru: 'rus', en: 'ingliz' })[c.lang] || "o'zbek";
       const prompt =
         "Sen foydalanuvchining intizom do'stisan — iliq mentor, hurmat bilan 'siz' shaklida gaplashasan. " +
-        "Foydalanuvchi uyqusi: o'rtacha " + (c.avgH || '?') + " soat uxlaydi, maqsad yotish vaqti " + (c.bedGoal || '23:00') + ", " +
-        "so'nggi kunlarda " + (c.lateCount || 0) + " marta kech yotgan. " +
+        "Foydalanuvchi uyqusi: o'rtacha " + (capS(c.avgH, 10) || '?') + " soat uxlaydi, maqsad yotish vaqti " + (capS(c.bedGoal, 10) || '23:00') + ", " +
+        "so'nggi kunlarda " + capN(c.lateCount) + " marta kech yotgan. " +
         langName + " tilida QISQA (2-3 jumla) yoz: uyqusini iliq baholab, vaqtida yotishga do'stona undab, " +
         "kech yotishning bitta aniq oqibatini eslatib o't. Qo'rqitmasdan qo'llab-quvvatla. Faqat xabarni yoz, izohsiz.";
       const t = await gemini(prompt);
@@ -128,8 +131,8 @@ module.exports = async (req, res) => {
   try {
     const prompt =
       "Sen foydalanuvchining intizom do'stisan — iliq, do'stona mentor, hurmat bilan 'siz' shaklida gaplashasan. " +
-      'Bugungi natija: ' + (c.done || 0) + '/' + (c.total || 0) + ' vazifa bajarilgan, ' +
-      (c.focusH || 0) + ' soat fokus, streak ' + (c.streak || 0) + ' kun. ' +
+      'Bugungi natija: ' + capN(c.done) + '/' + capN(c.total) + ' vazifa bajarilgan, ' +
+      (capS(c.focusH, 8) || 0) + ' soat fokus, streak ' + capN(c.streak) + ' kun. ' +
       "O'zbek tilida QISQA (1-2 jumla), iliq, rag'batlantiruvchi xabar yoz. " +
       "Jazolamasdan qo'llab-quvvatla. Faqat xabarning o'zini yoz, izohsiz.";
     const t = await gemini(prompt);

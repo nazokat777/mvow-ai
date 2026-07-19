@@ -1368,8 +1368,8 @@
       const emTime = '<span style="color:var(--accent);font-style:normal;font-weight:600;">' + pattern.goal.time + '</span>';
       const emMisses = '<span style="color:#FF8E97;font-style:normal;">' + pattern.misses + '</span>';
       pText.innerHTML = window.I18N
-        ? I18N.tWith('home.pattern_text', { time: emTime, goal: pattern.goal.text, n: emMisses })
-        : ('Siz ' + emTime + ' da «' + pattern.goal.text + '» rejasini ' + emMisses + ' kun ketma-ket bajarmadingiz.');
+        ? I18N.tWith('home.pattern_text', { time: emTime, goal: escapeHtmlH(pattern.goal.text), n: emMisses })
+        : ('Siz ' + emTime + ' da «' + escapeHtmlH(pattern.goal.text) + '» rejasini ' + emMisses + ' kun ketma-ket bajarmadingiz.');
       // Taklif tugmalari — energiya cho'qqisi + standart vaqtlar
       const pT = (k, def) => (window.I18N ? I18N.t(k, def) : def);
       const standardOptions = [

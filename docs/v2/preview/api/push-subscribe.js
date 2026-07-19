@@ -20,11 +20,17 @@ module.exports = async (req, res) => {
 
   let c = req.body || {};
   if (typeof c === 'string') { try { c = JSON.parse(c); } catch (e) { c = {}; } }
-  const code = String(c.code || '').trim();
+  const code = String(c.code || '').trim().slice(0, 32);
   const sub = c.subscription;
-  const tz = (typeof c.tz === 'number') ? c.tz : 300;
+  const tz = (typeof c.tz === 'number' && isFinite(c.tz)) ? Math.max(-840, Math.min(840, c.tz)) : 300;
   if (!code || !sub || !sub.endpoint) {
     res.status(400).json({ ok: false, reason: 'code va subscription kerak' });
+    return;
+  }
+  // Endpoint faqat https va oqilona uzunlikda bo'lsin (buzilgan/yolg'on qiymatlar bazaga tushmasin)
+  const endpoint = String(sub.endpoint).slice(0, 1000);
+  if (!/^https:\/\//.test(endpoint)) {
+    res.status(400).json({ ok: false, reason: 'endpoint' });
     return;
   }
 
@@ -35,15 +41,17 @@ module.exports = async (req, res) => {
       headers: Object.assign({}, H, { Prefer: 'resolution=merge-duplicates' }),
       body: JSON.stringify([{
         code: code,
-        endpoint: sub.endpoint,
-        p256dh: (sub.keys && sub.keys.p256dh) || '',
-        auth: (sub.keys && sub.keys.auth) || '',
+        endpoint: endpoint,
+        p256dh: String((sub.keys && sub.keys.p256dh) || '').slice(0, 300),
+        auth: String((sub.keys && sub.keys.auth) || '').slice(0, 100),
         tz: tz
       }])
     });
     // 2) Shu kod uchun eslatmalarni almashtirish (delete + insert)
     await fetch(SB_URL + '/rest/v1/reminders?code=eq.' + encodeURIComponent(code), { method: 'DELETE', headers: H });
-    const rems = Array.isArray(c.reminders) ? c.reminders.filter(r => r && r.time && r.body) : [];
+    const rems = Array.isArray(c.reminders)
+      ? c.reminders.filter(r => r && r.time && r.body && /^\d{1,2}:\d{2}$/.test(String(r.time))).slice(0, 50)
+      : [];
     if (rems.length) {
       await fetch(SB_URL + '/rest/v1/reminders', {
         method: 'POST',
