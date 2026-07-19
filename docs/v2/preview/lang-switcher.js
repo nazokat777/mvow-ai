@@ -136,14 +136,20 @@
       var frs = Social.friends();
       if (!frs.length) { setChatUnread(0); return; }
       var seen = {}; try { seen = JSON.parse(localStorage.getItem('mvow.chatSeen') || '{}'); } catch (e) {}
-      var total = 0, pending = frs.length;
+      var total = 0, pending = frs.length, seenChanged = false;
       frs.forEach(function (f) {
         Social.getMessages(f.code).then(function (msgs) {
-          var last = seen[f.code] || 0;
+          // Baseline yo'q bo'lsa (birinchi marta) — HOZIRGI eng oxirgi xabarni "asos" qilamiz:
+          // eski xabarlar "yangi" deb sanalmaydi (aks holda xabar kelmasa ham son chiqardi).
+          if (seen[f.code] == null) {
+            var maxT = 0; (msgs || []).forEach(function (m) { var t = new Date(m.created_at).getTime(); if (t > maxT) maxT = t; });
+            seen[f.code] = maxT || Date.now(); seenChanged = true;
+          }
+          var last = seen[f.code];
           (msgs || []).forEach(function (m) {
             if (m && m.from_code === f.code && new Date(m.created_at).getTime() > last) total++;
           });
-          if (--pending === 0) setChatUnread(total);
+          if (--pending === 0) { if (seenChanged) { try { localStorage.setItem('mvow.chatSeen', JSON.stringify(seen)); } catch (e) {} } setChatUnread(total); }
         }, function () { if (--pending === 0) setChatUnread(total); });
       });
     } catch (e) {}

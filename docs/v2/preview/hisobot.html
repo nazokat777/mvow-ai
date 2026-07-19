@@ -67,6 +67,13 @@
   .vis-row input:checked ~ .sw { background: var(--accent, #F4845F); }
   .vis-row input:checked ~ .sw::after { transform: translateX(19px); }
   .vis-note { font-size: 12px; color: var(--text-dim, #9CA0A8); margin-top: 6px; line-height: 1.5; }
+  /* "Do'st shuni ko'radi" preview */
+  .pv-card { background: rgba(110,181,255,.08); border: 1px solid rgba(110,181,255,.28); border-radius: 14px; padding: 14px 16px; margin-bottom: 16px; }
+  .pv-title { font-size: 13px; font-weight: 700; color: #6EB5FF; margin-bottom: 8px; }
+  .pv-stats { font-size: 15px; color: var(--text, #F5F2EC); margin-bottom: 8px; }
+  .pv-stats b { color: var(--accent-bright, #F4845F); }
+  .pv-row { font-size: 13.5px; color: var(--text-mid, #B8BBC2); padding: 3px 0; }
+  .pv-empty { font-size: 13px; color: var(--text-dim, #9CA0A8); }
 </style>
 </head>
 <body>
@@ -82,6 +89,13 @@
   <div class="total">
     <div class="big" id="totalVal">0</div>
     <div class="lbl" data-i18n="hisobot.total_lbl">Jami mehnat</div>
+  </div>
+
+  <!-- Do'st/ustoz SIZNI qanday ko'radi (o'zingiz tekshirasiz) — aynan sync bo'layotgan narsa. -->
+  <div class="pv-card" id="previewCard" style="display:none;">
+    <div class="pv-title" id="pvTitle">👁 Do'stingiz/ustozingiz shuni ko'radi</div>
+    <div class="pv-stats"><b id="pvHours">—</b> <span id="pvTasksSep">·</span> <b id="pvTasks">—</b></div>
+    <div id="pvTasksList"></div>
   </div>
 
   <!-- Do'st/ustoz/ota-onaga LIVE ko'rinishi: nimani ko'rsatish. Berkitilgani serverga BORMAYDI. -->
@@ -202,6 +216,7 @@ document.addEventListener('DOMContentLoaded', function () {
             Social.setHidden(it.name, !sel[it.key]);   // syncStats o'zi ichida chaqiriladi
           }
           render();
+          if (typeof renderPreview === 'function') renderPreview();   // "do'st ko'radi" yangilansin
         });
         list.appendChild(row);
       });
@@ -321,12 +336,31 @@ document.addEventListener('DOMContentLoaded', function () {
     Object.keys(map).forEach(function (id) {
       var el = document.getElementById(id); if (!el || el._wired) return;
       el.checked = v[map[id]] !== false;
-      el.addEventListener('change', function () { Social.visSet(map[id], el.checked); });
+      el.addEventListener('change', function () { Social.visSet(map[id], el.checked); if (typeof renderPreview === 'function') renderPreview(); });
       el._wired = true;
     });
   }
+  // Do'st/ustoz SIZNI qanday ko'radi — aynan sync bo'layotgan narsa (o'zingiz tekshirasiz).
+  function renderPreview() {
+    var card = document.getElementById('previewCard'); if (!card) return;
+    var hasFr = window.Social && Social.cloud && Social.cloud() && Social.friends && Social.friends().length > 0;
+    if (!hasFr) { card.style.display = 'none'; return; }
+    card.style.display = 'block';
+    var vis = Social.visGet ? Social.visGet() : { hours: true, tasks: true, notimer: true };
+    var st = Social.myStats ? Social.myStats() : { focusH: 0, habits: 0 };
+    var hid = T('hisobot.pv_hidden', 'yashirin');
+    document.getElementById('pvHours').textContent = vis.hours ? (st.focusH + ' ' + T('hisobot.hour_short', 'soat')) : hid;
+    document.getElementById('pvTasks').textContent = vis.tasks ? (st.habits + ' ' + T('hisobot.pv_task_unit', 'vazifa')) : hid;
+    var tasks = Social.myTasksToday ? Social.myTasksToday() : [];
+    var html = '';
+    tasks.forEach(function (t) {
+      var badge = (t.t == null) ? '' : (' · ' + (t.t ? T('hisobot.timer_badge', 'taymerli') : T('hisobot.notimer_badge', 'taymersiz')));
+      html += '<div class="pv-row">• ' + esc(t.n) + ' — ' + (t.m || 0) + ' ' + T('hisobot.min_short', 'daq') + badge + '</div>';
+    });
+    document.getElementById('pvTasksList').innerHTML = tasks.length ? html : '<div class="pv-empty">' + T('hisobot.pv_none', "Ko'rinadigan vazifa yo'q") + '</div>';
+  }
   function initReport() {
-    D = window.MVOW_DATA; build(); render(); renderFriends(); initVis();
+    D = window.MVOW_DATA; build(); render(); renderFriends(); initVis(); renderPreview();
     // Ochilganda ko'rinadigan vazifalarni serverga sync qilamiz (viewerlar yangilansin)
     try { if (window.Social && Social.cloud && Social.cloud()) Social.syncStats(); } catch (e) {}
   }

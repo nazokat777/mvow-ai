@@ -73,7 +73,7 @@
   .chat-ic { margin-left: 8px; opacity: .55; font-size: 15px; }
   .chat-ov { position: fixed; inset: 0; background: var(--void); z-index: 100001; display: none; flex-direction: column; }
   .chat-ov.open { display: flex; }
-  .chat-hd { display: flex; align-items: center; gap: 10px; padding: 16px 16px; border-bottom: 1px solid var(--border-default, rgba(0,0,0,.1)); }
+  .chat-hd { display: flex; align-items: center; gap: 10px; padding: max(16px, env(safe-area-inset-top, 16px)) 16px 16px; border-bottom: 1px solid var(--border-default, rgba(0,0,0,.1)); }
   .chat-hd .bk { background: none; border: none; color: var(--text); font-size: 30px; cursor: pointer; line-height: 1; padding: 0 4px; }
   .chat-hd .who { font-family: 'Anton', sans-serif; font-size: 22px; letter-spacing: 1px; }
   .chat-msgs { flex: 1; overflow-y: auto; padding: 16px; display: flex; flex-direction: column; gap: 8px; }
