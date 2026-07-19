@@ -61,6 +61,28 @@
     return { shake: function (m) { msg.textContent = m; msg.style.color = '#ff6b6b'; entered = ''; renderDots(); } };
   }
 
+  // "Mavjud emas" NIQOB oynasi — yashirilgan funksiya ochilganda. Bosilsa PIN so'raydi;
+  // to'g'ri PIN -> kontent ochiladi, aks holda "Mavjud emas" bo'lib turaveradi.
+  function disguiseOverlay(expected, onOk) {
+    var dark = false; try { dark = localStorage.getItem('mvow.theme') === 'dark'; } catch (e) {}
+    var bg = dark ? '#04060B' : '#f3f4f7', fg = dark ? '#F5F2EC' : '#15171c', sub = dark ? '#8A8A92' : '#6b7078';
+    var ov = document.createElement('div');
+    ov.id = 'mvow-disguise';
+    ov.style.cssText = 'position:fixed;inset:0;z-index:2147483590;background:' + bg + ';color:' + fg + ';display:flex;flex-direction:column;align-items:center;justify-content:center;padding:32px;font-family:Inter,sans-serif;text-align:center;-webkit-tap-highlight-color:transparent;';
+    ov.innerHTML = '<div style="font-size:52px;margin-bottom:16px;opacity:.3;">🚫</div>'
+      + '<div style="font-family:Anton,sans-serif;font-size:30px;letter-spacing:.5px;margin-bottom:8px;">Mavjud emas</div>'
+      + '<div style="color:' + sub + ';font-size:15px;max-width:260px;line-height:1.5;">Bu bo\'lim mavjud emas.</div>';
+    document.documentElement.appendChild(ov);
+    var opened = false;
+    ov.addEventListener('click', function () {
+      if (opened) return; opened = true;
+      padOverlay('Kodni kiriting', function (p) {
+        if (p === expected) { if (ov.parentNode) ov.parentNode.removeChild(ov); if (typeof onOk === 'function') onOk(); }
+        else { opened = false; }   // noto'g'ri -> niqob qoladi, qayta bosish mumkin
+      }, true, function () { opened = false; });
+    });
+  }
+
   // Qulf oynasi — kutilgan PIN'ga tekshiradi (ilova PIN'i YOKI funksiya PIN'i). Cancelsiz.
   function gate(expected, onOk) {
     expected = (expected != null) ? expected : get();
@@ -171,18 +193,32 @@
   function manageFeature(key) {
     var opts = [
       { label: "✏️  Nom o'zgartirish" },
-      { label: isHidden(key) ? "👁  Menyuda ko'rsatish" : "🙈  Menyudan yashirish" },
+      { label: isHidden(key) ? "👁  Yashirishni o'chirish" : "🙈  Yashirish (Mavjud emas qilib)" },
       { label: hasFeatPin(key) ? "🔓  PIN qulfni o'chirish" : "🔒  PIN qulf qo'yish" }
     ];
     chooseModal(opts, function (i) {
       if (i === 0) { var nm = prompt("Yangi nom (bo'sh = asl nom):", featName(key)); if (nm !== null) { setFeatName(key, (nm || '').trim()); toast('Saqlandi ✓'); setTimeout(function () { location.reload(); }, 400); } }
       else if (i === 1) {
-        var willHide = !isHidden(key); setHidden(key, willHide);
-        toast(willHide ? 'Menyudan yashirildi ✓' : "Menyuda ko'rsatiladi ✓");
-        // Menyuga o'tkazamiz — natijani DARHOL ko'rsin (yashirilgan qator yo'q / qaytgan).
-        setTimeout(function () { location.href = 'menu.html'; }, 650);
+        // Yashirish: sahifa ochilganda "Mavjud emas" bo'lib ko'rinadi, PIN bilan ochiladi.
+        // Shuning uchun PIN SHART — yo'q bo'lsa avval o'rnatamiz.
+        if (isHidden(key)) {
+          setHidden(key, false);
+          toast("Yashirish o'chirildi — sahifa oddiy ochiladi ✓");
+        } else if (hasFeatPin(key)) {
+          setHidden(key, true);
+          toast("Yashirildi — sahifa 'Mavjud emas' bo'lib ko'rinadi. PIN bilan ochasiz ✓");
+        } else {
+          toast('Avval PIN kod o\'ylab toping — u bilan ochasiz');
+          setFeaturePin(key, function (ok) {
+            if (ok) { setHidden(key, true); toast("Yashirildi — sahifa 'Mavjud emas' bo'lib ko'rinadi. PIN bilan ochasiz ✓"); }
+          });
+        }
       }
-      else { if (hasFeatPin(key)) disableFeaturePin(key); else setFeaturePin(key); }
+      else {
+        // PIN o'chirilsa va funksiya yashirilgan bo'lsa — niqobni ham o'chiramiz (aks holda kirib bo'lmaydi).
+        if (hasFeatPin(key)) disableFeaturePin(key, function (ok) { if (ok && isHidden(key)) setHidden(key, false); });
+        else setFeaturePin(key);
+      }
     }, featName(key));
   }
 
@@ -200,6 +236,8 @@
   }
   if (_feat) { if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', injectManageBtn); else injectManageBtn(); }
   function _autoGate() {
+    // Yashirilgan + PIN'li funksiya -> "Mavjud emas" niqob (PIN bilan ochiladi).
+    if (_feat && isHidden(_feat) && hasFeatPin(_feat) && !featUnlocked(_feat)) { disguiseOverlay(getFeatPin(_feat), function () { markFeatUnlocked(_feat); }); return; }
     if (_feat && hasFeatPin(_feat) && !featUnlocked(_feat)) { gate(getFeatPin(_feat), function () { markFeatUnlocked(_feat); }); return; }
     if (has() && !unlocked() && (appLockOn() || (_feat && isFeatureLocked(_feat)))) { gate(); }
   }

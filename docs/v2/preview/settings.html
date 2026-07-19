@@ -198,11 +198,6 @@
       <div class="lbl" style="font-size:13px;color:var(--text-dim);line-height:1.5;" data-i18n="settings.feat_hint">Har funksiyani alohida qulflash / yashirish / nomlash — o'sha funksiya sahifasidagi ⋮ tugmadan.</div>
     </div>
 
-    <!-- Menyudan berkitilgan funksiyalarni shu yerdan tiklash mumkin (menyudagi "Yashirin funksiyalar" o'rniga). -->
-    <div id="hiddenFeatsBox" style="display:none;margin-top:12px;">
-      <div class="section-lbl" data-i18n="settings.sec_hidden">Berkitilgan funksiyalar</div>
-      <div id="hiddenFeatsList"></div>
-    </div>
 
     <div class="section" style="margin-top:24px;">
       <button class="intensity-pill" type="button" id="replayIntro" data-i18n="settings.replay_intro" style="width:100%;">Tanishuv ko'rinishini qayta ko'rsatish</button>
@@ -278,24 +273,6 @@
   function updPin() { var s = document.getElementById('pinStatus'); if (s) s.textContent = (window.PinLock && PinLock.has()) ? T('settings.pin_on', 'Yoqilgan ✓') : T('settings.pin_off', "O'chiq ›"); }
   if (row) { updPin(); row.onclick = function () { if (window.PinLock) { PinLock.manage(); setTimeout(function () { updPin(); syncApp(); }, 300); } }; }
 
-  // Menyudan berkitilgan funksiyalarni tiklash (menyudagi "Yashirin funksiyalar" qatori o'rniga).
-  function renderHiddenFeats() {
-    var box = document.getElementById('hiddenFeatsBox'), list = document.getElementById('hiddenFeatsList');
-    if (!box || !list) return;
-    var hidden = [];
-    try { hidden = JSON.parse(localStorage.getItem('mvow.hiddenFeatures') || '[]'); } catch (e) {}
-    if (!Array.isArray(hidden) || !hidden.length) { box.style.display = 'none'; list.innerHTML = ''; return; }
-    box.style.display = '';
-    list.innerHTML = hidden.map(function (k) {
-      var nm = (window.PinLock && PinLock.featName) ? PinLock.featName(k) : k;
-      return '<div class="row" style="justify-content:space-between;"><span class="lbl">' + String(nm).replace(/[<>&]/g, '') + '</span>'
-        + '<button type="button" class="restore-feat" data-k="' + k + '" style="background:transparent;border:1px solid rgba(244,132,95,.4);color:var(--accent);border-radius:999px;padding:6px 14px;font-size:14px;font-weight:600;cursor:pointer;font-family:Inter,sans-serif;">' + T('settings.restore', 'Tiklash') + '</button></div>';
-    }).join('');
-    list.querySelectorAll('.restore-feat').forEach(function (b) {
-      b.onclick = function () { if (window.PinLock) PinLock.setHidden(b.getAttribute('data-k'), false); renderHiddenFeats(); };
-    });
-  }
-  renderHiddenFeats();
 
   // PIN kerak — yo'q bo'lsa avval o'rnatishni so'raymiz.
   function needPin() {
