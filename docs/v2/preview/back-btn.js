@@ -6,7 +6,8 @@
  * Bosh/launcher sahifalarda (index, menu, gallery, app, intro) kerak emas.
  */
 (function () {
-  var NO_NAV = ['', 'index.html', 'menu.html', 'gallery.html', 'app.html', 'intro.html'];
+  // menu.html — ‹ (qaytish) KERAK (u ro'yxatda emas); faqat ☰ keraksiz (allaqachon menyudamiz).
+  var NO_NAV = ['', 'index.html', 'gallery.html', 'app.html', 'intro.html'];
 
   function t(key, fb) {
     return (window.I18N && typeof I18N.t === 'function') ? I18N.t(key, fb) : fb;
@@ -91,8 +92,8 @@
     menu.style.fontSize = '18px';
 
     caps.appendChild(back);
-    caps.appendChild(divider);
-    caps.appendChild(menu);
+    // Menyuning O'ZIDA ☰ keraksiz — faqat ‹ qaytish qoladi.
+    if (file !== 'menu.html') { caps.appendChild(divider); caps.appendChild(menu); }
     document.body.appendChild(caps);
   }
 
