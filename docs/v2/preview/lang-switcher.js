@@ -115,6 +115,48 @@
     document.body.appendChild(wrap);
   }
 
+  // ── Chat o'qilmagan xabar belgisi (do'stlar ikonkasida) + ilova ikonkasi badge ──
+  // Ilova OCHIQ bo'lganda hisoblaydi; belgi localStorage'da saqlanadi (barcha sahifada ko'rinadi).
+  // Eslatma: ilova TO'LIQ yopiq turganda yangi xabarni bildirish PUSH backend talab qiladi (keyingi bosqich).
+  function renderChatBadge() {
+    var badge = document.getElementById('mvow-chat-badge');
+    if (!badge) return;
+    var n = 0; try { n = parseInt(localStorage.getItem('mvow.chatUnread') || '0', 10) || 0; } catch (e) {}
+    if (n > 0) { badge.textContent = n > 9 ? '9+' : String(n); badge.style.display = 'block'; }
+    else badge.style.display = 'none';
+  }
+  function setChatUnread(n) {
+    try { localStorage.setItem('mvow.chatUnread', String(n)); } catch (e) {}
+    renderChatBadge();
+    try { if (navigator.setAppBadge) { if (n > 0) navigator.setAppBadge(n); else if (navigator.clearAppBadge) navigator.clearAppBadge(); } } catch (e) {}
+  }
+  function computeChatUnread() {
+    try {
+      if (!window.Social || !Social.cloud || !Social.cloud() || !Social.getMessages || !Social.friends) return;
+      var frs = Social.friends();
+      if (!frs.length) { setChatUnread(0); return; }
+      var seen = {}; try { seen = JSON.parse(localStorage.getItem('mvow.chatSeen') || '{}'); } catch (e) {}
+      var total = 0, pending = frs.length;
+      frs.forEach(function (f) {
+        Social.getMessages(f.code).then(function (msgs) {
+          var last = seen[f.code] || 0;
+          (msgs || []).forEach(function (m) {
+            if (m && m.from_code === f.code && new Date(m.created_at).getTime() > last) total++;
+          });
+          if (--pending === 0) setChatUnread(total);
+        }, function () { if (--pending === 0) setChatUnread(total); });
+      });
+    } catch (e) {}
+  }
+  // dostlar chat ochganda "o'qildi" belgilash uchun global hook
+  window.MvowChat = {
+    recompute: computeChatUnread,
+    markSeen: function (code) {
+      try { var s = JSON.parse(localStorage.getItem('mvow.chatSeen') || '{}'); s[code] = Date.now(); localStorage.setItem('mvow.chatSeen', JSON.stringify(s)); } catch (e) {}
+      computeChatUnread();
+    }
+  };
+
   // Har sahifada til tugmasi YONIGA (chapiga) Do'stlar + Sovrinlar ikonkalari
   function buildQuickNav() {
     if (document.getElementById('mvow-quicknav')) return;
@@ -131,10 +173,18 @@
       a.textContent = emoji;
       return a;
     }
-    qn.appendChild(mk('👥', 'dostlar.html', "Do'stlar"));
+    var friendsA = mk('👥', 'dostlar.html', "Do'stlar");
+    friendsA.style.position = 'relative';
+    var cbadge = document.createElement('span');
+    cbadge.id = 'mvow-chat-badge';
+    cbadge.style.cssText = 'position:absolute;top:-3px;right:-3px;min-width:18px;height:18px;padding:0 4px;border-radius:999px;background:#e0483c;color:#fff;font-size:11px;font-weight:800;line-height:18px;text-align:center;display:none;box-shadow:0 2px 6px rgba(0,0,0,.4);';
+    friendsA.appendChild(cbadge);
+    qn.appendChild(friendsA);
     qn.appendChild(mk('🏅', 'sovrinlar.html', 'Sovrinlar'));
     qn.appendChild(mk('🔥', 'fokus-izi.html', 'Seriya'));
     document.body.appendChild(qn);
+    renderChatBadge();               // localStorage'dan darhol (barcha sahifada)
+    setTimeout(computeChatUnread, 900);  // Supabase yuklangach qayta hisoblaydi
     function place() {
       var lang = document.querySelector('.lang-switcher');
       if (!lang) { qn.style.top = '14px'; qn.style.right = '64px'; return; }

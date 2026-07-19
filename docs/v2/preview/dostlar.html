@@ -228,13 +228,17 @@
     var chatCode = null, chatCh = null;
     function openChat(code) {
       chatCode = code;
-      $('chatWho').textContent = code;
+      $('chatWho').textContent = (Social.nameOf ? Social.nameOf(code, 'friend') : code) || code;
       $('chatMsgs').innerHTML = '<div class="chat-empty">' + T('loading', 'Yuklanmoqda…') + '</div>';
       $('chatOv').classList.add('open');
       $('chatInput').focus();
       if (!Social.cloud()) { $('chatMsgs').innerHTML = '<div class="chat-empty">' + T('need_net', 'Chat uchun internet kerak.') + '</div>'; return; }
       Social.getMessages(code).then(renderMsgs);
-      chatCh = Social.subscribeMessages(code, function (m) { if (m.from_code !== Social.myCode()) appendMsg(m); });
+      chatCh = Social.subscribeMessages(code, function (m) {
+        if (m.from_code !== Social.myCode()) appendMsg(m);
+        if (window.MvowChat) MvowChat.markSeen(code);   // ochiq chatda kelgan xabar -> o'qilgan
+      });
+      if (window.MvowChat) MvowChat.markSeen(code);      // chat ochildi -> shu suhbat o'qildi
     }
     function closeChat() {
       $('chatOv').classList.remove('open');
