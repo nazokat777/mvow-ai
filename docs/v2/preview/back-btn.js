@@ -72,8 +72,11 @@
     back.addEventListener('click', function (e) {
       e.preventDefault();
       var ref = document.referrer || '';
-      if (ref && ref.indexOf(location.origin) === 0 && window.history.length > 1) history.back();
-      else location.href = 'home.html';
+      if (ref && ref.indexOf(location.origin) === 0 && window.history.length > 1) { history.back(); return; }
+      // Zaxira: home'da bo'lsak home'ni qayta yuklamaymiz (splash location.replace tufayli history bo'sh
+      // bo'lib, ‹ "ishlamagandek" edi) — menyuga o'tamiz. Boshqa sahifada esa home'ga.
+      var f = (location.pathname.split('/').pop() || '').toLowerCase();
+      location.href = (f === 'home.html') ? 'menu.html' : 'home.html';
     });
 
     // Ajratuvchi chiziq

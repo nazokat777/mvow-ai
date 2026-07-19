@@ -292,6 +292,16 @@
 </head>
 <body>
 
+<script>
+  // Skelet miltillashini oldini olamiz ("vazifa yo'q" -> yonib-o'chib -> "vazifalar bor").
+  // Kontent JS render tugaguncha yashirin turadi, keyin yumshoq paydo bo'ladi. Zaxira: 1.5s da baribir ko'rsatiladi.
+  (function () {
+    try { document.documentElement.classList.add('home-loading'); } catch (e) {}
+    setTimeout(function () { try { document.documentElement.classList.remove('home-loading'); } catch (e) {} }, 1500);
+  })();
+</script>
+<style>html.home-loading .container { opacity: 0; } .container { transition: opacity .28s ease; }</style>
+
 <div class="phone">
   <div class="container">
 
@@ -685,6 +695,8 @@
     }
     renderTasks();
     renderNowCard();
+    // Kontent tayyor — miltillashsiz yumshoq ko'rsatamiz.
+    requestAnimationFrame(function () { try { document.documentElement.classList.remove('home-loading'); } catch (e) {} });
 
     // ── Orzular eslatmasi — 3 kunda bir "orzularingizni o'qing" kartasi ──
     (function renderDreamCard() {
