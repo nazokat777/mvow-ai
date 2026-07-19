@@ -116,20 +116,13 @@
   var MAP = { 'hamyon.html':'hamyon','blaknot.html':'blaknot','goyalar.html':'goyalar','orzular.html':'orzular','uyqu.html':'uyqu','mukofotlar.html':'mukofot','shahar.html':'shahar','eslatmalar.html':'eslatma','hisobot.html':'hisobot','dostlar.html':'dostlar' };
   var names = {}; try { names = JSON.parse(localStorage.getItem('mvow.featNames') || '{}'); } catch (e2) {}
   var hidden = []; try { hidden = JSON.parse(localStorage.getItem('mvow.hiddenFeatures') || '[]'); } catch (e3) {}
-  var hiddenRows = [];
   document.querySelectorAll('.wrap .row').forEach(function (a) {
     var href = (a.getAttribute('href') || '').split('?')[0], key = MAP[href];
     if (!key) return;
-    if (hidden.indexOf(key) >= 0) { a.style.display = 'none'; hiddenRows.push(a); }   // BERKITILGAN
+    if (hidden.indexOf(key) >= 0) { a.style.display = 'none'; }   // BERKITILGAN (tiklash: Sozlamalar > Berkitilgan funksiyalar)
     if (names[key]) { var nm = a.querySelector('.name'); if (nm) { nm.textContent = names[key]; nm.removeAttribute('data-i18n'); } }
   });
-  // Yashirin funksiyalarga kirish — bosilsa ko'rsatiladi (siz topib ochasiz)
-  if (hiddenRows.length) {
-    var acc = document.createElement('a'); acc.href = '#'; acc.className = 'row';
-    acc.innerHTML = '<span class="num">🙈</span><span class="name">' + ((window.I18N && I18N.t) ? I18N.t('menu.hidden_access', 'Yashirin funksiyalar') : 'Yashirin funksiyalar') + ' (' + hiddenRows.length + ')</span>';
-    acc.onclick = function (ev) { ev.preventDefault(); hiddenRows.forEach(function (r) { r.style.display = ''; }); acc.style.display = 'none'; };
-    var sec = document.querySelector('.wrap .section'); if (sec) sec.appendChild(acc);
-  }
+  // "Yashirin funksiyalar" qatori olib tashlandi (foydalanuvchi so'rovi). Tiklash Sozlamalarda.
   var shown = 0; document.querySelectorAll('.wrap .row').forEach(function (a) { if (a.style.display !== 'none') shown++; }); if (e) e.textContent = shown;
 });</script>
 <script src="reveal.js?v=29.0.71" defer></script>
