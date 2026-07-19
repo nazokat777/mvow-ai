@@ -185,9 +185,15 @@
 
     <div class="section-lbl" style="margin-top:24px;" data-i18n="settings.sec_security">Xavfsizlik</div>
     <div class="row" id="pinRow" style="cursor:pointer;">
-      <div class="lbl" data-i18n="settings.pin_lock_lbl">Ilovani qulflash (PIN)</div>
+      <div class="lbl" data-i18n="settings.pin_lock_lbl">PIN kod (o'rnatish / o'zgartirish)</div>
       <div id="pinStatus" style="color:var(--text-dim);font-size:15px;">›</div>
     </div>
+    <label class="row lock-row"><span class="lbl" data-i18n="settings.applock_lbl">Ochilganda butun ilovani qulflash</span><input type="checkbox" id="appLockToggle"><span class="sw"></span></label>
+    <div class="row" id="featLockRow" style="cursor:pointer;">
+      <div class="lbl" data-i18n="settings.featlock_lbl">Funksiyalarni alohida qulflash</div>
+      <div id="featLockArrow" style="color:var(--text-dim);font-size:15px;">›</div>
+    </div>
+    <div id="featLockList" style="display:none;padding:2px 0 6px;"></div>
 
     <div class="section" style="margin-top:24px;">
       <button class="intensity-pill" type="button" id="replayIntro" data-i18n="settings.replay_intro" style="width:100%;">Tanishuv ko'rinishini qayta ko'rsatish</button>
@@ -237,8 +243,65 @@
 <script src="data.js?v=28.4.0" defer></script>
 <script src="nav-overlay.js?v=28.4.0" defer></script>
 <script src="pin-lock.js?v=28.67.0"></script>
+<style>
+  .lock-row { cursor: pointer; }
+  .lock-row input { position: absolute; opacity: 0; width: 0; height: 0; }
+  .lock-row .sw { position: relative; width: 44px; height: 25px; border-radius: 999px; background: rgba(150,150,150,.3); flex: none; transition: background .2s; }
+  .lock-row .sw::after { content: ''; position: absolute; top: 2px; left: 2px; width: 21px; height: 21px; border-radius: 50%; background: #fff; transition: transform .2s; box-shadow: 0 1px 3px rgba(0,0,0,.3); }
+  .lock-row input:checked ~ .sw { background: var(--accent, #F4845F); }
+  .lock-row input:checked ~ .sw::after { transform: translateX(19px); }
+</style>
 <script>
-  (function(){ var row=document.getElementById('pinRow'); if(!row) return; function upd(){ var s=document.getElementById('pinStatus'); if(s) s.textContent=(window.PinLock&&PinLock.has())?(window.I18N?I18N.t('settings.pin_on','Yoqilgan ✓'):'Yoqilgan ✓'):(window.I18N?I18N.t('settings.pin_off',"O'chiq ›"):"O'chiq ›"); } upd(); setInterval(upd,1000); row.onclick=function(){ if(window.PinLock) PinLock.manage(); }; })();
+(function () {
+  var T = function (k, fb) { return (window.I18N && I18N.t) ? I18N.t(k, fb) : fb; };
+  var row = document.getElementById('pinRow');
+  function updPin() { var s = document.getElementById('pinStatus'); if (s) s.textContent = (window.PinLock && PinLock.has()) ? T('settings.pin_on', 'Yoqilgan ✓') : T('settings.pin_off', "O'chiq ›"); }
+  if (row) { updPin(); row.onclick = function () { if (window.PinLock) { PinLock.manage(); setTimeout(function () { updPin(); syncApp(); }, 300); } }; }
+
+  // PIN kerak — yo'q bo'lsa avval o'rnatishni so'raymiz.
+  function needPin() {
+    if (window.PinLock && PinLock.has()) return true;
+    if (window.PinLock) PinLock.manage();
+    return false;
+  }
+
+  // Butun ilova qulfi
+  var appTog = document.getElementById('appLockToggle');
+  function syncApp() { if (appTog && window.PinLock) appTog.checked = PinLock.has() && PinLock.appLockOn(); }
+  if (appTog) appTog.addEventListener('change', function () {
+    if (appTog.checked && !needPin()) { appTog.checked = false; return; }
+    if (window.PinLock) PinLock.setAppLock(appTog.checked);
+  });
+
+  // Funksiyalarni alohida qulflash
+  var featRow = document.getElementById('featLockRow'), featList = document.getElementById('featLockList'), featArrow = document.getElementById('featLockArrow');
+  var LABELS = { hamyon: 'Hamyon', blaknot: 'Blaknot', goyalar: "G'oyalarim", orzular: 'Orzular', uyqu: 'Uyqu', mukofot: 'Mukofotlar', shahar: 'Shahringiz', eslatma: 'Eslatmalar', hisobot: 'Hisobot', dostlar: "Do'stlar" };
+  function renderFeats() {
+    if (!featList || !window.PinLock) return;
+    featList.innerHTML = '';
+    var feats = PinLock.FEATURES || {}, seen = {};
+    Object.keys(feats).forEach(function (page) {
+      var key = feats[page]; if (seen[key]) return; seen[key] = 1;
+      var wrap = document.createElement('label');
+      wrap.className = 'row lock-row'; wrap.style.paddingLeft = '14px';
+      wrap.innerHTML = '<span class="lbl" style="font-size:15px;">' + (LABELS[key] || key) + '</span><input type="checkbox"><span class="sw"></span>';
+      var cb = wrap.querySelector('input');
+      cb.checked = PinLock.isFeatureLocked(key);
+      cb.addEventListener('change', function () {
+        if (cb.checked && !needPin()) { cb.checked = false; return; }
+        PinLock.setFeatureLocked(key, cb.checked);
+      });
+      featList.appendChild(wrap);
+    });
+  }
+  if (featRow) featRow.onclick = function () {
+    var open = featList.style.display === 'none';
+    featList.style.display = open ? 'block' : 'none';
+    if (featArrow) featArrow.textContent = open ? '⌄' : '›';
+    if (open) renderFeats();
+  };
+  syncApp();
+})();
 </script>
 <script>
   document.addEventListener('DOMContentLoaded', () => {

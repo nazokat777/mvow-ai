@@ -108,11 +108,37 @@
     });
   }
 
-  // Avtomatik qulf (faqat PIN o'rnatilgan + bu sessiyada ochilmagan bo'lsa)
-  if (has() && !unlocked()) {
+  // ── Qulf sozlamalari: butun ilova (appLock) va/yoki alohida funksiyalar ──
+  // appLock default = YOQILGAN (PIN o'rnatilса, eski xatti-harakat: butun ilova qulf).
+  function appLockOn() { try { var v = localStorage.getItem('mvow.appLock'); return v == null ? true : v === '1'; } catch (e) { return true; } }
+  function setAppLock(on) { try { localStorage.setItem('mvow.appLock', on ? '1' : '0'); } catch (e) {} }
+  function lockedFeatures() { try { var a = JSON.parse(localStorage.getItem('mvow.lockedFeatures') || '[]'); return Array.isArray(a) ? a : []; } catch (e) { return []; } }
+  function isFeatureLocked(name) { return lockedFeatures().indexOf(name) >= 0; }
+  function setFeatureLocked(name, on) {
+    var a = lockedFeatures(), i = a.indexOf(name);
+    if (on && i < 0) a.push(name);
+    if (!on && i >= 0) a.splice(i, 1);
+    try { localStorage.setItem('mvow.lockedFeatures', JSON.stringify(a)); } catch (e) {}
+  }
+  // sahifa fayli -> funksiya kaliti (settings shu ro'yxatdan foydalanadi)
+  var FEATURES = {
+    'hamyon.html': 'hamyon', 'blaknot.html': 'blaknot', 'goyalar.html': 'goyalar',
+    'orzular.html': 'orzular', 'uyqu.html': 'uyqu', 'mukofotlar.html': 'mukofot',
+    'shahar.html': 'shahar', 'eslatmalar.html': 'eslatma', 'hisobot.html': 'hisobot', 'dostlar.html': 'dostlar'
+  };
+
+  // Avtomatik qulf: PIN o'rnatilgan + bu sessiyada ochilmagan + (butun ilova YOKI joriy funksiya qulflangan).
+  var _file = (location.pathname.split('/').pop() || '').toLowerCase();
+  var _feat = FEATURES[_file];
+  if (has() && !unlocked() && (appLockOn() || (_feat && isFeatureLocked(_feat)))) {
     if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', gate);
     else gate();
   }
 
-  window.PinLock = { has: has, manage: manage, clear: clearPin };
+  window.PinLock = {
+    has: has, manage: manage, clear: clearPin,
+    appLockOn: appLockOn, setAppLock: setAppLock,
+    lockedFeatures: lockedFeatures, isFeatureLocked: isFeatureLocked, setFeatureLocked: setFeatureLocked,
+    FEATURES: FEATURES
+  };
 })();
