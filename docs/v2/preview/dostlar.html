@@ -74,6 +74,15 @@
   .lb-row.self .chev { display: inline-block; transition: transform .2s; }
   .lb-row.self.open .chev { transform: rotate(180deg); }
   .self-preview .wt-name .tick { color: rgb(244,132,95); }
+  /* Ko'rsatish/berkitish toggle'lari (Siz preview ichida) */
+  .vis-controls { margin-top: 10px; padding-top: 10px; border-top: 1px solid rgba(128,128,128,.14); }
+  .vis-hd { font-size: 11px; letter-spacing: 1px; text-transform: uppercase; color: var(--text-dim); margin-bottom: 6px; }
+  .vis-row { display: flex; align-items: center; justify-content: space-between; padding: 7px 0; font-size: 14px; color: var(--text); cursor: pointer; }
+  .vis-row input { position: absolute; opacity: 0; width: 0; height: 0; }
+  .vsw { position: relative; width: 40px; height: 23px; border-radius: 999px; background: rgba(150,150,150,.3); flex: none; transition: background .2s; }
+  .vsw::after { content: ''; position: absolute; top: 2px; left: 2px; width: 19px; height: 19px; border-radius: 50%; background: #fff; box-shadow: 0 1px 3px rgba(0,0,0,.3); transition: transform .2s; }
+  .vis-row input:checked ~ .vsw { background: var(--accent, #F4845F); }
+  .vis-row input:checked ~ .vsw::after { transform: translateX(17px); }
 
   /* Chat */
   .lb-row[data-chat] { cursor: pointer; }
@@ -253,8 +262,14 @@
         rows += '<div class="wt-row"><span class="wt-name" style="color:var(--text-dim)">' + T('pv_no_tasks', "Ko'rinadigan vazifa yo'q") + '</span><span></span></div>';
       }
       if (hiddenN) rows += '<div class="wt-row"><span class="wt-name" style="color:var(--text-dim)">🙈 ' + T('pv_hidden_n', '{n} ta vazifa berkitilgan (ko\'rinmaydi)', { n: hiddenN }) + '</span><span></span></div>';
-      return '<div class="ward-tasks self-preview" style="display:none;"><div style="font-size:11px;letter-spacing:1px;text-transform:uppercase;color:var(--text-dim);margin-bottom:6px;">👁 ' + T('pv_head', "Do'st, ustoz va ota-onangiz shuni ko'radi") + '</div>' + rows
-        + '<div style="font-size:11.5px;color:var(--text-dim);margin-top:8px;line-height:1.45;">' + T('pv_foot', "O'zgartirish: Hisobot sahifasida ko'rsatish/berkitishni sozlaysiz.") + '</div></div>';
+      // Ko'rsatish / berkitish boshqaruvi — shu yerda (Hisobotdan ko'chirildi).
+      function visRow(k, label, on) { return '<label class="vis-row"><span>' + label + '</span><input type="checkbox" data-vis="' + k + '"' + (on ? ' checked' : '') + '><span class="vsw"></span></label>'; }
+      var ctrl = '<div class="vis-controls"><div class="vis-hd">' + T('pv_controls', "Ko'rsatish / berkitish") + '</div>'
+        + visRow('hours', T('pv_focus', 'Fokus vaqti'), vis.hours)
+        + visRow('tasks', T('pv_habits', 'Bajarilgan odatlar'), vis.tasks)
+        + visRow('notimer', T('pv_timer_lbl', 'Taymerli / taymersiz belgisi'), vis.notimer)
+        + '<div style="font-size:11.5px;color:var(--text-dim);margin-top:8px;line-height:1.45;">' + T('pv_foot2', "Alohida vazifani berkitish — vazifa bajarilganda so'raladi.") + '</div></div>';
+      return '<div class="ward-tasks self-preview" style="display:none;"><div style="font-size:11px;letter-spacing:1px;text-transform:uppercase;color:var(--text-dim);margin-bottom:6px;">👁 ' + T('pv_head', "Do'st, ustoz va ota-onangiz shuni ko'radi") + '</div>' + rows + ctrl + '</div>';
     }
 
     // ── Chat (suhbat) ──
@@ -340,11 +355,20 @@
       });
       // "Siz" qatori — bosilsa do'st/ustoz ko'radigan preview ochiladi/yopiladi.
       $('lbList').addEventListener('click', function (e) {
+        if (e.target.closest && e.target.closest('.vis-row')) return;   // toggle bosilса ochilib-yopilmasin
         var srow = e.target.closest && e.target.closest('[data-self]');
         if (!srow) return;
         srow.classList.toggle('open');
         var pv = srow.nextElementSibling;
         if (pv && pv.classList.contains('self-preview')) pv.style.display = (srow.classList.contains('open')) ? 'block' : 'none';
+      });
+      // Ko'rsatish/berkitish toggle'i — saqlaydi va preview'ni joyida yangilaydi (ochiq holatni saqlab).
+      $('lbList').addEventListener('change', function (e) {
+        var t = e.target.closest && e.target.closest('[data-vis]');
+        if (!t || !Social.visSet) return;
+        Social.visSet(t.getAttribute('data-vis'), t.checked);
+        var pv = document.querySelector('.self-preview');
+        if (pv) { var tmp = document.createElement('div'); tmp.innerHTML = selfPreviewHtml(); var fresh = tmp.firstChild; fresh.style.display = 'block'; pv.parentNode.replaceChild(fresh, pv); }
       });
       $('lbList').addEventListener('click', function (e) {
         if (e.target.closest && e.target.closest('[data-rename]')) return;   // ism tugmasi — chat ochilmasin

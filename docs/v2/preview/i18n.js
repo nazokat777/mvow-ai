@@ -86,6 +86,7 @@
         pv_no_tasks: "Ko'rinadigan vazifa yo'q",
         pv_hidden_n: "{n} ta vazifa berkitilgan (ko'rinmaydi)",
         pv_foot: "O'zgartirish: Hisobot sahifasida ko'rsatish/berkitishni sozlaysiz.",
+        pv_controls: "Ko'rsatish / berkitish", pv_timer_lbl: "Taymerli / taymersiz belgisi", pv_foot2: "Alohida vazifani berkitish — vazifa bajarilganda so'raladi.",
       },
       rejalar: {
         page_title: "{brand} — Rejalar",
@@ -1172,6 +1173,7 @@
         pv_no_tasks: "Нет видимых задач",
         pv_hidden_n: "{n} задач скрыто (не видно)",
         pv_foot: "Изменить: настройте показ/скрытие на странице Отчёт.",
+        pv_controls: "Показывать / скрывать", pv_timer_lbl: "Метка с таймером / без", pv_foot2: "Скрыть отдельную задачу — спросим при её выполнении.",
       },
       rejalar: {
         page_title: "{brand} — Планы",
@@ -2245,6 +2247,7 @@
         pv_no_tasks: "No visible tasks",
         pv_hidden_n: "{n} task(s) hidden (not visible)",
         pv_foot: "To change: adjust show/hide on the Report page.",
+        pv_controls: "Show / hide", pv_timer_lbl: "Timed / untimed badge", pv_foot2: "Hide a specific task — asked when you complete it.",
       },
       rejalar: {
         page_title: "{brand} — Plans",
