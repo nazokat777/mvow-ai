@@ -37,7 +37,8 @@
     box-shadow: 0 0 22px rgba(200,215,255,.6), 0 0 54px rgba(150,175,255,.4); animation: moonGlow 6s ease-in-out infinite; }
   .city .ground { left: 0; right: 0; bottom: 0; height: 34%; background: linear-gradient(180deg, transparent, rgba(8,24,12,.55) 70%); }
   .city .fly { width: 4px; height: 4px; border-radius: 50%; background: #ffe08a; box-shadow: 0 0 8px 2px rgba(255,224,138,.7); opacity: .0; }
-  .tile { position: relative; z-index: 1; font-size: 34px; line-height: 1; transform-origin: bottom center; filter: drop-shadow(0 3px 5px rgba(0,0,0,.4)); animation: citySway 3.8s ease-in-out infinite; }
+  /* PERF: filter:drop-shadow animatsiyali elementda WebViewni muzlatadi -> arzon text-shadow (emoji uchun ham ishlaydi) */
+  .tile { position: relative; z-index: 1; font-size: 34px; line-height: 1; transform-origin: bottom center; text-shadow: 0 3px 4px rgba(0,0,0,.45); animation: citySway 3.8s ease-in-out infinite; }
   .tile.mfx-drop { animation: cityDrop .62s cubic-bezier(.22,1.5,.36,1); }
   @keyframes skyTwinkle { 0%,100% { opacity: .55; } 50% { opacity: 1; } }
   @keyframes moonGlow { 0%,100% { box-shadow: 0 0 22px rgba(200,215,255,.55), 0 0 54px rgba(150,175,255,.35); } 50% { box-shadow: 0 0 30px rgba(210,225,255,.75), 0 0 70px rgba(160,185,255,.5); } }
@@ -261,7 +262,7 @@
     try { MOTION = matchMedia('(prefers-reduced-motion: no-preference)').matches; } catch (e) {}
     var cityEl = document.getElementById('city');
     if (!cityEl || !window.MutationObserver) return;
-    var MAXSTAR = 40, MILES = [3, 7, 12, 20, 30];
+    var MAXSTAR = 24, MILES = [3, 7, 12, 20, 30];
     function cityLen() { try { var c = JSON.parse(localStorage.getItem('mvow.city') || '[]'); return Array.isArray(c) ? c.length : 0; } catch (e) { return 0; } }
     // Deterministik "tasodifiy" joy — yulduz har renderda O'SHA joyida qoladi (xotira barqaror)
     function h(i, s) { var x = Math.sin((i + 1) * s) * 43758.5453; return x - Math.floor(x); }
