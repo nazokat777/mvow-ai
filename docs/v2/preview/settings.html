@@ -175,6 +175,17 @@
       <input type="time" data-pref="wakeTime" value="06:00">
     </div>
 
+    <div class="row">
+      <div class="lbl" data-i18n="settings.alarm_mode">Budilnik turi</div>
+      <select data-pref="alarmMode">
+        <option value="simple" data-i18n="settings.alarm_simple">Oddiy</option>
+        <option value="math" data-i18n="settings.alarm_math">Matematik</option>
+      </select>
+    </div>
+    <div class="row" style="padding-top:0;">
+      <div class="lbl" style="flex-basis:100%;font-size:12px;color:var(--text-dim);line-height:1.5;" data-i18n="settings.alarm_mode_hint">Oddiy — bir bosishda o'chadi. Matematik — 3 ta misolni yechmaguningizcha o'chmaydi.</div>
+    </div>
+
     <div class="section-lbl" data-i18n="settings.sec_notif">Bildirishnomalar</div>
 
     <div class="row">
@@ -328,7 +339,7 @@
     const defaults = {
       tone: 'mid', meddle: 'quiet',
       mode: 'simple', sessionMins: '45', pomoCycles: '3', breakMins: '5',
-      wakeTime: '06:00',
+      wakeTime: '06:00', alarmMode: 'math',
       autoNext: true, voiceRemind: true, negotiation: true
     };
     const merged = Object.assign({}, defaults, prefs);

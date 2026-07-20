@@ -191,6 +191,9 @@
     </div>
 
     <div class="hint" id="hint" data-i18n="alarm.hint">javobni kiriting</div>
+
+    <!-- ODDIY rejim: misolsiz, bitta tugma bilan o'chadi (Sozlamalar -> Budilnik turi) -->
+    <button type="button" id="simpleWake" style="display:none;width:100%;max-width:340px;margin:8px auto 0;padding:20px;border:none;border-radius:999px;background:linear-gradient(135deg,var(--accent-bright,#F79B7F),var(--accent-deep,#C2410C));color:#fff;font:800 19px 'Inter',sans-serif;letter-spacing:2px;text-transform:uppercase;cursor:pointer;box-shadow:0 12px 34px rgba(244,132,95,.34);" data-i18n="alarm.simple_btn">Uyg'ondim</button>
   </div>
 
   <div class="container done-msg" id="doneArea">
@@ -307,7 +310,30 @@
     if (e.key === 'Enter') check();
   });
 
-  next();
+  // ── Budilnik turi: 'simple' (bir bosish) yoki 'math' (3 misol) ──
+  function alarmMode() {
+    try {
+      const p = JSON.parse(localStorage.getItem('mvow.prefs') || '{}');
+      return p.alarmMode === 'simple' ? 'simple' : 'math';
+    } catch (e) { return 'math'; }
+  }
+
+  if (alarmMode() === 'simple') {
+    const title = document.querySelector('#quizArea .title');
+    if (title) { title.removeAttribute('data-i18n'); title.textContent = (window.I18N ? I18N.t('alarm.title_simple', "Uyg'oning.") : "Uyg'oning."); }
+    document.getElementById('progress').style.display = 'none';
+    probEl.style.display = 'none';
+    document.querySelector('.input-wrap').style.display = 'none';
+    hint.style.display = 'none';
+    const sw = document.getElementById('simpleWake');
+    sw.style.display = 'block';
+    sw.addEventListener('click', function () {
+      if (window.MVOW_DATA && MVOW_DATA.fxFinish) MVOW_DATA.fxFinish();
+      finish();
+    });
+  } else {
+    next();
+  }
 </script>
 
 <script src="back-btn.js?v=29.0.133"></script>
