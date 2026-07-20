@@ -1011,12 +1011,12 @@
         page_title: 'FOCUS AI — Hisobot', title: 'Hisobot',
         sub: "Mehnatingizni do'st, ustoz yoki ota-onangizga ulashing. Qaysi vazifalar ko'rinishini o'zingiz belgilaysiz.",
         tab_today: 'Bugun', tab_week: '7 kun', total_lbl: 'Jami mehnat',
-        select_hint: "Belgilangan vazifalar do'st/ustoz/ota-onangizga ko'rinadi. Belgini oling — bekitiladi.", select_hint2: "👁 bosilgan vazifalar do'st/ustozga <b>ko'rinadi</b>. Bekitilgani ularga ko'rinmaydi.", fl_shown: "ko'rinadi", fl_hidden: "bekik", done_h: "Bajarilgan", skipped_h: "Bajarilmagan", share_btn: 'Ulashish', vis_title: "Do'st/ustozga ko'rinsin:", vis_hours: 'Fokus soati', vis_tasks: 'Vazifalar soni', vis_notimer: 'Taymerli / taymersiz belgisi', vis_note: "Berkitilgani ularga umuman ko'rinmaydi (telefoningizda qoladi).", moved_note: "Do'st/ustozga nima ko'rinishini <b>Do'stlar</b> sahifasidagi \"Siz\" bo'limida sozlaysiz.",
+        select_hint: "Belgilangan vazifalar do'st/ustoz/ota-onangizga ko'rinadi. Belgini oling — bekitiladi.", select_hint2: "👁 bosilgan vazifalar do'st yoki ustoz/ota-onangizga <b>ko'rinadi</b>. Bekitilgani ularga ko'rinmaydi.", fl_shown: "ko'rinadi", fl_hidden: "bekik", done_h: "Bajarilgan", skipped_h: "Bajarilmagan", share_btn: 'Ulashish', vis_title: "Do'st yoki ustoz/ota-onaga ko'rinsin:", vis_hours: 'Fokus soati', vis_tasks: 'Vazifalar soni', vis_notimer: 'Taymerli / taymersiz belgisi', vis_note: "Berkitilgani ularga umuman ko'rinmaydi (telefoningizda qoladi).", moved_note: "Do'st yoki ustoz/ota-onaga nima ko'rinishini <b>Do'stlar</b> sahifasidagi \"Siz\" bo'limida sozlaysiz.",
         done_h: 'Bajarilgan', skipped_h: 'Bajarilmagan',
         timer_badge: 'taymerli', notimer_badge: 'taymersiz',
         empty_all: "Bu davr uchun ma'lumot yo'q", copy_ok: 'Nusxalandi ✓',
         sent_ok: 'Yuborildi ✓', send_fail: 'Yuborilmadi',
-        role_mentor: 'ustoz', role_friend: "do'st",
+        pv_title: "👁 Do'st yoki ustoz/ota-onangiz shuni ko'radi", pv_title_no: "👁 Do'st ulasangiz shuni ko'radi", role_mentor: 'ustoz/ota-ona', role_friend: "do'st",
         report_word: 'hisoboti', task_fb: 'Vazifa', hour_short: 'soat', min_short: 'daq'
       },
       otaona: {
@@ -2092,12 +2092,12 @@
         page_title: 'FOCUS AI — Отчёт', title: 'Отчёт',
         sub: 'Поделитесь своим трудом с другом, наставником или родителями. Какие задачи показать — выбираете вы.',
         tab_today: 'Сегодня', tab_week: '7 дней', total_lbl: 'Всего труда',
-        select_hint: 'Отмеченные задачи видят друг/наставник/родитель. Снимите отметку — скроется.', select_hint2: '👁 отмеченные задачи <b>видит</b> друг/наставник. Скрытые — не видит.', fl_shown: 'видно', fl_hidden: 'скрыто', done_h: 'Выполнено', skipped_h: 'Не выполнено', share_btn: 'Поделиться', vis_title: 'Показывать другу/наставнику:', vis_hours: 'Часы фокуса', vis_tasks: 'Число задач', vis_notimer: 'Метка таймер/без таймера', vis_note: 'Скрытое им вообще не видно (остаётся на телефоне).', moved_note: 'Что видит друг/наставник — настраивается в разделе "Вы" на странице <b>Друзья</b>.',
+        select_hint: 'Отмеченные задачи видят друг/наставник/родитель. Снимите отметку — скроется.', select_hint2: '👁 отмеченные задачи <b>видит</b> друг или наставник/родитель. Скрытые — не видит.', fl_shown: 'видно', fl_hidden: 'скрыто', done_h: 'Выполнено', skipped_h: 'Не выполнено', share_btn: 'Поделиться', vis_title: 'Показывать другу или наставнику/родителю:', vis_hours: 'Часы фокуса', vis_tasks: 'Число задач', vis_notimer: 'Метка таймер/без таймера', vis_note: 'Скрытое им вообще не видно (остаётся на телефоне).', moved_note: 'Что видит друг или наставник/родитель — настраивается в разделе "Вы" на странице <b>Друзья</b>.',
         done_h: 'Выполнено', skipped_h: 'Не выполнено',
         timer_badge: 'с таймером', notimer_badge: 'без таймера',
         empty_all: 'Нет данных за этот период', copy_ok: 'Скопировано ✓',
         sent_ok: 'Отправлено ✓', send_fail: 'Не отправлено',
-        role_mentor: 'наставник', role_friend: 'друг',
+        pv_title: '👁 Это видит друг или наставник/родитель', pv_title_no: '👁 Это увидят, когда добавите друга', role_mentor: 'наставник/родитель', role_friend: 'друг',
         report_word: 'отчёт', task_fb: 'Задача', hour_short: 'ч', min_short: 'мин'
       },
       otaona: {
@@ -3173,12 +3173,12 @@
         page_title: 'FOCUS AI — Report', title: 'Report',
         sub: 'Share your effort with a friend, mentor or parents. You choose which tasks are shown.',
         tab_today: 'Today', tab_week: '7 days', total_lbl: 'Total effort',
-        select_hint: 'Checked tasks are visible to your friend/mentor/parent. Uncheck to hide.', select_hint2: '👁 tapped tasks are <b>visible</b> to your friend/mentor. Hidden ones are not.', fl_shown: 'shown', fl_hidden: 'hidden', done_h: 'Done', skipped_h: 'Not done', share_btn: 'Share', vis_title: 'Show to friend/mentor:', vis_hours: 'Focus hours', vis_tasks: 'Task count', vis_notimer: 'Timer / no-timer badge', vis_note: 'Hidden ones are not visible to them at all (stays on your phone).', moved_note: 'What your friend/mentor sees is set in the "You" section on the <b>Friends</b> page.',
+        select_hint: 'Checked tasks are visible to your friend/mentor/parent. Uncheck to hide.', select_hint2: '👁 tapped tasks are <b>visible</b> to your friend or mentor/parent. Hidden ones are not.', fl_shown: 'shown', fl_hidden: 'hidden', done_h: 'Done', skipped_h: 'Not done', share_btn: 'Share', vis_title: 'Show to friend or mentor/parent:', vis_hours: 'Focus hours', vis_tasks: 'Task count', vis_notimer: 'Timer / no-timer badge', vis_note: 'Hidden ones are not visible to them at all (stays on your phone).', moved_note: 'What your friend or mentor/parent sees is set in the "You" section on the <b>Friends</b> page.',
         done_h: 'Done', skipped_h: 'Not done',
         timer_badge: 'timed', notimer_badge: 'untimed',
         empty_all: 'No data for this period', copy_ok: 'Copied ✓',
         sent_ok: 'Sent ✓', send_fail: 'Not sent',
-        role_mentor: 'mentor', role_friend: 'friend',
+        pv_title: '👁 Your friend or mentor/parent sees this', pv_title_no: '👁 Add a friend to share this', role_mentor: 'mentor/parent', role_friend: 'friend',
         report_word: 'report', task_fb: 'Task', hour_short: 'h', min_short: 'min'
       },
       otaona: {
