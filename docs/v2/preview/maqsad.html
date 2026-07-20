@@ -232,6 +232,10 @@
     <p class="sub" data-i18n="maqsad.step1_sub">Qancha vaqt ichida erishasiz?</p>
 
     <div class="options" id="durationList">
+      <div class="opt" data-d="3day" data-days="3">
+        <div class="lbl"><div class="lbl-main" data-i18n="maqsad.dur_3day">3 kun</div><div class="lbl-sub" data-i18n="maqsad.dur_3day_sub">Tez sinov</div></div>
+        <div class="radio"></div>
+      </div>
       <div class="opt" data-d="week" data-days="7">
         <div class="lbl"><div class="lbl-main" data-i18n="maqsad.dur_week">1 hafta</div><div class="lbl-sub" data-i18n="maqsad.dur_week_sub">Yaqin natija</div></div>
         <div class="radio"></div>
@@ -567,6 +571,7 @@
     function gotoStep2() {
       currentStep = 2;
       const titles = {
+        '3day':  (window.I18N ? I18N.t('maqsad.step2_title_3day',  '3 kunda nimaga erishasiz?')   : '3 kunda nimaga erishasiz?'),
         'week':  (window.I18N ? I18N.t('maqsad.step2_title_week',  '1 haftada nimaga erishasiz?') : '1 haftada nimaga erishasiz?'),
         'month': (window.I18N ? I18N.t('maqsad.step2_title_month', '1 oyda nimaga erishasiz?')    : '1 oyda nimaga erishasiz?'),
         '3mo':   (window.I18N ? I18N.t('maqsad.step2_title_3mo',   '3 oyda nimaga erishasiz?')    : '3 oyda nimaga erishasiz?'),

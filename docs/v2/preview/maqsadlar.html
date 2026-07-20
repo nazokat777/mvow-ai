@@ -470,6 +470,7 @@
 <script>
   function _t(key, fb) { return (window.I18N ? I18N.t(key, fb) : fb); }
   const DURATION_INFO = {
+    '3day':  { get label(){ return _t('maqsadlar.dur_3day_lbl', '3 KUN'); },   cls: 'badge-3day',  days: 3,   get short(){ return _t('maqsadlar.dur_3day_short', '3 kun'); } },
     'week':  { get label(){ return _t('maqsadlar.dur_week_lbl', '1 HAFTA'); }, cls: 'badge-week',  days: 7,   get short(){ return _t('maqsadlar.dur_week_short', 'hafta'); } },
     'month': { get label(){ return _t('maqsadlar.dur_month_lbl', '1 OY'); },    cls: 'badge-month', days: 30,  get short(){ return _t('maqsadlar.dur_month_short', 'oy'); } },
     '3mo':   { get label(){ return _t('maqsadlar.dur_3mo_lbl', '3 OY'); },     cls: 'badge-3mo',   days: 90,  get short(){ return _t('maqsadlar.dur_3mo_short', '3 oy'); } },
@@ -875,7 +876,7 @@
             <div class="goal-main">
               <div class="goal-name">${escapeHtml(g.text || g.name || g.title || g.goal || '')}</div>
               <div class="goal-meta">${escapeHtml(lblEveryDay)} <span class="em">${escapeHtml(g.time || (g.sessions && g.sessions[0] && g.sessions[0].time) || '')}</span> · ${escapeHtml(dispDur(g.dur))}</div>
-              <div class="goal-badge ${info.cls}" style="display:inline-block;margin-top:8px;">${info.label}</div>
+              <button type="button" class="goal-badge ${info.cls}" data-chdur="${g.id}" style="display:inline-block;margin-top:8px;border:none;cursor:pointer;font-family:inherit;" title="${escapeHtml(_t('maqsadlar.chdur_aria', 'Muddatni o\'zgartirish'))}">${info.label} ▾</button>
             </div>
           </div>
           <div class="goal-body">
@@ -924,6 +925,11 @@
     });
 
     // Per-goal qaytadan boshlash (bittalab) — ikki-tap tasdiq (render faqat tasdiqdan keyin)
+    // Muddat belgisiga bosilsa — muddatni o'zgartirish oynasi
+    list.querySelectorAll('[data-chdur]').forEach(function (b) {
+      b.addEventListener('click', function (e) { e.stopPropagation(); changeDuration(b.getAttribute('data-chdur')); });
+    });
+
     list.querySelectorAll('[data-restart]').forEach(function (b) {
       b.addEventListener('click', function (e) {
         e.stopPropagation();
@@ -1261,6 +1267,51 @@
       ? g.sessions : [{ time: g.time || '07:00', dur: g.dur || '60 daq' }];
     g.changeLog = [{ fromIso: todayIso, sessions: sess.map(function (s) { return { time: s.time, dur: s.dur }; }) }];
   }
+  // ── Mavjud maqsad MUDDATINI o'zgartirish (1 oy -> 3 oy va h.k.) ──
+  // Boshlanish sanasi va bajarilgan kunlar SAQLANADI — faqat maqsad uzunligi almashadi,
+  // shuning uchun progress darhol yangi muddatga nisbatan qayta hisoblanadi.
+  function changeDuration(id) {
+    var goals = loadGoals();
+    var g = goals.find(function (x) { return String(x.id) === String(id); });
+    if (!g) return;
+
+    var ORDER = ['3day', 'week', 'month', '3mo', '6mo', 'year'];
+    var ov = document.createElement('div');
+    ov.style.cssText = 'position:fixed;inset:0;z-index:10000;background:rgba(0,0,0,.6);display:flex;align-items:flex-end;justify-content:center;';
+    var rows = ORDER.map(function (k) {
+      var info = DURATION_INFO[k], on = (g.duration === k);
+      return '<button type="button" data-pick="' + k + '" style="display:flex;align-items:center;justify-content:space-between;width:100%;padding:15px 16px;margin-top:8px;border-radius:13px;'
+        + 'border:1px solid ' + (on ? 'var(--accent,#F4845F)' : 'var(--border-default,rgba(255,255,255,.14))') + ';'
+        + 'background:' + (on ? 'rgba(244,132,95,.14)' : 'transparent') + ';color:var(--text,#F5F2EC);font:600 16px Inter,sans-serif;cursor:pointer;">'
+        + '<span>' + escapeHtml(info.label) + '</span>'
+        + '<span style="font-size:13px;color:var(--text-dim,#9CA0A8);font-weight:600;">' + info.days + ' ' + escapeHtml(_t('maqsadlar.days', 'kun')) + (on ? ' ✓' : '') + '</span></button>';
+    }).join('');
+    ov.innerHTML = '<div style="width:100%;max-width:480px;background:var(--card,#11151E);border-radius:20px 20px 0 0;border-top:1px solid var(--border-default,rgba(255,255,255,.12));padding:22px 18px calc(22px + env(safe-area-inset-bottom,0px));">'
+      + '<div style="font:700 19px Inter,sans-serif;margin-bottom:4px;">' + escapeHtml(_t('maqsadlar.chdur_title', 'Maqsad muddati')) + '</div>'
+      + '<div style="font-size:13.5px;color:var(--text-dim,#9CA0A8);line-height:1.5;margin-bottom:12px;">' + escapeHtml(_t('maqsadlar.chdur_note', "Boshlanish sanasi va bajarilganlar saqlanadi — faqat muddat o'zgaradi.")) + '</div>'
+      + rows
+      + '<button type="button" data-cancel="1" style="width:100%;margin-top:14px;padding:13px;border-radius:12px;border:1px solid var(--border-default,rgba(255,255,255,.15));background:transparent;color:var(--text-mid,#B8BBC2);font:700 15px Inter,sans-serif;cursor:pointer;">' + escapeHtml(_t('common.cancel', 'Bekor')) + '</button>'
+      + '</div>';
+    document.body.appendChild(ov);
+
+    function close() { if (ov.parentNode) ov.parentNode.removeChild(ov); }
+    ov.addEventListener('click', function (e) {
+      if (e.target === ov || e.target.closest('[data-cancel]')) { close(); return; }
+      var b = e.target.closest('[data-pick]');
+      if (!b) return;
+      var k = b.getAttribute('data-pick');
+      close();
+      if (k === g.duration) return;
+      var arr = loadGoals();
+      var t = arr.find(function (x) { return String(x.id) === String(id); });
+      if (!t) return;
+      t.duration = k;
+      saveGoals(arr);
+      if (window.MVOW_DATA && MVOW_DATA.fxSuccess) MVOW_DATA.fxSuccess();
+      render();
+    });
+  }
+
   function restartGoal(id) {
     var goals = loadGoals();
     var g = goals.find(function (x) { return String(x.id) === String(id); });
