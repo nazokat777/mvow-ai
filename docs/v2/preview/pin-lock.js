@@ -96,6 +96,17 @@
     ask();
   }
 
+  // Ilova PIN'ini bir marta so'rash (BEKOR QILSA BO'LADI) — himoyalangan amal oldidan.
+  // PIN qo'yilmagan bo'lsa darhol o'tkazadi.
+  function verify(onOk, onCancel) {
+    if (!has()) { if (onOk) onOk(); return; }
+    var expected = get();
+    padOverlay('PIN kodni kiriting', function (p) {
+      if (p === expected) { if (onOk) onOk(); }
+      else { verify(onOk, onCancel); }
+    }, true, onCancel);
+  }
+
   // Tanlov modali (o'zgartirish / o'chirish)
   function chooseModal(opts, onPick, title) {
     var ov = document.createElement('div');
@@ -250,7 +261,7 @@
   }
 
   window.PinLock = {
-    has: has, manage: manage, clear: clearPin,
+    has: has, manage: manage, clear: clearPin, verify: verify,
     appLockOn: appLockOn, setAppLock: setAppLock,
     lockedFeatures: lockedFeatures, isFeatureLocked: isFeatureLocked, setFeatureLocked: setFeatureLocked,
     hasFeatPin: hasFeatPin, getFeatPin: getFeatPin, setFeaturePin: setFeaturePin, disableFeaturePin: disableFeaturePin, clearFeatPin: clearFeatPin,

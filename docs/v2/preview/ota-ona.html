@@ -52,13 +52,31 @@
     </div>
   </div>
 
-  <div class="note" data-i18n="otaona.note">Eslatma: hech qanday ilova boshqa ilovalarni to'g'ridan-to'g'ri qulflay olmaydi — bu telefon xavfsizlik qoidasi. Lekin yuqoridagi usul aynan shuni beradi: bola faqat FOCUS AI'da qoladi.</div>
+  <div class="card">
+    <h2 data-i18n="otaona.apps_h">3. Istalgan ilovani qulflash</h2>
+    <p data-i18n="otaona.apps_desc">Qaysi ilovalar yopiq bo'lishini shu yerga yozing. Ro'yxat PIN bilan himoyalanadi — farzandingiz uni o'zgartira olmaydi.</p>
+
+    <div id="appList"></div>
+
+    <div style="display:flex;gap:8px;margin-top:12px;">
+      <input id="appName" maxlength="40" placeholder="mas. TikTok"
+             style="flex:1;min-width:0;padding:12px;background:var(--void,#0C0F16);border:1px solid var(--border-default,rgba(255,255,255,.12));border-radius:12px;color:var(--text,#F5F2EC);font-size:15px;font-family:inherit;">
+      <button class="btn" id="appAdd" type="button" style="flex-shrink:0;padding:12px 18px;">+</button>
+    </div>
+
+    <div class="os" style="margin-top:16px;">
+      <div class="os-h" data-i18n="otaona.enforce_h">Telefonda haqiqatan yopish</div>
+      <div class="os-s" data-i18n="otaona.enforce_steps">Android: Google Family Link → farzand profili → «Ilovalar» → kerakli ilovani tanlab «Bloklash». Yoki Sozlamalar → Raqamli farovonlik → «Ilova taymerlari» → ilovaga 0 daqiqa qo'ying. Samsung/Xiaomi'da «Ilova qulfi» (App lock) ham bor. iPhone: Sozlamalar → Ekran vaqti → «Kontent va maxfiylik cheklovlari».</div>
+    </div>
+  </div>
+
+  <div class="note" data-i18n="otaona.note">Eslatma: bu ro'yxat kelishuv va nazorat uchun — yopishning o'zi telefon sozlamalari orqali bajariladi (yuqoridagi qadamlar). Telefon xavfsizlik qoidasi bo'yicha veb-ilova boshqa ilovani o'zi yopa olmaydi; 2-banddagi «mahkamlash» esa bolani faqat FOCUS AI ichida ushlab turadi.</div>
 </div>
 
 <script src="i18n.js?v=29.0.50"></script>
 <script src="lang-switcher.js?v=29.0.50" defer></script>
 <script src="data.js?v=29.0.50" defer></script>
-<script src="pin-lock.js?v=29.0.50"></script>
+<script src="pin-lock.js?v=29.0.138"></script>
 <script src="nav-overlay.js?v=29.0.50" defer></script>
 <script>
   (function () {
@@ -72,6 +90,53 @@
     });
     try { document.title = T('otaona.page_title', 'FOCUS AI — Ota-ona nazorati'); } catch (e) {}
     syncStatus();
+
+    // ── Qulflanadigan ilovalar ro'yxati (ota-ona yuritadi) ──
+    // O'chirish/qo'shish PIN so'raydi (PIN qo'yilgan bo'lsa) — bola o'zgartira olmasin.
+    var KEY = 'mvow.parentBlockedApps';
+    function esc(s) { return String(s == null ? '' : s).replace(/[&<>"]/g, function (c) { return ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]); }); }
+    function loadApps() { try { var a = JSON.parse(localStorage.getItem(KEY) || '[]'); return Array.isArray(a) ? a : []; } catch (e) { return []; } }
+    function saveApps(a) { try { localStorage.setItem(KEY, JSON.stringify(a.slice(0, 60))); } catch (e) {} }
+
+    // PIN qo'yilgan bo'lsa — o'zgartirishdan oldin so'raladi.
+    function guard(done) {
+      if (window.PinLock && typeof PinLock.verify === 'function') { PinLock.verify(done); return; }
+      done();
+    }
+
+    function renderApps() {
+      var list = loadApps(), el = document.getElementById('appList');
+      el.innerHTML = list.length
+        ? list.map(function (n, i) {
+            return '<div style="display:flex;align-items:center;gap:10px;background:var(--void,#0C0F16);border:1px solid var(--border-default,rgba(255,255,255,.10));border-radius:12px;padding:11px 13px;margin-top:8px;">'
+              + '<span style="flex:1;min-width:0;font-size:15px;font-weight:600;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">🔒 ' + esc(n) + '</span>'
+              + '<button type="button" data-rm="' + i + '" aria-label="olib tashlash" style="background:none;border:none;color:var(--text-dim,#9CA0A8);font-size:20px;line-height:1;cursor:pointer;">×</button></div>';
+          }).join('')
+        : '<div style="font-size:14px;color:var(--text-dim,#9CA0A8);padding:8px 2px;">' + T('otaona.apps_empty', "Hali ilova qo'shilmagan") + '</div>';
+
+      el.querySelectorAll('[data-rm]').forEach(function (b) {
+        b.addEventListener('click', function () {
+          guard(function () {
+            var a = loadApps(); a.splice(parseInt(b.getAttribute('data-rm'), 10), 1); saveApps(a); renderApps();
+          });
+        });
+      });
+    }
+
+    function addApp() {
+      var inp = document.getElementById('appName');
+      var v = inp.value.trim();
+      if (!v) { inp.focus(); return; }
+      guard(function () {
+        var a = loadApps();
+        if (a.indexOf(v) < 0) a.push(v);
+        saveApps(a); inp.value = ''; renderApps();
+        if (window.MVOW_DATA && MVOW_DATA.fxSuccess) MVOW_DATA.fxSuccess();
+      });
+    }
+    document.getElementById('appAdd').addEventListener('click', addApp);
+    document.getElementById('appName').addEventListener('keydown', function (e) { if (e.key === 'Enter') addApp(); });
+    renderApps();
   })();
 </script>
 <script src="back-btn.js?v=29.0.133"></script>
