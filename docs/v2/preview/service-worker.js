@@ -3,7 +3,7 @@
  * after first load. Caches all preview HTML files + the logo.
  */
 
-const CACHE_NAME = 'focusai-v29.0.136';
+const CACHE_NAME = 'focusai-v29.0.137';
 const ASSETS = [
   './',
   // Asosiy infratuzilma
@@ -99,43 +99,46 @@ self.addEventListener('fetch', event => {
   // Serverless API (POST /api/...) — SW aralashmaydi, to'g'ridan tarmoqqa
   if (url.pathname.indexOf('/api/') === 0) return;
 
-  // Network-first for Google Fonts (cache fallback if offline)
+  // Shriftlar — CACHE-FIRST (deyarli o'zgarmaydi; tarmoqni birinchi chizishdan olib tashlaydi)
   if (url.hostname === 'fonts.googleapis.com' || url.hostname === 'fonts.gstatic.com') {
     event.respondWith(
-      fetch(event.request)
-        .then(response => {
+      caches.match(event.request).then(cached => cached || fetch(event.request).then(response => {
+        if (response && response.status === 200) {
           const copy = response.clone();
           caches.open(CACHE_NAME).then(c => c.put(event.request, copy));
-          return response;
-        })
-        .catch(() => caches.match(event.request))
+        }
+        return response;
+      }).catch(() => cached))
     );
     return;
   }
 
-  // For our own files: HTML & JS always fetched fresh (network-first).
-  // Images/manifest cache-first (fast, rarely change).
   if (url.origin === location.origin) {
     const path = url.pathname;
     const isHtmlOrJs = path.endsWith('.html') || path.endsWith('.js') || path.endsWith('.css') || path === '/' || path.endsWith('/');
 
     if (isHtmlOrJs) {
-      // Network first — updates appear instantly
+      // STALE-WHILE-REVALIDATE — kesh bo'lsa DARHOL beriladi (tarmoq kutilmaydi),
+      // yangisi fonda yuklanib keshga yoziladi va keyingi ochilishda ko'rinadi.
+      // Sabab: ilgari har sahifaga o'tishda 10-16 ta tarmoq so'rovi kutilardi — sekin his qilinardi.
+      // Yangilanish yo'qolmaydi: har relizda CACHE_NAME o'zgaradi va eski kesh butunlay tozalanadi.
+      // ignoreSearch — '?v=' turlicha bo'lsa ham mos keladi (ilgari precache umuman ishlamasdi).
       event.respondWith(
-        fetch(event.request)
-          .then(response => {
+        caches.match(event.request, { ignoreSearch: true }).then(cached => {
+          const fresh = fetch(event.request).then(response => {
             if (response && response.status === 200) {
               const copy = response.clone();
               caches.open(CACHE_NAME).then(c => c.put(event.request, copy));
             }
             return response;
-          })
-          .catch(() => caches.match(event.request).then(c => c || caches.match('./app.html')))
+          }).catch(() => cached || caches.match('./app.html', { ignoreSearch: true }));
+          return cached || fresh;
+        })
       );
     } else {
       // Static assets (images, manifest) — cache first for speed
       event.respondWith(
-        caches.match(event.request)
+        caches.match(event.request, { ignoreSearch: true })
           .then(cached => cached || fetch(event.request).then(response => {
             if (response && response.status === 200) {
               const copy = response.clone();
