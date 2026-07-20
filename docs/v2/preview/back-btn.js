@@ -9,6 +9,40 @@
   // menu.html — ‹ (qaytish) KERAK (u ro'yxatda emas); faqat ☰ keraksiz (allaqachon menyudamiz).
   var NO_NAV = ['', 'index.html', 'gallery.html', 'app.html', 'intro.html'];
 
+  // ── Navigatsiya izi (o'z tariximiz) ──────────────────────────────
+  // TWA/standalone'da document.referrer ko'pincha BO'SH bo'ladi, shuning uchun
+  // history.back() qayerga borishini bilib bo'lmaydi. Sahifalar ketma-ketligini
+  // sessionStorage'da o'zimiz yuritamiz — ‹ har doim ROSTDAN oldingi sahifaga qaytadi.
+  var STACK_KEY = 'mvow.navstack';
+
+  function readStack() {
+    try { var a = JSON.parse(sessionStorage.getItem(STACK_KEY) || '[]'); return Array.isArray(a) ? a : []; }
+    catch (e) { return []; }
+  }
+  function writeStack(a) {
+    try { sessionStorage.setItem(STACK_KEY, JSON.stringify(a.slice(-25))); } catch (e) {}
+  }
+  function pushCurrent(file) {
+    var st = readStack();
+    if (st[st.length - 1] === file) return;          // yangilash/qayta yuklash — takrorlamaymiz
+    if (st[st.length - 2] === file) { st.pop(); writeStack(st); return; }  // orqaga qaytdik
+    st.push(file);
+    writeStack(st);
+  }
+  // ‹ bosilganda: izdan oldingi sahifani olamiz.
+  function goBack() {
+    var st = readStack();
+    st.pop();                                        // joriy sahifani olib tashlaymiz
+    var prev = st[st.length - 1];
+    writeStack(st);
+    if (prev) { location.href = prev; return; }
+    var ref = document.referrer || '';
+    if (ref && ref.indexOf(location.origin) === 0 && window.history.length > 1) { history.back(); return; }
+    var f = (location.pathname.split('/').pop() || '').toLowerCase();
+    location.href = (f === 'home.html') ? 'menu.html' : 'home.html';
+  }
+  window.MvowBack = { go: goBack };
+
   function t(key, fb) {
     return (window.I18N && typeof I18N.t === 'function') ? I18N.t(key, fb) : fb;
   }
@@ -44,6 +78,7 @@
 
   function init() {
     var file = (location.pathname.split('/').pop() || '').toLowerCase();
+    pushCurrent(file || 'home.html');   // NO_NAV sahifalar ham izga yoziladi
     if (NO_NAV.indexOf(file) !== -1) return;
     if (document.getElementById('globalNavCaps')) return;
 
@@ -72,12 +107,7 @@
     back.type = 'button';
     back.addEventListener('click', function (e) {
       e.preventDefault();
-      var ref = document.referrer || '';
-      if (ref && ref.indexOf(location.origin) === 0 && window.history.length > 1) { history.back(); return; }
-      // Zaxira: home'da bo'lsak home'ni qayta yuklamaymiz (splash location.replace tufayli history bo'sh
-      // bo'lib, ‹ "ishlamagandek" edi) — menyuga o'tamiz. Boshqa sahifada esa home'ga.
-      var f = (location.pathname.split('/').pop() || '').toLowerCase();
-      location.href = (f === 'home.html') ? 'menu.html' : 'home.html';
+      goBack();
     });
 
     // Ajratuvchi chiziq

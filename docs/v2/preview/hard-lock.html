@@ -28,6 +28,10 @@
   .task .time { font-size: 15px; letter-spacing: 3px; color: var(--text-mid); text-transform: uppercase; margin-top: 8px; }
 
   /* Choice modal (Taymer bilan / Taymersiz) */
+  /* Fokus boshlangach tepa tugmalar yashirinadi (JS tartibiga bog'liq emas). */
+  body.focus-on #globalNavCaps,
+  body.focus-on .lang-switcher { display: none !important; }
+
   .choice-overlay {
     position: fixed; inset: 0;
     background: var(--overlay-strong);
@@ -244,7 +248,7 @@
         <span style="display:block;font-size:14px;color:#fff;opacity:0.7;letter-spacing:0.5px;text-transform:none;font-weight:500;" id="chPomoDur" data-i18n="hardlock.opt_pomo_desc">25 daq ish + 5 daq dam sikllari</span>
       </button>
     </div>
-    <div style="margin-top:14px;text-align:center;"><a href="home.html" style="color:#9CA0A8;font-size:14px;text-decoration:none;">‹ <span data-i18n="hardlock.choice_back">Orqaga</span></a></div>
+    <div style="margin-top:14px;text-align:center;"><a href="home.html" id="chBack" style="color:#9CA0A8;font-size:14px;text-decoration:none;padding:8px 12px;display:inline-block;">‹ <span data-i18n="hardlock.choice_back">Orqaga</span></a></div>
     <!-- Fokus foni boshqaruvi taymer ekraniga ko'chirildi -->
 
   </div>
@@ -754,14 +758,23 @@ document.addEventListener('DOMContentLoaded', function () {
     saveActive();
   }
 
+  // Tanlov kartasidagi "‹ Orqaga" — qayerdan kelgan bo'lsak (menyu/uy) o'sha yerga qaytadi.
+  (function () {
+    var cb = document.getElementById('chBack');
+    if (!cb) return;
+    cb.addEventListener('click', function (e) {
+      if (window.MvowBack && typeof MvowBack.go === 'function') { e.preventDefault(); MvowBack.go(); }
+    });
+  })();
+
   // Tanlovlar
   document.getElementById('chTimer').addEventListener('click', () => {
     mode = 'timer';
     WORK_MIN = taskMins; // to'liq vazifa davomiyligi
     TOTAL_CYC = 1;
     choiceOverlay.style.display = 'none';
-    var _nav = document.getElementById('globalNavCaps'); if (_nav) _nav.style.display = 'none';
-    var _lang = document.querySelector('.lang-switcher'); if (_lang) _lang.style.display = 'none';
+    document.body.classList.add('focus-on');
+    
     enableFaceDown();
     startFocusAudioIfPref();
     _getAC();
@@ -775,8 +788,8 @@ document.addEventListener('DOMContentLoaded', function () {
     BREAK_MIN = POMO_BREAK;
     TOTAL_CYC = pomoCycles;
     choiceOverlay.style.display = 'none';
-    var _nav = document.getElementById('globalNavCaps'); if (_nav) _nav.style.display = 'none';
-    var _lang = document.querySelector('.lang-switcher'); if (_lang) _lang.style.display = 'none';
+    document.body.classList.add('focus-on');
+    
     enableFaceDown();
     startFocusAudioIfPref();
     _getAC();
@@ -787,8 +800,8 @@ document.addEventListener('DOMContentLoaded', function () {
   document.getElementById('chNoTimer').addEventListener('click', () => {
     mode = 'no-timer';
     choiceOverlay.style.display = 'none';
-    var _nav = document.getElementById('globalNavCaps'); if (_nav) _nav.style.display = 'none';
-    var _lang = document.querySelector('.lang-switcher'); if (_lang) _lang.style.display = 'none';
+    document.body.classList.add('focus-on');
+    
     enableFaceDown();
     startFocusAudioIfPref();
     _getAC();
@@ -960,8 +973,8 @@ document.addEventListener('DOMContentLoaded', function () {
     cycle = s.cycle; phase = s.phase; startedAt = s.startedAt;
     paused = s.paused || false;
     choiceOverlay.style.display = 'none';
-    const _nav = document.getElementById('globalNavCaps'); if (_nav) _nav.style.display = 'none';
-    const _lang = document.querySelector('.lang-switcher'); if (_lang) _lang.style.display = 'none';
+    document.body.classList.add('focus-on');
+    
     enableFaceDown();
     startFocusAudioIfPref();
     _getAC();
@@ -1083,6 +1096,6 @@ document.addEventListener('DOMContentLoaded', function () {
 });  // end DOMContentLoaded
 </script>
 
-<script src="back-btn.js?v=28.4.0"></script>
+<script src="back-btn.js?v=29.0.133"></script>
 </body>
 </html>
