@@ -5,8 +5,7 @@
       "namespace": "android_app",
       "package_name": "com.justaiit.daywarden.twa",
       "sha256_cert_fingerprints": [
-        "REPLACE_WITH_PLAY_APP_SIGNING_SHA256",
-        "REPLACE_WITH_UPLOAD_KEY_SHA256"
+        "95:0C:D0:D9:FD:32:52:A2:3B:3F:B7:4F:AC:FE:71:A5:16:CD:02:B0:B5:41:BC:CD:2A:FC:C6:17:37:A0:CA:EB"
       ]
     }
   }
