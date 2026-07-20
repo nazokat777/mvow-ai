@@ -31,16 +31,16 @@
   .sec { margin-top: 20px; }
   .sec-hd { display: flex; align-items: center; justify-content: space-between; margin: 0 2px 8px; }
   .sec-hd .t { font-size: 14px; letter-spacing: 1px; text-transform: uppercase; font-weight: 800; }
-  .sec-hd .t.g { color: #6BBF7A; } .sec-hd .t.a { color: #F5C26B; } .sec-hd .t.r { color: #FF7A7A; } .sec-hd .t.b { color: #6EB5FF; }
+  .sec-hd .t.g { color: #6BBF7A; } .sec-hd .t.a { color: #F5C26B; } .sec-hd .t.r { color: #FF7A7A; } .sec-hd .t.b { color: #6EB5FF; } .sec-hd .t.s { color: #9B8CFF; }
   .sec-hd .tot { font-size: 15px; font-weight: 700; color: var(--text, #F5F2EC); }
   .addb { border: none; border-radius: 999px; padding: 7px 14px; font-size: 13px; font-weight: 700; cursor: pointer; font-family: inherit; color: #04060B; }
-  .addb.g { background: #6BBF7A; } .addb.r { background: #FF7A7A; } .addb.b { background: #6EB5FF; }
+  .addb.g { background: #6BBF7A; } .addb.r { background: #FF7A7A; } .addb.b { background: #6EB5FF; } .addb.s { background: #9B8CFF; }
   .item { display: flex; align-items: center; gap: 10px; background: var(--card, #0C0F16); border: 1px solid var(--border-default, rgba(255,255,255,.10)); border-radius: 12px; padding: 12px 14px; margin-top: 8px; }
   .item .nm { flex: 1; min-width: 0; }
   .item .nm .n1 { font-size: 15px; font-weight: 600; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
   .item .nm .n2 { font-size: 12px; color: var(--text-dim, #9CA0A8); margin-top: 2px; }
   .item .amt { font-size: 15px; font-weight: 800; flex-shrink: 0; }
-  .item .amt.g { color: #6BBF7A; } .item .amt.a { color: #F5C26B; } .item .amt.r { color: #FF7A7A; } .item .amt.b { color: #6EB5FF; }
+  .item .amt.g { color: #6BBF7A; } .item .amt.a { color: #F5C26B; } .item .amt.r { color: #FF7A7A; } .item .amt.b { color: #6EB5FF; } .item .amt.s { color: #9B8CFF; }
   .item .amt.muted { color: var(--text-dim, #9CA0A8); font-weight: 700; }
   .item .x { background: none; border: none; color: var(--text-dim, #9CA0A8); font-size: 20px; cursor: pointer; flex-shrink: 0; line-height: 1; }
   .empty { color: var(--text-dim, #9CA0A8); font-size: 14px; padding: 8px 4px; }
@@ -86,6 +86,14 @@
       <div class="chip"><div class="ck" data-i18n="wallet.cash">Naqd</div><div class="cv" id="cashV">0</div></div>
     </div>
     <div class="free" id="freeRow"></div>
+    <div class="free" id="savedRow" style="display:none;"></div>
+  </div>
+
+  <div class="sec">
+    <div class="sec-hd"><span class="t s" data-i18n="wallet.savings">Zaxira</span><span class="tot" id="totSaved">0</span></div>
+    <div style="font-size:12.5px;color:var(--text-dim,#9CA0A8);margin:0 0 8px;line-height:1.5;" data-i18n="wallet.savings_note">Chetga olib qo'yilgan pul. Hamyonda turaveradi, lekin "erkin pul"dan chiqariladi va oy almashganda nolga tushmaydi.</div>
+    <div id="listSaved"></div>
+    <div style="margin-top:8px;text-align:right;"><button class="addb s" data-add="save" data-i18n="wallet.add_savings">+ Zaxira</button></div>
   </div>
 
   <div class="sec">
@@ -125,7 +133,8 @@
       <button type="button" id="tIn" data-i18n="wallet.type_in">Kirim</button>
       <button type="button" id="tExpIn" data-i18n="wallet.type_expected">Kutilayotgan</button>
       <button type="button" id="tSpend" data-i18n="wallet.type_exp">Rasxod</button>
-      <button type="button" id="tPlan" data-i18n="wallet.type_plan">Reja</button>
+      <button type="button" id="tSave" data-i18n="wallet.type_savings">Zaxira</button>
+      <button type="button" id="tPlan" style="grid-column:1 / -1;" data-i18n="wallet.type_plan">Reja</button>
     </div>
     <label class="lbl" data-i18n="wallet.amount">Summa</label>
     <div class="amtrow">
@@ -217,6 +226,7 @@
       if (!Array.isArray(d.incomes)) d.incomes = [];
       if (!Array.isArray(d.expenses)) d.expenses = [];
       if (!Array.isArray(d.planned)) d.planned = [];
+      if (!Array.isArray(d.savings)) d.savings = [];
       return d;
     }
     function save(d) { try { localStorage.setItem('mvow.wallet', JSON.stringify(d)); } catch (e) {} }
@@ -234,7 +244,13 @@
       if (d.incomes.length || d.expenses.length || d.planned.length) {
         var h = loadHistory(); h[stored] = { incomes: d.incomes, expenses: d.expenses, planned: d.planned }; saveHistory(h);
       }
-      try { localStorage.removeItem('mvow.wallet'); localStorage.setItem('mvow.walletMonth', cur); } catch (e) {}
+      // ZAXIRA oy almashganda tozalanmaydi — u yig'ilib boradi (butun maqsadi shu).
+      var keepSavings = d.savings || [];
+      try {
+        localStorage.removeItem('mvow.wallet');
+        localStorage.setItem('mvow.walletMonth', cur);
+        if (keepSavings.length) localStorage.setItem('mvow.wallet', JSON.stringify({ incomes: [], expenses: [], planned: [], savings: keepSavings }));
+      } catch (e) {}
       return true;
     }
     function toast(msg) { var t = document.getElementById('wToast'); if (!t) return; t.textContent = msg; t.style.opacity = '1'; setTimeout(function () { t.style.opacity = '0'; }, 3200); }
@@ -257,8 +273,11 @@
         if (e.date) { if (e.date === ti) spentToday += a; datedSpent += a; days[e.date] = 1; }
       });
       d.planned.forEach(function (p) { planned += num(p.amount); });
+      // Zaxira — chetga olib qo'yilgan pul. Sarflanmagan (balansda qoladi), lekin ERKIN emas.
+      var saved = 0;
+      (d.savings || []).forEach(function (s) { saved += num(s.amount); });
       var nd = Object.keys(days).length;
-      return { recIn: recIn, expIn: expIn, spent: spent, planned: planned, balance: recIn - spent, free: recIn - spent - planned, cardBal: cardBal, cashBal: cashBal,
+      return { recIn: recIn, expIn: expIn, spent: spent, planned: planned, saved: saved, balance: recIn - spent, free: recIn - spent - planned - saved, cardBal: cardBal, cashBal: cashBal,
         spentToday: spentToday, avgDay: nd ? datedSpent / nd : 0, hasDaily: nd > 0 };
     }
 
@@ -285,6 +304,14 @@
       var freeRow = document.getElementById('freeRow');
       freeRow.className = 'free' + (c.free < 0 ? ' neg' : '');
       freeRow.innerHTML = T('wallet.free', 'Reja ayirilgach erkin') + ': <b>' + fmt(c.free) + ' ' + SOM() + '</b>';
+
+      var savedRow = document.getElementById('savedRow');
+      savedRow.style.display = c.saved > 0 ? '' : 'none';
+      savedRow.innerHTML = '🔒 ' + T('wallet.saved_row', 'Zaxirada') + ': <b>' + fmt(c.saved) + ' ' + SOM() + '</b>';
+      document.getElementById('totSaved').textContent = fmt(c.saved) + ' ' + SOM();
+      document.getElementById('listSaved').innerHTML = d.savings.length
+        ? d.savings.map(function (s) { return itemRow(s.cat, subMeta(s.method, s.date), s.amount, 's', 'data-del="sav:' + s.id + '"', { edit: 'sav:' + s.id }); }).join('')
+        : '<div class="empty">' + T('wallet.empty_savings', "Hali zaxira yo'q") + '</div>';
 
       document.getElementById('totIn').textContent = fmt(c.recIn) + ' ' + SOM();
       document.getElementById('totExp').textContent = fmt(c.expIn) + ' ' + SOM();
@@ -329,18 +356,24 @@
       });
     }
 
+    // Bo'lim kaliti -> massiv (inc | exp | sav | plan)
+    function arrOf(d, kind) {
+      return kind === 'inc' ? d.incomes : (kind === 'exp' ? d.expenses : (kind === 'sav' ? d.savings : d.planned));
+    }
+
     function del(token) {
       var d = load(), p = token.split(':'), kind = p[0], id = p.slice(1).join(':');
-      var arr0 = kind === 'inc' ? d.incomes : (kind === 'exp' ? d.expenses : d.planned);
+      var arr0 = arrOf(d, kind);
       var item = null; for (var i = 0; i < arr0.length; i++) { if (String(arr0[i].id) === id) { item = arr0[i]; break; } }
       if (kind === 'inc') d.incomes = d.incomes.filter(function (x) { return String(x.id) !== id; });
       else if (kind === 'exp') d.expenses = d.expenses.filter(function (x) { return String(x.id) !== id; });
+      else if (kind === 'sav') d.savings = d.savings.filter(function (x) { return String(x.id) !== id; });
       else if (kind === 'plan') d.planned = d.planned.filter(function (x) { return String(x.id) !== id; });
       save(d);
       if (window.MVOW_DATA && MVOW_DATA.fxTap) MVOW_DATA.fxTap();
       render();
       if (window.MvowUndo && item) MvowUndo.show(T('common.deleted', "O'chirildi"), function () {
-        var dd = load(); (kind === 'inc' ? dd.incomes : (kind === 'exp' ? dd.expenses : dd.planned)).push(item); save(dd); render();
+        var dd = load(); arrOf(dd, kind).push(item); save(dd); render();
       });
     }
 
@@ -373,12 +406,13 @@
     // Tur (bo'lim) tanlash — barcha rejimda; tahrirlashda boshqa bo'limga ko'chirish mumkin
     function setType(type) {
       curType = type;
-      [['tIn', 'in'], ['tExpIn', 'exp-in'], ['tSpend', 'spend'], ['tPlan', 'plan']].forEach(function (p) {
+      [['tIn', 'in'], ['tExpIn', 'exp-in'], ['tSpend', 'spend'], ['tSave', 'save'], ['tPlan', 'plan']].forEach(function (p) {
         var b = document.getElementById(p[0]); if (b) b.classList.toggle('on', type === p[1]);
       });
-      var tk = { 'in': 'wallet.add_in', 'exp-in': 'wallet.add_expected', 'spend': 'wallet.add_exp', 'plan': 'wallet.add_plan' };
+      var tk = { 'in': 'wallet.add_in', 'exp-in': 'wallet.add_expected', 'spend': 'wallet.add_exp', 'save': 'wallet.add_savings', 'plan': 'wallet.add_plan' };
       document.getElementById('ovTitle').textContent = curEdit ? T('wallet.edit', 'Tahrirlash') : T(tk[type], '+');
       if (type === 'in' || type === 'exp-in') { fNameLbl.textContent = T('wallet.source_lbl', 'Manba'); fName.placeholder = T('wallet.source_ph', 'mas. oylik'); }
+      else if (type === 'save') { fNameLbl.textContent = T('wallet.savings_lbl', 'Nima uchun yig\'yapsiz'); fName.placeholder = T('wallet.savings_ph', 'mas. safar uchun'); }
       else if (type === 'spend') { fNameLbl.textContent = T('wallet.cat_lbl', 'Nima uchun'); fName.placeholder = T('wallet.cat_ph', 'mas. maktab to\'lovi'); }
       else { fNameLbl.textContent = T('wallet.plan_lbl', 'Reja nomi'); fName.placeholder = T('wallet.plan_ph', 'mas. haftalik xarajat'); }
       rowMethod.style.display = (type === 'plan') ? 'none' : '';
@@ -416,10 +450,10 @@
     function closeSheet() { ov.classList.remove('show'); curType = null; curEdit = null; }
 
     function startEdit(kind, id) {
-      var d = load(), arr = kind === 'inc' ? d.incomes : (kind === 'exp' ? d.expenses : d.planned), entry = null;
+      var d = load(), arr = arrOf(d, kind), entry = null;
       for (var k = 0; k < arr.length; k++) { if (String(arr[k].id) === id) { entry = arr[k]; break; } }
       if (!entry) return;
-      var type = kind === 'inc' ? (entry.expected ? 'exp-in' : 'in') : (kind === 'exp' ? 'spend' : 'plan');
+      var type = kind === 'inc' ? (entry.expected ? 'exp-in' : 'in') : (kind === 'exp' ? 'spend' : (kind === 'sav' ? 'save' : 'plan'));
       curEdit = { kind: kind, id: id };
       openSheet(type, entry);
     }
@@ -433,24 +467,27 @@
       var cnt = Math.max(1, Math.min(365, parseInt(fWeeks.value, 10) || 1));
       var isApprox = !!(fApprox && fApprox.checked);
       if (curEdit) {   // MAVJUDNI YANGILASH (kerak bo'lsa boshqa bo'limga KO'CHIRISH)
-        var newKind = curType === 'spend' ? 'exp' : (curType === 'plan' ? 'plan' : 'inc');
+        var newKind = curType === 'spend' ? 'exp' : (curType === 'plan' ? 'plan' : (curType === 'save' ? 'sav' : 'inc'));
         var obj;
         if (newKind === 'inc') obj = { id: curEdit.id, amount: a, source: name, method: curMethod, expected: (curType === 'exp-in'), date: dt };
         else if (newKind === 'exp') obj = { id: curEdit.id, amount: a, cat: name, method: curMethod, date: dt };
+        else if (newKind === 'sav') obj = { id: curEdit.id, amount: a, cat: name, method: curMethod, date: dt };
         else obj = { id: curEdit.id, amount: a, cat: name, unit: curPeriod, count: cnt, date: dt, approx: isApprox };
         if (curEdit.kind === newKind) {   // o'sha bo'limda — o'rnida yangilash
-          var arr2 = newKind === 'inc' ? d.incomes : (newKind === 'exp' ? d.expenses : d.planned);
+          var arr2 = arrOf(d, newKind);
           for (var k = 0; k < arr2.length; k++) { if (String(arr2[k].id) === curEdit.id) { arr2[k] = obj; break; } }
         } else {                          // boshqa bo'limga — eskisidan olib, yangisiga qo'shish
           if (curEdit.kind === 'inc') d.incomes = d.incomes.filter(function (x) { return String(x.id) !== curEdit.id; });
           else if (curEdit.kind === 'exp') d.expenses = d.expenses.filter(function (x) { return String(x.id) !== curEdit.id; });
+          else if (curEdit.kind === 'sav') d.savings = d.savings.filter(function (x) { return String(x.id) !== curEdit.id; });
           else d.planned = d.planned.filter(function (x) { return String(x.id) !== curEdit.id; });
-          (newKind === 'inc' ? d.incomes : (newKind === 'exp' ? d.expenses : d.planned)).push(obj);
+          arrOf(d, newKind).push(obj);
         }
       } else {         // YANGI QO'SHISH
         var id = String(Date.now()) + Math.floor(Math.random() * 999);
         if (curType === 'in' || curType === 'exp-in') d.incomes.push({ id: id, amount: a, source: name, method: curMethod, expected: (curType === 'exp-in'), date: dt });
         else if (curType === 'spend') d.expenses.push({ id: id, amount: a, cat: name, method: curMethod, date: dt });
+        else if (curType === 'save') d.savings.push({ id: id, amount: a, cat: name, method: curMethod, date: dt });
         else if (curType === 'plan') d.planned.push({ id: id, amount: a, cat: name, unit: curPeriod, count: cnt, date: dt, approx: isApprox });
       }
       save(d);
@@ -465,7 +502,7 @@
     mCash.addEventListener('click', function () { setMethod('cash'); });
     if (uWeek) uWeek.addEventListener('click', function () { setPeriod('week'); });
     if (uDay) uDay.addEventListener('click', function () { setPeriod('day'); });
-    var typeMap = { tIn: 'in', tExpIn: 'exp-in', tSpend: 'spend', tPlan: 'plan' };
+    var typeMap = { tIn: 'in', tExpIn: 'exp-in', tSpend: 'spend', tSave: 'save', tPlan: 'plan' };
     Object.keys(typeMap).forEach(function (idk) {
       var b = document.getElementById(idk);
       if (b) b.addEventListener('click', function () { setType(typeMap[idk]); });

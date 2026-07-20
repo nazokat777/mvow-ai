@@ -1045,6 +1045,7 @@
         source_lbl: "Manba", source_ph: "mas. oylik", cat_lbl: "Nima uchun", cat_ph: "mas. maktab to'lovi",
         plan_lbl: "Reja nomi", plan_ph: "mas. haftalik xarajat",
         empty_in: "Hali kirim yo'q", empty_expected: "Hali yo'q", empty_exp: "Hali rasxod yo'q", empty_plan: "Hali reja yo'q",
+        savings: "Zaxira", type_savings: "Zaxira", add_savings: "+ Zaxira", saved_row: "Zaxirada", empty_savings: "Hali zaxira yo'q", savings_lbl: "Nima uchun yig'yapsiz", savings_ph: "mas. safar uchun", savings_note: "Chetga olib qo'yilgan pul. Hamyonda turaveradi, lekin erkin puldan chiqariladi va oy almashganda nolga tushmaydi.",
         save: "Saqlash", cancel: "Bekor"
       },
       about: {
@@ -2126,6 +2127,7 @@
         source_lbl: "Источник", source_ph: "напр. зарплата", cat_lbl: "На что", cat_ph: "напр. оплата школы",
         plan_lbl: "Название плана", plan_ph: "напр. недельные расходы",
         empty_in: "Пока нет доходов", empty_expected: "Пока нет", empty_exp: "Пока нет расходов", empty_plan: "Пока нет планов",
+        savings: "Резерв", type_savings: "Резерв", add_savings: "+ Резерв", saved_row: "В резерве", empty_savings: "Пока нет резерва", savings_lbl: "На что копите", savings_ph: "напр. на поездку", savings_note: "Отложенные деньги. Остаются в кошельке, но не считаются свободными и не обнуляются в новом месяце.",
         save: "Сохранить", cancel: "Отмена"
       },
       about: {
@@ -3207,6 +3209,7 @@
         source_lbl: "Source", source_ph: "e.g. salary", cat_lbl: "For what", cat_ph: "e.g. school fee",
         plan_lbl: "Plan name", plan_ph: "e.g. weekly spending",
         empty_in: "No income yet", empty_expected: "None yet", empty_exp: "No expenses yet", empty_plan: "No plans yet",
+        savings: "Reserve", type_savings: "Reserve", add_savings: "+ Reserve", saved_row: "In reserve", empty_savings: "No reserve yet", savings_lbl: "What are you saving for", savings_ph: "e.g. a trip", savings_note: "Money set aside. It stays in your wallet but is not counted as free, and it does not reset when the month changes.",
         save: "Save", cancel: "Cancel"
       },
       about: {
