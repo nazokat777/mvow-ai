@@ -1028,7 +1028,7 @@
         android_h: "Android", android_steps: "Sozlamalar → Xavfsizlik → «Ilovani mahkamlash» (App pinning) ni yoqing. So'ng FOCUS AI'ni oching → «yaqinda ochilganlar» tugmasi → ilova ustidagi belgiga bosib «Mahkamlash». Chiqish uchun PIN/naqsh so'raladi.",
         ios_h: "iPhone", ios_steps: "Sozlamalar → Universal kirish → «Yo'naltirilgan kirish» (Guided Access) ni yoqing va parol qo'ying. FOCUS AI'da yon tugmani 3 marta bosing → «Boshlash». Chiqish uchun parol kerak bo'ladi.",
         apps_h: "3. Istalgan ilovani qulflash", apps_desc: "Qaysi ilovalar yopiq bo'lishini shu yerga yozing. Ro'yxat PIN bilan himoyalanadi — farzandingiz uni o'zgartira olmaydi.", apps_empty: "Hali ilova qo'shilmagan", enforce_h: "Telefonda haqiqatan yopish", enforce_steps: "Android: Google Family Link → farzand profili → «Ilovalar» → kerakli ilovani tanlab «Bloklash». Yoki Sozlamalar → Raqamli farovonlik → «Ilova taymerlari» → ilovaga 0 daqiqa qo'ying. Samsung/Xiaomi'da «Ilova qulfi» (App lock) ham bor. iPhone: Sozlamalar → Ekran vaqti → «Kontent va maxfiylik cheklovlari».",
-        note: "Eslatma: bu ro'yxat kelishuv va nazorat uchun — yopishning o'zi telefon sozlamalari orqali bajariladi (yuqoridagi qadamlar). Telefon xavfsizlik qoidasi bo'yicha veb-ilova boshqa ilovani o'zi yopa olmaydi; 2-banddagi «mahkamlash» esa bolani faqat FOCUS AI ichida ushlab turadi."
+        note: "Eslatma: ilovaning O'ZI ilovalarni qulflashi — tayyorlanmoqda (telefondan «Maxsus imkoniyatlar» ruxsati so'raladi), Play'da chiqqach yangilanish bilan keladi. Shu paytgacha ro'yxat kelishuv uchun, yopish esa yuqoridagi telefon sozlamalari orqali bajariladi."
       },
       wallet: {
         page_title: "{brand} — Hamyon", title: "Hamyon", sub: "Pul kirim-chiqim va rejalar",
@@ -2111,7 +2111,7 @@
         android_h: "Android", android_steps: "Настройки → Безопасность → включите «Закрепление приложений» (App pinning). Откройте FOCUS AI → кнопка «недавние» → значок над приложением → «Закрепить». Для выхода спросит PIN/узор.",
         ios_h: "iPhone", ios_steps: "Настройки → Универсальный доступ → включите «Гид-доступ» (Guided Access) и задайте пароль. В FOCUS AI трижды нажмите боковую кнопку → «Начать». Для выхода нужен пароль.",
         apps_h: "3. Заблокировать любое приложение", apps_desc: "Запишите здесь, какие приложения закрыты. Список защищён PIN-кодом — ребёнок его не изменит.", apps_empty: "Приложения пока не добавлены", enforce_h: "Как закрыть на самом телефоне", enforce_steps: "Android: Google Family Link → профиль ребёнка → «Приложения» → выберите приложение и «Заблокировать». Или Настройки → Цифровое благополучие → «Таймеры приложений» → поставьте 0 минут. На Samsung/Xiaomi есть «Блокировка приложений». iPhone: Настройки → Экранное время → «Контент и конфиденциальность».",
-        note: "Примечание: этот список — договорённость и контроль; само закрытие делается в настройках телефона (шаги выше). По правилам безопасности веб-приложение не может закрыть другое приложение; а «закрепление» из пункта 2 удерживает ребёнка внутри FOCUS AI."
+        note: "Примечание: блокировка приложений самим FOCUS AI — готовится (телефон запросит разрешение «Специальные возможности»), придёт обновлением после выхода в Play. Пока список служит договорённостью, а закрытие делается через настройки телефона выше."
       },
       wallet: {
         page_title: "{brand} — Кошелёк", title: "Кошелёк", sub: "Доходы, расходы и планы",
@@ -3194,7 +3194,7 @@
         android_h: "Android", android_steps: "Settings → Security → turn on «App pinning». Open FOCUS AI → «recents» button → tap the icon above the app → «Pin». Exiting asks for the PIN/pattern.",
         ios_h: "iPhone", ios_steps: "Settings → Accessibility → turn on «Guided Access» and set a passcode. In FOCUS AI triple-click the side button → «Start». Exiting requires the passcode.",
         apps_h: "3. Lock any app", apps_desc: "List which apps are off-limits. The list is PIN-protected — your child cannot change it.", apps_empty: "No apps added yet", enforce_h: "How to actually block them", enforce_steps: "Android: Google Family Link → child profile → «Apps» → pick the app and «Block». Or Settings → Digital Wellbeing → «App timers» → set 0 minutes. Samsung/Xiaomi also have «App lock». iPhone: Settings → Screen Time → «Content & Privacy Restrictions».",
-        note: "Note: this list is for agreement and oversight — the actual blocking happens in phone settings (steps above). By phone security rules a web app cannot close another app; the «pinning» in step 2 keeps the child inside FOCUS AI."
+        note: "Note: locking apps from inside FOCUS AI is in the works (the phone will ask for the «Accessibility» permission) and arrives in an update after the Play release. Until then the list serves as an agreement, and blocking is done via the phone settings above."
       },
       wallet: {
         page_title: "{brand} — Wallet", title: "Wallet", sub: "Income, spending and plans",
