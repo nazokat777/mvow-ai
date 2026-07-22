@@ -122,6 +122,21 @@
     <div style="margin-top:8px;text-align:right;"><button class="addb b" data-add="plan" data-i18n="wallet.add_plan">+ Reja</button></div>
   </div>
 
+  <div class="sec" id="nextSec" style="border:1px solid var(--accent,#F4845F);border-radius:18px;padding:14px 14px 16px;">
+    <div class="sec-hd"><span class="t" style="color:var(--accent,#F4845F);" data-i18n="wallet.next_title">Kelasi oy rejasi</span><span class="tot" id="totNext">0</span></div>
+    <div style="font-size:12.5px;color:var(--text-dim,#9CA0A8);margin:0 0 12px;line-height:1.5;" data-i18n="wallet.next_note">Kelayotgan oyga kirim va rasxodni oldindan rejalashtiring. Yangi oy boshlanganda «Ijroga o'tkazish» bilan ular shu oyning kutilayotgan kirimi va rejasiga aylanadi.</div>
+
+    <div style="font-size:12px;letter-spacing:1px;text-transform:uppercase;color:var(--text-dim,#9CA0A8);font-weight:700;margin:2px 2px 6px;" data-i18n="wallet.next_in_hd">Kutilayotgan kirim</div>
+    <div id="listNextIn"></div>
+    <div style="margin:6px 0 14px;text-align:right;"><button class="addb g" data-add="next-in" data-i18n="wallet.next_add_in">+ Kirim</button></div>
+
+    <div style="font-size:12px;letter-spacing:1px;text-transform:uppercase;color:var(--text-dim,#9CA0A8);font-weight:700;margin:2px 2px 6px;" data-i18n="wallet.next_exp_hd">Rejalangan rasxod</div>
+    <div id="listNextExp"></div>
+    <div style="margin:6px 0 4px;text-align:right;"><button class="addb r" data-add="next-exp" data-i18n="wallet.next_add_exp">+ Rasxod</button></div>
+
+    <button id="actNext" type="button" style="width:100%;margin-top:14px;background:var(--accent,#F4845F);color:#fff;border:none;border-radius:14px;padding:14px;font-size:15px;font-weight:700;cursor:pointer;font-family:inherit;">▶ <span data-i18n="wallet.next_activate">Yangi oyda ijroga o'tkazish</span></button>
+  </div>
+
   <div style="margin-top:30px;text-align:center;">
     <button id="clearAll" type="button" style="background:none;border:none;color:var(--text-dim,#9CA0A8);font-size:13px;text-decoration:underline;cursor:pointer;font-family:inherit;">🗑 <span data-i18n="wallet.clear_all">Hammasini tozalash</span></button>
   </div>
@@ -228,6 +243,8 @@
       if (!Array.isArray(d.expenses)) d.expenses = [];
       if (!Array.isArray(d.planned)) d.planned = [];
       if (!Array.isArray(d.savings)) d.savings = [];
+      if (!Array.isArray(d.nextIn)) d.nextIn = [];    // kelasi oy rejasi — kirim
+      if (!Array.isArray(d.nextExp)) d.nextExp = [];  // kelasi oy rejasi — rasxod
       return d;
     }
     function save(d) { try { localStorage.setItem('mvow.wallet', JSON.stringify(d)); } catch (e) {} }
@@ -245,12 +262,14 @@
       if (d.incomes.length || d.expenses.length || d.planned.length) {
         var h = loadHistory(); h[stored] = { incomes: d.incomes, expenses: d.expenses, planned: d.planned }; saveHistory(h);
       }
-      // ZAXIRA oy almashganda tozalanmaydi — u yig'ilib boradi (butun maqsadi shu).
+      // ZAXIRA va KELASI OY REJASI oy almashganda tozalanmaydi (arxivga ketmaydi).
       var keepSavings = d.savings || [];
+      var keepNextIn = d.nextIn || [], keepNextExp = d.nextExp || [];
       try {
         localStorage.removeItem('mvow.wallet');
         localStorage.setItem('mvow.walletMonth', cur);
-        if (keepSavings.length) localStorage.setItem('mvow.wallet', JSON.stringify({ incomes: [], expenses: [], planned: [], savings: keepSavings }));
+        if (keepSavings.length || keepNextIn.length || keepNextExp.length)
+          localStorage.setItem('mvow.wallet', JSON.stringify({ incomes: [], expenses: [], planned: [], savings: keepSavings, nextIn: keepNextIn, nextExp: keepNextExp }));
       } catch (e) {}
       return true;
     }
@@ -349,6 +368,23 @@
           }).join('')
         : '<div class="empty">' + T('wallet.empty_plan', "Hali reja yo'q") + '</div>';
 
+      // ── Kelasi oy rejasi ──
+      var nextInTot = 0, nextExpTot = 0;
+      d.nextIn.forEach(function (x) { nextInTot += num(x.amount); });
+      d.nextExp.forEach(function (x) { nextExpTot += num(x.amount); });
+      document.getElementById('totNext').textContent = '+' + fmt(nextInTot) + ' / −' + fmt(nextExpTot) + ' ' + SOM();
+      document.getElementById('listNextIn').innerHTML = d.nextIn.length
+        ? d.nextIn.map(function (x) { return itemRow(x.name, '', x.amount, 'g', 'data-del="nextin:' + x.id + '"', { edit: 'nextin:' + x.id }); }).join('')
+        : '<div class="empty">' + T('wallet.next_empty_in', "Hali yo'q") + '</div>';
+      document.getElementById('listNextExp').innerHTML = d.nextExp.length
+        ? d.nextExp.map(function (x) { return itemRow(x.name, '', -Math.abs(num(x.amount)), 'r', 'data-del="nextexp:' + x.id + '"', { edit: 'nextexp:' + x.id }); }).join('')
+        : '<div class="empty">' + T('wallet.next_empty_exp', "Hali yo'q") + '</div>';
+      var actBtn = document.getElementById('actNext');
+      var hasNext = d.nextIn.length || d.nextExp.length;
+      actBtn.disabled = !hasNext;
+      actBtn.style.opacity = hasNext ? '1' : '.45';
+      actBtn.style.cursor = hasNext ? 'pointer' : 'default';
+
       document.querySelectorAll('[data-del]').forEach(function (b) {
         b.addEventListener('click', function (e) { e.stopPropagation(); del(b.getAttribute('data-del')); });
       });
@@ -357,9 +393,10 @@
       });
     }
 
-    // Bo'lim kaliti -> massiv (inc | exp | sav | plan)
+    // Bo'lim kaliti -> massiv (inc | exp | sav | plan | nextin | nextexp)
     function arrOf(d, kind) {
-      return kind === 'inc' ? d.incomes : (kind === 'exp' ? d.expenses : (kind === 'sav' ? d.savings : d.planned));
+      return kind === 'inc' ? d.incomes : (kind === 'exp' ? d.expenses : (kind === 'sav' ? d.savings
+        : (kind === 'nextin' ? d.nextIn : (kind === 'nextexp' ? d.nextExp : d.planned))));
     }
 
     function del(token) {
@@ -370,6 +407,8 @@
       else if (kind === 'exp') d.expenses = d.expenses.filter(function (x) { return String(x.id) !== id; });
       else if (kind === 'sav') d.savings = d.savings.filter(function (x) { return String(x.id) !== id; });
       else if (kind === 'plan') d.planned = d.planned.filter(function (x) { return String(x.id) !== id; });
+      else if (kind === 'nextin') d.nextIn = d.nextIn.filter(function (x) { return String(x.id) !== id; });
+      else if (kind === 'nextexp') d.nextExp = d.nextExp.filter(function (x) { return String(x.id) !== id; });
       save(d);
       if (window.MVOW_DATA && MVOW_DATA.fxTap) MVOW_DATA.fxTap();
       render();
@@ -410,13 +449,15 @@
       [['tIn', 'in'], ['tExpIn', 'exp-in'], ['tSpend', 'spend'], ['tSave', 'save'], ['tPlan', 'plan']].forEach(function (p) {
         var b = document.getElementById(p[0]); if (b) b.classList.toggle('on', type === p[1]);
       });
-      var tk = { 'in': 'wallet.add_in', 'exp-in': 'wallet.add_expected', 'spend': 'wallet.add_exp', 'save': 'wallet.add_savings', 'plan': 'wallet.add_plan' };
+      var tk = { 'in': 'wallet.add_in', 'exp-in': 'wallet.add_expected', 'spend': 'wallet.add_exp', 'save': 'wallet.add_savings', 'plan': 'wallet.add_plan', 'next-in': 'wallet.next_add_in', 'next-exp': 'wallet.next_add_exp' };
       document.getElementById('ovTitle').textContent = curEdit ? T('wallet.edit', 'Tahrirlash') : T(tk[type], '+');
-      if (type === 'in' || type === 'exp-in') { fNameLbl.textContent = T('wallet.source_lbl', 'Manba'); fName.placeholder = T('wallet.source_ph', 'mas. oylik'); }
+      var isNext = (type === 'next-in' || type === 'next-exp');
+      if (type === 'in' || type === 'exp-in' || type === 'next-in') { fNameLbl.textContent = T('wallet.source_lbl', 'Manba'); fName.placeholder = T('wallet.source_ph', 'mas. oylik'); }
       else if (type === 'save') { fNameLbl.textContent = T('wallet.savings_lbl', 'Nima uchun yig\'yapsiz'); fName.placeholder = T('wallet.savings_ph', 'mas. safar uchun'); }
-      else if (type === 'spend') { fNameLbl.textContent = T('wallet.cat_lbl', 'Nima uchun'); fName.placeholder = T('wallet.cat_ph', 'mas. maktab to\'lovi'); }
+      else if (type === 'spend' || type === 'next-exp') { fNameLbl.textContent = T('wallet.cat_lbl', 'Nima uchun'); fName.placeholder = T('wallet.cat_ph', 'mas. maktab to\'lovi'); }
       else { fNameLbl.textContent = T('wallet.plan_lbl', 'Reja nomi'); fName.placeholder = T('wallet.plan_ph', 'mas. haftalik xarajat'); }
-      rowMethod.style.display = (type === 'plan') ? 'none' : '';
+      rowMethod.style.display = (type === 'plan' || isNext) ? 'none' : '';
+      rowDate.style.display = isNext ? 'none' : '';   // kelasi oy rejasida sana yo'q
       fDateLbl.textContent = (type === 'plan') ? T('wallet.date_start_lbl', 'Boshlanish sanasi')
         : ((type === 'exp-in') ? T('wallet.date_exp_lbl', 'Qachon kutilmoqda') : T('wallet.date_lbl', 'Sana'));
       rowWeeks.style.display = (type === 'plan') ? '' : 'none';
@@ -454,7 +495,8 @@
       var d = load(), arr = arrOf(d, kind), entry = null;
       for (var k = 0; k < arr.length; k++) { if (String(arr[k].id) === id) { entry = arr[k]; break; } }
       if (!entry) return;
-      var type = kind === 'inc' ? (entry.expected ? 'exp-in' : 'in') : (kind === 'exp' ? 'spend' : (kind === 'sav' ? 'save' : 'plan'));
+      var type = kind === 'inc' ? (entry.expected ? 'exp-in' : 'in') : (kind === 'exp' ? 'spend' : (kind === 'sav' ? 'save'
+        : (kind === 'nextin' ? 'next-in' : (kind === 'nextexp' ? 'next-exp' : 'plan'))));
       curEdit = { kind: kind, id: id };
       openSheet(type, entry);
     }
@@ -468,11 +510,13 @@
       var cnt = Math.max(1, Math.min(365, parseInt(fWeeks.value, 10) || 1));
       var isApprox = !!(fApprox && fApprox.checked);
       if (curEdit) {   // MAVJUDNI YANGILASH (kerak bo'lsa boshqa bo'limga KO'CHIRISH)
-        var newKind = curType === 'spend' ? 'exp' : (curType === 'plan' ? 'plan' : (curType === 'save' ? 'sav' : 'inc'));
+        var newKind = curType === 'spend' ? 'exp' : (curType === 'plan' ? 'plan' : (curType === 'save' ? 'sav'
+          : (curType === 'next-in' ? 'nextin' : (curType === 'next-exp' ? 'nextexp' : 'inc'))));
         var obj;
         if (newKind === 'inc') obj = { id: curEdit.id, amount: a, source: name, method: curMethod, expected: (curType === 'exp-in'), date: dt };
         else if (newKind === 'exp') obj = { id: curEdit.id, amount: a, cat: name, method: curMethod, date: dt };
         else if (newKind === 'sav') obj = { id: curEdit.id, amount: a, cat: name, method: curMethod, date: dt };
+        else if (newKind === 'nextin' || newKind === 'nextexp') obj = { id: curEdit.id, amount: a, name: name };
         else obj = { id: curEdit.id, amount: a, cat: name, unit: curPeriod, count: cnt, date: dt, approx: isApprox };
         if (curEdit.kind === newKind) {   // o'sha bo'limda — o'rnida yangilash
           var arr2 = arrOf(d, newKind);
@@ -481,6 +525,8 @@
           if (curEdit.kind === 'inc') d.incomes = d.incomes.filter(function (x) { return String(x.id) !== curEdit.id; });
           else if (curEdit.kind === 'exp') d.expenses = d.expenses.filter(function (x) { return String(x.id) !== curEdit.id; });
           else if (curEdit.kind === 'sav') d.savings = d.savings.filter(function (x) { return String(x.id) !== curEdit.id; });
+          else if (curEdit.kind === 'nextin') d.nextIn = d.nextIn.filter(function (x) { return String(x.id) !== curEdit.id; });
+          else if (curEdit.kind === 'nextexp') d.nextExp = d.nextExp.filter(function (x) { return String(x.id) !== curEdit.id; });
           else d.planned = d.planned.filter(function (x) { return String(x.id) !== curEdit.id; });
           arrOf(d, newKind).push(obj);
         }
@@ -490,6 +536,8 @@
         else if (curType === 'spend') d.expenses.push({ id: id, amount: a, cat: name, method: curMethod, date: dt });
         else if (curType === 'save') d.savings.push({ id: id, amount: a, cat: name, method: curMethod, date: dt });
         else if (curType === 'plan') d.planned.push({ id: id, amount: a, cat: name, unit: curPeriod, count: cnt, date: dt, approx: isApprox });
+        else if (curType === 'next-in') d.nextIn.push({ id: id, amount: a, name: name });
+        else if (curType === 'next-exp') d.nextExp.push({ id: id, amount: a, name: name });
       }
       save(d);
       if (window.MVOW_DATA && MVOW_DATA.fxSuccess) MVOW_DATA.fxSuccess();
@@ -523,6 +571,28 @@
       } else if (confirm(T('wallet.clear_confirm', "Barcha hamyon yozuvlari o'chirilsinmi?"))) {
         try { localStorage.removeItem('mvow.wallet'); } catch (e) {} render();
       }
+    });
+
+    // ── Kelasi oy rejasini IJROGA O'TKAZISH ──
+    // Kutilayotgan kirim -> "Kutilayotgan pul" (expected); Rejalangan rasxod -> "Rejalangan rasxodlar".
+    // So'ngra kelasi-oy ro'yxati bo'shatiladi (reja bajarildi).
+    var actBtn = document.getElementById('actNext');
+    if (actBtn) actBtn.addEventListener('click', function () {
+      var d = load();
+      if (!(d.nextIn.length || d.nextExp.length)) return;
+      if (!confirm(T('wallet.next_confirm', "Kelasi oy rejasi shu oyning kutilayotgan kirimi va rejasiga o'tkazilsinmi?"))) return;
+      var ti = todayIso();
+      d.nextIn.forEach(function (x) {
+        d.incomes.push({ id: String(Date.now()) + Math.floor(Math.random() * 999999), amount: num(x.amount), source: x.name, method: 'card', expected: true, date: ti });
+      });
+      d.nextExp.forEach(function (x) {
+        d.planned.push({ id: String(Date.now()) + Math.floor(Math.random() * 999999), amount: num(x.amount), cat: x.name, unit: 'week', count: 4, date: ti, approx: false });
+      });
+      d.nextIn = []; d.nextExp = [];
+      save(d);
+      if (window.MVOW_DATA && MVOW_DATA.fxSuccess) MVOW_DATA.fxSuccess();
+      render();
+      toast(T('wallet.next_done', "Reja ijroga o'tkazildi ✓"));
     });
 
     // ── Tarix ko'rish (o'tgan oylar) ──
@@ -566,7 +636,15 @@
     var didRoll = rollover();   // yangi oy bo'lsa — o'tgan oyni arxivlab, toza boshlaydi
     try { document.title = T('wallet.page_title', 'FOCUS AI — Hamyon'); } catch (e) {}
     render();
-    if (didRoll) toast(T('wallet.month_reset', "Yangi oy boshlandi — o'tgan oy Tarixga saqlandi"));
+    if (didRoll) {
+      var dNow = load();
+      if (dNow.nextIn.length || dNow.nextExp.length) {
+        toast(T('wallet.next_ready', "Yangi oy boshlandi — kelasi oy rejangizni «Ijroga o'tkazish» bilan qo'llang"));
+        var ns = document.getElementById('nextSec'); if (ns) ns.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      } else {
+        toast(T('wallet.month_reset', "Yangi oy boshlandi — o'tgan oy Tarixga saqlandi"));
+      }
+    }
   })();
 </script>
 <script src="undo-toast.js?v=29.0.51"></script>
