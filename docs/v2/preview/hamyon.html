@@ -456,6 +456,8 @@
       else if (type === 'save') { fNameLbl.textContent = T('wallet.savings_lbl', 'Nima uchun yig\'yapsiz'); fName.placeholder = T('wallet.savings_ph', 'mas. safar uchun'); }
       else if (type === 'spend' || type === 'next-exp') { fNameLbl.textContent = T('wallet.cat_lbl', 'Nima uchun'); fName.placeholder = T('wallet.cat_ph', 'mas. maktab to\'lovi'); }
       else { fNameLbl.textContent = T('wallet.plan_lbl', 'Reja nomi'); fName.placeholder = T('wallet.plan_ph', 'mas. haftalik xarajat'); }
+      var rowType = document.getElementById('rowType');
+      if (rowType) rowType.style.display = isNext ? 'none' : 'grid';  // kelasi-oyda tur tanlagich yashirin (adashib "Rasxod"ni bosmasin)
       rowMethod.style.display = (type === 'plan' || isNext) ? 'none' : '';
       rowDate.style.display = isNext ? 'none' : '';   // kelasi oy rejasida sana yo'q
       fDateLbl.textContent = (type === 'plan') ? T('wallet.date_start_lbl', 'Boshlanish sanasi')
