@@ -137,11 +137,15 @@
         updated_at: new Date().toISOString() },
       { onConflict: 'code,d' }
     ).then(function () {}, function () {});
-    // 2) Ko'rinadigan vazifalar (per-task) — ALOHIDA update; ustun hali qo'shilmagan bo'lsa xatoni yutamiz.
+    // 2) Ko'rinadigan vazifalar (per-task) — ALOHIDA update; 'report' ustuni hali qo'shilmagan bo'lsa
+    //    Supabase 400 qaytaradi. Xatoni yutamiz VA shu sessiyada qayta urinmaymiz (konsol shovqini +
+    //    behuda so'rovni to'xtatadi). Yangi sessiyada qayta urinadi — ustun qo'shilgan bo'lsa ishlaydi.
     p.then(function () {
+      try { if (sessionStorage.getItem('mvow.noReportCol') === '1') return; } catch (e) {}
       try {
         c.from('daily_stats').update({ report: myTasksToday() })
-          .match({ code: myCode(), d: todayIso() }).then(function () {}, function () {});
+          .match({ code: myCode(), d: todayIso() })
+          .then(function (res) { if (res && res.error) { try { sessionStorage.setItem('mvow.noReportCol', '1'); } catch (_) {} } }, function () {});
       } catch (e) {}
     });
     return p;

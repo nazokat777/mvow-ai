@@ -22,9 +22,9 @@
   /* Mening kodim */
   .code-card { background: linear-gradient(135deg, rgba(244,132,95,1), rgba(217,102,60,1)); border-radius: 20px; padding: 18px 20px; color: #fff; margin-bottom: 16px; box-shadow: 0 12px 30px rgba(244,132,95,.4); }
   .code-card .lbl { font-size: 12px; letter-spacing: 2px; text-transform: uppercase; opacity: .9; margin-bottom: 4px; }
-  .code-card .row { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
-  .code-card .code { font-family: 'Anton', sans-serif; font-size: 40px; letter-spacing: 4px; }
-  .code-card .acts { display: flex; gap: 8px; }
+  .code-card .row { display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap; }
+  .code-card .code { font-family: 'Anton', sans-serif; font-size: clamp(30px, 9vw, 40px); letter-spacing: 3px; white-space: nowrap; }
+  .code-card .acts { display: flex; gap: 8px; flex-wrap: wrap; flex: 1 1 auto; justify-content: flex-end; }
   .code-card .acts button { background: rgba(255,255,255,.22); border: none; color: #fff; border-radius: 12px; padding: 10px 14px; font-size: 14px; font-weight: 700; cursor: pointer; display: flex; align-items: center; gap: 6px; font-family: 'Inter'; }
   .code-card .acts button:active { transform: scale(.94); }
 
@@ -207,7 +207,8 @@
             ? '<span class="lb-pending">' + T('pending', 'kutilmoqda…') + '</span>'
             : '<span class="lb-stat">' + (r.focusH == null ? '—' : r.focusH) + ' ' + T('hours', 'soat') + ' <span class="hb">· ' + (r.habits == null ? '—' : r.habits) + ' ' + T('habits', 'odat') + '</span></span>';
           html += '<div class="lb-row' + (r.me ? ' me self' : '') + (top ? ' top' : '') + '"' + (r.me ? ' data-self="1"' : ' data-chat="' + escapeHtml(r.code) + '"') + '>'
-            + '<div class="lb-rank">' + (i + 1) + '</div>'
+            // Do'st yo'q bo'lsa "1" raqami ma'nosiz — o'zingizni yolg'iz "1-o'rin" qilib ko'rsatmaymiz.
+            + ((!hasFriends && r.me) ? '' : '<div class="lb-rank">' + (i + 1) + '</div>')
             + '<div class="lb-name">' + (r.me ? '<span class="you">' + T('you', 'Siz') + '</span><span class="self-hint"> · ' + T('pv_tap', "do'stingiz nimani ko'radi") + ' <span class="chev">▾</span></span>' : escapeHtml(r.name)) + '</div>'
             + stat + (r.me ? '' : '<span class="rename-ic" data-rename="' + escapeHtml(r.code) + '" data-kind="friend" title="' + T('name_give', 'Ism berish') + '">✎</span><span class="chat-ic">💬</span>') + '</div>';
           if (r.me) html += selfPreviewHtml();

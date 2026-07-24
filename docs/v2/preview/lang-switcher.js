@@ -234,6 +234,22 @@
     place();
     setTimeout(place, 200); setTimeout(place, 700);
     window.addEventListener('resize', place);
+
+    // Birinchi kirishda ikonalar nima ekanini bir marta ko'rsatamiz (mobil — hover yo'q, uzoq bosish yashirin).
+    try {
+      if (!localStorage.getItem('mvow.qnHintSeen')) {
+        var _tt = function (k, d) { return (window.I18N && I18N.t) ? I18N.t(k, d) : d; };
+        var hint = document.createElement('div');
+        hint.textContent = '👥 ' + _tt('menu.row_friends', "Do'stlar") + '   🏅 ' + _tt('menu.row_rewards', 'Sovrinlar') + '   🔥 ' + _tt('menu.row_trace', 'Seriya');
+        hint.style.cssText = 'position:fixed;z-index:99990;background:rgba(20,22,30,0.97);color:#fff;font:600 12px Inter,sans-serif;padding:7px 12px;border-radius:10px;box-shadow:0 6px 20px rgba(0,0,0,0.45);opacity:0;transition:opacity .3s;pointer-events:none;max-width:78vw;text-align:right;line-height:1.5;';
+        document.body.appendChild(hint);
+        var placeHint = function () { var r = qn.getBoundingClientRect(); hint.style.top = (r.bottom + 8) + 'px'; hint.style.right = Math.max(8, window.innerWidth - r.right) + 'px'; };
+        placeHint(); setTimeout(placeHint, 260);
+        requestAnimationFrame(function () { hint.style.opacity = '1'; });
+        setTimeout(function () { hint.style.opacity = '0'; setTimeout(function () { if (hint.parentNode) hint.parentNode.removeChild(hint); }, 350); }, 4500);
+        localStorage.setItem('mvow.qnHintSeen', '1');
+      }
+    } catch (e) {}
   }
 
   function init() { build(); buildQuickNav(); }

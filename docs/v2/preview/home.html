@@ -1051,18 +1051,22 @@
     // Bo'sh holatda ortiqcha "maqsadga o'tish" takrorlari yashiriladi — bitta aniq harakat qoladi.
     const _moreGoal = document.getElementById('moreGoalBtn');
     const _tileGoals = document.getElementById('tileGoals');
+    const _addTaskBtn = document.getElementById('addTaskBtn');
     if (!hasGoals || !plan.length) {
       cta.textContent = Ti('home.cta_add_goal', "Maqsad qo'shing");
       cta.href = 'maqsadlar.html';
-      // CTA endi "Maqsad qo'shing" — pastdagi "Maqsadlar" plitka va "Yana maqsad qo'shish" ortiqcha.
+      // Bo'sh holat: bitta aniq harakat qoladi. Ortiqcha takrorlar yashiriladi —
+      // "vazifa qo'shish" (maqsad yo'q joyda mantiqsiz), "Maqsadlar" plitka, "Yana maqsad qo'shish".
       if (_tileGoals) _tileGoals.style.display = 'none';
       if (_moreGoal && !hasGoals) _moreGoal.style.display = 'none';
+      if (_addTaskBtn && !plan.length) _addTaskBtn.style.display = 'none';
       var _tg = document.getElementById('tileGrid'); if (_tg) _tg.style.gridTemplateColumns = '1fr';
     } else {
       cta.textContent = Ti('home.cta_start', 'Boshlash');
       cta.href = 'hard-lock.html';
       if (_tileGoals) _tileGoals.style.display = '';
       if (_moreGoal) _moreGoal.style.display = '';
+      if (_addTaskBtn) _addTaskBtn.style.display = '';
       var _tg2 = document.getElementById('tileGrid'); if (_tg2) _tg2.style.gridTemplateColumns = '1fr 1fr';
       // Umumiy "Boshlash": faqat 1 ta bajarilmagan vazifa bo'lsa — to'g'ridan-to'g'ri nomi bilan.
       // Ko'p yoki vaqti o'tib ketgan (overdue) bo'lsa — activeTask o'rnatilmaydi,
