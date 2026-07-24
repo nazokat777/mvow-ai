@@ -291,9 +291,15 @@
             };
           }).sort(function (a, b) { return ((b.focusMins || 0) - (a.focusMins || 0)) || ((b.habits || 0) - (a.habits || 0)); });
         }
+        var noRep = false; try { noRep = sessionStorage.getItem('mvow.noReportCol') === '1'; } catch (e) {}
+        if (noRep) {   // shu sessiyada ustun yo'qligi aniqlangan — to'g'ridan report'siz so'raymiz (400 takrorlanmaydi)
+          return c.from('daily_stats').select('code,focus_mins,habits').eq('d', todayIso()).in('code', codes)
+            .then(function (r3) { return build((r3 && r3.data) || []); });
+        }
         return c.from('daily_stats').select('code,focus_mins,habits,report').eq('d', todayIso()).in('code', codes)
           .then(function (r2) {
-            if (r2 && r2.error) {   // 'report' ustuni hali qo'shilmagan -> report'siz qayta
+            if (r2 && r2.error) {   // 'report' ustuni hali qo'shilmagan -> report'siz qayta + sessiyada eslab qolamiz
+              try { sessionStorage.setItem('mvow.noReportCol', '1'); } catch (e) {}
               return c.from('daily_stats').select('code,focus_mins,habits').eq('d', todayIso()).in('code', codes)
                 .then(function (r3) { return build((r3 && r3.data) || []); });
             }
