@@ -674,6 +674,7 @@
         // CTA variantlari (smart logic)
         cta_add_goal: "Maqsad qo'shing",
         more_goal: "Yana maqsad qo'shish",
+        rest_entry: "Bugun og'ir kun — dam olaman", rest_title: "Bugun — dam kuni", rest_body: "Kutilmagan ishlar bo'ldi — bu normal. Dam olish ham intizomning bir qismi. Streak'ingiz saqlanadi, ertaga qaytamiz.", rest_count: "Bu oy dam kunlari", rest_undo: "Fikrimdan qaytdim",
         cta_evening: 'Kun yakuni',
         cta_start: 'Boshlayman',
         cta_continue: 'Davom etaman',
@@ -1770,6 +1771,7 @@
         ish: 'дел',
         cta_add_goal: 'Добавить цель',
         more_goal: 'Добавить ещё цель',
+        rest_entry: 'Тяжёлый день — беру выходной', rest_title: 'Сегодня — день отдыха', rest_body: 'Случились непредвиденные дела — это нормально. Отдых тоже часть дисциплины. Ваш стрик сохранится, завтра продолжим.', rest_count: 'Дней отдыха в этом месяце', rest_undo: 'Передумал(а)',
         cta_evening: 'Итог дня',
         cta_start: 'Начинаю',
         cta_continue: 'Продолжаю',
@@ -2854,6 +2856,7 @@
         ish: 'tasks',
         cta_add_goal: 'Add a goal',
         more_goal: 'Add another goal',
+        rest_entry: "Tough day — taking a rest", rest_title: "Today is a rest day", rest_body: "Unexpected things came up — that's okay. Rest is part of discipline too. Your streak is safe, we continue tomorrow.", rest_count: "Rest days this month", rest_undo: "Changed my mind",
         cta_evening: 'Day summary',
         cta_start: 'Start',
         cta_continue: 'Continue',

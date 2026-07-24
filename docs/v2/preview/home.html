@@ -402,6 +402,9 @@
       <div style="font-family:'Inter',sans-serif;font-style:normal;font-size:19px;line-height:1.55;color:var(--text);" id="identityText"></div>
     </div>
 
+    <!-- BUGUN DAM / KUTILMAGAN KUN — jazolamaydigan istisno rejimi -->
+    <div id="restBanner" style="display:none;background:linear-gradient(135deg,rgba(110,181,255,.14),rgba(150,130,220,.10));border:1px solid rgba(130,150,220,.34);border-radius:16px;padding:18px 18px 16px;margin:8px 0 14px;"></div>
+
     <!-- BUGUNGI VAZIFALAR — to'liq ketma-ketlik (vaqt + status badge) -->
     <div id="tasksBlock" style="margin: 8px 0 4px;">
       <div style="font-size:14px;letter-spacing:3px;color:var(--text-dim);text-transform:uppercase;margin-bottom:4px;text-align:center;" data-i18n="home.tasks_lbl">Kunlik odatlar</div>
@@ -432,6 +435,11 @@
       <div id="tasksPrompt" style="display:none;text-align:center;margin-top:12px;font-family:'Inter',sans-serif;font-style:normal;font-size:17px;color:var(--text-dim);">
         <span data-i18n="home.tasks_ask">Yana qo'shasizmi yoki o'zgartirasizmi?</span>
         <a href="maqsadlar.html" style="display:inline-block;margin-left:8px;color:var(--accent);text-decoration:none;font-style:normal;font-size:16px;letter-spacing:1px;text-transform:uppercase;font-weight:500;font-family:'Inter',sans-serif;" data-i18n="home.tasks_edit">Tahrirlash →</a>
+      </div>
+
+      <!-- Bugun dam olaman / kutilmagan kun — muloyim kirish havolasi -->
+      <div id="restEntry" style="display:none;text-align:center;margin-top:16px;">
+        <button type="button" id="restEntryBtn" style="background:none;border:none;color:var(--text-dim);font-size:14px;cursor:pointer;font-family:inherit;text-decoration:underline;text-underline-offset:3px;">🌙 <span data-i18n="home.rest_entry">Bugun og'ir kun — dam olaman</span></button>
       </div>
     </div>
 
@@ -551,6 +559,51 @@
     const T = (k, def) => (window.I18N ? I18N.t(k, def) : def);
     const tasksList = document.getElementById('tasksList');
     const tasksPrompt = document.getElementById('tasksPrompt');
+
+    // ── BUGUN DAM / KUTILMAGAN KUN ──
+    // Falsafa: hayotda kutilmagan narsa bo'ladi — buning uchun jazolamaymiz.
+    // Bugungi vazifalar "bajarilmagan" deb belgilanmaydi; streak UZILMAYDI (himoyalanadi),
+    // lekin soxta +1 ham qo'shilmaydi — halol. Ertaga davom etadi.
+    const REST_KEY = 'mvow.restDays';
+    function restTodayIso() { try { if (window.MVOW_DATA && MVOW_DATA.today) return MVOW_DATA.today.iso; } catch (e) {} var d = new Date(); return d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0'); }
+    function restDaysArr() { try { var a = JSON.parse(localStorage.getItem(REST_KEY) || '[]'); return Array.isArray(a) ? a : []; } catch (e) { return []; } }
+    function isRestToday() { return restDaysArr().indexOf(restTodayIso()) >= 0; }
+    function restMonthCount() { var ym = restTodayIso().slice(0, 7); return restDaysArr().filter(function (x) { return String(x).slice(0, 7) === ym; }).length; }
+    function setRestToday() {
+      var iso = restTodayIso(), a = restDaysArr();
+      if (a.indexOf(iso) < 0) { a.push(iso); try { localStorage.setItem(REST_KEY, JSON.stringify(a)); } catch (e) {} }
+      // Streak himoyasi: oldingi sanani eslab qolamiz, so'ng gap o'smasligi uchun bugunga suramiz (soxta +1 emas).
+      try {
+        if (localStorage.getItem('mvow.restPrevStreakDate') === null) localStorage.setItem('mvow.restPrevStreakDate', localStorage.getItem('mvow.lastStreakDate') || '');
+        localStorage.setItem('mvow.lastStreakDate', iso);
+      } catch (e) {}
+    }
+    function clearRestToday() {
+      var iso = restTodayIso();
+      try { localStorage.setItem(REST_KEY, JSON.stringify(restDaysArr().filter(function (x) { return x !== iso; }))); } catch (e) {}
+      try {
+        var prev = localStorage.getItem('mvow.restPrevStreakDate');
+        if (prev !== null) { if (prev === '') localStorage.removeItem('mvow.lastStreakDate'); else localStorage.setItem('mvow.lastStreakDate', prev); localStorage.removeItem('mvow.restPrevStreakDate'); }
+      } catch (e) {}
+    }
+    function updateRest() {
+      var banner = document.getElementById('restBanner'), entry = document.getElementById('restEntry'), now = document.getElementById('nowCard');
+      if (!banner) return;
+      if (isRestToday()) {
+        banner.innerHTML = '<div style="font-size:16px;font-weight:800;color:var(--text);margin-bottom:6px;">🌙 ' + T('home.rest_title', "Bugun — dam kuni") + '</div>'
+          + '<div style="font-size:14px;color:var(--text-mid);line-height:1.55;">' + T('home.rest_body', "Kutilmagan ishlar bo'ldi — bu normal. Dam olish ham intizomning bir qismi. Streak'ingiz saqlanadi, ertaga qaytamiz.") + '</div>'
+          + '<div style="font-size:12.5px;color:var(--text-dim);margin-top:8px;">' + T('home.rest_count', "Bu oy dam kunlari") + ': ' + restMonthCount() + '</div>'
+          + '<button type="button" id="restUndoBtn" style="margin-top:12px;background:none;border:1px solid var(--border-default,rgba(255,255,255,.16));color:var(--text-mid);border-radius:10px;padding:9px 16px;font-size:14px;cursor:pointer;font-family:inherit;">' + T('home.rest_undo', "Fikrimdan qaytdim") + '</button>';
+        banner.style.display = 'block';
+        if (entry) entry.style.display = 'none';
+        if (now) now.style.display = 'none';
+        var ub = document.getElementById('restUndoBtn');
+        if (ub) ub.addEventListener('click', function () { clearRestToday(); try { if (window.MVOW_DATA && MVOW_DATA.fxTap) MVOW_DATA.fxTap(); } catch (e) {} updateRest(); renderNowCard(); });
+      } else {
+        banner.style.display = 'none';
+        if (entry) entry.style.display = (plan && plan.length) ? 'block' : 'none';
+      }
+    }
     const tasksBlock = document.getElementById('tasksBlock');
 
     function escapeHtmlH(s) {
@@ -708,6 +761,16 @@
     }
     renderTasks();
     renderNowCard();
+    updateRest();
+    (function () {
+      var reb = document.getElementById('restEntryBtn');
+      if (reb) reb.addEventListener('click', function () {
+        setRestToday();
+        try { if (window.MVOW_DATA && MVOW_DATA.fxTap) MVOW_DATA.fxTap(); } catch (e) {}
+        updateRest();
+        try { window.scrollTo({ top: 0, behavior: 'smooth' }); } catch (e) {}
+      });
+    })();
     // Vazifalar chizildi — splash logoni yumshoq so'ndiramiz (ostida tayyor kontent turibdi).
     requestAnimationFrame(function () {
       var s = document.getElementById('homeSplash');
@@ -1361,7 +1424,7 @@
       }
     } catch (err) { console.warn('recoveryMoment skipped:', err); }
 
-    const pattern = (recoveryDays === null) ? findPatternFailure() : null;
+    const pattern = (recoveryDays === null && !isRestToday()) ? findPatternFailure() : null;
     if (pattern) {
       const peakTime = suggestedPeakTime();
       const pBox = document.getElementById('patternBox');
