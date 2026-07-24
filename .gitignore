@@ -77,3 +77,6 @@ backend/.wrangler/
 backend/dist/
 backend/.dev.vars
 .gstack/
+
+# Shaxsiy TZ hujjati — repoda saqlanmaydi
+TZ-social-gamification.md
