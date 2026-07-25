@@ -7,7 +7,7 @@
  */
 (function () {
   // menu.html — ‹ (qaytish) KERAK (u ro'yxatda emas); faqat ☰ keraksiz (allaqachon menyudamiz).
-  var NO_NAV = ['', 'index.html', 'gallery.html', 'app.html', 'intro.html'];
+  var NO_NAV = ['', 'index.html', 'gallery.html', 'app.html', 'intro.html', 'alarm.html'];
 
   // ── Navigatsiya izi (o'z tariximiz) ──────────────────────────────
   // TWA/standalone'da document.referrer ko'pincha BO'SH bo'ladi, shuning uchun

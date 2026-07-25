@@ -240,8 +240,9 @@
       if (!localStorage.getItem('mvow.qnHintSeen')) {
         var _tt = function (k, d) { return (window.I18N && I18N.t) ? I18N.t(k, d) : d; };
         var hint = document.createElement('div');
-        hint.textContent = '👥 ' + _tt('menu.row_friends', "Do'stlar") + '   🏅 ' + _tt('menu.row_rewards', 'Sovrinlar') + '   🔥 ' + _tt('menu.row_trace', 'Seriya');
-        hint.style.cssText = 'position:fixed;z-index:99990;background:rgba(20,22,30,0.97);color:#fff;font:600 12px Inter,sans-serif;padding:7px 12px;border-radius:10px;box-shadow:0 6px 20px rgba(0,0,0,0.45);opacity:0;transition:opacity .3s;pointer-events:none;max-width:78vw;text-align:right;line-height:1.5;';
+        // Tik ustun (har yorliq alohida qatorda) — o'ng ustunда qoladi, markazdagi sahifa sarlavhasini YOPMAYDI.
+        hint.innerHTML = '<div>👥 ' + _tt('menu.row_friends', "Do'stlar") + '</div><div>🏅 ' + _tt('menu.row_rewards', 'Sovrinlar') + '</div><div>🔥 ' + _tt('menu.row_trace', 'Seriya') + '</div>';
+        hint.style.cssText = 'position:fixed;z-index:99990;background:rgba(20,22,30,0.97);color:#fff;font:600 12px Inter,sans-serif;padding:8px 12px;border-radius:10px;box-shadow:0 6px 20px rgba(0,0,0,0.45);opacity:0;transition:opacity .3s;pointer-events:none;text-align:right;line-height:1.7;white-space:nowrap;';
         document.body.appendChild(hint);
         var placeHint = function () { var r = qn.getBoundingClientRect(); hint.style.top = (r.bottom + 8) + 'px'; hint.style.right = Math.max(8, window.innerWidth - r.right) + 'px'; };
         placeHint(); setTimeout(placeHint, 260);
@@ -252,7 +253,12 @@
     } catch (e) {}
   }
 
-  function init() { build(); buildQuickNav(); }
+  function init() {
+    // Budilnik (uyg'onish + misol) — toza, chalg'itmaydigan ekran: til/ijtimoiy ikonalar chiqmasin.
+    var _pg = (location.pathname.split('/').pop() || '').toLowerCase();
+    if (_pg === 'alarm.html') return;
+    build(); buildQuickNav();
+  }
   if (document.readyState === 'loading') {
     document.addEventListener('DOMContentLoaded', init);
   } else {

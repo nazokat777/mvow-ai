@@ -35,7 +35,6 @@
   .choice-overlay {
     position: fixed; inset: 0;
     background: var(--overlay-strong);
-    backdrop-filter: blur(10px);
     z-index: 9999;
     display: flex; align-items: center; justify-content: center;
     padding: 24px;
@@ -93,12 +92,9 @@
      chizolmay, butun aylanani KO'RINMAS qilardi ("dumaloq soat chiqmadi" bug'i).
      Endi toza to'q sariq halqa — qurilmadan qat'i nazar chiziladi. */
   .ring-prog { fill: none; stroke: var(--accent); stroke-width: 5; stroke-linecap: round; transition: stroke-dashoffset 1s linear; }
-  /* Ring ichida disk: raqamlar rasm ustida ham o'qilsin. backdrop-filter faqat qo'llab-quvvatlansa
-     qo'shiladi (progressive) — bo'lmasa ham radial-gradient to'q disk kontrast beradi. */
-  .ring-glow { position: absolute; inset: 8px; border-radius: 50%; background: radial-gradient(circle, rgba(6,8,13,.55) 55%, rgba(6,8,13,0) 82%); pointer-events: none; z-index: 0; }
-  @supports ((-webkit-backdrop-filter: blur(4px)) or (backdrop-filter: blur(4px))) {
-    .ring-glow { -webkit-backdrop-filter: blur(4px); backdrop-filter: blur(4px); }
-  }
+  /* Ring ichida disk: raqamlar rasm ustida ham o'qilsin. Kontrast radial-gradient bilan beriladi
+     (backdrop-filter YO'Q — Android WebView muzlashiga qarshi). */
+  .ring-glow { position: absolute; inset: 8px; border-radius: 50%; background: radial-gradient(circle, rgba(6,8,13,.62) 55%, rgba(6,8,13,0) 82%); pointer-events: none; z-index: 0; }
   .ring-svg { position: relative; z-index: 1; }
   .ring-center { z-index: 1; }
   /* Chiqish tugmasi (taymer ishlab turaveradi) */
@@ -148,7 +144,6 @@
   .ask-overlay {
     position: fixed; inset: 0;
     background: var(--overlay-strong);
-    backdrop-filter: blur(10px);
     z-index: 9998;
     display: none;
     align-items: center; justify-content: center;
@@ -259,9 +254,7 @@
 <!-- DEEP LOCK overlay — taymer paytida idle bo'lsa, ekran qulflanadi -->
 <div id="deepLockOverlay" style="
   position:fixed;inset:0;
-  background:rgba(0,0,0,0.92);
-  -webkit-backdrop-filter:blur(6px);
-  backdrop-filter:blur(6px);
+  background:rgba(0,0,0,0.95);
   z-index:200;
   display:none;
   flex-direction:column;

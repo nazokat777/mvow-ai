@@ -84,9 +84,9 @@
     gap: 10px;
   }
   .dot {
-    width: 10px; height: 10px;
+    width: 11px; height: 11px;
     border-radius: 50%;
-    background: rgba(255,255,255,.1);
+    background: rgba(130,125,150,.4);   /* och/to'q ikkala fonda ham ko'rinadi (oldin oq .1 edi — ko'rinmasdi) */
     transition: background 0.3s;
   }
   .dot.on { background: var(--accent); }
@@ -117,7 +117,11 @@
     outline: none;
     transition: border-color .2s;
     font-feature-settings: "tnum";
+    -moz-appearance: textfield;   /* native yuqori/past o'qlarni yashiradi */
+    appearance: textfield;
   }
+  .input-wrap input::-webkit-outer-spin-button,
+  .input-wrap input::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
   .input-wrap input:focus { border-bottom-color: var(--accent); }
   .input-wrap input.wrong { border-bottom-color: var(--alert); color: var(--alert); }
 

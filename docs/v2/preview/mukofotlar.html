@@ -95,7 +95,8 @@
   @keyframes mkTxt { 0% { opacity: 0; transform: translateY(14px); } 100% { opacity: 1; transform: none; } }
   .rw .buy { width: 100%; margin-top: 12px; padding: 12px; border: none; border-radius: 12px; font-size: 15px; font-weight: 700; font-family: inherit; cursor: pointer; }
   .rw .buy.ready { background: #6BBF7A; color: #04060B; }
-  .rw .buy.wait { background: transparent; border: 1px solid var(--border-default, rgba(255,255,255,.14)); color: var(--text-dim, #9CA0A8); cursor: default; }
+  /* "Qoldi" — bu HOLAT, tugma emas: quti/border yo'q, kichik dim matn (bosiladigandek ko'rinmasin). */
+  .rw .buy.wait { background: transparent; border: none; padding: 6px 4px 2px; margin-top: 8px; color: var(--text-dim, #9CA0A8); font-size: 13px; font-weight: 600; cursor: default; }
   .empty { color: var(--text-dim, #9CA0A8); font-size: 14px; padding: 10px 4px; }
   .hist { display: flex; align-items: center; gap: 10px; background: var(--card, #0C0F16); border: 1px solid var(--border-default, rgba(255,255,255,.10)); border-radius: 12px; padding: 11px 14px; margin-top: 8px; opacity: .85; }
   .hist .em { font-size: 22px; } .hist .nm { flex: 1; font-size: 15px; } .hist .dt { font-size: 12px; color: var(--text-dim, #9CA0A8); }

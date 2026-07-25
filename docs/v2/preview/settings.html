@@ -139,7 +139,7 @@
   <div class="container">
 
     <div class="me">
-      <div class="name" id="userName">—</div>
+      <div class="name" id="userName" style="display:none;"></div>
       <div class="sub" style="font-size:16px;"><span style="color:var(--accent,#F4845F);">🔥</span> <span class="em" id="streakN" style="color:var(--accent,#F4845F);font-weight:800;">0</span> <span data-i18n="settings.sub">kun yo'l</span></div>
     </div>
 
@@ -160,7 +160,7 @@
     <div class="row" style="flex-wrap:wrap;">
       <div class="lbl" data-i18n="settings.perm_screen_time">Ekran vaqti</div>
       <div class="toggle" data-perm="screenTime" role="switch" tabindex="0" data-i18n-aria="settings.perm_screen_time_aria" aria-label="Ekran vaqti ruxsati" aria-checked="false"></div>
-      <div class="lbl" style="flex-basis:100%;font-size:12px;color:var(--text-dim);line-height:1.5;margin-top:4px;" data-i18n="settings.perm_screen_time_hint">Boshqa ilovalarda qancha vaqt o'tkazganingizni ko'rish uchun.</div>
+      <div class="lbl" style="flex-basis:100%;font-size:12px;color:var(--text-dim);line-height:1.5;margin-top:4px;" data-i18n="settings.perm_screen_time_hint">Ilova qulflash bilan birga keladi (Play relizidan keyingi yangilanish).</div>
     </div>
 
     <div class="row" style="flex-wrap:wrap;">
@@ -326,7 +326,10 @@
   document.addEventListener('DOMContentLoaded', () => {
     // Ism
     const userName = (localStorage.getItem('mvow.userName') || '').trim();
-    document.getElementById('userName').textContent = userName || '—';
+    // Ism yo'q bo'lsa yolg'iz "—" (qora chiziqdek ko'rinadi) o'rniga qatorni yashiramiz.
+    const _nameEl = document.getElementById('userName');
+    if (userName) { _nameEl.textContent = userName; _nameEl.style.display = ''; }
+    else { _nameEl.style.display = 'none'; }
     // Streak
     const streak = parseInt(localStorage.getItem('mvow.streak') || '0', 10);
     document.getElementById('streakN').textContent = streak;
@@ -440,7 +443,19 @@
     try { permSaved = JSON.parse(localStorage.getItem(PERM_KEY) || '{}'); } catch {}
     document.querySelectorAll('[data-perm]').forEach(t => {
       const key = t.dataset.perm;
-      if (permSaved[key]) { t.classList.add('on'); t.setAttribute('aria-checked','true'); }
+      // BILDIRISHNOMA — yuklashda HAQIQIY brauzer ruxsatini aks ettiramiz (localStorage emas).
+      if (key === 'notification' && 'Notification' in window) {
+        const granted = Notification.permission === 'granted';
+        t.classList.toggle('on', granted);
+        t.setAttribute('aria-checked', granted ? 'true' : 'false');
+        permSaved[key] = granted;
+      } else if (key === 'screenTime') {
+        // EKRAN VAQTI — veb-ilovada IMKONSIZ (native/Play relizidan keyin). Yolg'on "on" ko'rsatmaymiz.
+        t.style.opacity = '.4'; t.style.cursor = 'default'; t.setAttribute('aria-disabled', 'true');
+        return;   // click/keydown ulanmaydi — bosilmaydi
+      } else if (permSaved[key]) {
+        t.classList.add('on'); t.setAttribute('aria-checked', 'true');
+      }
       const flip = async () => {
         if (window.MVOW_DATA && MVOW_DATA.fxTap) MVOW_DATA.fxTap();
         if (key === 'notification' && !t.classList.contains('on')) {
