@@ -775,7 +775,13 @@
     }
     var done = ms.filter(function (m) { return m.done; }).length;
     var pct = Math.round(done / ms.length * 100);
-    return '<div class="gs-label">' + escapeHtml(_t('maqsadlar.ms_title', 'Bosqichlar')) + ' <span style="color:var(--accent)">' + done + '/' + ms.length + '</span></div>'
+    var collapsed = !!g.msCollapsed;
+    // Sarlavha — bosiladigan yig'ish/ochish tugmasi (▾ ochiq, ▸ yig'ilgan). Foydalanuvchi istasa bosqichlarni berkitadi.
+    var label = '<div class="gs-label" data-ms-collapse="' + g.id + '" role="button" tabindex="0" style="cursor:pointer;display:flex;align-items:center;gap:7px;">'
+      + '<span style="display:inline-block;font-size:11px;line-height:1;transition:transform .2s;transform:rotate(' + (collapsed ? '-90deg' : '0deg') + ');">▾</span>'
+      + '<span>' + escapeHtml(_t('maqsadlar.ms_title', 'Bosqichlar')) + ' <span style="color:var(--accent)">' + done + '/' + ms.length + '</span></span></div>';
+    if (collapsed) return label;
+    return label
       + '<div class="ms-bar"><div class="ms-fill" style="width:' + pct + '%"></div></div>'
       + ms.map(function (m, mi) { return '<div class="ms-row"><label style="display:flex;align-items:center;gap:10px;flex:1;cursor:pointer;"><input type="checkbox" data-ms-toggle="' + g.id + '" data-ms-i="' + mi + '"' + (m.done ? ' checked' : '') + '><span class="' + (m.done ? 'ms-done' : '') + '">' + escapeHtml(m.text) + '</span></label><button type="button" data-ms-edit="' + g.id + '" data-ms-ei="' + mi + '" style="background:none;border:none;color:var(--text-dim);cursor:pointer;font-size:15px;padding:4px 8px;flex-shrink:0;" aria-label="tahrirlash">✎</button></div>'; }).join('');
   }
@@ -975,6 +981,19 @@
           saveGoals(gg); render();
         });
       });
+    });
+    // Bosqichlarni yig'ish/ochish (foydalanuvchi istasa berkitadi — g.msCollapsed saqlanadi)
+    list.querySelectorAll('[data-ms-collapse]').forEach(function (el) {
+      var doCollapse = function () {
+        var goalId = parseInt(el.dataset.msCollapse, 10);
+        var goals = loadGoals(), g = goals.find(function (x) { return x.id === goalId; });
+        if (!g) return;
+        g.msCollapsed = !g.msCollapsed; saveGoals(goals);
+        if (window.MVOW_DATA && MVOW_DATA.fxTap) MVOW_DATA.fxTap();
+        render();
+      };
+      el.addEventListener('click', doCollapse);
+      el.addEventListener('keydown', function (e) { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); doCollapse(); } });
     });
     // Milestone: belgilash (toggle)
     list.querySelectorAll('[data-ms-toggle]').forEach(function (cb) {
