@@ -945,13 +945,13 @@
       },
       orzular: {
         title: 'Orzular daftari',
-        sub: "Yil oxirigacha erishmoqchi bo'lgan orzularingiz. Ilova vaqti-vaqti bilan eslatib turadi.",
+        sub: "Orzularingizni yozing va har biriga o'zingiz muddat belgilang. Ilova vaqti-vaqti bilan eslatib turadi.",
         add_ph: 'Yangi orzu...',
         empty: "Hali orzu yo'q. Birinchisini yozing.",
         remind_off: 'Har kuni eslatib tur',
         remind_on: 'Eslatib turiladi ✓',
         remind_card: "orzularingizni o'qing",
-        target_hint: "muddat — ixtiyoriy", until: "gacha", days_left: "kun qoldi", today: "bugun", overdue: "muddat o'tdi",
+        target_hint: "muddat — ixtiyoriy", list_hd: "Orzularim", save: "Saqlash", cancel: "Bekor", clear_date: "muddatsiz", until: "gacha", days_left: "kun qoldi", today: "bugun", overdue: "muddat o'tdi",
         push_denied: "Eslatma saqlandi. Telefon bildirishnomasi uchun ruxsat bering."
       },
       eslatma: {
@@ -2030,13 +2030,13 @@
       },
       orzular: {
         title: 'Дневник мечт',
-        sub: 'Ваши мечты, которых хотите достичь к концу года. Приложение будет напоминать.',
+        sub: 'Записывайте мечты и задавайте каждой свой срок. Приложение периодически напомнит.',
         add_ph: 'Новая мечта...',
         empty: 'Мечт пока нет. Запишите первую.',
         remind_off: 'Напоминать каждый день',
         remind_on: 'Напоминание включено ✓',
         remind_card: 'перечитайте свои мечты',
-        target_hint: 'срок — необязательно', until: 'до', days_left: 'дн. осталось', today: 'сегодня', overdue: 'срок прошёл',
+        target_hint: 'срок — необязательно', list_hd: 'Мои мечты', save: 'Сохранить', cancel: 'Отмена', clear_date: 'без срока', until: 'до', days_left: 'дн. осталось', today: 'сегодня', overdue: 'срок прошёл',
         push_denied: "Напоминание сохранено. Разрешите уведомления на телефоне."
       },
       eslatma: {
@@ -3115,13 +3115,13 @@
       },
       orzular: {
         title: 'Dream journal',
-        sub: 'Your dreams to reach by the end of the year. The app will remind you now and then.',
+        sub: 'Write your dreams and set a deadline for each yourself. The app reminds you now and then.',
         add_ph: 'New dream...',
         empty: 'No dreams yet. Write your first one.',
         remind_off: 'Remind me daily',
         remind_on: 'Reminder on ✓',
         remind_card: 'read your dreams',
-        target_hint: 'deadline — optional', until: 'by', days_left: 'days left', today: 'today', overdue: 'overdue',
+        target_hint: 'deadline — optional', list_hd: 'My dreams', save: 'Save', cancel: 'Cancel', clear_date: 'no deadline', until: 'by', days_left: 'days left', today: 'today', overdue: 'overdue',
         push_denied: "Reminder saved. Please allow notifications on your phone."
       },
       eslatma: {

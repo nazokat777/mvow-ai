@@ -29,6 +29,17 @@
   .dream.done .tx { text-decoration: line-through; color: var(--text-dim, #9CA0A8); }
   .dream .x { flex-shrink: 0; color: var(--text-dim, #9CA0A8); font-size: 22px; cursor: pointer; background: none; border: none; line-height: 1; }
   .empty { color: var(--text-dim, #9CA0A8); padding: 10px 4px; font-size: 15px; }
+  /* Yangi orzu qo'shish kartasi + muddat */
+  .add-card { background: var(--card, #0C0F16); border: 1px solid var(--border-default, rgba(255,255,255,.12)); border-radius: 16px; padding: 14px; margin-bottom: 8px; }
+  .add-row2 { display: flex; align-items: center; gap: 8px; margin-top: 10px; }
+  .add-row2 .hint { flex: 1; font-size: 12px; color: var(--text-dim, #9CA0A8); }
+  .cnt-hd { display: flex; align-items: baseline; gap: 10px; margin: 22px 2px 4px; font-size: 13px; letter-spacing: 2px; text-transform: uppercase; color: var(--text-dim, #9CA0A8); }
+  .cnt-hd .n { color: var(--accent, #F4845F); font-weight: 800; }
+  .dream .ic-ed { flex-shrink: 0; color: var(--text-dim, #9CA0A8); font-size: 17px; cursor: pointer; background: none; border: none; line-height: 1; padding: 0 2px; }
+  .dream.editing { flex-direction: column; align-items: stretch; }
+  .mini { border: none; border-radius: 10px; padding: 9px 14px; font-size: 14px; font-weight: 700; font-family: inherit; cursor: pointer; }
+  .mini.save { background: var(--accent, #F4845F); color: #fff; }
+  .mini.cancel, .mini.clr { background: transparent; border: 1px solid var(--border-default, rgba(255,255,255,.14)); color: var(--text-dim, #9CA0A8); }
   .remind { width: 100%; margin-top: 28px; padding: 15px; border-radius: 14px; border: 1px solid var(--accent, #F4845F); background: transparent; color: var(--accent, #F4845F); font-size: 16px; font-weight: 700; font-family: inherit; cursor: pointer; }
   .remind.on { background: var(--accent, #F4845F); color: #fff; }
 </style>
@@ -37,9 +48,19 @@
 <body>
 <div class="phone">
   <h1 data-i18n="orzular.title">Orzular daftari</h1>
-  <div class="sub" data-i18n="orzular.sub">Yil oxirigacha erishmoqchi bo'lgan orzularingiz. Ilova vaqti-vaqti bilan eslatib turadi.</div>
+  <div class="sub" data-i18n="orzular.sub">Orzularingizni yozing va har biriga o'zingiz muddat belgilang. Ilova vaqti-vaqti bilan eslatib turadi.</div>
 
-  <div id="years"></div>
+  <div class="add-card">
+    <input class="fld" id="dreamText" maxlength="140" placeholder="Yangi orzu..." data-i18n-placeholder="orzular.add_ph" autocomplete="off">
+    <div class="add-row2">
+      <input class="fld" id="dreamDate" type="date" style="flex:0 0 158px;padding:9px 10px;font-size:14px;">
+      <span class="hint" data-i18n="orzular.target_hint">🎯 muddat — ixtiyoriy</span>
+      <button class="addbtn" id="dreamAdd" aria-label="qo'shish">+</button>
+    </div>
+  </div>
+
+  <div class="cnt-hd"><span data-i18n="orzular.list_hd">Orzularim</span> <span class="n" id="cnt"></span></div>
+  <div id="list"></div>
 
   <button id="remindBtn" class="remind" type="button">🔔 <span id="remindLbl" data-i18n="orzular.remind_off">Har kuni eslatib tur</span></button>
 </div>
@@ -54,7 +75,6 @@
 <script src="nav-overlay.js?v=29.0.28" defer></script>
 <script>
   (function () {
-    var YEARS = [2026, 2027];
     var REMIND_ID = 'dream-reminder';
     var REMIND_TIME = '09:00';
     function T(k, fb) { return (window.I18N && I18N.t) ? I18N.t(k, fb) : fb; }
@@ -70,49 +90,56 @@
       return '<div style="font-size:12px;color:var(--text-dim,#9CA0A8);margin-top:3px;">🎯 ' + f + ' ' + T('orzular.until', 'gacha') + tail + '</div>';
     }
 
-    var root = document.getElementById('years');
+    var listEl = document.getElementById('list');
+    var cntEl = document.getElementById('cnt');
+    var editingId = null;
+
+    // Tartib: bajarilmagan avval (muddat yaqin — tepada, muddatsiz — oxirida); bajarilgan eng oxirida.
+    function sortDreams(all) {
+      return all.slice().sort(function (a, b) {
+        if (!!a.done !== !!b.done) return a.done ? 1 : -1;
+        var da = a.target ? daysLeft(a.target) : null, db = b.target ? daysLeft(b.target) : null;
+        if (da == null) da = Infinity; if (db == null) db = Infinity;
+        return da - db;
+      });
+    }
+    function editRowHtml(d) {
+      return '<div class="dream editing">'
+        + '<input class="fld" id="editText" maxlength="140" value="' + esc(d.text) + '">'
+        + '<div style="display:flex;align-items:center;gap:8px;margin-top:8px;flex-wrap:wrap;">'
+        +   '<input class="fld" id="editDate" type="date" style="flex:0 0 158px;padding:9px 10px;font-size:14px;" value="' + (d.target || '') + '">'
+        +   '<button class="mini clr" id="editClr" type="button">' + T('orzular.clear_date', 'muddatsiz') + '</button>'
+        + '</div>'
+        + '<div style="display:flex;gap:8px;margin-top:10px;">'
+        +   '<button class="mini save" data-save="' + d.id + '">' + T('orzular.save', 'Saqlash') + '</button>'
+        +   '<button class="mini cancel" data-cancel="1">' + T('orzular.cancel', 'Bekor') + '</button>'
+        + '</div></div>';
+    }
     function render() {
-      var all = load();
-      root.innerHTML = YEARS.map(function (yr) {
-        var items = all.filter(function (d) { return d.year === yr; });
-        var done = items.filter(function (d) { return d.done; }).length;
-        var rows = items.length ? items.map(function (d) {
-          return '<div class="dream ' + (d.done ? 'done' : '') + '">'
-            + '<button class="ck" data-ck="' + d.id + '" aria-label="belgilash">' + (d.done ? '✓' : '') + '</button>'
-            + '<div class="tx">' + esc(d.text) + (d.target ? targetHtml(d.target) : '') + '</div>'
-            + '<button class="x" data-del="' + d.id + '" aria-label="o\'chirish">×</button></div>';
-        }).join('') : '<div class="empty">' + T('orzular.empty', "Hali orzu yo'q. Birinchisini yozing.") + '</div>';
-        return '<div class="year">'
-          + '<div class="year-hd"><span class="yr">' + yr + '</span>'
-          + (items.length ? '<span class="cnt">' + done + '/' + items.length + '</span>' : '') + '</div>'
-          + '<div class="addrow"><input class="fld" data-add="' + yr + '" maxlength="140" placeholder="' + T('orzular.add_ph', 'Yangi orzu...') + '">'
-          + '<button class="addbtn" data-addbtn="' + yr + '" aria-label="qo\'shish">+</button></div>'
-          + '<div style="margin:6px 0 2px;display:flex;align-items:center;gap:8px;"><input class="fld" data-adddate="' + yr + '" type="date" style="flex:0 0 150px;padding:9px 10px;font-size:14px;"><span style="font-size:12px;color:var(--text-dim,#9CA0A8);">🎯 ' + T('orzular.target_hint', 'muddat — ixtiyoriy') + '</span></div>'
-          + rows + '</div>';
+      var all = sortDreams(load());
+      var done = all.filter(function (d) { return d.done; }).length;
+      cntEl.textContent = all.length ? (done + '/' + all.length) : '';
+      if (!all.length) { listEl.innerHTML = '<div class="empty">' + T('orzular.empty', "Hali orzu yo'q. Birinchisini yozing.") + '</div>'; return; }
+      listEl.innerHTML = all.map(function (d) {
+        if (editingId === d.id) return editRowHtml(d);
+        return '<div class="dream ' + (d.done ? 'done' : '') + '">'
+          + '<button class="ck" data-ck="' + d.id + '" aria-label="belgilash">' + (d.done ? '✓' : '') + '</button>'
+          + '<div class="tx">' + esc(d.text) + (d.target ? targetHtml(d.target) : '') + '</div>'
+          + '<button class="ic-ed" data-edit="' + d.id + '" aria-label="tahrirlash">✎</button>'
+          + '<button class="x" data-del="' + d.id + '" aria-label="o\'chirish">×</button></div>';
       }).join('');
       wire();
     }
-    function addDream(yr, text, target) {
+    function addDream(text, target) {
       text = (text || '').trim(); if (!text) return;
-      var obj = { id: Date.now() + '' + Math.floor(Math.random() * 999), year: yr, text: text, done: false };
+      var obj = { id: Date.now() + '' + Math.floor(Math.random() * 999), text: text, done: false };
       if (/^\d{4}-\d{2}-\d{2}$/.test(target || '')) obj.target = target;
-      var d = load(); d.push(obj);
-      save(d);
+      var d = load(); d.push(obj); save(d);
       if (window.MVOW_DATA && MVOW_DATA.fxSuccess) MVOW_DATA.fxSuccess();
       render();
     }
     function wire() {
-      root.querySelectorAll('[data-addbtn]').forEach(function (b) {
-        b.addEventListener('click', function () {
-          var yr = +b.getAttribute('data-addbtn');
-          var inp = root.querySelector('[data-add="' + yr + '"]'), dinp = root.querySelector('[data-adddate="' + yr + '"]');
-          addDream(yr, inp && inp.value, dinp && dinp.value); if (inp) inp.value = ''; if (dinp) dinp.value = '';
-        });
-      });
-      root.querySelectorAll('[data-add]').forEach(function (inp) {
-        inp.addEventListener('keydown', function (e) { if (e.key === 'Enter') { var yr = +inp.getAttribute('data-add'), dinp = root.querySelector('[data-adddate="' + yr + '"]'); addDream(yr, inp.value, dinp && dinp.value); inp.value = ''; if (dinp) dinp.value = ''; } });
-      });
-      root.querySelectorAll('[data-ck]').forEach(function (b) {
+      listEl.querySelectorAll('[data-ck]').forEach(function (b) {
         b.addEventListener('click', function () {
           var id = b.getAttribute('data-ck'), d = load();
           d.forEach(function (x) { if (String(x.id) === String(id)) x.done = !x.done; });
@@ -121,16 +148,42 @@
           render();
         });
       });
-      root.querySelectorAll('[data-del]').forEach(function (b) {
+      listEl.querySelectorAll('[data-del]').forEach(function (b) {
         b.addEventListener('click', function () {
           var id = b.getAttribute('data-del'), all = load();
           var item = all.filter(function (x) { return String(x.id) === String(id); })[0];
           save(all.filter(function (x) { return String(x.id) !== String(id); }));
+          if (editingId === id) editingId = null;
           render();
           if (window.MvowUndo && item) MvowUndo.show(T('common.deleted', "O'chirildi"), function () { var a = load(); a.push(item); save(a); render(); });
         });
       });
+      listEl.querySelectorAll('[data-edit]').forEach(function (b) {
+        b.addEventListener('click', function () { editingId = b.getAttribute('data-edit'); render(); var t = document.getElementById('editText'); if (t) t.focus(); });
+      });
+      var saveBtn = listEl.querySelector('[data-save]');
+      if (saveBtn) saveBtn.addEventListener('click', function () {
+        var id = saveBtn.getAttribute('data-save');
+        var tx = document.getElementById('editText'), dt = document.getElementById('editDate');
+        var text = tx ? tx.value.trim() : '';
+        if (!text) { if (tx) tx.focus(); return; }
+        var target = (dt && /^\d{4}-\d{2}-\d{2}$/.test(dt.value)) ? dt.value : null;
+        var d = load(); d.forEach(function (x) { if (String(x.id) === String(id)) { x.text = text; if (target) x.target = target; else delete x.target; } });
+        save(d); editingId = null;
+        if (window.MVOW_DATA && MVOW_DATA.fxSuccess) MVOW_DATA.fxSuccess();
+        render();
+      });
+      var cancelBtn = listEl.querySelector('[data-cancel]');
+      if (cancelBtn) cancelBtn.addEventListener('click', function () { editingId = null; render(); });
+      var clrBtn = document.getElementById('editClr');
+      if (clrBtn) clrBtn.addEventListener('click', function () { var dt = document.getElementById('editDate'); if (dt) dt.value = ''; });
     }
+
+    // Yangi orzu qo'shish (yuqoridagi doimiy karta)
+    var addBtn = document.getElementById('dreamAdd'), addText = document.getElementById('dreamText'), addDate = document.getElementById('dreamDate');
+    function doAdd() { addDream(addText.value, addDate.value); addText.value = ''; addDate.value = ''; addText.focus(); }
+    if (addBtn) addBtn.addEventListener('click', doAdd);
+    if (addText) addText.addEventListener('keydown', function (e) { if (e.key === 'Enter') doAdd(); });
 
     // ── Vaqti-vaqti bilan eslatib tur (Web Push — ilova yopiq bo'lsa ham) ──
     function reminders() { try { var r = JSON.parse(localStorage.getItem('mvow.reminders') || '[]'); return Array.isArray(r) ? r : []; } catch (e) { return []; } }
@@ -148,8 +201,7 @@
         saveReminders(r.filter(function (x) { return x.id !== REMIND_ID; }));
         syncRemindBtn();
       } else {
-        var yr = YEARS[0];
-        r.push({ id: REMIND_ID, time: REMIND_TIME, text: '📖 ' + yr + ' ' + T('orzular.remind_card', 'orzularingizni o\'qing') });
+        r.push({ id: REMIND_ID, time: REMIND_TIME, text: '📖 ' + T('orzular.remind_card', 'orzularingizni o\'qing') });
         saveReminders(r);
         syncRemindBtn();
         if (window.PushReminders) PushReminders.enable().then(function (res) {
