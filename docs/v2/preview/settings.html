@@ -227,6 +227,9 @@
       <span style="color:var(--text-dim);">›</span>
     </div>
 
+    <button id="restartBtn" type="button" style="width:100%;padding:14px;margin-bottom:12px;background:transparent;color:var(--accent);border:1px solid rgba(244,132,95,.4);border-radius:999px;font-family:'Inter',sans-serif;font-size:16px;font-weight:700;letter-spacing:1px;cursor:pointer;">🔄 <span data-i18n="settings.restart">Ilovani qayta ishga tushirish</span></button>
+    <div style="font-size:12.5px;color:var(--text-dim);line-height:1.5;margin:-4px 2px 14px;text-align:center;" data-i18n="settings.restart_hint">Ilova sekin yoki noto'g'ri ishlasa bosing — keshni tozalab yangilaydi. Ma'lumotlaringiz saqlanadi.</div>
+
     <button id="logoutBtn" type="button" data-i18n="settings.logout" style="width:100%;padding:14px;margin-bottom:12px;background:transparent;color:var(--text-mid);border:1px solid rgba(255,255,255,.14);border-radius:999px;font-family:'Inter',sans-serif;font-size:16px;font-weight:600;letter-spacing:1px;cursor:pointer;">Chiqish</button>
 
     <button class="danger" id="resetBtn" type="button" data-i18n="settings.reset">Hammasini tozalash</button>
@@ -402,6 +405,19 @@
         }, 3000);
       }
     });
+    // Restart — kesh + service worker'ni tozalab, TOZA yuklaydi (localStorage/ma'lumot saqlanadi).
+    // Uzoq ishlatilmagach eski kesh buzilishi mumkin — oddiy reload yordam bermaydi, shu tugma tuzatadi.
+    const restartBtn = document.getElementById('restartBtn');
+    const _rt = (k, fb) => (window.I18N ? I18N.t(k, fb) : fb);
+    if (restartBtn) restartBtn.addEventListener('click', async () => {
+      if (!confirm(_rt('settings.restart_confirm', "Ilova yangilanib qayta yuklanadi. Ma'lumotlaringiz (maqsad, tarix, tanga) saqlanadi. Davom etamizmi?"))) return;
+      restartBtn.disabled = true;
+      restartBtn.innerHTML = '⏳ ' + _rt('settings.restart_wait', 'Yangilanmoqda…');
+      try { if (window.caches && caches.keys) { const ks = await caches.keys(); await Promise.all(ks.map(k => caches.delete(k))); } } catch (e) {}
+      try { if (navigator.serviceWorker && navigator.serviceWorker.getRegistrations) { const rs = await navigator.serviceWorker.getRegistrations(); await Promise.all(rs.map(r => r.unregister())); } } catch (e) {}
+      try { location.replace('home.html?fresh=' + Date.now()); } catch (e) { location.reload(); }
+    });
+
     let confirmTimer = null;
     resetBtn.addEventListener('click', () => {
       if (resetBtn.classList.contains('confirm')) {
