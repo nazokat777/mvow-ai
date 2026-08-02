@@ -1,5 +1,6 @@
 name: Android (TWA) — APK + AAB
 
+# Build trigger: 2026-08-02 — Play birinchi yuklash uchun doimiy kalit bilan yangi AAB (upload key = permanent).
 # PWA'ni (daywarden.vercel.app) Android ilovaga o'raydi (Bubblewrap TWA).
 # Chiqishlar (Releases -> apk-latest):
 #   - app-release-signed.apk  -> telefonga sideload (sinov uchun)
