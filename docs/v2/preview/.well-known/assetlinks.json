@@ -5,7 +5,8 @@
       "namespace": "android_app",
       "package_name": "com.justaiit.daywarden.twa",
       "sha256_cert_fingerprints": [
-        "95:0C:D0:D9:FD:32:52:A2:3B:3F:B7:4F:AC:FE:71:A5:16:CD:02:B0:B5:41:BC:CD:2A:FC:C6:17:37:A0:CA:EB"
+        "95:0C:D0:D9:FD:32:52:A2:3B:3F:B7:4F:AC:FE:71:A5:16:CD:02:B0:B5:41:BC:CD:2A:FC:C6:17:37:A0:CA:EB",
+        "1F:66:E4:08:32:4F:C6:F9:59:BC:2D:E0:F5:A7:2B:A9:80:C5:16:52:F9:4E:4B:60:0F:CC:C2:0E:EF:75:4B:A5"
       ]
     }
   }
