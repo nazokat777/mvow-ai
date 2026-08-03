@@ -1199,6 +1199,11 @@
     function checkRecovery() {
       const history = window.MVOW_DATA ? MVOW_DATA.getHistory() : [];
       if (!hasGoals) return null;
+      // Foydalanuvchi bugun sababni tanlab javob bergan bo'lsa — kartani qayta ko'rsatmaymiz.
+      try {
+        const _ti = (window.MVOW_DATA && MVOW_DATA.today) ? MVOW_DATA.today.iso : new Date().toISOString().slice(0, 10);
+        if (localStorage.getItem('mvow.recoveryHandled') === _ti) return null;
+      } catch (e) {}
       const lastIso = history.length ? history.map(h => h.dateIso).sort().pop() : null;
       if (!lastIso) {
         // History bo'sh va maqsad bor → maqsad qachon qo'yilgan?
@@ -1219,6 +1224,15 @@
       const days = Math.floor((today - last) / 86400000);
       return days >= 3 ? days : null;
     }
+
+    // "Bugun sababni tanlab, javob berdim" — karta bugun qayta chiqmaydi.
+    function markRecoveryHandled() {
+      try {
+        const _ti = (window.MVOW_DATA && MVOW_DATA.today) ? MVOW_DATA.today.iso : new Date().toISOString().slice(0, 10);
+        localStorage.setItem('mvow.recoveryHandled', _ti);
+      } catch (e) {}
+    }
+    function recoveryHaptic() { try { if (navigator.vibrate) navigator.vibrate(14); } catch (e) {} }
 
     // Maqsadlar davomiyligini foiz bilan kamaytirish + qayta tarqatish
     function reduceAndRegen(pct) {
@@ -1300,22 +1314,23 @@
         const diagOpts = document.getElementById('diagOpts');
         document.querySelectorAll('.diag-opt').forEach(b => {
           b.addEventListener('click', () => {
+            recoveryHaptic();
             const fix = b.dataset.fix;
             if (fix === 'reduce') {
-              // User'dan % so'raymiz
+              // User'dan % so'raymiz (bu oxirgi javob emas — % tanlagach hal bo'ladi)
               diagOpts.style.display = 'none';
               reducePctBox.style.display = 'block';
             }
-            else if (fix === 'time') location.href = 'maqsadlar.html';
-            else regenOnly();
+            else if (fix === 'time') { markRecoveryHandled(); location.href = 'maqsadlar.html'; }
+            else { markRecoveryHandled(); regenOnly(); }
           });
         });
         document.querySelectorAll('.red-pct').forEach(b => {
-          b.addEventListener('click', () => reduceAndRegen(parseInt(b.dataset.pct, 10)));
+          b.addEventListener('click', () => { recoveryHaptic(); markRecoveryHandled(); reduceAndRegen(parseInt(b.dataset.pct, 10)); });
         });
         document.getElementById('reducePctCustomBtn').addEventListener('click', () => {
           const v = parseInt(document.getElementById('reducePctCustom').value, 10);
-          if (!isNaN(v) && v >= 5 && v <= 80) reduceAndRegen(v);
+          if (!isNaN(v) && v >= 5 && v <= 80) { recoveryHaptic(); markRecoveryHandled(); reduceAndRegen(v); }
         });
       } else {
         // Oddiy recovery (3-6 kun)
@@ -1325,7 +1340,7 @@
         recText.innerHTML = lead + '<br>' + q;
         document.getElementById('recoveryBtn').textContent = btnTxt;
         simpleBox.style.display = 'block';
-        document.getElementById('recoveryBtn').addEventListener('click', regenOnly);
+        document.getElementById('recoveryBtn').addEventListener('click', () => { recoveryHaptic(); markRecoveryHandled(); regenOnly(); });
       }
     }
 
