@@ -775,8 +775,10 @@
     }
     var done = ms.filter(function (m) { return m.done; }).length;
     var pct = Math.round(done / ms.length * 100);
-    var collapsed = !!g.msCollapsed;
-    // Sarlavha — bosiladigan yig'ish/ochish tugmasi (▾ ochiq, ▸ yig'ilgan). Foydalanuvchi istasa bosqichlarni berkitadi.
+    // DEFAULT YOPIQ — user istasa sarlavhani bosib ochadi (ochilgani g.msCollapsed===false bo'lib saqlanadi).
+    // Ochiq turgan bosqichlar ro'yxati miyani charchatardi; endi minimal — faqat "Bosqichlar N/M ▸".
+    var collapsed = (g.msCollapsed !== false);
+    // Sarlavha — bosiladigan yig'ish/ochish tugmasi (▾ ochiq, ▸ yig'ilgan). Foydalanuvchi istasa bosqichlarni ochadi.
     var label = '<div class="gs-label" data-ms-collapse="' + g.id + '" role="button" tabindex="0" style="cursor:pointer;display:flex;align-items:center;gap:7px;">'
       + '<span style="display:inline-block;font-size:11px;line-height:1;transition:transform .2s;transform:rotate(' + (collapsed ? '-90deg' : '0deg') + ');">▾</span>'
       + '<span>' + escapeHtml(_t('maqsadlar.ms_title', 'Bosqichlar')) + ' <span style="color:var(--accent)">' + done + '/' + ms.length + '</span></span></div>';

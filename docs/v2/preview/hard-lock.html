@@ -209,6 +209,8 @@
       <!-- Elapsed counter va o'tgan vaqt yashirin (visual minimal) — JS uchun saqlangan -->
       <div class="no-timer-elapsed" id="elapsed" style="display:none;">00:00</div>
       <div class="no-timer-lbl" data-i18n="hardlock.elapsed_label" style="display:none;">o'tgan vaqt</div>
+      <!-- 10 000 soat rejimi — jami mahorat soati (faqat shu rejimda ko'rinadi) -->
+      <div id="mastery10k" style="display:none;font-size:17px;color:#F5C26B;font-weight:700;letter-spacing:.3px;margin-bottom:10px;text-align:center;"></div>
       <button class="done-btn" id="doneBtn" type="button" data-i18n="hardlock.done_btn">Bajardim</button>
     </div>
 
@@ -243,6 +245,10 @@
         <span style="position:absolute;top:10px;right:12px;background:rgba(255,255,255,.22);color:#fff;font-size:10px;font-weight:800;letter-spacing:.5px;text-transform:uppercase;padding:3px 8px;border-radius:999px;" data-i18n="hardlock.recommended">Tavsiya</span>
         <span style="display:block;font-weight:600;margin-bottom:2px;" data-i18n="hardlock.opt_pomo">Pomodoro</span>
         <span style="display:block;font-size:14px;color:#fff;opacity:0.7;letter-spacing:0.5px;text-transform:none;font-weight:500;" id="chPomoDur" data-i18n="hardlock.opt_pomo_desc">25 daq ish + 5 daq dam sikllari</span>
+      </button>
+      <button class="choice-btn secondary" id="ch10k" type="button" style="text-align:left;padding:14px 16px;">
+        <span style="display:block;font-weight:600;margin-bottom:2px;" data-i18n="hardlock.opt_10k">🎯 10 000 soat</span>
+        <span style="display:block;font-size:14px;color:#9CA0A8;letter-spacing:0.5px;text-transform:none;font-weight:500;" data-i18n="hardlock.opt_10k_desc">Mahorat yo'li — jami soatlaringiz yig'iladi</span>
       </button>
     </div>
     <div style="margin-top:14px;text-align:center;"><a href="home.html" id="chBack" style="color:#9CA0A8;font-size:14px;text-decoration:none;padding:8px 12px;display:inline-block;">‹ <span data-i18n="hardlock.choice_back">Orqaga</span></a></div>
@@ -396,7 +402,7 @@ document.addEventListener('DOMContentLoaded', function () {
     list.forEach(function (g) { if (!seen[g.name]) { seen[g.name] = 1; uniq.push(g); } });
     uniq.sort(function (a, b) { return (a.time || '99:99').localeCompare(b.time || '99:99'); });
     if (uniq.length < 1) return;                        // maqsad yo'q — so'ramaymiz, default qoladi
-    if (hadExplicitTask && uniq.length < 2) return;     // aniq tanlangan + bitta vazifa — picker keraksiz
+    if (hadExplicitTask) return;                        // vazifa ANIQ tanlangan — boshqa vazifalar chiqmasin, o'shani boshlaymiz
     var picker = document.getElementById('taskPicker'), lbl = document.getElementById('pickLabel');
     if (!picker) return;
     picker.innerHTML = '';         // idempotent — eski tugmalarni tozalab qayta quramiz
@@ -490,6 +496,7 @@ document.addEventListener('DOMContentLoaded', function () {
   document.addEventListener('keydown', function (e) { if (e.key === 'Escape' && choiceOverlay.style.display !== 'none') location.href = 'home.html'; });
 
   let mode = null; // 'timer' | 'no-timer'
+  let is10k = false; // "10 000 soat" rejimi — taymersiz kabi, lekin jami mahorat soatini ko'rsatadi
   let totalSec = WORK_MIN * 60;
   let remaining = totalSec;
   let startedAt = Date.now();
@@ -518,10 +525,20 @@ document.addEventListener('DOMContentLoaded', function () {
     elapsedEl.textContent = fmt(elapsedSec);
     saveActive();
     // Taymersiz: rejalashtirilgan vaqt o'tgach avtomatik so'roq (bir marta)
-    if (mode === 'no-timer' && !askedAlready && elapsedSec >= WORK_MIN * 60) {
+    if (mode === 'no-timer' && !is10k && !askedAlready && elapsedSec >= WORK_MIN * 60) {
       askedAlready = true;
       if (window.MVOW_DATA && MVOW_DATA.fxFinish) MVOW_DATA.fxFinish(); playBeep(); notify();
       askOverlay.classList.add('show');
+    }
+    // 10 000 soat: jami mahorat soati (umr bo'yi fokus + shu sessiya) — real vaqtда yangilanadi.
+    if (is10k) {
+      var lifeMins = 0;
+      try { lifeMins = ((window.MVOW_DATA && MVOW_DATA.getHistory()) || []).reduce(function (s, h) { return s + (h.actualMins || 0); }, 0); } catch (e) {}
+      var totalH = (lifeMins + elapsedSec / 60) / 60;
+      var pct = Math.min(100, totalH / 10000 * 100);
+      var soat = (window.I18N ? I18N.t('home.unit_hours', 'soat') : 'soat');
+      var el10k = document.getElementById('mastery10k');
+      if (el10k) el10k.textContent = '🎯 ' + (Math.round(totalH * 10) / 10) + ' / 10 000 ' + soat + '  ·  ' + (Math.round(pct * 100) / 100) + '%';
     }
   }
 
@@ -804,6 +821,24 @@ document.addEventListener('DOMContentLoaded', function () {
     timerArea.classList.add('hidden');
     noTimerArea.classList.add('show');
     tsub.textContent = (window.I18N ? I18N.t('hardlock.sub_no_timer', 'taymersiz') : 'taymersiz');
+    startedAt = Date.now();
+    paintElapsed();
+    interval = setInterval(paintElapsed, 1000);
+  });
+
+  // "10 000 soat" — taymersiz kabi (sanoq yuqoriga), lekin jami mahorat soatini ko'rsatadi.
+  document.getElementById('ch10k').addEventListener('click', () => {
+    mode = 'no-timer'; is10k = true;
+    choiceOverlay.style.display = 'none';
+    document.body.classList.add('focus-on');
+    enableFaceDown();
+    startFocusAudioIfPref();
+    _getAC();
+    ensureNotifPerm();
+    timerArea.classList.add('hidden');
+    noTimerArea.classList.add('show');
+    var m10 = document.getElementById('mastery10k'); if (m10) m10.style.display = 'block';
+    tsub.textContent = (window.I18N ? I18N.t('hardlock.sub_10k', '10 000 soat sari') : '10 000 soat sari');
     startedAt = Date.now();
     paintElapsed();
     interval = setInterval(paintElapsed, 1000);
