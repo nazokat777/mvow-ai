@@ -966,6 +966,30 @@
         err.textContent = msg;
         setTimeout(() => { if (err) err.textContent = ''; }, 3500);
       }
+      // Vaqt to'qnashuvida BLOKLAMAYMIZ — ogohlantiramiz + "Baribir qo'shish" tugmasi beramiz.
+      function showConflictError(msg, onConfirm) {
+        let err = form.querySelector('.t-add-error');
+        if (!err) { err = document.createElement('div'); err.className = 't-add-error'; err.style.cssText = 'color:#FF8E97;font-size:15px;margin-top:8px;text-align:center;font-family:Inter,sans-serif;'; form.appendChild(err); }
+        err.innerHTML = '';
+        const txt = document.createElement('div'); txt.textContent = msg; txt.style.marginBottom = '8px'; err.appendChild(txt);
+        const btn = document.createElement('button'); btn.type = 'button';
+        btn.textContent = (window.I18N ? I18N.t('home.add.force', "Baribir qo'shish") : "Baribir qo'shish");
+        btn.style.cssText = 'padding:9px 16px;border:1px solid rgba(255,142,151,.5);background:transparent;color:#FF8E97;border-radius:999px;font-family:Inter,sans-serif;font-size:14px;font-weight:600;cursor:pointer;';
+        btn.addEventListener('click', () => { err.innerHTML = ''; onConfirm(); });
+        err.appendChild(btn);
+      }
+      function commitAdd(time, name, dur) {
+        const cur = MVOW_DATA.getTodayPlan();
+        cur.push({ time, name, dur });
+        MVOW_DATA.setTodayPlan(cur);
+        closeForm();
+        renderTasks();
+        const fresh = MVOW_DATA.getTodayPlan();
+        const totalMinFresh = fresh.reduce((s, p) => s + durMins(p.dur), 0);
+        const totalHFresh = Math.round(totalMinFresh / 60 * 10) / 10;
+        const fh = document.getElementById('focusH'); if (fh) fh.textContent = totalHFresh || 0;
+        const sn = document.getElementById('sessN'); if (sn) sn.textContent = fresh.length;
+      }
 
       form.addEventListener('submit', (e) => {
         e.preventDefault();
@@ -998,21 +1022,15 @@
               return String(h).padStart(2, '0') + ':' + String(mn).padStart(2, '0');
             };
             shake();
-            showError("Bu vaqtda boshqa vazifa bor: " + (t.name || '?') + " (" + fmtTime(tStart) + "—" + fmtTime(tEnd) + ")");
+            showConflictError(
+              "Bu vaqtda «" + (t.name || '?') + "» bor (" + fmtTime(tStart) + "—" + fmtTime(tEnd) + "). " + (window.I18N ? I18N.t('home.add.conflict_q', "Baribir qo'shilsinmi?") : "Baribir qo'shilsinmi?"),
+              () => commitAdd(time, name, dur)
+            );
             return;
           }
         }
 
-        current.push({ time, name, dur });
-        MVOW_DATA.setTodayPlan(current);
-        closeForm();
-        renderTasks();
-        // Refresh stats below — count + total hours
-        const fresh = MVOW_DATA.getTodayPlan();
-        const totalMinFresh = fresh.reduce((s,p) => s + durMins(p.dur), 0);
-        const totalHFresh = Math.round(totalMinFresh / 60 * 10) / 10;
-        const fh = document.getElementById('focusH'); if (fh) fh.textContent = totalHFresh || 0;
-        const sn = document.getElementById('sessN'); if (sn) sn.textContent = fresh.length;
+        commitAdd(time, name, dur);
       });
     })();
 

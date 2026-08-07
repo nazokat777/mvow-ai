@@ -369,9 +369,19 @@ document.addEventListener('DOMContentLoaded', function () {
 
   const POMO_WORK = 25, POMO_BREAK = 5;
   let taskMins = 25, pomoCycles = 1, pomoTotalMins = 25, WORK_MIN = 25;
+  // Bu maqsad "10 000 soat mahorat maqsadi" qilib belgilanganmi? (maqsadlar sahifasida user belgilaydi)
+  function isMasteryGoal(nm) {
+    try {
+      var goals = JSON.parse(localStorage.getItem('mvow.goals') || '[]');
+      return Array.isArray(goals) && goals.some(function (g) { return (g.text || g.name || g.title || g.goal) === nm && g.mastery10k; });
+    } catch (e) { return false; }
+  }
   // Tanlangan vazifani UI + hisob-kitoblarga qo'llash (tanlovchi o'zgartirsa qayta chaqiriladi)
   function applyTask(t) {
     current = t;
+    // "10 000 soat" varianti FAQAT mahorat maqsadi uchun ko'rinadi (1 haftalik maqsad 10 000 soat emas).
+    var _c10 = document.getElementById('ch10k');
+    if (_c10) _c10.style.display = isMasteryGoal(t.name) ? '' : 'none';
     document.getElementById('tname').textContent = t.name;
     document.getElementById('cTaskName').textContent = t.name;
     document.getElementById('aTaskName').textContent = t.name;

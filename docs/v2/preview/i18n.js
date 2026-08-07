@@ -469,7 +469,7 @@
         add_btn: 'Yangi maqsad',
         restart_btn: '🔄 Hammasini qaytadan boshlash', restart_confirm: 'Aniqmisiz? Yana bosing', restart_done: 'Qaytadan boshlandi ✓',
         restart_one: '🔄 Boshidan boshlash', restart_one_confirm: '🔄 Aniqmisiz? Yana bosing',
-        dur_week_lbl: '1 HAFTA', dur_3day_lbl: '3 KUN', dur_3day_short: '3 kun', days: 'kun', chdur_title: 'Maqsad muddati', chdur_aria: "Muddatni o'zgartirish", chdur_note: "Boshlanish sanasi va bajarilganlar saqlanadi — faqat muddat o'zgaradi.",
+        dur_week_lbl: '1 HAFTA', dur_3day_lbl: '3 KUN', dur_3day_short: '3 kun', days: 'kun', chdur_title: 'Maqsad muddati', chdur_aria: "Muddatni o'zgartirish", mastery_aria: "10 000 soat mahorat maqsadi", hours_short: "soat", chdur_note: "Boshlanish sanasi va bajarilganlar saqlanadi — faqat muddat o'zgaradi.",
         dur_week_short: 'hafta',
         dur_month_lbl: '1 OY',
         dur_month_short: 'oy',
@@ -697,7 +697,7 @@
           name: "Vazifa nomi",
           dur: "1 soat / 30 daq",
           cancel: "Bekor",
-          save: "Qo'shish"
+          save: "Qo'shish", force: "Baribir qo'shish", conflict_q: "Baribir qo'shilsinmi?"
         },
         tile_evening: 'Kun yakuni',
         // AI Murabbiy xabarlar
@@ -1567,7 +1567,7 @@
         add_btn: 'Новая цель',
         restart_btn: '🔄 Начать все заново', restart_confirm: 'Уверены? Нажмите ещё раз', restart_done: 'Начато заново ✓',
         restart_one: '🔄 Начать заново', restart_one_confirm: '🔄 Уверены? Ещё раз',
-        dur_week_lbl: '1 НЕДЕЛЯ', dur_3day_lbl: '3 ДНЯ', dur_3day_short: '3 дня', days: 'дн.', chdur_title: 'Срок цели', chdur_aria: 'Изменить срок', chdur_note: 'Дата начала и выполненное сохраняются — меняется только срок.',
+        dur_week_lbl: '1 НЕДЕЛЯ', dur_3day_lbl: '3 ДНЯ', dur_3day_short: '3 дня', days: 'дн.', chdur_title: 'Срок цели', chdur_aria: 'Изменить срок', mastery_aria: 'Цель на 10 000 часов (мастерство)', hours_short: 'ч', chdur_note: 'Дата начала и выполненное сохраняются — меняется только срок.',
         dur_week_short: 'неделя',
         dur_month_lbl: '1 МЕСЯЦ',
         dur_month_short: 'месяц',
@@ -1793,7 +1793,7 @@
           name: "Название задачи",
           dur: "1 час / 30 мин",
           cancel: "Отмена",
-          save: "Добавить"
+          save: "Добавить", force: "Всё равно добавить", conflict_q: "Всё равно добавить?"
         },
         tile_evening: 'Итог дня',
         murabbiy_all_done: 'Сегодня всё сделано. Поздравляю.',
@@ -2652,7 +2652,7 @@
         add_btn: 'New goal',
         restart_btn: '🔄 Restart all', restart_confirm: 'Sure? Tap again', restart_done: 'Restarted ✓',
         restart_one: '🔄 Restart', restart_one_confirm: '🔄 Sure? Tap again',
-        dur_week_lbl: '1 WEEK', dur_3day_lbl: '3 DAYS', dur_3day_short: '3 days', days: 'days', chdur_title: 'Goal duration', chdur_aria: 'Change duration', chdur_note: 'Start date and completed days are kept — only the duration changes.',
+        dur_week_lbl: '1 WEEK', dur_3day_lbl: '3 DAYS', dur_3day_short: '3 days', days: 'days', chdur_title: 'Goal duration', chdur_aria: 'Change duration', mastery_aria: '10,000-hour mastery goal', hours_short: 'h', chdur_note: 'Start date and completed days are kept — only the duration changes.',
         dur_week_short: 'week',
         dur_month_lbl: '1 MONTH',
         dur_month_short: 'month',
@@ -2878,7 +2878,7 @@
           name: "Task name",
           dur: "1 hour / 30 min",
           cancel: "Cancel",
-          save: "Add"
+          save: "Add", force: "Add anyway", conflict_q: "Add anyway?"
         },
         tile_evening: 'Day summary',
         murabbiy_all_done: 'All done for today. Well done.',
