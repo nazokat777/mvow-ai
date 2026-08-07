@@ -248,7 +248,7 @@
       </button>
       <button class="choice-btn secondary" id="ch10k" type="button" style="text-align:left;padding:14px 16px;">
         <span style="display:block;font-weight:600;margin-bottom:2px;" data-i18n="hardlock.opt_10k">🎯 10 000 soat</span>
-        <span style="display:block;font-size:14px;color:#9CA0A8;letter-spacing:0.5px;text-transform:none;font-weight:500;" data-i18n="hardlock.opt_10k_desc">Mahorat yo'li — jami soatlaringiz yig'iladi</span>
+        <span style="display:block;font-size:14px;color:#9CA0A8;letter-spacing:0.5px;text-transform:none;font-weight:500;" data-i18n="hardlock.opt_10k_desc">Mahorat yo'li — shu maqsad soatlari yig'iladi</span>
       </button>
     </div>
     <div style="margin-top:14px;text-align:center;"><a href="home.html" id="chBack" style="color:#9CA0A8;font-size:14px;text-decoration:none;padding:8px 12px;display:inline-block;">‹ <span data-i18n="hardlock.choice_back">Orqaga</span></a></div>
@@ -530,11 +530,17 @@ document.addEventListener('DOMContentLoaded', function () {
       if (window.MVOW_DATA && MVOW_DATA.fxFinish) MVOW_DATA.fxFinish(); playBeep(); notify();
       askOverlay.classList.add('show');
     }
-    // 10 000 soat: jami mahorat soati (umr bo'yi fokus + shu sessiya) — real vaqtда yangilanadi.
+    // 10 000 soat: AYNAN SHU MAQSAD (mahorat) soati — o'sha maqsadga qaysi taymer bilan ishlangan bo'lsa ham
+    // (pomodoro/oddiy/taymersiz) tarixдаги soatlar shu yerга yig'iladi + shu sessiya. Real vaqtда yangilanadi.
     if (is10k) {
-      var lifeMins = 0;
-      try { lifeMins = ((window.MVOW_DATA && MVOW_DATA.getHistory()) || []).reduce(function (s, h) { return s + (h.actualMins || 0); }, 0); } catch (e) {}
-      var totalH = (lifeMins + elapsedSec / 60) / 60;
+      var skillMins = 0;
+      try {
+        var _nm = (current && current.name) || '';
+        skillMins = ((window.MVOW_DATA && MVOW_DATA.getHistory()) || [])
+          .filter(function (h) { return h.name === _nm; })
+          .reduce(function (s, h) { return s + (h.actualMins || 0); }, 0);
+      } catch (e) {}
+      var totalH = (skillMins + elapsedSec / 60) / 60;
       var pct = Math.min(100, totalH / 10000 * 100);
       var soat = (window.I18N ? I18N.t('home.unit_hours', 'soat') : 'soat');
       var el10k = document.getElementById('mastery10k');
