@@ -108,7 +108,18 @@ jobs:
         working-directory: twa
         run: |
           # bubblewrap build -> app-release-signed.apk (sideload) + app-release-bundle.aab (Play)
+          # Bubblewrap gradle chiqishini yutib yuboradi; xato bo'lsa sababi ko'rinmay qoladi,
+          # shuning uchun yiqilganda gradle'ni to'g'ridan-to'g'ri qayta chaqiramiz.
+          set +e
           yes "$KEY_PASS" | bubblewrap build --skipPwaValidation
+          STATUS=$?
+          set -e
+          if [ "$STATUS" -ne 0 ]; then
+            echo "::group::Gradle batafsil log (sababni ko'rsatadi)"
+            ./gradlew assembleRelease --console=plain --stacktrace 2>&1 | tail -250 || true
+            echo "::endgroup::"
+            exit 1
+          fi
           echo "--- chiqishlar ---"
           find . -name "*.apk" -o -name "*.aab" | sort
 

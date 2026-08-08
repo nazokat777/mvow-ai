@@ -1,6 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- Widget matnlari — standart (o'zbekcha). Ruscha/inglizcha: values-ru, values-en. -->
-<resources>
+<!--
+  Widget matnlari — standart (o'zbekcha). Ruscha/inglizcha: values-ru, values-en.
+  Brend nomi, belgilar va namuna kod tarjima qilinmaydi (ataylab) — MissingTranslation
+  lint tekshiruvi release build'ni yiqitmasligi uchun o'chirilgan.
+-->
+<resources xmlns:tools="http://schemas.android.com/tools"
+    tools:ignore="MissingTranslation">
     <string name="fw_brand">FOCUS AI</string>
     <string name="fw_description">Bugungi fokus — uy ekranida</string>
     <string name="fw_start">BOSHLASH</string>

@@ -8,6 +8,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.net.Uri;
+import android.os.Build;
 import android.view.View;
 import android.widget.RemoteViews;
 
@@ -156,7 +157,10 @@ public class FocusWidget extends AppWidgetProvider {
     }
 
     private static int flags() {
-        // FLAG_IMMUTABLE Android 12+ da majburiy; eski tizimlar noma'lum bayroqni e'tiborsiz qoldiradi.
-        return PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_IMMUTABLE;
+        // FLAG_IMMUTABLE Android 12+ da MAJBURIY, lekin u API 23'da paydo bo'lgan —
+        // minSdk 21 bo'lgani uchun versiya tekshiruvisiz lint (NewApi) build'ni yiqitadi.
+        int f = PendingIntent.FLAG_UPDATE_CURRENT;
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) f |= PendingIntent.FLAG_IMMUTABLE;
+        return f;
     }
 }
