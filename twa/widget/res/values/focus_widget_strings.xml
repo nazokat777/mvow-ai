@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Widget matnlari — standart (o'zbekcha). Ruscha/inglizcha: values-ru, values-en. -->
+<resources>
+    <string name="fw_brand">FOCUS AI</string>
+    <string name="fw_description">Bugungi fokus — uy ekranida</string>
+    <string name="fw_start">BOSHLASH</string>
+    <string name="fw_refresh">↻</string>
+
+    <string name="fw_mins">%1$d daq</string>
+    <string name="fw_hours">%1$d soat</string>
+    <string name="fw_hours_mins">%1$d s %2$d daq</string>
+    <string name="fw_tasks">%1$d vazifa</string>
+    <string name="fw_streak">🔥 %1$d</string>
+
+    <string name="fw_link_title">Kodni ulang</string>
+    <string name="fw_link_sub">Bosing va kodingizni kiriting</string>
+
+    <string name="fwc_title">Widgetni ulash</string>
+    <string name="fwc_help">Kodingizni kiriting. Kod ilovada: Menyu → Do\'stlar.</string>
+    <string name="fwc_hint">ABC123</string>
+    <string name="fwc_save">Saqlash</string>
+    <string name="fwc_error">Kod noto\'g\'ri — 3 harf va 3 raqam (masalan ABC123).</string>
+</resources>

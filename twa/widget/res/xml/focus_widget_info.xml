@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  Widget ta'rifi. updatePeriodMillis'ning eng kichik amaldagi qiymati 30 daqiqa —
+  undan tez-tez so'ralsa tizim baribir 30 daqiqada bir yangilaydi. Foydalanuvchi
+  darhol yangilashi uchun widgetda ⟳ tugmasi bor.
+-->
+<appwidget-provider xmlns:android="http://schemas.android.com/apk/res/android"
+    android:minWidth="250dp"
+    android:minHeight="110dp"
+    android:minResizeWidth="180dp"
+    android:minResizeHeight="110dp"
+    android:targetCellWidth="4"
+    android:targetCellHeight="2"
+    android:updatePeriodMillis="1800000"
+    android:initialLayout="@layout/focus_widget"
+    android:configure="__PKG__.widget.FocusWidgetConfigActivity"
+    android:description="@string/fw_description"
+    android:resizeMode="horizontal|vertical"
+    android:widgetCategory="home_screen" />

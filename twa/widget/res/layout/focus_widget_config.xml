@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  Widget sozlash oynasi — foydalanuvchi kodini bir marta so'raydi.
+  Dialog mavzusi qurilmaga qarab och/qorong'i bo'lishi mumkin, shuning uchun
+  panel o'z foni va o'z ranglari bilan chiziladi (kontrast doim to'g'ri).
+-->
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:background="#12151C"
+    android:padding="24dp">
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/fwc_title"
+        android:textColor="#F5F5F5"
+        android:textSize="19sp"
+        android:textStyle="bold" />
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:text="@string/fwc_help"
+        android:textColor="#8A8F98"
+        android:textSize="14sp"
+        android:lineSpacingExtra="3dp" />
+
+    <EditText
+        android:id="@+id/fwc_code"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="18dp"
+        android:background="@drawable/focus_widget_field"
+        android:hint="@string/fwc_hint"
+        android:textColorHint="#5B6068"
+        android:textColor="#F5F5F5"
+        android:textSize="20sp"
+        android:textStyle="bold"
+        android:gravity="center"
+        android:padding="14dp"
+        android:maxLength="6"
+        android:inputType="textCapCharacters|textNoSuggestions"
+        android:imeOptions="actionDone"
+        android:singleLine="true" />
+
+    <TextView
+        android:id="@+id/fwc_error"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        android:text="@string/fwc_error"
+        android:textColor="#F4845F"
+        android:textSize="13sp"
+        android:visibility="gone" />
+
+    <Button
+        android:id="@+id/fwc_save"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="18dp"
+        android:background="@drawable/focus_widget_btn"
+        android:text="@string/fwc_save"
+        android:textAllCaps="false"
+        android:textColor="#FFFFFF"
+        android:textSize="16sp"
+        android:textStyle="bold" />
+</LinearLayout>

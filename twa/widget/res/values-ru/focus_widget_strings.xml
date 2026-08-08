@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="fw_description">Сегодняшний фокус — на главном экране</string>
+    <string name="fw_start">НАЧАТЬ</string>
+
+    <string name="fw_mins">%1$d мин</string>
+    <string name="fw_hours">%1$d ч</string>
+    <string name="fw_hours_mins">%1$d ч %2$d мин</string>
+    <string name="fw_tasks">задач: %1$d</string>
+
+    <string name="fw_link_title">Подключите код</string>
+    <string name="fw_link_sub">Нажмите и введите свой код</string>
+
+    <string name="fwc_title">Подключение виджета</string>
+    <string name="fwc_help">Введите свой код. Он есть в приложении: Меню → Друзья.</string>
+    <string name="fwc_save">Сохранить</string>
+    <string name="fwc_error">Неверный код — 3 буквы и 3 цифры (например ABC123).</string>
+</resources>

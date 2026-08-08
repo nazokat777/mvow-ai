@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="fw_description">Today\'s focus, right on your home screen</string>
+    <string name="fw_start">START</string>
+
+    <string name="fw_mins">%1$d min</string>
+    <string name="fw_hours">%1$d h</string>
+    <string name="fw_hours_mins">%1$d h %2$d min</string>
+    <string name="fw_tasks">%1$d tasks</string>
+
+    <string name="fw_link_title">Link your code</string>
+    <string name="fw_link_sub">Tap and enter your code</string>
+
+    <string name="fwc_title">Connect the widget</string>
+    <string name="fwc_help">Enter your code. Find it in the app: Menu → Friends.</string>
+    <string name="fwc_save">Save</string>
+    <string name="fwc_error">Invalid code — 3 letters and 3 digits (e.g. ABC123).</string>
+</resources>

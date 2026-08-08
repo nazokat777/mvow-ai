@@ -20,6 +20,7 @@ on:
     paths:
       - '.github/workflows/twa-apk.yml'
       - 'twa/twa-manifest.json'
+      - 'twa/widget/**'
 
 permissions:
   contents: write
@@ -90,12 +91,22 @@ jobs:
           echo " Play Console -> App integrity'dan olinadi va assetlinks'ga qo'yiladi."
           echo "=============================================================="
 
-      - name: Build signed APK + AAB
+      - name: Generate Android project
         working-directory: twa
         run: |
           bubblewrap doctor || true
           yes | bubblewrap update || bubblewrap update || true
           chmod +x gradlew 2>/dev/null || true
+
+      # Bubblewrap loyihani har safar qaytadan yasaydi, shuning uchun uy ekrani
+      # widgeti build'dan OLDIN shu yerda ulanadi (twa/widget/ dagi manbadan).
+      - name: Add home-screen widget
+        working-directory: twa
+        run: node widget/inject.js
+
+      - name: Build signed APK + AAB
+        working-directory: twa
+        run: |
           # bubblewrap build -> app-release-signed.apk (sideload) + app-release-bundle.aab (Play)
           yes "$KEY_PASS" | bubblewrap build --skipPwaValidation
           echo "--- chiqishlar ---"
@@ -107,6 +118,21 @@ jobs:
           mkdir -p out
           find . -path ./out -prune -o \( -name "*.apk" -o -name "*.aab" \) -print -exec cp {} out/ \;
           ls -la out
+
+      # Widget jimgina tushib qolmasin: tayyor APK ichida haqiqatan borligini tekshiramiz.
+      - name: Verify widget shipped
+        working-directory: twa
+        run: |
+          APK=$(ls out/*.apk 2>/dev/null | head -1)
+          [ -n "$APK" ] || { echo "::error::APK topilmadi"; exit 1; }
+          AAPT2="$(ls -d "$ANDROID_HOME"/build-tools/*/ | sort -V | tail -1)aapt2"
+          if [ -x "$AAPT2" ] && "$AAPT2" dump xmltree --file AndroidManifest.xml "$APK" > mf.txt 2>/dev/null; then
+            grep -q "FocusWidget" mf.txt || { echo "::error::Widget manifestga tushmadi"; exit 1; }
+            echo "Widget manifestda ✓"
+          else
+            unzip -l "$APK" | grep -q "focus_widget" || { echo "::error::Widget resurslari APK ichida yo'q"; exit 1; }
+            echo "Widget resurslari APK ichida ✓ (aapt2 yo'q — resurs bo'yicha tekshirildi)"
+          fi
 
       - name: Upload artifact
         uses: actions/upload-artifact@v4
