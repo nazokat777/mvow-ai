@@ -190,3 +190,55 @@ test('inject: buzuq manifest (</application> yo\'q) XATO beradi', () => {
   const dir = fakeProject({ manifest: '<?xml version="1.0"?>\n<manifest />\n' });
   assert.throws(() => inject(dir), /XATO|Command failed/);
 });
+
+// ── Resurs XML'lari haqiqiy build'dan OLDIN tekshiriladi ────────────────────
+// Sabab: izoh ichidagi "--" (mas. theme.css o'zgaruvchisi "--accent") XML'da
+// TAQIQLANGAN va Gradle'ni `parseReleaseLocalResources` bosqichida yiqitadi.
+// Bu xato bir marta CI'da 3 daqiqa yediradi — bu yerda bir soniyada tutiladi.
+
+function widgetResFiles() {
+  const root = path.join(__dirname, '..', 'twa', 'widget', 'res');
+  const out = [];
+  (function walk(dir) {
+    for (const name of fs.readdirSync(dir)) {
+      const p = path.join(dir, name);
+      if (fs.statSync(p).isDirectory()) walk(p);
+      else if (p.endsWith('.xml')) out.push(p);
+    }
+  })(root);
+  return out;
+}
+
+test('res XML: izohlar ichida "--" yo\'q (XML taqiqlaydi, Gradle yiqiladi)', () => {
+  const files = widgetResFiles();
+  assert.ok(files.length >= 8, 'res fayllari topilmadi');
+  for (const f of files) {
+    const src = fs.readFileSync(f, 'utf8');
+    const re = /<!--([\s\S]*?)-->/g;
+    let m;
+    while ((m = re.exec(src)) !== null) {
+      assert.ok(!m[1].includes('--'),
+        path.basename(f) + ': izoh ichida "--" bor — XML buni qabul qilmaydi');
+    }
+  }
+});
+
+test('res XML: har bir izoh yopilgan', () => {
+  for (const f of widgetResFiles()) {
+    const src = fs.readFileSync(f, 'utf8');
+    const open = src.split('<!--').length - 1;
+    const close = src.split('-->').length - 1;
+    assert.equal(open, close, path.basename(f) + ': yopilmagan izoh');
+  }
+});
+
+test('res XML: teglar muvozanatda (ochilish/yopilish soni mos)', () => {
+  for (const f of widgetResFiles()) {
+    const src = fs.readFileSync(f, 'utf8')
+      .replace(/<!--[\s\S]*?-->/g, '')
+      .replace(/<\?[\s\S]*?\?>/g, '');
+    const open = (src.match(/<[A-Za-z][^>]*?(?<!\/)>/g) || []).length;
+    const close = (src.match(/<\/[A-Za-z][^>]*>/g) || []).length;
+    assert.equal(open, close, path.basename(f) + ': teglar muvozanatda emas');
+  }
+});

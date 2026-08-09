@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- "Boshlash" tugmasi — ilova aksenti (theme.css: --accent → --accent-deep). -->
+<!-- "Boshlash" tugmasi — ilova aksenti (theme.css dagi accent → accent deep). -->
 <shape xmlns:android="http://schemas.android.com/apk/res/android"
     android:shape="rectangle">
     <gradient

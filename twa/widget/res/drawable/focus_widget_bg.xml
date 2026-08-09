@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- Widget karta foni — ilovaning qorong'i mavzusi (theme.css: --bg / --card). -->
+<!-- Widget karta foni — ilovaning qorong'i mavzusi (theme.css dagi card rangi). -->
 <shape xmlns:android="http://schemas.android.com/apk/res/android"
     android:shape="rectangle">
     <solid android:color="#12151C" />
