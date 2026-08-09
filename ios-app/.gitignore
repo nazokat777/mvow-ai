@@ -1,0 +1,5 @@
+# Capacitor iOS loyihasi va veb nusxasi build paytida yaratiladi — repoda saqlanmaydi.
+node_modules/
+www/
+ios/
+package-lock.json

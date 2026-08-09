@@ -1,0 +1,89 @@
+name: iOS (App Store) — Capacitor qobig'i
+
+# FOCUS AI'ning App Store versiyasi: PWA ilova ICHIDA ishlaydi (Capacitor),
+# ustiga native qismlar qo'shiladi. Mac KERAK EMAS — GitHub'ning macOS serveri.
+#
+# Bu bosqichda maqsad: ilova bulutda KOMPILE bo'lishini tasdiqlash (imzosiz).
+# Imzolash va App Store Connect'ga yuklash — Apple Developer akkaunti ochilgach
+# (APPSTORE.md, 2-bo'lim: APPSTORE_KEY_P8 / KEY_ID / ISSUER_ID secretlari).
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/ios-appstore.yml'
+      - 'ios-app/**'
+      - 'docs/v2/preview/**'
+
+jobs:
+  build:
+    runs-on: macos-15
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Node 20
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Select Xcode
+        uses: maxim-lobanov/setup-xcode@v1
+        with:
+          xcode-version: latest-stable
+
+      # PWA -> ios-app/www (ilova ichiga joylashadi, uzoq serverdan yuklanmaydi)
+      - name: Prepare web assets
+        working-directory: ios-app
+        run: node prepare-www.js
+
+      - name: Install dependencies
+        working-directory: ios-app
+        run: npm install --no-audit --no-fund
+
+      # Capacitor iOS loyihasini shu yerda yaratamiz — u repoda saqlanmaydi
+      # (bubblewrap/TWA bilan bir xil yondashuv: yaratilgan loyiha vaqtinchalik).
+      - name: Generate iOS project
+        working-directory: ios-app
+        run: |
+          if [ -d ios ]; then
+            npx cap sync ios
+          else
+            npx cap add ios
+          fi
+
+      - name: Show project info (diagnostika)
+        working-directory: ios-app/ios/App
+        run: xcodebuild -list -workspace App.xcworkspace || true
+
+      - name: Build (imzosiz — kompilyatsiya tasdig'i)
+        working-directory: ios-app/ios/App
+        run: |
+          set -o pipefail
+          xcodebuild build \
+            -workspace App.xcworkspace \
+            -scheme App \
+            -sdk iphoneos \
+            -destination 'generic/platform=iOS' \
+            -derivedDataPath build \
+            CODE_SIGNING_ALLOWED=NO CODE_SIGNING_REQUIRED=NO CODE_SIGN_IDENTITY="" \
+            2>&1 | tail -80
+
+      # Veb qism haqiqatan ilova ichiga tushganini tekshiramiz — aks holda
+      # ilova bo'sh ekran bilan ochiladi va buni faqat iPhone'da bilib qolamiz.
+      - name: Verify web assets are inside the app
+        working-directory: ios-app
+        run: |
+          APP=$(find ios/App/build/Build/Products -maxdepth 2 -name 'App.app' -type d | head -1)
+          [ -n "$APP" ] || { echo "::error::App.app topilmadi"; exit 1; }
+          for f in index.html home.html data.js i18n.js; do
+            [ -f "$APP/public/$f" ] || { echo "::error::$f ilova ichida yo'q"; exit 1; }
+          done
+          echo "Veb qism ilova ichida ✓ ($(find "$APP/public" -type f | wc -l | tr -d ' ') fayl)"
+
+      - name: Upload app bundle
+        uses: actions/upload-artifact@v4
+        with:
+          name: focus-ai-ios-unsigned
+          path: ios-app/ios/App/build/Build/Products/*/App.app
+          if-no-files-found: error

@@ -1,0 +1,21 @@
+{
+  "appId": "com.justaiit.focusai",
+  "appName": "FOCUS AI",
+  "webDir": "www",
+  "ios": {
+    "backgroundColor": "#04060B",
+    "contentInset": "never",
+    "limitsNavigationsToAppBoundDomains": false
+  },
+  "server": {
+    "iosScheme": "capacitor"
+  },
+  "plugins": {
+    "SplashScreen": {
+      "launchAutoHide": true,
+      "launchShowDuration": 400,
+      "backgroundColor": "#04060B",
+      "showSpinner": false
+    }
+  }
+}
