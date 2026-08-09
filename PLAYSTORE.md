@@ -65,9 +65,47 @@ Play Console'da shu fayllarni yuklaysiz (kamida 2 ta skrinshot shart — bizda 4
 
 ## 7) Play Console qo'shimcha bo'limlar
 - **Privacy policy:** https://daywarden.vercel.app/privacy.html
-- **Data safety:** ma'lumot to'plash — qurilma kodi (do'stlar), statistikangiz (server). Sotilmaydi.
 - **Content rating:** so'rovnoma to'ldiriladi (odatda "Everyone").
 - **Target audience:** 13+ (yoki mos yosh).
+- **App access:** login yo'q — "Все функции доступны без ограничений" ni tanlang.
+- **Ads:** reklama yo'q — "Нет".
+
+## 7a) Data safety (Безопасность данных) — tayyor javoblar
+
+Ilova haqiqatan nima yuboradi (koddan tekshirilgan):
+
+| Nima | Qayerga | Majburiymi |
+|---|---|---|
+| Qurilma kodi (ABC123 — o'zi yaratiladi, ismga bog'liq emas) | Supabase | ha |
+| Ism (anketada yozilsa) | Supabase `profiles` | **yo'q, ixtiyoriy** |
+| Kunlik statistika: fokus daqiqasi, vazifa soni, vazifa nomlari | Supabase `daily_stats` | ha |
+| Do'st/ustoz bilan yozishmalar | Supabase `messages` | yo'q (ishlatilsa) |
+| Bildirishnoma manzili (push endpoint) | Supabase `push_subs` | yo'q (ruxsat berilsa) |
+| Maqsad/kun matni — AI javob yozishi uchun | Google Gemini (server orqali) | yo'q (AI ishlatilsa) |
+
+**So'rovnomadagi javoblar:**
+
+- Ma'lumot to'planadimi/yuboriladimi → **Ha**
+- Sotiladimi (sold) → **Yo'q** (hech qachon)
+- Uchinchi tomonga uzatiladimi (shared) → **Yo'q**
+  (Gemini — bizning nomimizdan matnni qayta ishlovchi xizmat, saqlab qolmaydi)
+- Uzatishda shifrlanadimi → **Ha** (hammasi HTTPS)
+- Foydalanuvchi o'chirishni so'rashi mumkinmi → **Ha** (privacy.html'dagi aloqa)
+
+**Belgilanadigan turlar:**
+
+| Bo'lim | Tur | Maqsad |
+|---|---|---|
+| Personal info | Name (**ixtiyoriy**) | App functionality |
+| Messages | Other in-app messages | App functionality |
+| App activity | Other user-generated content (vazifa nomlari) | App functionality |
+| App activity | App interactions (statistika) | App functionality, Analytics |
+| Device or other IDs | Device or other IDs (push manzili) | App functionality |
+
+Joylashuv, kontakt, telefon, moliya, sog'liq, fayl, foto — **hech biri to'planmaydi**.
+
+⚠️ Javoblarni yuborishdan oldin o'zingiz bir ko'rib chiqing — bu deklaratsiya
+uchun mas'uliyat akkaunt egasida.
 
 ## 8) Har yangilanishda
 1. `twa/twa-manifest.json` da `appVersionCode` ni +1 (masalan 2), `appVersionName` (masalan 1.0.1).
