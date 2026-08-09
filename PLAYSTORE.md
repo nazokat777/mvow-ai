@@ -107,6 +107,23 @@ Joylashuv, kontakt, telefon, moliya, sog'liq, fayl, foto — **hech biri to'plan
 ⚠️ Javoblarni yuborishdan oldin o'zingiz bir ko'rib chiqing — bu deklaratsiya
 uchun mas'uliyat akkaunt egasida.
 
+## 7b) Yopiq sinov (closed testing) — yangi shaxsiy hisob talabi
+
+2023-yil 13-noyabrdan keyin ochilgan **shaxsiy** dasturchi hisoblari uchun
+production'dan oldin majburiy (Google hujjati, 2026-08-09 da tekshirilgan):
+
+- **Kamida 12 ta tester** yopiq sinovga qo'shilgan bo'lishi kerak
+- **14 kun KETMA-KET** — uzilsa hisob noldan boshlanadi
+- **Ichki sinov (internal) hisobga O'TMAYDI** — aynan **yopiq (closed)** kerak
+- 14 kun to'lgach → "Publikatsiya uchun ariza" ochiladi
+
+14 kun — kalendar vaqti, tezlashtirib bo'lmaydi. Shuning uchun sinovni
+deklaratsiyalar bilan **parallel** boshlang, ketma-ket emas.
+
+Tartib: Тестирование и выпуск → Тестирование → **Закрытое тестирование** →
+track yarating → AAB yuklang → 12+ Gmail manzili → chiqqan havolani testerlarga
+yuboring (ular "Стать тестировщиком" ni tasdiqlab, ilovani o'rnatishi shart).
+
 ## 8) Har yangilanishda
 1. `twa/twa-manifest.json` da `appVersionCode` ni +1 (masalan 2), `appVersionName` (masalan 1.0.1).
 2. "Android (TWA)" workflow → yangi `.aab`.
