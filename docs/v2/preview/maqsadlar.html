@@ -455,6 +455,7 @@
 
   <!-- Barcha maqsadlarni qaytadan boshlash (progress nolga; JS matnni to'ldiradi — data-i18n YO'Q, i18n ustidan yozmasin) -->
   <button id="restartAllBtn" type="button" style="display:none;width:100%;margin-top:10px;padding:13px;border-radius:14px;background:transparent;border:1px solid rgba(255,255,255,.18);color:var(--text-mid,#B8BBC2);font:600 15px 'Inter',sans-serif;cursor:pointer;transition:color .15s,border-color .15s;"></button>
+  <button id="deleteAllBtn" type="button" style="display:none;width:100%;margin-top:8px;padding:13px;border-radius:14px;background:transparent;border:1px solid rgba(255,110,120,.35);color:#FF8E97;font:600 15px 'Inter',sans-serif;cursor:pointer;transition:color .15s,border-color .15s;"></button>
 </div>
 
 <div class="bottom">
@@ -796,11 +797,13 @@
 
     var addBtnEl = document.getElementById('addBtn');
     var restartBtnEl = document.getElementById('restartAllBtn');
+    var deleteBtnEl = document.getElementById('deleteAllBtn');
     if (!goals.length) {
       list.style.display = 'none';
       empty.style.display = 'block';
       if (addBtnEl) addBtnEl.style.display = 'none';
       if (restartBtnEl) restartBtnEl.style.display = 'none';
+      if (deleteBtnEl) deleteBtnEl.style.display = 'none';
       sub.textContent = (window.I18N ? I18N.tWith('maqsadlar.count', { n: 0 }) : '0 ta maqsad');
       return;
     }
@@ -808,6 +811,7 @@
     list.style.display = 'flex';
     if (addBtnEl) addBtnEl.style.display = '';
     if (restartBtnEl) restartBtnEl.style.display = '';
+    if (deleteBtnEl) deleteBtnEl.style.display = '';
     sub.textContent = (window.I18N ? I18N.tWith('maqsadlar.count', { n: goals.length }) : goals.length + ' ta maqsad');
 
     // History — har maqsad uchun bajarilgan kunlar sonini hisoblash uchun
@@ -1383,6 +1387,49 @@
       btn.textContent = _t('maqsadlar.restart_done', "Qaytadan boshlandi ✓");
       btn.style.color = 'var(--accent)'; btn.style.borderColor = 'var(--accent)';
       setTimeout(function () { disarm(); render(); }, 1400);
+    });
+  })();
+
+  // ── Maqsadlarni BUTUNLAY o'chirish (progress tiklash emas — maqsadning o'zi ketadi) ──
+  // Kalendar/reja yozuvlari ham tozalanadi. Ikki-tap tasdiq.
+  function deleteAllGoals() {
+    var goals = loadGoals();
+    if (window.MVOW_DATA) {
+      var w = MVOW_DATA.getWeekPlan();
+      goals.forEach(function (goal) {
+        var info = DURATION_INFO[goal.duration] || DURATION_INFO.month;
+        var start = new Date(goal.startDate);
+        for (var i = 0; i < info.days; i++) {
+          var d = new Date(start); d.setDate(start.getDate() + i);
+          var key = 'd' + MVOW_DATA.localDateIso(d);
+          if (Array.isArray(w[key])) { w[key] = w[key].filter(function (s) { return s.goalId !== goal.id; }); if (!w[key].length) delete w[key]; }
+        }
+      });
+      MVOW_DATA.setWeekPlan(w);
+    }
+    saveGoals([]);
+  }
+  (function () {
+    var btn = document.getElementById('deleteAllBtn');
+    if (!btn) return;
+    var LBL = function () { return _t('maqsadlar.delete_all_btn', "🗑 Maqsadlarni o'chirish"); };
+    btn.textContent = LBL();
+    var armed = false, timer = null;
+    function disarm() { armed = false; if (timer) clearTimeout(timer); btn.textContent = LBL(); btn.style.color = '#FF8E97'; btn.style.borderColor = 'rgba(255,110,120,.35)'; }
+    btn.addEventListener('click', function () {
+      if (!armed) {
+        armed = true;
+        btn.textContent = _t('maqsadlar.delete_all_confirm', "Barcha maqsad o'chadi! Yana bosing");
+        btn.style.color = '#fff'; btn.style.borderColor = '#FF8E97'; btn.style.background = 'rgba(255,110,120,.18)';
+        timer = setTimeout(function () { btn.style.background = 'transparent'; disarm(); }, 3000);
+        return;
+      }
+      if (timer) clearTimeout(timer);
+      armed = false; btn.style.background = 'transparent';
+      deleteAllGoals();
+      if (window.MVOW_DATA && MVOW_DATA.fxSuccess) MVOW_DATA.fxSuccess();
+      btn.textContent = _t('maqsadlar.delete_all_done', "O'chirildi ✓");
+      setTimeout(function () { disarm(); render(); }, 1200);
     });
   })();
 
