@@ -3344,6 +3344,8 @@
       localStorage.setItem('mvow.lang', lang);
       // Sahifa yo'naltirilishini yangilash
       document.documentElement.lang = lang;
+      // Sana yorliqlarini (oy/hafta kuni) yangi tilга qayta hisoblash
+      try { if (window.MVOW_DATA && MVOW_DATA.fillToday) MVOW_DATA.fillToday(); } catch (e) {}
       I18N.apply();
     },
     apply(root) {

@@ -82,14 +82,36 @@
   // ──────────────────────────────────────────────────────────────
   // SANA — joriy sanani markaziy joydan tarqatish
   // ──────────────────────────────────────────────────────────────
-  (function fillToday() {
-    const monShort = ['YAN','FEV','MAR','APR','MAY','IYUN','IYUL','AVG','SEN','OKT','NOY','DEK'];
-    const monFull  = ['Yanvar','Fevral','Mart','Aprel','May','Iyun','Iyul','Avgust','Sentabr','Oktabr','Noyabr','Dekabr'];
-    const dayShort = ['YAKSHANBA','DUSHANBA','SESHANBA','CHORSHANBA','PAYSHANBA','JUMA','SHANBA'];
+  // Sana yorliqlari uch tilda — ilova inglizcha/ruscha bo'lsa sana ham shu tilda
+  // chiqsin (ilgari faqat o'zbekcha edi — xalqaro foydalanuvchi uchun xato).
+  const DATE_L10N = {
+    uz: {
+      monShort: ['YAN','FEV','MAR','APR','MAY','IYUN','IYUL','AVG','SEN','OKT','NOY','DEK'],
+      monFull:  ['Yanvar','Fevral','Mart','Aprel','May','Iyun','Iyul','Avgust','Sentabr','Oktabr','Noyabr','Dekabr'],
+      dayShort: ['YAKSHANBA','DUSHANBA','SESHANBA','CHORSHANBA','PAYSHANBA','JUMA','SHANBA']
+    },
+    ru: {
+      monShort: ['ЯНВ','ФЕВ','МАР','АПР','МАЙ','ИЮН','ИЮЛ','АВГ','СЕН','ОКТ','НОЯ','ДЕК'],
+      monFull:  ['Январь','Февраль','Март','Апрель','Май','Июнь','Июль','Август','Сентябрь','Октябрь','Ноябрь','Декабрь'],
+      dayShort: ['ВОСКРЕСЕНЬЕ','ПОНЕДЕЛЬНИК','ВТОРНИК','СРЕДА','ЧЕТВЕРГ','ПЯТНИЦА','СУББОТА']
+    },
+    en: {
+      monShort: ['JAN','FEB','MAR','APR','MAY','JUN','JUL','AUG','SEP','OCT','NOV','DEC'],
+      monFull:  ['January','February','March','April','May','June','July','August','September','October','November','December'],
+      dayShort: ['SUNDAY','MONDAY','TUESDAY','WEDNESDAY','THURSDAY','FRIDAY','SATURDAY']
+    }
+  };
+  function currentLang() {
+    let l = 'uz';
+    try { l = localStorage.getItem('mvow.lang') || 'uz'; } catch (e) {}
+    return DATE_L10N[l] ? l : 'uz';
+  }
+  DATA.fillToday = function fillToday() {
+    const L = DATE_L10N[currentLang()];
     const d = new Date();
-    DATA.today.date      = String(d.getDate()).padStart(2, '0') + '-' + monShort[d.getMonth()];
-    DATA.today.weekday   = dayShort[d.getDay()];
-    DATA.today.monthYear = monFull[d.getMonth()] + ' ' + d.getFullYear();
+    DATA.today.date      = String(d.getDate()).padStart(2, '0') + '-' + L.monShort[d.getMonth()];
+    DATA.today.weekday   = L.dayShort[d.getDay()];
+    DATA.today.monthYear = L.monFull[d.getMonth()] + ' ' + d.getFullYear();
     DATA.today.label     = DATA.today.date + ' · ' + DATA.today.weekday;
     // ISO hafta soni
     const t = new Date(d.valueOf());
@@ -97,7 +119,8 @@
     t.setDate(t.getDate() + 3 - ((t.getDay() + 6) % 7));
     const w = new Date(t.getFullYear(), 0, 4);
     DATA.today.week = 1 + Math.round(((t - w) / 86400000 - 3 + ((w.getDay() + 6) % 7)) / 7);
-  })();
+  };
+  DATA.fillToday();
 
   // Derived helpers — tez murojaat uchun
   DATA.firstSession   = () => SESSIONS[0];
