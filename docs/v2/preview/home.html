@@ -490,14 +490,14 @@
 <script>window.addEventListener('load',function(){try{if(window.Social&&Social.cloud&&Social.cloud())Social.syncStats();}catch(e){}});</script>
 <script>
   document.addEventListener('DOMContentLoaded', () => {
-    // Sana va vaqt
-    const dayNames = ['YAKSHANBA','DUSHANBA','SESHANBA','CHORSHANBA','PAYSHANBA','JUMA','SHANBA'];
-    const monNames = ['YAN','FEV','MAR','APR','MAY','IYUN','IYUL','AVG','SEN','OKT','NOY','DEK'];
+    // Sana va vaqt — til bo'yicha (MVOW_DATA sana yorliqlari uch tilda hisoblangan)
     const d = new Date();
     const hh = String(d.getHours()).padStart(2,'0');
     const mm = String(d.getMinutes()).padStart(2,'0');
-    document.getElementById('dateStamp').textContent =
-      `${String(d.getDate()).padStart(2,'0')}-${monNames[d.getMonth()]} · ${dayNames[d.getDay()]} · ${hh}:${mm}`;
+    const _dateLabel = (window.MVOW_DATA && MVOW_DATA.today && MVOW_DATA.today.label)
+      ? MVOW_DATA.today.label
+      : `${String(d.getDate()).padStart(2,'0')}-${d.getMonth()+1} · ${d.getDay()}`;
+    document.getElementById('dateStamp').textContent = `${_dateLabel} · ${hh}:${mm}`;
 
     // Salom — keyinroq plan'ga qarab to'g'irlanadi (pastda)
 

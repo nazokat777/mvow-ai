@@ -10,6 +10,13 @@
   var CODE_KEY = 'mvow.myCode';
   var FRIENDS_KEY = 'mvow.friends';
 
+  // "Siz" reyting nomi — til bo'yicha (ilgari hardcoded o'zbekcha edi; ru/en'da ham "Siz" chiqardi).
+  function meLabel() {
+    try { if (window.I18N && I18N.t) { var v = I18N.t('dostlar.you', ''); if (v) return v; } } catch (e) {}
+    var l = 'uz'; try { l = localStorage.getItem('mvow.lang') || 'uz'; } catch (e) {}
+    return l === 'en' ? 'You' : (l === 'ru' ? 'Вы' : 'Siz');
+  }
+
   function gen() {
     var L = 'ABCDEFGHJKLMNPQRSTUVWXYZ', N = '0123456789', s = '';
     for (var i = 0; i < 3; i++) s += L[Math.floor(Math.random() * L.length)];
@@ -188,7 +195,7 @@
 
   function localBoard(kind) {
     var me = myStats();
-    var list = [{ code: myCode(), name: 'Siz', me: true, focusMins: me.focusMins, focusH: me.focusH, habits: me.habits }];
+    var list = [{ code: myCode(), name: meLabel(), me: true, focusMins: me.focusMins, focusH: me.focusH, habits: me.habits }];
     friends().filter(function (x) { return x.role === kind; }).forEach(function (x) {
       list.push({ code: x.code, name: nameOf(x.code, kind), me: false, pending: true, focusMins: -1, focusH: 0, habits: 0 });
     });
@@ -217,7 +224,7 @@
         var fm = isMe ? meS.focusMins : (r.focus_mins == null ? null : r.focus_mins);
         var hb = isMe ? meS.habits    : (r.habits == null ? null : r.habits);
         return {
-          code: cd, name: isMe ? 'Siz' : (manualName(cd, kind) || pn[cd] || cd), me: isMe,
+          code: cd, name: isMe ? meLabel() : (manualName(cd, kind) || pn[cd] || cd), me: isMe,
           focusMins: fm, focusH: (fm == null ? null : Math.round(fm / 60 * 10) / 10), habits: hb
         };
       });
