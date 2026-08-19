@@ -1,0 +1,120 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<style>
+  * { margin:0; padding:0; box-sizing:border-box; }
+  html,body { background:#000; }
+  body { font-family:'Inter','Segoe UI',system-ui,sans-serif; -webkit-font-smoothing:antialiased; }
+
+  .slide {
+    position:relative; width:1080px; height:1920px; overflow:hidden;
+    display:flex; flex-direction:column; align-items:center;
+  }
+  .slide::before, .slide::after { content:''; position:absolute; border-radius:50%; filter:blur(8px); }
+
+  /* headline */
+  .cap { position:relative; z-index:3; text-align:center; padding:116px 80px 0; width:100%; }
+  .cap h1 {
+    font-size:100px; font-weight:800; letter-spacing:-2px; line-height:1.02; color:#fff;
+    text-shadow:0 8px 44px rgba(0,0,0,.4);
+  }
+  .cap h1 .hl { position:relative; color:#F9A03F; white-space:nowrap; }
+  .cap h1 .hl::after {
+    content:''; position:absolute; left:-4px; right:-4px; bottom:6px; height:20px; z-index:-1;
+    background:linear-gradient(90deg, rgba(249,160,63,.30), rgba(249,160,63,.16));
+    border-radius:10px; transform:skewX(-6deg);
+  }
+  .cap p { margin-top:30px; font-size:41px; font-weight:500; color:rgba(255,255,255,.80); line-height:1.28; }
+
+  /* device */
+  .stage { position:relative; z-index:2; margin-top:64px; }
+  .phone {
+    position:relative; width:600px; padding:16px;
+    background:linear-gradient(155deg,#31333c,#0e1015);
+    border-radius:64px;
+    box-shadow:0 60px 130px rgba(0,0,0,.6), 0 0 0 2px rgba(255,255,255,.07), inset 0 2px 5px rgba(255,255,255,.14);
+  }
+  .phone .screen { width:568px; height:1231px; border-radius:50px; overflow:hidden; background:#0a0a0a; }
+  .phone .screen img { width:568px; height:auto; display:block; }
+  .notch { position:absolute; top:26px; left:50%; transform:translateX(-50%); width:150px; height:30px; background:#000; border-radius:0 0 18px 18px; z-index:3; }
+
+  /* floating callout */
+  .call {
+    position:absolute; z-index:5; display:flex; align-items:center; gap:14px;
+    padding:20px 28px; border-radius:22px;
+    background:rgba(22,24,32,.86); border:1px solid rgba(255,255,255,.14);
+    box-shadow:0 24px 60px rgba(0,0,0,.5); backdrop-filter:blur(8px);
+  }
+  .call .e { font-size:40px; line-height:1; }
+  .call .t { font-size:30px; font-weight:700; color:#fff; letter-spacing:.2px; }
+  .call .t small { display:block; font-size:22px; font-weight:500; color:rgba(255,255,255,.6); margin-top:3px; }
+
+  /* brand footer */
+  .brand { position:absolute; bottom:50px; left:50%; transform:translateX(-50%); z-index:4; display:flex; align-items:center; gap:16px; }
+  .brand .ico { width:56px; height:56px; border-radius:15px; background:linear-gradient(150deg,#F9A03F,#E9631C); display:flex; align-items:center; justify-content:center; box-shadow:0 10px 26px rgba(233,99,28,.4); }
+  .brand .ico img { width:36px; height:36px; }
+  .brand span { font-size:32px; font-weight:800; color:#fff; letter-spacing:.5px; }
+  .brand span .ai { background:linear-gradient(92deg,#F9A03F,#9B6BE0); -webkit-background-clip:text; background-clip:text; color:transparent; }
+
+  #s1 { background:radial-gradient(1000px 900px at 72% 4%, #3a1e08, transparent 60%), linear-gradient(165deg,#1c1108 0%,#090806 62%); }
+  #s1::before{ width:960px;height:880px;top:-200px;right:-260px;background:rgba(233,99,28,.30); }
+  #s1::after { width:780px;height:720px;bottom:-240px;left:-220px;background:rgba(249,160,63,.12); }
+
+  #s2 { background:radial-gradient(1000px 900px at 28% 4%, #241a4a, transparent 60%), linear-gradient(165deg,#140e28 0%,#08060f 62%); }
+  #s2::before{ width:980px;height:900px;top:-220px;left:-240px;background:rgba(120,90,230,.34); }
+  #s2::after { width:760px;height:700px;bottom:-220px;right:-220px;background:rgba(233,110,75,.14); }
+
+  #s3 { background:radial-gradient(1000px 860px at 50% 2%, #3a1c07, transparent 58%), linear-gradient(165deg,#221206 0%,#0a0805 62%); }
+  #s3::before{ width:920px;height:840px;top:-160px;left:50%;transform:translateX(-50%);background:rgba(249,120,40,.26); }
+  #s3::after { width:720px;height:660px;bottom:-220px;right:-200px;background:rgba(233,99,28,.16); }
+
+  #s4 { background:radial-gradient(1000px 900px at 72% 4%, #0f3a22, transparent 60%), linear-gradient(165deg,#0c2013 0%,#070d09 62%); }
+  #s4::before{ width:940px;height:860px;top:-200px;right:-220px;background:rgba(70,200,130,.26); }
+  #s4::after { width:760px;height:700px;bottom:-220px;left:-220px;background:rgba(245,194,107,.14); }
+</style>
+</head>
+<body>
+
+<div class="slide" id="s1">
+  <div class="cap"><h1>Your discipline,<br><span class="hl">on autopilot</span></h1>
+    <p>One big goal becomes small daily wins — planned for you.</p></div>
+  <div class="stage">
+    <div class="phone"><div class="notch"></div><div class="screen"><img src="_shots/home.png"></div></div>
+    <div class="call" style="top:660px; right:-70px;"><span class="e">✨</span><span class="t">Plan builds itself<small>every single morning</small></span></div>
+  </div>
+  <div class="brand"><span class="ico"><img src="assets/mnsm-maskable-512.png"></span><span>FOCUS <span class="ai">AI</span></span></div>
+</div>
+
+<div class="slide" id="s2">
+  <div class="cap"><h1>Deep focus,<br><span class="hl">on demand</span></h1>
+    <p>Pomodoro, a plain timer, or the 10,000-hour path to mastery.</p></div>
+  <div class="stage">
+    <div class="phone"><div class="notch"></div><div class="screen"><img src="_shots/modes.png"></div></div>
+    <div class="call" style="top:150px; left:-60px;"><span class="e">🎯</span><span class="t">10,000-hour method<small>built for mastery</small></span></div>
+  </div>
+  <div class="brand"><span class="ico"><img src="assets/mnsm-maskable-512.png"></span><span>FOCUS <span class="ai">AI</span></span></div>
+</div>
+
+<div class="slide" id="s3">
+  <div class="cap"><h1>Never break<br><span class="hl">the chain</span></h1>
+    <p>Every day you show up, your streak grows into your identity.</p></div>
+  <div class="stage">
+    <div class="phone"><div class="notch"></div><div class="screen"><img src="_shots/streak.png"></div></div>
+    <div class="call" style="top:520px; right:-64px;"><span class="e">🔥</span><span class="t">12-day streak<small>don't lose it now</small></span></div>
+  </div>
+  <div class="brand"><span class="ico"><img src="assets/mnsm-maskable-512.png"></span><span>FOCUS <span class="ai">AI</span></span></div>
+</div>
+
+<div class="slide" id="s4">
+  <div class="cap"><h1>Discipline that<br><span class="hl">rewards you</span></h1>
+    <p>Turn focus into coins — and real rewards you choose yourself.</p></div>
+  <div class="stage">
+    <div class="phone"><div class="notch"></div><div class="screen"><img src="_shots/rewards.png"></div></div>
+    <div class="call" style="top:452px; left:-56px;"><span class="e">🪙</span><span class="t">Real rewards<small>you actually want</small></span></div>
+  </div>
+  <div class="brand"><span class="ico"><img src="assets/mnsm-maskable-512.png"></span><span>FOCUS <span class="ai">AI</span></span></div>
+</div>
+
+</body>
+</html>
