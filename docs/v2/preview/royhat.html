@@ -215,6 +215,8 @@
 <script src="i18n.js?v=28.4.0"></script>
 <script src="lang-switcher.js?v=28.4.0" defer></script>
 <script src="focus-indicator.js?v=28.4.0" defer></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="supabase-config.js?v=29.1.0"></script>
 <script>
   const $ = id => document.getElementById(id);
   const emailInp = $('emailInput');
@@ -252,12 +254,61 @@
     saveAndContinue(email, '');
   });
 
-  googleBtn.addEventListener('click', () => {
-    // Google Sign-In hozircha sozlanmagan — ClientID kerak
-    // Vaqtinchalik: foydalanuvchini email orqali davom etishga yo'naltirish
-    alert('Google ulanish hozircha sozlanmagan.\n\nEmail bilan davom eting yoki "O\'tkazib yuborish".');
+  // ── Google bilan davom (Supabase OAuth) ────────────────────────────────
+  // MUHIM: bu ilovaga "akkaunt" qo'shmaydi. Foydalanuvchi identifikatori
+  // AVVALGIDEK qurilma kodi (mvow.myCode) bo'lib qoladi — Google faqat ism va
+  // emailni qo'lda yozish o'rniga avtomatik to'ldiradi. Shu sabab ma'lumot
+  // sxemasi, RLS va do'stlar mantig'i tegilmaydi.
+  var _sb = null;
+  function sbClient() {
+    if (_sb !== null) return _sb;
+    try {
+      _sb = (window.supabase && window.SB_URL && window.SB_KEY)
+        ? window.supabase.createClient(window.SB_URL, window.SB_KEY)
+        : false;
+    } catch (e) { _sb = false; }
+    return _sb;
+  }
+
+  function googleUnavailable() {
+    var msg = (window.I18N && I18N.t)
+      ? I18N.t('auth.google_off', '')
+      : '';
+    alert(msg || 'Google ulanishni hozir bajarib bo\'lmadi. Email bilan davom eting yoki "O\'tkazib yuborish".');
     emailInp.focus();
+  }
+
+  googleBtn.addEventListener('click', function () {
+    var c = sbClient();
+    if (!c) { googleUnavailable(); return; }
+    googleBtn.classList.add('disabled');
+    c.auth.signInWithOAuth({
+      provider: 'google',
+      options: {
+        // Aynan shu sahifaga qaytadi; qaytgach pastdagi kod sessiyani o'qiydi.
+        redirectTo: location.origin + location.pathname,
+        queryParams: { prompt: 'select_account' }
+      }
+    }).then(function (res) {
+      // Xato bo'lsa (masalan provayder yoqilmagan) — brauzer yo'naltirilmaydi.
+      if (res && res.error) { googleBtn.classList.remove('disabled'); googleUnavailable(); }
+    }, function () {
+      googleBtn.classList.remove('disabled'); googleUnavailable();
+    });
   });
+
+  // Google'dan qaytgandan keyin — ism/emailni olib davom etamiz.
+  (function resumeFromGoogle() {
+    var c = sbClient();
+    if (!c) return;
+    c.auth.getSession().then(function (res) {
+      var u = res && res.data && res.data.session && res.data.session.user;
+      if (!u) return;
+      var meta = u.user_metadata || {};
+      var name = (meta.full_name || meta.name || '').trim().slice(0, 24);
+      saveAndContinue(u.email || '', name);
+    }, function () {});
+  })();
 
   // Saqlangan email
   const savedEmail = localStorage.getItem('mvow.email');
