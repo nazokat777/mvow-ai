@@ -107,7 +107,10 @@ body {
 }
 
 /* 5. Bottom-left — gesture bar ustiga chiqadi (safe-area), strelkalar CTA'dan ustun (z 70) */
-.bl { position: absolute; bottom: calc(24px + env(safe-area-inset-bottom, 0px)); left: 16px; z-index: 70; max-width: 320px; }
+/* Android 15+ chetdan-chetga (edge-to-edge) rejimida tizim tugmalari paneli
+   kontent ustiga tushadi va ba'zi qurilmalarда env(safe-area-inset-bottom) 0 keladi.
+   max(56px, ...) — panel qanday bo'lishidan qat'i nazar tugmalar ko'rinishini kafolatlaydi. */
+.bl { position: absolute; bottom: max(56px, calc(24px + env(safe-area-inset-bottom, 0px))); left: 16px; z-index: 70; max-width: 320px; }
 @media (min-width: 640px) { .bl { bottom: 80px; left: 96px; } }
 .bl-title {
   font-weight: 700; text-transform: uppercase; letter-spacing: 0.02em;
@@ -133,7 +136,7 @@ body {
 
 /* 6. Bottom-right link */
 .br {
-  position: absolute; bottom: calc(24px + env(safe-area-inset-bottom, 0px)); right: 16px; z-index: 60;
+  position: absolute; bottom: max(56px, calc(24px + env(safe-area-inset-bottom, 0px))); right: 16px; z-index: 60;
   display: flex; align-items: center; gap: 6px;
   font-family: 'Anton', sans-serif;
   font-size: clamp(20px, 4vw, 56px); font-weight: 400;
